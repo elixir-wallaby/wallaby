@@ -1,0 +1,2 @@
+defmodule Wallaby do
+end
