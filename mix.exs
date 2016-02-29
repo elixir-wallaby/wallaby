@@ -14,7 +14,7 @@ defmodule Wallaby.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :httpoison]]
+    [applications: [:logger, :httpoison], mod: {Wallaby, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -29,6 +29,8 @@ defmodule Wallaby.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.8"},
+      {:poison, ">= 1.4.0"},
+      {:poolboy, "~> 1.5"}
     ]
   end
 end

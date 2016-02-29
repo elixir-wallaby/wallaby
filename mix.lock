@@ -1,6 +1,8 @@
 %{"certifi": {:hex, :certifi, "0.3.0"},
-  "hackney": {:hex, :hackney, "1.4.8"},
+  "hackney": {:hex, :hackney, "1.4.10"},
   "httpoison": {:hex, :httpoison, "0.8.1"},
-  "idna": {:hex, :idna, "1.0.3"},
+  "idna": {:hex, :idna, "1.1.0"},
   "mimerl": {:hex, :mimerl, "1.0.2"},
+  "poison": {:hex, :poison, "2.1.0"},
+  "poolboy": {:hex, :poolboy, "1.5.1"},
   "ssl_verify_hostname": {:hex, :ssl_verify_hostname, "1.0.5"}}
