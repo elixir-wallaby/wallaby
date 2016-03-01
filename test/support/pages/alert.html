@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Alert Test</title>
+  </head>
+  <body>
+    <h1>Alert Test</h1>
+    <a id='alert' href=# onclick="alert('this is an alert')")>Alert</a>
+    <a id='prompt' href=# onclick="doPrompt()">Prompt</a>
+    <p id='result'></p>
+    <script>
+    function doPrompt() {
+      var name = prompt("name", "");
+        if (name != null) {
+            document.getElementById("result").innerHTML =
+            "Hello " + name;
+        }
+    }
+</script>
+  </body>
+</html>

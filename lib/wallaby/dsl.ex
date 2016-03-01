@@ -3,7 +3,6 @@ defmodule Wallaby.DSL do
 
   defmacro __using__([]) do
     quote do
-      import Wallaby.DSL.Session
       import Wallaby.DSL.Navigation
       import Wallaby.DSL.Finder
     end

@@ -1,14 +1,35 @@
-defprotocol Wallaby.Session do
-  # @fallback_to_any true
+defmodule Wallaby.Session do
+  defstruct [:id, :base_url, :server]
 
-  def visit(session, url)
+  def create(server) do
+    base_url = Wallaby.Server.get_base_url(server)
 
-  def page_source(session)
+    params = %{
+      desiredCapabilities: %{
+        javascriptEnabled: false,
+        version: "",
+        rotatable: false,
+        takesScreenshot: true,
+        cssSelectorsEnabled: true,
+        browserName: "phantomjs",
+        nativeEvents: false,
+        platform: "ANY"
+      }
+    }
 
-  def click(session, link_or_button)
+    response = request(:post, "#{base_url}session", params)
+    session = %Wallaby.Session{base_url: base_url, id: response["sessionId"], server: server}
+    {:ok, session}
+  end
 
-  def find(session, selector)
+  def request(method, url, params \\ %{}) do
+    headers = [{"Content-Type", "text/json"}]
+    body = case params do
+      params when map_size(params) == 0 -> ""
+      params -> Poison.encode!(params)
+    end
 
-  def all(session, selector)
+    {:ok, response} = HTTPoison.request(method, url, body, headers)
+    Poison.decode!(response.body)
+  end
 end
-

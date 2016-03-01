@@ -1,12 +1,12 @@
-defmodule Wallaby.Servers.PhantomJS do
+defmodule Wallaby.Server do
   use GenServer
 
   def start_link(_args) do
     GenServer.start_link(__MODULE__, [])
   end
 
-  def get_base_url(driver) do
-    GenServer.call(driver, :get_base_url)
+  def get_base_url(server) do
+    GenServer.call(server, :get_base_url)
   end
 
   def init(_) do
