@@ -4,7 +4,7 @@ defmodule Wallaby.DSL do
   defmacro __using__([]) do
     quote do
       import Wallaby.DSL.Navigation
-      import Wallaby.DSL.Finder
+      import Wallaby.DSL.Finders
     end
   end
 end

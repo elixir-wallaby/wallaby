@@ -17,13 +17,20 @@ defmodule Wallaby.DSLTest do
     assert element
   end
 
-  test "nonexisting elements are not found", %{server: server, session: session} do
-    element =
+  test "finding nonexistent elements raises an exception", %{server: server, session: session} do
+    assert_raise Wallaby.ElementNotFound, fn ->
       session
       |> visit(server.base_url)
       |> find("#not-there")
+    end
+  end
 
-    refute element
+  test "ambiguous queries raise an exception", %{server: server, session: session} do
+    assert_raise Wallaby.AmbiguousMatch, fn ->
+      session
+      |> visit(server.base_url)
+      |> find("a")
+    end
   end
 
   test "can query for multiple elements", %{server: server, session: session} do
@@ -42,5 +49,17 @@ defmodule Wallaby.DSLTest do
       |> all("table")
 
     assert elements == []
+  end
+
+  test "click through to another page", %{server: server, session: session} do
+    session
+    |> visit(server.base_url)
+    |> click_link("Page 1")
+
+    element =
+      session
+      |> find(".blue")
+
+    assert element
   end
 end
