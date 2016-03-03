@@ -51,6 +51,27 @@ defmodule Wallaby.DSLTest do
     assert elements == []
   end
 
+  test "can get text of an element", %{server: server, session: session} do
+    text =
+      session
+      |> visit(server.base_url)
+      |> find("#header")
+      |> text
+
+    assert text == "Test Index"
+  end
+
+  test "can get attributes of an element", %{server: server, session: session} do
+    class =
+      session
+      |> visit(server.base_url)
+      |> find("body")
+      |> attr("class")
+
+    assert class == "bootstrap"
+  end
+
+
   test "click through to another page", %{server: server, session: session} do
     session
     |> visit(server.base_url)

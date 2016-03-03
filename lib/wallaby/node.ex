@@ -1,3 +1,3 @@
 defmodule Wallaby.Node do
-  defstruct [:id]
+  defstruct [:session, :id]
 end

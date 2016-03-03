@@ -20,21 +20,11 @@ defmodule Wallaby.DSL.Finders do
     %{using: "css selector", value: css_selector}
   end
 
-  defp do_find_elements(%{id: session_id, base_url: base_url}, params) do
+  defp do_find_elements(%{id: session_id, base_url: base_url} = session, params) do
     response = Session.request(:post, "#{base_url}session/#{session_id}/elements", params)
 
     Enum.map response["value"], fn %{"ELEMENT" => id} ->
-      %Wallaby.Node{id: id}
+      %Wallaby.Node{id: id, session: session}
     end
   end
 end
-
-# def page_source(%{id: session_id, base_url: base_url}) do
-#   request(:get, "#{base_url}session/#{session_id}/source")
-# end
-#
-# def attribute_value(element, attribute_name) do
-#   element_id = get_element_id(element)
-#   session_id = Hound.current_session_id
-#   make_req(:get, "session/#{session_id}/element/#{element_id}/attribute/#{attribute_name}")
-# end

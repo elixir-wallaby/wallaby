@@ -5,6 +5,7 @@ defmodule Wallaby.DSL do
     quote do
       import Wallaby.DSL.Navigation
       import Wallaby.DSL.Finders
+      import Wallaby.DSL.Attributes
     end
   end
 end
