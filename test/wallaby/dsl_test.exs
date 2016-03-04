@@ -83,4 +83,13 @@ defmodule Wallaby.DSLTest do
 
     assert element
   end
+
+  @tag :skip
+  test "filling in input by css selector", %{server: server, session: session} do
+    session
+    |> visit("#{server.base_url}/forms")
+    |> fill_in("#name_field", with: "Chris")
+
+    assert find(session, ".name-input") |> has_value?("Chris")
+  end
 end
