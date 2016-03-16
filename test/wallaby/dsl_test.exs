@@ -107,4 +107,18 @@ defmodule Wallaby.DSLTest do
 
     assert find(session, "#name_field") |> has_value?("Chris")
   end
+
+  test "clearing input", %{server: server, session: session} do
+    node =
+      session
+      |> visit(server.base_url <> "forms.html")
+      |> find("#name_field")
+
+    fill_in(node, with: "Chris")
+    assert has_value?(node, "Chris")
+    
+    clear(node)
+    refute has_value?(node, "Chris")
+    assert has_value?(node, "")
+  end
 end

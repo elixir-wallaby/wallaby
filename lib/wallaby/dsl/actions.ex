@@ -1,5 +1,6 @@
 defmodule Wallaby.DSL.Actions do
   alias Wallaby.Session
+  alias Wallaby.Node
   import Wallaby.DSL.Finders, only: [find: 2]
   import Wallaby.XPath
 
@@ -10,5 +11,16 @@ defmodule Wallaby.DSL.Actions do
       "#{session.base_url}session/#{session.id}/element/#{node.id}/value",
       %{value: [value]}
     )
+  end
+  def fill_in(%Node{session: session, id: id}, with: value) when is_binary(value) do
+    Session.request(
+      :post,
+      "#{session.base_url}session/#{session.id}/element/#{id}/value",
+      %{value: [value]}
+    )
+  end
+
+  def clear(%Node{session: session, id: id}) do
+    Session.request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/clear")
   end
 end
