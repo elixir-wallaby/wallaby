@@ -14,6 +14,7 @@ defmodule Wallaby.DSL.Actions do
       "#{session.base_url}session/#{session.id}/element/#{id}/value",
       %{value: [value]}
     )
+    session
   end
 
   def clear(session, query) when is_binary(query) do
