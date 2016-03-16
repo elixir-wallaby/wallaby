@@ -43,7 +43,7 @@ defmodule Wallaby.Mixfile do
 
   defp package do
     [
-      files: ["lib", "mix.exs", "README.md", "LICENSE.md"],
+      files: ["lib", "mix.exs", "README.md", "LICENSE.md", "priv"],
       maintainers: ["Chris Keathley", "Tommy Fisher"],
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/keathley/wallaby"}
