@@ -10,4 +10,8 @@ defmodule Wallaby.DSL.Matchers do
   def has_content?(%Node{}=node, text) when is_binary(text) do
     Attributes.text(node) == text
   end
+
+  def checked?(_) do
+    false
+  end
 end

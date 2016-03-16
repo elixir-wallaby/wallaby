@@ -17,6 +17,14 @@ defmodule Wallaby.XPath do
     ".//a[./@href][(((./@id = '#{lnk}' or contains(normalize-space(string(.)), '#{lnk}')) or contains(./@title, '#{lnk}')) or .//img[contains(./@alt, '#{lnk}')])]"
   end
 
+  def radio_button(query) do
+    nodes = descendants(["input"])
+    predicate = all([any(attr("type", ["radio"])), field_locator(query)])
+
+    union(nodes, predicate)
+    |> render
+  end
+
   @doc """
   Match any `input` or `textarea` that can be filled with text.
   Excludes any inputs with types of `submit`, `image`, `radio`, `checkbox`,
@@ -41,9 +49,6 @@ defmodule Wallaby.XPath do
     attr("type", ["checkbox", "submit", "button"])
   end
 
-  @doc """
-  Returns xpath for finding fields (id, name, and label)
-  """
   defp field_locator(query) do
     any([attr("id", query), attr("name", query)])
   end

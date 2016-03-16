@@ -116,9 +116,31 @@ defmodule Wallaby.DSLTest do
 
     fill_in(node, with: "Chris")
     assert has_value?(node, "Chris")
-    
+
     clear(node)
     refute has_value?(node, "Chris")
     assert has_value?(node, "")
+  end
+
+  test "choosing a radio button", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> choose("option2")
+
+    assert find(session, "#option2") |> checked?
+  end
+
+  test "choosing a radio button unchecks other buttons in the group", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "forms.html")
+
+    choose(session, "Option 1")
+    assert find(session, "#option1") |> checked?
+
+    find(session, "#option2")
+    |> choose()
+    
+    refute find(session, "#option1") |> checked?
+    assert find(session, "#option2") |> checked?
   end
 end
