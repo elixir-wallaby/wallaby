@@ -8,4 +8,3 @@ defmodule Wallaby.ServerTest do
     assert Server.get_base_url(server) =~ ~r"http://localhost:\d+/"
   end
 end
-
