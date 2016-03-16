@@ -3,8 +3,8 @@ defmodule Wallaby.DSL.Navigation do
   alias Wallaby.XPath
   alias Wallaby.DSL.Actions
 
-  def visit(session, url) do
-    Session.request(:post, "#{session.base_url}session/#{session.id}/url", %{url: url})
+  def visit(session, path) do
+    Session.request(:post, "#{session.base_url}session/#{session.id}/url", %{url: request_url(path)})
     session
   end
 
@@ -13,4 +13,6 @@ defmodule Wallaby.DSL.Navigation do
     |> Actions.click
     session
   end
+
+  defp request_url(url), do: (Application.get_env(:wallaby, :base_url) || "") <> url
 end
