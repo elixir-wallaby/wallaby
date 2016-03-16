@@ -8,6 +8,8 @@ defmodule Wallaby.Mixfile do
      elixirc_paths: elixirc_paths(Mix.env),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     package: package,
+     description: "Concurrent feature tests for elixir",
      deps: deps]
   end
 
@@ -36,6 +38,15 @@ defmodule Wallaby.Mixfile do
       {:httpoison, "~> 0.8"},
       {:poison, ">= 1.4.0"},
       {:poolboy, "~> 1.5"}
+    ]
+  end
+
+  defp package do
+    [
+      files: ["lib", "mix.exs", "README.md", "LICENSE.md"],
+      maintainers: ["Chris Keathley", "Tommy Fisher"],
+      licenses: ["MIT"],
+      links: %{"Github" => "https://github.com/keathley/wallaby"}
     ]
   end
 end
