@@ -1,5 +1,7 @@
 # Wallaby
 
+[![Build Status](https://travis-ci.org/keathley/wallaby.svg?branch=master)](https://travis-ci.org/keathley/wallaby)
+
 **TODO: Add description**
 
 ## Installation
