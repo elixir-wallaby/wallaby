@@ -249,4 +249,24 @@ defmodule Wallaby.DSLTest do
 
     assert window_size == %{"height" => 1234, "width" => 1234}
   end
+
+  test "waits for an element to be visible", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "wait.html")
+
+    assert_raise Wallaby.ElementNotFound, fn ->
+      find(session, ".main")
+    end
+
+    assert wait_until_visible(session, ".main")
+  end
+
+  test "waits for count elements to be visible", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "wait.html")
+
+    assert all(session, ".orange") == []
+
+    assert wait_until_visible(session, ".orange", count: 5) |> length == 5
+  end
 end
