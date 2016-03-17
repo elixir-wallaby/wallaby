@@ -149,8 +149,21 @@ defmodule Wallaby.DSLTest do
 
     find(session, "#option2")
     |> choose()
-    
+
     refute find(session, "#option1") |> checked?
     assert find(session, "#option2") |> checked?
+  end
+
+  test "navigating by path only", %{session: session, server: server} do
+    Application.put_env(:wallaby, :base_url, server.base_url)
+    session
+    |> visit("page_1.html")
+
+    element =
+      session
+      |> find(".blue")
+
+    assert element
+    Application.put_env(:wallaby, :base_url, nil)
   end
 end
