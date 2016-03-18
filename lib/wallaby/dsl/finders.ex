@@ -27,7 +27,7 @@ defmodule Wallaby.DSL.Finders do
     do_find_elements(session, to_params(query))
   end
 
-  def any?(session, query) do
+  def any(session, query) do
     retry fn ->
       case do_find_elements(session, to_params(query)) do
         elements when length(elements) > 0 -> elements
