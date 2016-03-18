@@ -174,7 +174,7 @@ defmodule Wallaby.DSLTest do
       |> take_screenshot
 
     assert File.exists? path
-    File.rm_rf! path
+    File.rm_rf! "#{File.cwd!}/screenshots"
   end
 
   test "manipulating window size", %{session: session, server: server} do
