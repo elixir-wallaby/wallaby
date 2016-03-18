@@ -7,6 +7,7 @@ defmodule Wallaby.DSL.Finders do
   def find(session, query, [{:count, count} | _] = _opts) do
     retry fn ->
       case do_find_elements(session, to_params(query)) do
+        elements when length(elements) > 0 and count == :any -> elements
         elements when length(elements) == count -> elements
         [] -> raise Wallaby.ElementNotFound, message: "Could not find element"
         elements -> raise Wallaby.AmbiguousMatch, message: "Ambiguous match, found #{length(elements)}"
@@ -25,15 +26,6 @@ defmodule Wallaby.DSL.Finders do
 
   def all(session, query) do
     do_find_elements(session, to_params(query))
-  end
-
-  def any(session, query) do
-    retry fn ->
-      case do_find_elements(session, to_params(query)) do
-        elements when length(elements) > 0 -> elements
-        [] -> raise Wallaby.ElementNotFound, message: "Could not find any elements"
-      end
-    end
   end
 
   defp to_params({:xpath, xpath}) do

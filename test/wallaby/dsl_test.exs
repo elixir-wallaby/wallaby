@@ -275,9 +275,9 @@ defmodule Wallaby.DSLTest do
     |> visit(server.base_url <> "page_1.html")
 
     assert_raise Wallaby.ElementNotFound, fn ->
-      any(session, ".not-there")
+      find(session, ".not-there", count: :any)
     end
 
-    assert any(session, "li") |> length == 4
+    assert find(session, "li", count: :any) |> length == 4
   end
 end
