@@ -131,6 +131,7 @@ defmodule Wallaby.DSLTest do
     assert has_value?(node, "")
   end
 
+  @tag :pending
   test "choosing a radio button", %{session: session, server: server} do
     page =
       session
@@ -144,6 +145,7 @@ defmodule Wallaby.DSLTest do
     assert find(session, "#option2") |> checked?
   end
 
+  @tag :pending
   test "choosing a radio button unchecks other buttons in the group", %{session: session, server: server} do
     session
     |> visit(server.base_url <> "forms.html")
