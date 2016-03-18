@@ -254,11 +254,9 @@ defmodule Wallaby.DSLTest do
     session
     |> visit(server.base_url <> "wait.html")
 
-    assert_raise Wallaby.ElementNotFound, fn ->
-      find(session, ".main")
-    end
+    assert all(session, ".main") == []
 
-    assert wait_until_visible(session, ".main")
+    assert find(session, ".main")
   end
 
   test "waits for count elements to be visible", %{session: session, server: server} do
@@ -267,6 +265,17 @@ defmodule Wallaby.DSLTest do
 
     assert all(session, ".orange") == []
 
-    assert wait_until_visible(session, ".orange", count: 5) |> length == 5
+    assert find(session, ".orange", count: 5) |> length == 5
+  end
+
+  test "finding one or more elements", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "page_1.html")
+
+    assert_raise Wallaby.ElementNotFound, fn ->
+      any?(session, ".not-there")
+    end
+
+    assert any?(session, "li") |> length == 4
   end
 end

@@ -1,13 +1,25 @@
 defmodule Wallaby.DSL.Finders do
   alias Wallaby.Session
 
-  @default_max_wait_time 5_000
+  @default_max_wait_time 3_000
 
-  def find(session, query) do
-    case do_find_elements(session, to_params(query)) do
-      [element] -> element
-      [] -> raise Wallaby.ElementNotFound, message: "Could not find element"
-      elements -> raise Wallaby.AmbiguousMatch, message: "Ambiguous match, found #{length(elements)}"
+  def find(session, query, _opts \\ [])
+  def find(session, query, [{:count, count} | _] = _opts) do
+    retry fn ->
+      case do_find_elements(session, to_params(query)) do
+        elements when length(elements) == count -> elements
+        [] -> raise Wallaby.ElementNotFound, message: "Could not find element"
+        elements -> raise Wallaby.AmbiguousMatch, message: "Ambiguous match, found #{length(elements)}"
+      end
+    end
+  end
+  def find(session, query, _opts) do
+    retry fn ->
+      case do_find_elements(session, to_params(query)) do
+        [element] -> element
+        [] -> raise Wallaby.ElementNotFound, message: "Could not find element"
+        elements -> raise Wallaby.AmbiguousMatch, message: "Ambiguous match, found #{length(elements)}"
+      end
     end
   end
 
@@ -15,16 +27,14 @@ defmodule Wallaby.DSL.Finders do
     do_find_elements(session, to_params(query))
   end
 
-  def wait_until_visible(session, query, opts \\ [])
-  def wait_until_visible(session, query, [{:count, count} | _] = _opts) do
+  def any?(session, query) do
     retry fn ->
-      case all(session, query) do
-        elements when length(elements) == count -> elements
-        _ -> raise Wallaby.ElementNotFound, message: "Could not find #{count} elements"
+      case do_find_elements(session, to_params(query)) do
+        elements when length(elements) > 0 -> elements
+        [] -> raise Wallaby.ElementNotFound, message: "Could not find any elements"
       end
     end
   end
-  def wait_until_visible(session, query, _opts), do: retry fn -> find(session, query) end
 
   defp to_params({:xpath, xpath}) do
     %{using: "xpath", value: xpath}
