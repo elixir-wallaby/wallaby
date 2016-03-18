@@ -166,4 +166,14 @@ defmodule Wallaby.DSLTest do
     assert element
     Application.put_env(:wallaby, :base_url, nil)
   end
+
+  test "taking a screenshot", %{session: session, server: server} do
+    path =
+      session
+      |> visit(server.base_url)
+      |> take_screenshot
+
+    assert File.exists? path
+    File.rm_rf! path
+  end
 end
