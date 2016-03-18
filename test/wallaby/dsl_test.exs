@@ -166,4 +166,24 @@ defmodule Wallaby.DSLTest do
     assert element
     Application.put_env(:wallaby, :base_url, nil)
   end
+
+  test "taking a screenshot", %{session: session, server: server} do
+    path =
+      session
+      |> visit(server.base_url)
+      |> take_screenshot
+
+    assert File.exists? path
+    File.rm_rf! "#{File.cwd!}/screenshots"
+  end
+
+  test "manipulating window size", %{session: session, server: server} do
+    window_size =
+      session
+      |> visit(server.base_url)
+      |> set_window_size(1234, 1234)
+      |> get_window_size
+
+    assert window_size == %{"height" => 1234, "width" => 1234}
+  end
 end

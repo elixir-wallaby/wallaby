@@ -8,6 +8,7 @@ defmodule Wallaby.DSL do
       import Wallaby.DSL.Attributes
       import Wallaby.DSL.Actions
       import Wallaby.DSL.Matchers
+      import Wallaby.DSL.Helpers
     end
   end
 end
