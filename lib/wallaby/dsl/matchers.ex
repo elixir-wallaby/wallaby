@@ -11,7 +11,7 @@ defmodule Wallaby.DSL.Matchers do
     Attributes.text(node) == text
   end
 
-  def checked?(_) do
-    false
+  def checked?(%Node{}=node) do
+    Attributes.attr(node, "checked") == "true"
   end
 end

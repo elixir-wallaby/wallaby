@@ -37,7 +37,8 @@ defmodule Wallaby.Mixfile do
     [
       {:httpoison, "~> 0.8"},
       {:poison, ">= 1.4.0"},
-      {:poolboy, "~> 1.5"}
+      {:poolboy, "~> 1.5"},
+      {:dialyze, "~> 0.2.0"},
     ]
   end
 

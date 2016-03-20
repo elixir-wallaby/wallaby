@@ -1,6 +1,5 @@
 defmodule Wallaby.DSLTest do
   use Wallaby.ServerCase, async: true
-
   use Wallaby.DSL
 
   setup do
@@ -133,8 +132,13 @@ defmodule Wallaby.DSLTest do
   end
 
   test "choosing a radio button", %{session: session, server: server} do
-    session
-    |> visit(server.base_url <> "forms.html")
+    page =
+      session
+      |> visit(server.base_url <> "forms.html")
+
+    refute find(page, "#option2") |> checked?
+
+    page
     |> choose("option2")
 
     assert find(session, "#option2") |> checked?

@@ -18,11 +18,7 @@ defmodule Wallaby.XPath do
   end
 
   def radio_button(query) do
-    nodes = descendants(["input"])
-    predicate = all([any(attr("type", ["radio"])), field_locator(query)])
-
-    union(nodes, predicate)
-    |> render
+    ".//input[./@type = 'radio'][(((./@id = '#{query}' or ./@name = '#{query}') or ./@placeholder = '#{query}') or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//input[./@type = 'radio']"
   end
 
   @doc """
@@ -30,15 +26,8 @@ defmodule Wallaby.XPath do
   Excludes any inputs with types of `submit`, `image`, `radio`, `checkbox`,
   `hidden`, or `file`.
   """
-  @spec fillable_field(name) :: xpath
-  @spec fillable_field(id) :: xpath
-  @spec fillable_field(label) :: xpath
   def fillable_field(query) when is_binary(query) do
-    nodes = descendants(fillable_fields)
-    predicate = all([none(unfillable_fields), field_locator(query)])
-
-    union(nodes, predicate)
-    |> render
+    ".//*[self::input | self::textarea][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'radio' or ./@type = 'checkbox' or ./@type = 'hidden' or ./@type = 'file')][(((./@id = '#{query}' or ./@name = '#{query}') or ./@placeholder = '#{query}') or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//*[self::input | self::textarea][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'radio' or ./@type = 'checkbox' or ./@type = 'hidden' or ./@type = 'file')]"
   end
 
   defp fillable_fields do
@@ -50,6 +39,6 @@ defmodule Wallaby.XPath do
   end
 
   defp field_locator(query) do
-    any([attr("id", query), attr("name", query)])
+    any([attr("id", query), attr("name", query), attr("placeholder", query), ])
   end
 end
