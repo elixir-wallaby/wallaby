@@ -30,6 +30,10 @@ defmodule Wallaby.XPath do
     ".//*[self::input | self::textarea][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'radio' or ./@type = 'checkbox' or ./@type = 'hidden' or ./@type = 'file')][(((./@id = '#{query}' or ./@name = '#{query}') or ./@placeholder = '#{query}') or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//*[self::input | self::textarea][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'radio' or ./@type = 'checkbox' or ./@type = 'hidden' or ./@type = 'file')]"
   end
 
+  def checkbox(query) do
+    ".//input[./@type = 'checkbox'][(((./@id = '#{query}' or ./@name = '#{query}') or ./@placeholder = '#{query}') or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//input[./@type = 'checkbox']"
+  end
+
   defp fillable_fields do
     ["textarea", "input"]
   end

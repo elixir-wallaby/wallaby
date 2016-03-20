@@ -33,6 +33,12 @@ defmodule Wallaby.DSL.Actions do
     click(node)
   end
 
+  def check(%Node{}=node), do: click(node)
+  def check(%Session{}=session, query) do
+    find(session, {:xpath, checkbox(query)})
+    |> click
+  end
+
   def click(session, query) do
     find(session, query)
   end

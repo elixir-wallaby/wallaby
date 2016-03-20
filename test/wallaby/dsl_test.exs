@@ -158,6 +158,41 @@ defmodule Wallaby.DSLTest do
     assert find(session, "#option2") |> checked?
   end
 
+  test "check/1 checks the specified node", %{session: session, server: server} do
+    checkbox =
+      session
+      |> visit(server.base_url <> "forms.html")
+      |> find("#checkbox1")
+
+    check checkbox
+
+    assert checked?(checkbox)
+  end
+
+  test "check/2 finds the node by label", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> check("Checkbox 1")
+
+    assert find(session, "#checkbox1") |> checked?
+  end
+
+  test "check/2 finds the node by id", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> check("checkbox1")
+
+    assert find(session, "#checkbox1") |> checked?
+  end
+
+  test "check/2 finds the node by name", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> check("testbox")
+    
+    assert find(session, "#checkbox1") |> checked?
+  end
+
   test "navigating by path only", %{session: session, server: server} do
     Application.put_env(:wallaby, :base_url, server.base_url)
     session
