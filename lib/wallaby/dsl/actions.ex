@@ -1,6 +1,7 @@
 defmodule Wallaby.DSL.Actions do
   alias Wallaby.Session
   alias Wallaby.Node
+  alias Wallaby.DSL.Matchers
   import Wallaby.DSL.Finders, only: [find: 2]
   import Wallaby.XPath
 
@@ -31,6 +32,30 @@ defmodule Wallaby.DSL.Actions do
   end
   def choose(%Node{}=node) do
     click(node)
+  end
+
+  def check(%Node{}=node) do
+    unless Matchers.checked?(node) do
+      click(node)
+    end
+    node
+  end
+  def check(%Session{}=session, query) do
+    find(session, {:xpath, checkbox(query)})
+    |> check
+    session
+  end
+
+  def uncheck(%Node{}=node) do
+    if Matchers.checked?(node) do
+      click(node)
+    end
+    node
+  end
+  def uncheck(%Session{}=session, query) do
+    find(session, {:xpath, checkbox(query)})
+    |> uncheck
+    session
   end
 
   def click(session, query) do

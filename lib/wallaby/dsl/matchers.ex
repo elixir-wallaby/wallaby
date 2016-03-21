@@ -12,6 +12,6 @@ defmodule Wallaby.DSL.Matchers do
   end
 
   def checked?(%Node{}=node) do
-    Attributes.attr(node, "checked") == "true"
+    Attributes.selected(node) == true
   end
 end
