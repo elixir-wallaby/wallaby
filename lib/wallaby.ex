@@ -13,7 +13,7 @@ defmodule Wallaby do
 
   def start_session do
     server = :poolboy.checkout(Wallaby.ServerPool)
-    Wallaby.Session.create(server)
+    Wallaby.Driver.create(server)
   end
 
   def end_session(_session) do

@@ -1,18 +1,16 @@
 defmodule Wallaby.DSL.Attributes do
   alias Wallaby.Session
+  alias Wallaby.Driver
 
   def text(node) do
-    response = Session.request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/text")
-    response["value"]
+    Driver.text(node)
   end
 
   def attr(node, name) do
-    response = Session.request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/attribute/#{name}")
-    response["value"]
+    Driver.attribute(node, name)
   end
 
   def selected(node) do
-    response = Session.request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/selected")
-    response["value"]
+    Driver.selected(node)
   end
 end

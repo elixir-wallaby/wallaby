@@ -3,6 +3,7 @@ defmodule Wallaby.DSL.Actions do
   alias Wallaby.Node
   alias Wallaby.DSL.Matchers
   alias Wallaby.DSL.Finders
+  alias Wallaby.Driver
   import Wallaby.XPath
 
   def fill_in(session, query, with: value) when is_binary(value) do
@@ -10,14 +11,9 @@ defmodule Wallaby.DSL.Actions do
     |> fill_in(with: value)
   end
 
-  def fill_in(%Node{session: session, id: id}, with: value) when is_binary(value) do
+  def fill_in(%Node{session: session, id: id}=node, with: value) when is_binary(value) do
     node
-    |> set_value
-    Session.request(
-      :post,
-      "#{session.base_url}session/#{session.id}/element/#{id}/value",
-      %{value: [value]}
-    )
+    |> Driver.set_value(value)
     session
   end
 
@@ -26,8 +22,8 @@ defmodule Wallaby.DSL.Actions do
     |> clear()
   end
 
-  def clear(%Node{session: session, id: id}) do
-    Session.request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/clear")
+  def clear(locator) do
+    Driver.clear(locator)
   end
 
   def choose(%Session{}=session, query) when is_binary(query) do
@@ -45,6 +41,7 @@ defmodule Wallaby.DSL.Actions do
     end
     node
   end
+
   def check(%Session{}=session, query) do
     Finders.find(session, {:xpath, checkbox(query)})
     |> check
@@ -57,6 +54,7 @@ defmodule Wallaby.DSL.Actions do
     end
     node
   end
+
   def uncheck(%Session{}=session, query) do
     Finders.find(session, {:xpath, checkbox(query)})
     |> uncheck
@@ -67,7 +65,7 @@ defmodule Wallaby.DSL.Actions do
     Finders.find(session, query)
   end
 
-  def click(%Node{session: session, id: id}) do
-    Session.request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/click")
+  def click(locator) do
+    Driver.click(locator)
   end
 end
