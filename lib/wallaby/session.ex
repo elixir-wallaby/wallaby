@@ -17,12 +17,12 @@ defmodule Wallaby.Session do
       }
     }
 
-    response = request(:post, "#{base_url}session", params)
+    response = request({:post, "#{base_url}session", params})
     session = %Wallaby.Session{base_url: base_url, id: response["sessionId"], server: server}
     {:ok, session}
   end
 
-  def request(method, url, params \\ %{}) do
+  def request({method, url, params}) do
     headers = [{"Content-Type", "text/json"}]
     body = case params do
       params when map_size(params) == 0 -> ""
