@@ -10,4 +10,9 @@ defmodule Wallaby.DSL.Attributes do
     response = Session.request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/attribute/#{name}")
     response["value"]
   end
+
+  def selected(node) do
+    response = Session.request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/selected")
+    response["value"]
+  end
 end

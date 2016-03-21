@@ -165,8 +165,26 @@ defmodule Wallaby.DSLTest do
       |> find("#checkbox1")
 
     check checkbox
-
     assert checked?(checkbox)
+    uncheck checkbox
+    refute checked?(checkbox)
+  end
+
+  test "check/2 does not uncheck the node if called twice", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> check("Checkbox 1")
+    |> check("Checkbox 1")
+
+    assert find(session, "#checkbox1") |> checked?
+  end
+
+  test "uncheck/2 does not check the node", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> uncheck("Checkbox 1")
+
+    refute find(session, "#checkbox1") |> checked?
   end
 
   test "check/2 finds the node by label", %{session: session, server: server} do
@@ -175,6 +193,8 @@ defmodule Wallaby.DSLTest do
     |> check("Checkbox 1")
 
     assert find(session, "#checkbox1") |> checked?
+    uncheck(session, "Checkbox 1")
+    refute find(session, "#checkbox1") |> checked?
   end
 
   test "check/2 finds the node by id", %{session: session, server: server} do
@@ -183,14 +203,18 @@ defmodule Wallaby.DSLTest do
     |> check("checkbox1")
 
     assert find(session, "#checkbox1") |> checked?
+    uncheck(session, "checkbox1")
+    refute find(session, "#checkbox1") |> checked?
   end
 
   test "check/2 finds the node by name", %{session: session, server: server} do
     session
     |> visit(server.base_url <> "forms.html")
     |> check("testbox")
-    
+
     assert find(session, "#checkbox1") |> checked?
+    uncheck(session, "testbox")
+    refute find(session, "#checkbox1") |> checked?
   end
 
   test "navigating by path only", %{session: session, server: server} do
