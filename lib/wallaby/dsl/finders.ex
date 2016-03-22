@@ -3,8 +3,6 @@ defmodule Wallaby.DSL.Finders do
   alias Wallaby.Node
   alias Wallaby.Driver
 
-  @default_max_wait_time 3_000
-
   def find(locator, query, opts \\ []) do
     retry fn ->
       locator
@@ -28,7 +26,7 @@ defmodule Wallaby.DSL.Finders do
     end
   end
 
-  defp retry(find_fn, max_wait_time \\ @default_max_wait_time, start_time \\ :erlang.monotonic_time(:milli_seconds)) do
+  defp retry(find_fn, start_time \\ :erlang.monotonic_time(:milli_seconds)) do
     try do
       find_fn.()
     rescue
@@ -36,10 +34,14 @@ defmodule Wallaby.DSL.Finders do
         current_time = :erlang.monotonic_time(:milli_seconds)
         if current_time - start_time < max_wait_time do
           :timer.sleep(25)
-          retry(find_fn, max_wait_time, start_time)
+          retry(find_fn, start_time)
         else
           raise e
         end
     end
+  end
+
+  defp max_wait_time do
+    Application.get_env(:wallaby, :max_wait_time)
   end
 end
