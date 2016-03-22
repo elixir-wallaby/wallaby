@@ -7,6 +7,7 @@ defmodule Wallaby.ServerCase do
     on_exit fn ->
       Wallaby.TestServer.stop(server)
     end
+    
     {:ok, %{server: server}}
   end
 end

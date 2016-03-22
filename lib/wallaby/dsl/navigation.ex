@@ -1,11 +1,11 @@
 defmodule Wallaby.DSL.Navigation do
   alias Wallaby.Session
   alias Wallaby.XPath
+  alias Wallaby.Driver
   alias Wallaby.DSL.Actions
 
   def visit(session, path) do
-    Session.request(:post, "#{session.base_url}session/#{session.id}/url", %{url: request_url(path)})
-    session
+    Driver.visit(session, request_url(path))
   end
 
   def click_link(session, link) do

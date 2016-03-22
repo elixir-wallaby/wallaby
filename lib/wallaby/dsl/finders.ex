@@ -1,45 +1,30 @@
 defmodule Wallaby.DSL.Finders do
   alias Wallaby.Session
+  alias Wallaby.Node
+  alias Wallaby.Driver
 
   @default_max_wait_time 3_000
 
-  def find(session, query, _opts \\ [])
-  def find(session, query, [{:count, count} | _] = _opts) do
+  def find(locator, query, opts \\ []) do
     retry fn ->
-      case do_find_elements(session, to_params(query)) do
-        elements when length(elements) > 0 and count == :any -> elements
-        elements when length(elements) == count -> elements
-        [] -> raise Wallaby.ElementNotFound, message: "Could not find element"
-        elements -> raise Wallaby.AmbiguousMatch, message: "Ambiguous match, found #{length(elements)}"
-      end
-    end
-  end
-  def find(session, query, _opts) do
-    retry fn ->
-      case do_find_elements(session, to_params(query)) do
-        [element] -> element
-        [] -> raise Wallaby.ElementNotFound, message: "Could not find element"
-        elements -> raise Wallaby.AmbiguousMatch, message: "Ambiguous match, found #{length(elements)}"
-      end
+      locator
+      |> Driver.find_elements(query)
+      |> assert_element_count(Keyword.get(opts, :count, 1))
     end
   end
 
-  def all(session, query) do
-    do_find_elements(session, to_params(query))
+  def all(locator, query) do
+    locator
+    |> Driver.find_elements(query)
   end
 
-  defp to_params({:xpath, xpath}) do
-    %{using: "xpath", value: xpath}
-  end
-  defp to_params(css_selector) do
-    %{using: "css selector", value: css_selector}
-  end
-
-  defp do_find_elements(%{id: session_id, base_url: base_url} = session, params) do
-    response = Session.request(:post, "#{base_url}session/#{session_id}/elements", params)
-
-    Enum.map response["value"], fn %{"ELEMENT" => id} ->
-      %Wallaby.Node{id: id, session: session}
+  defp assert_element_count(elements, count) when is_list(elements) do
+    case elements do
+      elements when length(elements) > 0 and count == :any -> elements
+      [element] when length(elements) == count -> element
+      elements when length(elements) == count -> elements
+      [] -> raise Wallaby.ElementNotFound, message: "Could not find element"
+      elements -> raise Wallaby.AmbiguousMatch, message: "Ambiguous match, found #{length(elements)}"
     end
   end
 

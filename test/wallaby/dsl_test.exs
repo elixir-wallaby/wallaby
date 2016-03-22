@@ -41,6 +41,18 @@ defmodule Wallaby.DSLTest do
     assert length(elements) == 3
   end
 
+  test "queries can be scoped to nodes", %{server: server, session: session} do
+    users =
+      session
+      |> visit(server.base_url <> "nesting.html")
+      |> find(".dashboard")
+      |> find(".users")
+      |> all(".user")
+
+    assert Enum.count(users) == 3
+    assert List.first(users) |> text == "Chris"
+  end
+
   test "empty list is returned when all does not match", %{server: server, session: session} do
     elements =
       session
