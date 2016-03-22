@@ -1,7 +1,11 @@
 defmodule Wallaby.DSL.Helpers do
-  alias Wallaby.Session
+  alias Wallaby.Node
   alias Wallaby.Driver
 
+  def take_screenshot(%Node{session: session}=node) do
+    take_screenshot(session)
+    node
+  end
   def take_screenshot(session) do
     Driver.take_screenshot(session)
   end
