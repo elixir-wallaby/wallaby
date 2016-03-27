@@ -1,5 +1,5 @@
 defmodule Wallaby.XPath.RenderTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   import Wallaby.XPath.Render
 

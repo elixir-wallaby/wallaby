@@ -16,6 +16,7 @@ defmodule Wallaby do
     Wallaby.Driver.create(server)
   end
 
-  def end_session(_session) do
+  def end_session(%Wallaby.Session{server: server}) do
+    :poolboy.checkin(Wallaby.ServerPool, server)
   end
 end
