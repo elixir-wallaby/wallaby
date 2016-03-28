@@ -1,5 +1,4 @@
 defmodule Wallaby.XPath.Builder do
-
   def descendants(list) when is_list(list) do
     list
     |> Enum.map(&descendant/1)
@@ -23,17 +22,11 @@ defmodule Wallaby.XPath.Builder do
 
   @doc """
   Returns a list of noted values.
-
-  iex> Wallaby.XPath.exclude(["a", "b", "c"])
-  {:not, ["a", "b", "c"]}
   """
   def none(exclusions), do: {:not, exclusions}
 
   @doc """
   Returns a list of tuples with the attribute and value of the list
-
-  iex> attr("type", ["checkbox", "submit"])
-  [{"type", "checkbox"}, {"type", "submit"}]
   """
   def attr(a, list) when is_list(list) do
     list
