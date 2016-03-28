@@ -38,7 +38,7 @@ defmodule Wallaby.Mixfile do
   defp package do
     [
       files: ["lib", "mix.exs", "README.md", "LICENSE.md", "priv"],
-      maintainers: ["Chris Keathley", "Tommy Fisher"],
+      maintainers: ["Chris Keathley", "Tommy Fisher", "Alex Daniel"],
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/keathley/wallaby"}
     ]
@@ -49,7 +49,7 @@ defmodule Wallaby.Mixfile do
       extras: ["README.md"],
       source_ref: "v#{@version}",
       source_url: "https://github.com/keathley/wallaby",
-      main: "extra-readme",
+      main: "readme",
     ]
   end
 end
