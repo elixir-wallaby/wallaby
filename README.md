@@ -4,11 +4,13 @@
 
 Wallaby helps you test your web applications by simulating user interactions. By default it runs each TestCase concurrently and manages browsers for you.
 
+[Official Documentation](https://hexdocs.pm/wallaby)
+
 ## Features
 
 * Intuitive DSL for interacting with pages.
-* Manages browser processes for you.
-* Works with Ecto's concurrent tests out of the box.
+* Manages multiple browser processes.
+* Works with Ecto's test Sandbox.
 
 ## Setup
 
@@ -105,7 +107,7 @@ end
 
 ## DSL
 
-The full documentation for the DSL is in the official documentation.
+The full documentation for the DSL is in the [official documentation](https://hexdocs.pm/wallaby).
 
 ### Navigation
 
