@@ -121,6 +121,7 @@ defmodule Wallaby.Driver do
   # @spec clear(Locator.t, query) :: t
   def clear(%Node{session: session, id: id}) do
     request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/clear")
+    session
   end
 
   @doc """

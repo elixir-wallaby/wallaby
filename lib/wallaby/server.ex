@@ -55,4 +55,3 @@ defmodule Wallaby.Server do
     {:reply, state.base_url, state}
   end
 end
-
