@@ -256,14 +256,19 @@ defmodule Wallaby.Driver do
     %{using: "css selector", value: css_selector}
   end
 
-  defp request(method, url, params \\ %{}, opts \\ []) do
-    headers = [{"Content-Type", "text/json"}]
-    body = case params do
-      params when map_size(params) == 0 -> ""
-      params when [{:encode_json, false}] == opts -> params
-      params -> Poison.encode!(params)
-    end
+  defp request(method, url, params \\ %{}, opts \\ [])
+  defp request(method, url, params, _opts) when map_size(params) == 0 do
+    make_request(method, url, "")
+  end
+  defp request(method, url, params, [{:encode_json, false} | _]) do
+    make_request(method, url, params)
+  end
+  defp request(method, url, params, _opts) do
+    make_request(method, url, Poison.encode!(params))
+  end
 
+  defp make_request(method, url, body) do
+    headers = [{"Content-Type", "text/json"}]
     {:ok, response} = HTTPoison.request(method, url, body, headers)
     Poison.decode!(response.body)
   end
