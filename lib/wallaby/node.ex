@@ -85,6 +85,31 @@ defmodule Wallaby.Node do
   end
 
   @doc """
+  Selects an option from a select box. Searches for the select box by id, name or label,
+  then finds the option by visible text.
+
+  The specific node for the select box can also be passed in directly.
+  """
+  @spec select(locator, query, [from: String.t]) :: Session.t
+  @spec select(query, [from: Node.t]) :: Session.t
+
+  def select(session, query, from: selector) do
+    find(session, {:xpath, select_box(selector)})
+    |> find({:xpath, option_for(query)})
+    |> click
+
+    session
+  end
+
+  def select(query, from: %Node{session: session}=node) do
+    node
+    |> find({:xpath, option_for(query)})
+    |> click
+
+    session
+  end
+
+  @doc """
   Clears an input field. Input nodes are looked up by id, label text, or name.
   The node can also be passed in directly.
   """
@@ -241,6 +266,15 @@ defmodule Wallaby.Node do
 
   def checked?(%Node{}=node) do
     selected(node) == true
+  end
+
+  @doc """
+  Checks if the node has been selected. Alias for checked?(node)
+  """
+  @spec selected?(t) :: boolean()
+
+  def selected?(%Node{}=node) do
+    checked?(node)
   end
 
   defp assert_element_count(elements, count) when is_list(elements) do

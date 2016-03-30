@@ -136,6 +136,7 @@ fill_in(session, "#last_name_field", with: "Keathley")
 choose(session, "Radio Button 1")
 check(session, "Checkbox")
 uncheck(session, "Checkbox")
+select(session, "Option 1", from: "My Awesome Select")
 click(session, "Some Button")
 ```
 

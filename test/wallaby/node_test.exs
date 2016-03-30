@@ -145,6 +145,59 @@ defmodule Wallaby.NodeTest do
     assert has_value?(node, "")
   end
 
+  test "choosing an option from a select box by id", %{session: session, server: server} do
+    page =
+      session
+      |> visit(server.base_url <> "select_boxes.html")
+
+    refute find(page, "#select-option-2") |> selected?
+
+    page
+    |> select("Option 2", from: "select-box")
+
+    assert find(session, "#select-option-2") |> selected?
+  end
+
+  test "choosing an option from a select box by name", %{session: session, server: server} do
+    page =
+      session
+      |> visit(server.base_url <> "select_boxes.html")
+
+    refute find(page, "#select-option-5") |> selected?
+
+    page
+    |> select("Option 2", from: "my-select")
+
+    assert find(session, "#select-option-5") |> selected?
+  end
+
+  test "choosing an option from a select box by label", %{session: session, server: server} do
+    page =
+      session
+      |> visit(server.base_url <> "select_boxes.html")
+
+    refute find(page, "#select-option-5") |> selected?
+
+    page
+    |> select("Option 2", from: "My Select")
+
+    assert find(session, "#select-option-5") |> selected?
+  end
+
+  test "choosing an option from a select box by node", %{session: session, server: server} do
+    page =
+      session
+      |> visit(server.base_url <> "select_boxes.html")
+
+    node = session |> find("#select-box")
+
+    refute find(page, "#select-option-2") |> selected?
+
+    select("Option 2", from: node)
+
+    assert find(session, "#select-option-2") |> selected?
+  end
+
   test "choosing a radio button", %{session: session, server: server} do
     page =
       session
