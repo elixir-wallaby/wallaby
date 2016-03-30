@@ -79,8 +79,8 @@ defmodule Wallaby.Node do
   end
 
   def fill_in(%Node{session: session}=node, with: value) when is_binary(value) do
-    node
-    |> Driver.set_value(value)
+    clear(node)
+    Driver.set_value(node, value)
     session
   end
 

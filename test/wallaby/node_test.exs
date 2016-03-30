@@ -122,6 +122,15 @@ defmodule Wallaby.NodeTest do
     assert find(session, "#email_field") |> has_value?("alex@example.com")
   end
 
+  test "fill_in replaces all of the text", %{server: server, session: session} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> fill_in("name", with: "Chris")
+    |> fill_in("name", with: "Alex")
+
+    assert find(session, "#name_field") |> has_value?("Alex")
+  end
+
   test "clearing input", %{server: server, session: session} do
     node =
       session
