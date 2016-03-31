@@ -283,4 +283,47 @@ defmodule Wallaby.NodeTest do
       |> has_no_css?(".user")
     end
   end
+
+  test "executing scripts with arguments and returning", %{session: session, server: server} do
+    script = """
+      var node = document.createElement("div")
+      node.id = "new-element"
+      var text = document.createTextNode(arguments[0])
+      node.appendChild(text)
+      document.body.appendChild(node)
+      return arguments[1]
+    """
+
+    result =
+      session
+      |> visit(server.base_url <> "page_1.html")
+      |> execute_script(script, ["now you see me", "return value"])
+
+    assert result == "return value"
+    assert find(session, "#new-element") |> text == "now you see me"
+  end
+
+  test "sending text", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "forms.html")
+
+    session
+    |> find("#name_field")
+    |> click
+
+    session
+    |> send_text("hello")
+
+    assert session |> find("#name_field") |> has_value?("hello")
+  end
+
+  test "sending key presses", %{session: session, server: server} do
+    session
+    |> visit(server.base_url)
+
+    session
+    |> send_keys([:tab, :enter])
+
+    assert find(session, ".blue")
+  end
 end

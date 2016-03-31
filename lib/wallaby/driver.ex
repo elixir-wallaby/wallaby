@@ -201,6 +201,39 @@ defmodule Wallaby.Driver do
     |> Map.get("value")
   end
 
+  @doc """
+  Executes javascript synchoronously, taking as arguments the script to execute,
+  and optionally a list of arguments available in the script via `arguments`
+  """
+  def execute_script(session, script, arguments \\ []) do
+    request(
+      :post,
+      "#{session.base_url}session/#{session.id}/execute",
+      %{script: script, args: arguments})
+    |> Map.get("value")
+  end
+
+  @doc """
+  Sends a list of key strokes to active element
+  """
+  def send_keys(session, keys) when is_list(keys) do
+    request(
+      :post,
+      "#{session.base_url}session/#{session.id}/keys",
+      Wallaby.Helpers.KeyCodes.json(keys),
+      encode_json: false)
+  end
+
+  @doc """
+  Sends text characters to the active element
+  """
+  def send_text(session, text) do
+    request(
+      :post,
+      "#{session.base_url}session/#{session.id}/keys",
+      %{value: [text]})
+  end
+
   defp path_for_screenshot do
     {hour, minutes, seconds} = :erlang.time()
     {year, month, day} = :erlang.date()
@@ -223,13 +256,19 @@ defmodule Wallaby.Driver do
     %{using: "css selector", value: css_selector}
   end
 
-  defp request(method, url, params \\ %{}) do
-    headers = [{"Content-Type", "text/json"}]
-    body = case params do
-      params when map_size(params) == 0 -> ""
-      params -> Poison.encode!(params)
-    end
+  defp request(method, url, params \\ %{}, opts \\ [])
+  defp request(method, url, params, _opts) when map_size(params) == 0 do
+    make_request(method, url, "")
+  end
+  defp request(method, url, params, [{:encode_json, false} | _]) do
+    make_request(method, url, params)
+  end
+  defp request(method, url, params, _opts) do
+    make_request(method, url, Poison.encode!(params))
+  end
 
+  defp make_request(method, url, body) do
+    headers = [{"Content-Type", "text/json"}]
     {:ok, response} = HTTPoison.request(method, url, body, headers)
     Poison.decode!(response.body)
   end

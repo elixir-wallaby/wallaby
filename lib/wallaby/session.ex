@@ -107,6 +107,36 @@ defmodule Wallaby.Session do
     Driver.get_window_size(session)
   end
 
+  @doc """
+  Executes javascript synchoronously, taking as arguments the script to execute,
+  and optionally a list of arguments available in the script via `arguments`
+  """
+  @spec execute_script(t, String.t, list) :: t
+
+  def execute_script(session, script, arguments \\ []) do
+    Driver.execute_script(session, script, arguments)
+  end
+
+  @doc """
+  Sends a list of key strokes to active element
+  """
+  @spec send_keys(t, list(atom)) :: t
+
+  def send_keys(session, keys) when is_list(keys) do
+    Driver.send_keys(session, keys)
+    session
+  end
+
+  @doc """
+  Sends text characters to the active element
+  """
+  @spec send_text(t, String.t) :: t
+
+  def send_text(session, text) do
+    Driver.send_text(session, text)
+    session
+  end
+
   defp request_url(url) do
     (Application.get_env(:wallaby, :base_url) || "") <> url
   end
