@@ -34,6 +34,20 @@ defmodule Wallaby.XPath do
     ".//input[./@type = 'checkbox'][(((./@id = '#{query}' or ./@name = '#{query}') or ./@placeholder = '#{query}') or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//input[./@type = 'checkbox']"
   end
 
+  @doc """
+  Match any `select` by name, id, or label.
+  """
+  def select_box(query) do
+    ".//select[(((./@id = '#{query}' or ./@name = '#{query}')) or ./@name = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//select"
+  end
+
+  @doc """
+  Match any `option` by visible text
+  """
+  def option_for(query) do
+    ".//option[normalize-space(text())='#{query}']"
+  end
+
   defp fillable_fields do
     ["textarea", "input"]
   end
