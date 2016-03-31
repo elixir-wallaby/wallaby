@@ -90,10 +90,10 @@ defmodule Wallaby.Node do
 
   The specific node for the select box can also be passed in directly.
   """
-  @spec select(locator, query, [from: String.t]) :: Session.t
-  @spec select(query, [from: Node.t]) :: Session.t
+  @spec select(locator, String.t, [option: query]) :: Session.t
+  @spec select(Node.t, [option: query]) :: Session.t
 
-  def select(session, query, from: selector) do
+  def select(session, selector, option: query) do
     find(session, {:xpath, select_box(selector)})
     |> find({:xpath, option_for(query)})
     |> click
@@ -101,7 +101,7 @@ defmodule Wallaby.Node do
     session
   end
 
-  def select(query, from: %Node{session: session}=node) do
+  def select(%Node{session: session}=node, option: query) do
     node
     |> find({:xpath, option_for(query)})
     |> click

@@ -153,7 +153,7 @@ defmodule Wallaby.NodeTest do
     refute find(page, "#select-option-2") |> selected?
 
     page
-    |> select("Option 2", from: "select-box")
+    |> select("select-box", option: "Option 2")
 
     assert find(session, "#select-option-2") |> selected?
   end
@@ -166,7 +166,7 @@ defmodule Wallaby.NodeTest do
     refute find(page, "#select-option-5") |> selected?
 
     page
-    |> select("Option 2", from: "my-select")
+    |> select("my-select", option: "Option 2")
 
     assert find(session, "#select-option-5") |> selected?
   end
@@ -179,7 +179,7 @@ defmodule Wallaby.NodeTest do
     refute find(page, "#select-option-5") |> selected?
 
     page
-    |> select("Option 2", from: "My Select")
+    |> select("My Select", option: "Option 2")
 
     assert find(session, "#select-option-5") |> selected?
   end
@@ -189,11 +189,11 @@ defmodule Wallaby.NodeTest do
       session
       |> visit(server.base_url <> "select_boxes.html")
 
-    node = session |> find("#select-box")
-
     refute find(page, "#select-option-2") |> selected?
 
-    select("Option 2", from: node)
+    session
+    |> find("#select-box")
+    |> select(option: "Option 2")
 
     assert find(session, "#select-option-2") |> selected?
   end
