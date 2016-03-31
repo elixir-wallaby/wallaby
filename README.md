@@ -32,6 +32,8 @@ Then ensure that Wallaby is started in your `test_helper.exs`:
 
 If you're testing a Phoenix application with Ecto then you can enable concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` to your `Endpoint`
 
+**Note:** This requires Ecto v2.0.0-beta1 or newer.
+
 ```elixir
 # lib/endpoint.ex
 
