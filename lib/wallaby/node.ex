@@ -216,6 +216,25 @@ defmodule Wallaby.Node do
   end
 
   @doc """
+  Searches for CSS on the page.
+  """
+  @spec has_css?(locator, String.t) :: boolean()
+
+  def has_css?(locator, css) when is_binary(css) do
+    find(locator, css, [count: :any])
+    |> Enum.any?
+  end
+
+  @doc """
+  Searches for css that should not be on the page
+  """
+  @spec has_no_css?(locator, String.t) :: boolean()
+
+  def has_no_css?(locator, css) when is_binary(css) do
+    find(locator, css, count: 0)
+  end
+
+  @doc """
   Checks if the node has been selected.
   """
   @spec checked?(t) :: boolean()
@@ -229,6 +248,7 @@ defmodule Wallaby.Node do
       elements when length(elements) > 0 and count == :any -> elements
       [element] when length(elements) == count -> element
       elements when length(elements) == count -> elements
+      elements when length(elements) > 0 and count == 0 -> raise Wallaby.ExpectationNotMet, message: "Element was found"
       [] -> raise Wallaby.ElementNotFound, message: "Could not find element"
       elements -> raise Wallaby.AmbiguousMatch, message: "Ambiguous match, found #{length(elements)}"
     end
@@ -238,7 +258,7 @@ defmodule Wallaby.Node do
     try do
       find_fn.()
     rescue
-      e in [Wallaby.ElementNotFound, Wallaby.AmbiguousMatch] ->
+      e in [Wallaby.ElementNotFound, Wallaby.AmbiguousMatch, Wallaby.ExpectationNotMet] ->
         current_time = :erlang.monotonic_time(:milli_seconds)
         if current_time - start_time < max_wait_time do
           :timer.sleep(25)

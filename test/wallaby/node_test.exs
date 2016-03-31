@@ -259,4 +259,28 @@ defmodule Wallaby.NodeTest do
 
     assert find(session, "li", count: :any) |> length == 4
   end
+
+  test "has_css/2 returns true if the css is on the page", %{session: session, server: server} do
+    page =
+      session
+      |> visit(server.base_url <> "nesting.html")
+
+    assert has_css?(page, ".user")
+  end
+
+  test "has_no_css/2 checks is the css is not on the page", %{session: session, server: server} do
+    page =
+      session
+      |> visit(server.base_url <> "nesting.html")
+
+    assert has_no_css?(page, ".something_else")
+  end
+
+  test "has_no_css/2 raises error if the css is found", %{session: session, server: server} do
+    assert_raise Wallaby.ExpectationNotMet, fn ->
+      session
+      |> visit(server.base_url <> "nesting.html")
+      |> has_no_css?(".user")
+    end
+  end
 end
