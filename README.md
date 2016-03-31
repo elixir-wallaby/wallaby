@@ -80,7 +80,7 @@ defmodule YourApp.AcceptanceCase do
   setup _tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(YourApp.Repo)
     {:ok, session} = Wallaby.start_session
-    Wallaby.DSL.Navigation.visit(session, Phoenix.Ecto.SQL.Sandbox.path_for(YourApp.Repo, self()))
+    Wallaby.Session.visit(session, Phoenix.Ecto.SQL.Sandbox.path_for(YourApp.Repo, self()))
     {:ok, session: session}
   end
 end
