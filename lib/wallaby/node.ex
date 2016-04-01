@@ -242,8 +242,11 @@ defmodule Wallaby.Node do
 
   def has_text?(%Node{}=node, text) when is_binary(text) do
     retry fn ->
-      regex_results = Regex.run(~r/#{text}/, text(node))
-      regex_results != nil
+      not_found = Regex.run(~r/#{text}/, text(node)) |> is_nil
+      if not_found do
+        raise Wallaby.ExpectationNotMet, "Text '#{text}' not found"
+      end
+      !not_found
     end
   end
 
@@ -315,11 +318,7 @@ defmodule Wallaby.Node do
 
   defp retry(find_fn, start_time \\ :erlang.monotonic_time(:milli_seconds)) do
     try do
-      result = find_fn.()
-      if !result do
-        raise Wallaby.ExpectationNotMet, "Return value is falsy"
-      end
-      result
+      find_fn.()
     rescue
       e in [Wallaby.ElementNotFound, Wallaby.AmbiguousMatch, Wallaby.ExpectationNotMet] ->
         current_time = :erlang.monotonic_time(:milli_seconds)

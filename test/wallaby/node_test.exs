@@ -105,6 +105,17 @@ defmodule Wallaby.NodeTest do
     assert has_text?(node, "main")
   end
 
+  test "has_text?/2 will raise an exception for text not found", %{server: server, session: session} do
+    node =
+    session
+      |> visit(server.base_url <> "wait.html")
+      |> find("#container")
+
+    assert_raise Wallaby.ExpectationNotMet, "Text 'rain' not found", fn ->
+      has_text?(node, "rain")
+    end
+  end
+
   test "can get attributes of an element", %{server: server, session: session} do
     class =
       session
