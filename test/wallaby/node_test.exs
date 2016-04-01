@@ -379,4 +379,31 @@ defmodule Wallaby.NodeTest do
 
     assert find(session, ".blue")
   end
+
+  test "find/2 raises an error if the element is not visible", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "page_1.html")
+
+    assert_raise Wallaby.ElementNotFound, fn ->
+      find(session, "#invisible", count: :any)
+    end
+
+    assert find(session, "#visible", count: :any) |> length == 1
+  end
+
+  test "visible?/1 determines if the node is visible on the page", %{session: session, server: server} do
+    page =
+      session
+      |> visit(server.base_url <> "page_1.html")
+
+    page
+    |> find("#visible")
+    |> visible?
+    |> assert
+
+    page
+    |> find("#invisible", visible: false)
+    |> visible?
+    |> refute
+  end
 end
