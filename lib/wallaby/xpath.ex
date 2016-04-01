@@ -5,9 +5,6 @@ defmodule Wallaby.XPath do
   @type id    :: query
   @type label :: query
 
-  import Wallaby.XPath.Builder
-  import Wallaby.XPath.Render
-
   @doc """
   XPath for links
   this xpath is gracious ripped from capybara via
@@ -17,6 +14,9 @@ defmodule Wallaby.XPath do
     ".//a[./@href][(((./@id = '#{lnk}' or contains(normalize-space(string(.)), '#{lnk}')) or contains(./@title, '#{lnk}')) or .//img[contains(./@alt, '#{lnk}')])]"
   end
 
+  @doc """
+  Match any radio buttons
+  """
   def radio_button(query) do
     ".//input[./@type = 'radio'][(((./@id = '#{query}' or ./@name = '#{query}') or ./@placeholder = '#{query}') or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//input[./@type = 'radio']"
   end
@@ -30,6 +30,9 @@ defmodule Wallaby.XPath do
     ".//*[self::input | self::textarea][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'radio' or ./@type = 'checkbox' or ./@type = 'hidden' or ./@type = 'file')][(((./@id = '#{query}' or ./@name = '#{query}') or ./@placeholder = '#{query}') or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//*[self::input | self::textarea][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'radio' or ./@type = 'checkbox' or ./@type = 'hidden' or ./@type = 'file')]"
   end
 
+  @doc """
+  Match any checkboxes
+  """
   def checkbox(query) do
     ".//input[./@type = 'checkbox'][(((./@id = '#{query}' or ./@name = '#{query}') or ./@placeholder = '#{query}') or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//input[./@type = 'checkbox']"
   end
@@ -46,17 +49,5 @@ defmodule Wallaby.XPath do
   """
   def option_for(query) do
     ".//option[normalize-space(text())='#{query}']"
-  end
-
-  defp fillable_fields do
-    ["textarea", "input"]
-  end
-
-  defp unfillable_fields do
-    attr("type", ["checkbox", "submit", "button"])
-  end
-
-  defp field_locator(query) do
-    any([attr("id", query), attr("name", query), attr("placeholder", query), ])
   end
 end

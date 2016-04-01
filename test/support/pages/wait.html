@@ -7,7 +7,10 @@
     <script type="text/javascript">
       function addElement(className) {
         var node = document.createElement("div")
+          , text = document.createTextNode(className)
         node.className = className
+        node.appendChild(text)
+        
         document.body.appendChild(node)
       }
 

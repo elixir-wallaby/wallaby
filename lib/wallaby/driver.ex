@@ -167,6 +167,37 @@ defmodule Wallaby.Driver do
   end
 
   @doc """
+  Checks if the node is being displayed.
+
+  This is based on what is available in phantom and doesn't match the current
+  specification.
+  """
+  def displayed(node) do
+    response = request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/displayed")
+    response["value"]
+  end
+
+  @doc """
+  Gets the size of a node.
+
+  This is non-standard and only works in Phantom.
+  """
+  def size(node) do
+    response = request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/size")
+    response["value"]
+  end
+
+  @doc """
+  Gets the height, width, x, and y position of an Element.
+
+  This is based on the standard but currently is un-supported by Phantom.
+  """
+  def rect(node) do
+    response = request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/rect")
+    response["value"]
+  end
+
+  @doc """
   Takes a screenshot.
   """
   def take_screenshot(session) do
