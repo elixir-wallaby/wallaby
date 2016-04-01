@@ -259,6 +259,7 @@ defmodule Wallaby.Node do
 
   def has_no_css?(locator, css) when is_binary(css) do
     find(locator, css, count: 0)
+    |> Enum.empty?
   end
 
   @doc """
