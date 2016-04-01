@@ -1,5 +1,5 @@
 defmodule Wallaby.SessionTest do
-  use Wallaby.ServerCase, async: true
+  use Wallaby.ServerCase, async: false
   use Wallaby.DSL
 
   setup do

@@ -314,7 +314,7 @@ defmodule Wallaby.Node do
     rescue
       e in [Wallaby.ElementNotFound, Wallaby.AmbiguousMatch, Wallaby.ExpectationNotMet] ->
         current_time = :erlang.monotonic_time(:milli_seconds)
-        if current_time - start_time < max_wait_time do
+        if (current_time - start_time) < max_wait_time do
           :timer.sleep(25)
           retry(find_fn, start_time)
         else
