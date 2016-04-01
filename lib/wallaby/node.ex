@@ -238,10 +238,13 @@ defmodule Wallaby.Node do
   @doc """
   Matches the Node's content with the provided text.
   """
-  @spec has_content?(t, String.t) :: boolean()
+  @spec has_text?(t, String.t) :: boolean()
 
-  def has_content?(%Node{}=node, text) when is_binary(text) do
-    text(node) == text
+  def has_text?(%Node{}=node, text) when is_binary(text) do
+    retry fn ->
+      regex_results = Regex.run(~r/#{text}/, text(node))
+      regex_results != nil
+    end
   end
 
   @doc """
@@ -312,7 +315,11 @@ defmodule Wallaby.Node do
 
   defp retry(find_fn, start_time \\ :erlang.monotonic_time(:milli_seconds)) do
     try do
-      find_fn.()
+      result = find_fn.()
+      if !result do
+        raise Wallaby.ExpectationNotMet, "Return value is falsy"
+      end
+      result
     rescue
       e in [Wallaby.ElementNotFound, Wallaby.AmbiguousMatch, Wallaby.ExpectationNotMet] ->
         current_time = :erlang.monotonic_time(:milli_seconds)

@@ -77,13 +77,32 @@ defmodule Wallaby.NodeTest do
     assert text == "Test Index"
   end
 
-  test "has_content?/2 asserts text in an element", %{server: server, session: session} do
+  test "can get text of an element and its descendants", %{server: server, session: session} do
+    text =
+      session
+      |> visit(server.base_url)
+      |> find("#parent")
+      |> text
+
+    assert text == "The Parent\nThe Child"
+  end
+
+  test "has_text?/2 asserts text in an element", %{server: server, session: session} do
     node =
       session
       |> visit(server.base_url)
       |> find("#header")
 
-    assert has_content?(node, "Test Index")
+    assert has_text?(node, "Test Index")
+  end
+
+  test "has_text?/2 will retry for presence of text", %{server: server, session: session} do
+    node =
+    session
+      |> visit(server.base_url <> "wait.html")
+      |> find("#container")
+
+    assert has_text?(node, "main")
   end
 
   test "can get attributes of an element", %{server: server, session: session} do
