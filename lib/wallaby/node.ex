@@ -37,6 +37,8 @@ defmodule Wallaby.Node do
 
   import Wallaby.XPath
 
+  @default_max_wait_time 3_000
+
   @doc """
   Finds a specific DOM node on the page based on a css selector. Blocks until
   it either finds the node or until the max time is reached. By default only
@@ -324,6 +326,6 @@ defmodule Wallaby.Node do
   end
 
   defp max_wait_time do
-    Application.get_env(:wallaby, :max_wait_time)
+    Application.get_env(:wallaby, :max_wait_time, @default_max_wait_time)
   end
 end
