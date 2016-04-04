@@ -242,11 +242,11 @@ defmodule Wallaby.Node do
 
   def has_text?(%Node{}=node, text) when is_binary(text) do
     retry fn ->
-      not_found = Regex.run(~r/#{text}/, text(node)) |> is_nil
-      if not_found do
+      regex_results = Regex.run(~r/#{text}/, text(node))
+      if regex_results |> is_nil do
         raise Wallaby.ExpectationNotMet, "Text '#{text}' not found"
       end
-      !not_found
+      true
     end
   end
 
