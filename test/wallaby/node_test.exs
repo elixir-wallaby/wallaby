@@ -87,32 +87,33 @@ defmodule Wallaby.NodeTest do
     assert text == "The Parent\nThe Child"
   end
 
-  test "has_text?/2 asserts text in an element", %{server: server, session: session} do
-    node =
-      session
-      |> visit(server.base_url)
-      |> find("#header")
-
-    assert has_text?(node, "Test Index")
-  end
-
-  test "has_text?/2 will retry for presence of text", %{server: server, session: session} do
+  test "has_text?/2 waits for presence of text and returns a bool", %{server: server, session: session} do
     node =
     session
       |> visit(server.base_url <> "wait.html")
       |> find("#container")
 
     assert has_text?(node, "main")
+    refute has_text?(node, "rain")
   end
 
-  test "has_text?/2 will raise an exception for text not found", %{server: server, session: session} do
+  test "assert_text/2 waits for presence of text and and returns true if found", %{server: server, session: session} do
+    node =
+    session
+      |> visit(server.base_url <> "wait.html")
+      |> find("#container")
+
+    assert assert_text(node, "main")
+  end
+
+  test "assert_text/2 will raise an exception for text not found", %{server: server, session: session} do
     node =
     session
       |> visit(server.base_url <> "wait.html")
       |> find("#container")
 
     assert_raise Wallaby.ExpectationNotMet, "Text 'rain' not found", fn ->
-      has_text?(node, "rain")
+      assert_text(node, "rain")
     end
   end
 
