@@ -236,12 +236,31 @@ defmodule Wallaby.Node do
   end
 
   @doc """
-  Matches the Node's content with the provided text.
+  Matches the Node's content with the provided text and raises if not found
   """
-  @spec has_content?(t, String.t) :: boolean()
+  @spec assert_text(t, String.t) :: boolean()
 
-  def has_content?(%Node{}=node, text) when is_binary(text) do
-    text(node) == text
+  def assert_text(%Node{}=node, text) when is_binary(text) do
+    retry fn ->
+      regex_results = Regex.run(~r/#{text}/, text(node))
+      if regex_results |> is_nil do
+        raise Wallaby.ExpectationNotMet, "Text '#{text}' not found"
+      end
+      true
+    end
+  end
+
+  @doc """
+  Matches the Node's content with the provided text
+  """
+  @spec has_text?(t, String.t) :: boolean()
+
+  def has_text?(%Node{}=node, text) when is_binary(text) do
+    try do
+      assert_text(node, text)
+    rescue
+      e in Wallaby.ExpectationNotMet -> false
+    end
   end
 
   @doc """

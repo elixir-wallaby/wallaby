@@ -11,7 +11,7 @@
         node.className = className
         node.appendChild(text)
         
-        document.body.appendChild(node)
+        document.getElementById("container").appendChild(node)
       }
 
       setTimeout(function() {
@@ -20,5 +20,7 @@
         for (i = 0; i < 5; i++) { addElement("orange") }
       }, 1000)
     </script>
+    <div id="container">
+    </div>
   </body>
 </html>
