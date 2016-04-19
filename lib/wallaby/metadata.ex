@@ -6,8 +6,9 @@ defmodule Wallaby.Metadata do
   """
 
   @prefix "BeamMetadata"
-  @regex ~r{#{@metadata_prefix} \((.*?)\)}
+  @regex ~r{#{@prefix} \((.*?)\)}
 
+  def append(user_agent, nil), do: user_agent
   def append(user_agent, metadata) when is_map(metadata) or is_list(metadata) do
     append(user_agent, format(metadata))
   end
@@ -23,7 +24,7 @@ defmodule Wallaby.Metadata do
       {:v1, metadata}
       |> :erlang.term_to_binary
       |> Base.url_encode64
-    "#{@prefix} (#{{encoded}})"
+    "#{@prefix} (#{encoded})"
   end
 
   def extract(str) do
