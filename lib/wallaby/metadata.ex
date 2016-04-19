@@ -45,7 +45,7 @@ defmodule Wallaby.Metadata do
     |> :erlang.binary_to_term
     |> case do
         {:v1, metadata} -> metadata
-        _               -> IO.puts "Whelp"
+        _               -> raise Wallaby.BadMetadata, message: "#{encoded_metadata} is not valid"
       end
   end
 end
