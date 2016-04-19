@@ -12,22 +12,18 @@ defmodule Wallaby.Driver do
   @type params :: %{using: String.t, value: query}
   @type locator :: Session.t | Node.t
 
-  def create(server) do
+  @doc """
+  Creates a new session with the driver.
+  """
+  def create(server, opts) do
     base_url = Wallaby.Server.get_base_url(server)
+    user_agent =
+      Wallaby.Phantom.user_agent
+      |> Wallaby.Metadata.append(opts[:metadata])
 
-    params = %{
-      desiredCapabilities: %{
-        javascriptEnabled: false,
-        version: "",
-        rotatable: false,
-        takesScreenshot: true,
-        cssSelectorsEnabled: true,
-        browserName: "phantomjs",
-        nativeEvents: false,
-        platform: "ANY"
-      }
-    }
-
+    capabilities = Wallaby.Phantom.capabilities(user_agent: user_agent)
+    params = %{desiredCapabilities: capabilities}
+    
     response = request(:post, "#{base_url}session", params)
     session = %Wallaby.Session{base_url: base_url, id: response["sessionId"], server: server}
     {:ok, session}

@@ -9,3 +9,7 @@ end
 defmodule Wallaby.ExpectationNotMet do
   defexception [:message]
 end
+
+defmodule Wallaby.BadMetadata do
+  defexception [:message]
+end

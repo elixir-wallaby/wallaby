@@ -11,9 +11,9 @@ defmodule Wallaby do
     :poolboy.start_link(pool_opts, [])
   end
 
-  def start_session do
+  def start_session(opts \\ []) do
     server = :poolboy.checkout(Wallaby.ServerPool)
-    Wallaby.Driver.create(server)
+    Wallaby.Driver.create(server, opts)
   end
 
   def end_session(%Wallaby.Session{server: server}) do
