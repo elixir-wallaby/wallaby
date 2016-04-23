@@ -37,13 +37,25 @@ defmodule Wallaby.SessionTest do
     Application.put_env(:wallaby, :base_url, nil)
   end
 
-  test "taking a screenshot", %{session: session, server: server} do
-    %{path: path} =
+  test "taking screenshots", %{session: session, server: server} do
+    node =
       session
       |> visit(server.base_url)
       |> take_screenshot
+      |> find("#header")
+      |> take_screenshot
 
-    assert File.exists? path
+    screenshots =
+      node
+      |> Map.get(:session)
+      |> Map.get(:screenshots)
+
+    assert Enum.count(screenshots) == 2
+
+    Enum.each(screenshots, fn(path) ->
+      assert File.exists? path
+    end)
+
     File.rm_rf! "#{File.cwd!}/screenshots"
   end
 
