@@ -39,7 +39,8 @@ defmodule Wallaby.Session do
   @type t :: %__MODULE__{
     id: integer(),
     base_url: String.t,
-    server: pid()
+    server: pid(),
+    screenshots: list
   }
 
   alias __MODULE__
@@ -47,7 +48,7 @@ defmodule Wallaby.Session do
   alias Wallaby.Node
   alias Wallaby.XPath
 
-  defstruct [:id, :base_url, :server]
+  defstruct [:id, :base_url, :server, screenshots: []]
 
   @doc """
   Changes the current page to the provided route.
@@ -76,16 +77,20 @@ defmodule Wallaby.Session do
   Screenshots are saved to a "screenshots" directory in the same directory the
   tests are run in.
   """
-  @spec take_screenshot(t) :: %{session: t, path: String.t}
+  @spec take_screenshot(t) :: t
 
   def take_screenshot(%Node{session: session}=node) do
-    take_screenshot(session)
-    node
+    session = take_screenshot(session)
+    %Node{node | session: session}
   end
 
   def take_screenshot(%Session{}=session) do
-    path = Driver.take_screenshot(session)
-    %{session: session, path: path}
+    path =
+      session
+      |> Driver.take_screenshot
+      |> List.wrap
+
+    Map.update(session, :screenshots, [], &(&1 ++ path))
   end
 
   @doc """
