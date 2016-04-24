@@ -52,12 +52,23 @@ defmodule Wallaby.Session do
 
   @doc """
   Changes the current page to the provided route.
-  Routes are relative to any base url provided.
+  Relative paths are appended to the provided base_url.
+  Absolute paths do not use the base_url.
   """
   @spec visit(t, String.t) :: t
 
   def visit(session, path) do
-    Driver.visit(session, request_url(path))
+    uri = URI.parse(path)
+
+    cond do
+      uri.host == nil && String.length(base_url) == 0 ->
+        raise Wallaby.NoBaseUrl, path
+      uri.host ->
+        Driver.visit(session, path)
+      true ->
+        Driver.visit(session, request_url(path))
+    end
+
     session
   end
 
@@ -142,7 +153,11 @@ defmodule Wallaby.Session do
     session
   end
 
-  defp request_url(url) do
-    (Application.get_env(:wallaby, :base_url) || "") <> url
+  def request_url(path) do
+    base_url <> path
+  end
+
+  defp base_url do
+    Application.get_env(:wallaby, :base_url) || ""
   end
 end
