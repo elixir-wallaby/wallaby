@@ -1,6 +1,7 @@
 # Wallaby
 
 [![Build Status](https://travis-ci.org/keathley/wallaby.svg?branch=master)](https://travis-ci.org/keathley/wallaby)
+[![Hex pm](https://img.shields.io/hexpm/v/wallaby.svg?style=flat)](https://hex.pm/packages/wallaby)
 
 Wallaby helps you test your web applications by simulating user interactions. By default it runs each TestCase concurrently and manages browsers for you.
 
