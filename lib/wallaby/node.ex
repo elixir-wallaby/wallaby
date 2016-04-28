@@ -259,7 +259,7 @@ defmodule Wallaby.Node do
     try do
       assert_text(node, text)
     rescue
-      e in Wallaby.ExpectationNotMet -> false
+      _e in Wallaby.ExpectationNotMet -> false
     end
   end
 
