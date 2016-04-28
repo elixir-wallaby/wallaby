@@ -37,7 +37,7 @@ defmodule Wallaby.SessionTest do
     Application.put_env(:wallaby, :base_url, nil)
   end
 
-  test "visit/2 with a relative url and no base url raises exception", %{session: session, server: server} do
+  test "visit/2 with a relative url and no base url raises exception", %{session: session, server: _server} do
     assert_raise(Wallaby.NoBaseUrl, fn ->
       Application.put_env(:wallaby, :base_url, nil)
       session
