@@ -41,10 +41,16 @@ If you're testing a Phoenix application with Ecto then you can enable concurrent
 if Application.get_env(:your_app, :sql_sandbox) do
   plug Phoenix.Ecto.SQL.Sandbox
 end
+```
+
+```elixir
+# config/test.exs
 
 # Make sure Phoenix is setup to serve endpoints
-config :your_app, YourApplicaiton.Endpoint,
+config :your_app, YourApplication.Endpoint,
   server: true
+
+config :your_app, :sql_sandbox, true
 ```
 
 Then in your `test_helper.exs` you can provide some configuration to Wallaby.
@@ -52,7 +58,6 @@ Then in your `test_helper.exs` you can provide some configuration to Wallaby.
 ```elixir
 # test/test_helper.exs
 
-Application.put_env(:your_app, :sql_sandbox, true)
 Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
 ```
 
