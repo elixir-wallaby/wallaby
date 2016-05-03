@@ -169,7 +169,7 @@ defmodule Wallaby.Session do
     session
   end
 
-  def request_url(path) do
+  defp request_url(path) do
     base_url <> path
   end
 
