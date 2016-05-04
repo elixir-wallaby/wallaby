@@ -124,17 +124,19 @@ defmodule Wallaby.Session do
   end
 
   @doc """
-  Gets the current url of the session.
+  Gets the current url of the session
   """
   @spec get_current_url(t) :: String.t
+
   def get_current_url(session) do
      Driver.current_url(session)
   end
 
   @doc """
-  Gets the current url of the session.
+  Gets the current path of the session
   """
-  @spec get_current_url(t) :: String.t
+  @spec get_current_path(t) :: String.t
+
   def get_current_path(session) do
      URI.parse(get_current_url(session)).path
   end
