@@ -64,6 +64,7 @@ defmodule Wallaby.SessionTest do
       node
       |> Map.get(:session)
       |> Map.get(:screenshots)
+
     assert Enum.count(screenshots) == 2
 
     Enum.each(screenshots, fn(path) ->
