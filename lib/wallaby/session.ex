@@ -124,6 +124,24 @@ defmodule Wallaby.Session do
   end
 
   @doc """
+  Gets the current url of the session
+  """
+  @spec get_current_url(t) :: String.t
+
+  def get_current_url(session) do
+     Driver.current_url(session)
+  end
+
+  @doc """
+  Gets the current path of the session
+  """
+  @spec get_current_path(t) :: String.t
+
+  def get_current_path(session) do
+     URI.parse(get_current_url(session)).path
+  end
+
+  @doc """
   Executes javascript synchoronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
@@ -153,7 +171,7 @@ defmodule Wallaby.Session do
     session
   end
 
-  def request_url(path) do
+  defp request_url(path) do
     base_url <> path
   end
 
