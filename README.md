@@ -87,8 +87,11 @@ defmodule YourApp.AcceptanceCase do
     end
   end
 
-  setup _tags do
+  setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(YourApp.Repo)
+    unless tags[:async] do
+      Ecto.Adapters.SQL.Sandbox.mode(YourApp.Repo, {:shared, self()})
+    end
     metadata = Phoenix.Ecto.SQL.Sandbox.metadata_for(YourApp.Repo, self())
     {:ok, session} = Wallaby.start_session(metadata: metadata)
     {:ok, session: session}
