@@ -15,6 +15,13 @@ defmodule Wallaby.XPath do
   end
 
   @doc """
+  Match any clickable buttons
+  """
+  def button(query) do
+    ".//*[self::input | self::button][(./@type = 'submit' or ./@type = 'reset' or ./@type = 'button' or ./@type = 'image')][(((./@id = '#{query}' or ./@name = '#{query}' or ./@value = '#{query}' or ./@alt = '#{query}' or ./@title = '#{query}' or contains(normalize-space(string(.)), '#{query}'))))]"
+  end
+
+  @doc """
   Match any radio buttons
   """
   def radio_button(query) do
