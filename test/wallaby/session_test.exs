@@ -90,6 +90,42 @@ defmodule Wallaby.SessionTest do
     assert find(session, "#name_field") |> has_value?("")
   end
 
+  test "clicking button type[reset] via button text resets form", %{server: server, session: session} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> fill_in("name_field", with: "Erlich Bachman")
+
+    assert find(session, "#name_field") |> has_value?("Erlich Bachman")
+
+    click_button(session, "Reset button")
+
+    assert find(session, "#name_field") |> has_value?("")
+  end
+
+  test "clicking button type[reset] via name resets form", %{server: server, session: session} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> fill_in("name_field", with: "Erlich Bachman")
+
+    assert find(session, "#name_field") |> has_value?("Erlich Bachman")
+
+    click_button(session, "button-reset")
+
+    assert find(session, "#name_field") |> has_value?("")
+  end
+
+  test "clicking button type[reset] via id resets form", %{server: server, session: session} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> fill_in("name_field", with: "Erlich Bachman")
+
+    assert find(session, "#name_field") |> has_value?("Erlich Bachman")
+
+    click_button(session, "button-reset-id")
+
+    assert find(session, "#name_field") |> has_value?("")
+  end
+  
   test "clicking input type[submit] via button text submits form", %{server: server, session: session} do
     current_url =
       session
