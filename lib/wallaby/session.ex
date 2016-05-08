@@ -22,13 +22,13 @@ defmodule Wallaby.Session do
     user1
     |> visit("/page.html")
     |> fill_in("Share Message", with: "Hello there!")
-    |> click_on("Share")
+    |> click_button("Share")
 
     {:ok, user2} = Wallaby.start_session
     user2
     |> visit("/page.html")
     |> fill_in("Share Message", with: "Hello yourself")
-    |> click_on("Share")
+    |> click_button("Share")
 
     assert user1 |> find(".messages") |> List.last |> text == "Hello yourself"
     assert user2 |> find(".messages") |> List.first |> text == "Hello there"
@@ -79,6 +79,17 @@ defmodule Wallaby.Session do
 
   def click_link(session, link) do
     Node.find(session, {:xpath, XPath.link(link)})
+    |> Node.click
+    session
+  end
+
+  @doc """
+  Clicks the matching button. Buttons can be found based on id, name, or button text.
+  """
+  @spec click_button(t, String.t) :: t
+
+  def click_button(session, button) do
+    Node.find(session, {:xpath, XPath.button(button)})
     |> Node.click
     session
   end
