@@ -127,41 +127,6 @@ defmodule Wallaby.NodeTest do
     assert class == "bootstrap"
   end
 
-  test "filling in input by name", %{server: server, session: session} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> fill_in("name", with: "Chris")
-
-    assert find(session, "#name_field") |> has_value?("Chris")
-  end
-
-  test "filling in input by id", %{server: server, session: session} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> fill_in("name_field", with: "Chris")
-
-    assert find(session, "#name_field") |> has_value?("Chris")
-  end
-
-  test "filling in multple inputs", %{server: server, session: session} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> fill_in("name", with: "Alex")
-    |> fill_in("email", with: "alex@example.com")
-
-    assert find(session, "#name_field")  |> has_value?("Alex")
-    assert find(session, "#email_field") |> has_value?("alex@example.com")
-  end
-
-  test "fill_in replaces all of the text", %{server: server, session: session} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> fill_in("name", with: "Chris")
-    |> fill_in("name", with: "Alex")
-
-    assert find(session, "#name_field") |> has_value?("Alex")
-  end
-
   test "clearing input", %{server: server, session: session} do
     node =
       session
@@ -370,7 +335,7 @@ defmodule Wallaby.NodeTest do
   end
 
   test "has_no_css/2 raises error if the css is found", %{session: session, server: server} do
-    assert_raise Wallaby.ExpectationNotMet, fn ->
+    assert_raise Wallaby.ElementFound, fn ->
       session
       |> visit(server.base_url <> "nesting.html")
       |> has_no_css?(".user")
@@ -424,7 +389,7 @@ defmodule Wallaby.NodeTest do
     session
     |> visit(server.base_url <> "page_1.html")
 
-    assert_raise Wallaby.ElementNotFound, fn ->
+    assert_raise Wallaby.InvisibleElement, fn ->
       find(session, "#invisible", count: :any)
     end
 

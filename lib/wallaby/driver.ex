@@ -62,9 +62,9 @@ defmodule Wallaby.Driver do
   Clears the value in an element
   """
   # @spec clear(Locator.t, query) :: t
-  def clear(%Node{session: session, id: id}) do
+  def clear(%Node{session: session, id: id}=node) do
     request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/clear")
-    session
+    node
   end
 
   @doc """
@@ -241,9 +241,8 @@ defmodule Wallaby.Driver do
   defp to_params({:xpath, xpath}) do
     %{using: "xpath", value: xpath}
   end
-
-  defp to_params(css_selector) do
-    %{using: "css selector", value: css_selector}
+  defp to_params({:css, css}) do
+    %{using: "css selector", value: css}
   end
 
   defp request(method, url, params \\ %{}, opts \\ [])

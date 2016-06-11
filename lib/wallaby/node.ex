@@ -34,6 +34,7 @@ defmodule Wallaby.Node do
   alias __MODULE__
   alias Wallaby.Driver
   alias Wallaby.Session
+  alias Wallaby.Node.Query
 
   import Wallaby.XPath
 
@@ -50,13 +51,8 @@ defmodule Wallaby.Node do
   """
   @spec find(locator, query, Keyword.t) :: t | list(t)
 
-  def find(locator, query, opts \\ []) do
-    retry fn ->
-      locator
-      |> Driver.find_elements(query)
-      |> assert_visibility(Keyword.get(opts, :visible, true))
-      |> assert_element_count(Keyword.get(opts, :count, 1))
-    end
+  def find(parent, query, opts \\ []) do
+    Query.find_element(parent, query, opts)
   end
 
   @doc """
@@ -65,27 +61,19 @@ defmodule Wallaby.Node do
   """
   @spec all(locator, query) :: list(t)
 
-  def all(locator, query) do
-    locator
-    |> Driver.find_elements(query)
+  def all(parent, query, opts \\ []) do
+    Query.find_elements(parent, query, opts)
   end
 
   @doc """
-  Fills in a "fillable" node with text. Input nodes are looked up by id, label text,
-  or name. The specific node can also be passed in directly.
+  Fills in the node with the supplied value
   """
-  @spec fill_in(locator, query, [with: String.t]) :: Session.t
   @spec fill_in(Node.t, [with: String.t]) :: Session.t
 
-  def fill_in(session, query, with: value) when is_binary(value) do
-    find(session, {:xpath, fillable_field(query)})
-    |> fill_in(with: value)
-  end
-
-  def fill_in(%Node{session: session}=node, with: value) when is_binary(value) do
-    clear(node)
-    Driver.set_value(node, value)
-    session
+  def fill_in(%Node{}=node, with: value) when is_binary(value) do
+    node
+    |> clear
+    |> Driver.set_value(value)
   end
 
   @doc """
@@ -117,16 +105,10 @@ defmodule Wallaby.Node do
   Clears an input field. Input nodes are looked up by id, label text, or name.
   The node can also be passed in directly.
   """
-  @spec clear(Session.t, query) :: Session.t
   @spec clear(Node.t) :: Session.t
 
-  def clear(session, query) when is_binary(query) do
-    find(session, {:xpath, fillable_field(query)})
-    |> clear()
-  end
-
-  def clear(locator) do
-    Driver.clear(locator)
+  def clear(node) do
+    Driver.clear(node)
   end
 
   @doc """
@@ -311,25 +293,6 @@ defmodule Wallaby.Node do
 
   def visible?(%Node{}=node) do
     Driver.displayed(node)
-  end
-
-  defp assert_element_count(elements, count) when is_list(elements) do
-    case elements do
-      elements when length(elements) > 0 and count == :any -> elements
-      [element] when length(elements) == count -> element
-      elements when length(elements) == count -> elements
-      elements when length(elements) > 0 and count == 0 -> raise Wallaby.ExpectationNotMet, message: "Element was found"
-      [] -> raise Wallaby.ElementNotFound, message: "Could not find element"
-      elements -> raise Wallaby.AmbiguousMatch, message: "Ambiguous match, found #{length(elements)}"
-    end
-  end
-
-  defp assert_visibility(elements, visible) when is_list(elements) do
-    if Enum.all?(elements, &(visible?(&1) == visible)) do
-      elements
-    else
-      raise Wallaby.ElementNotFound, message: "Could not find element"
-    end
   end
 
   defp retry(find_fn, start_time \\ :erlang.monotonic_time(:milli_seconds)) do
