@@ -256,6 +256,15 @@ defmodule Wallaby.NodeTest do
     assert find(session, "#option2") |> checked?
   end
 
+  test "choosing a radio button returns the parent", %{session: session, server: server} do
+    session
+    |> visit(server.base_url <> "forms.html")
+    |> choose("Option 1")
+    |> choose("option2")
+
+    assert find(session, "#option2") |> checked?
+  end
+
   test "check/1 checks the specified node", %{session: session, server: server} do
     checkbox =
       session
