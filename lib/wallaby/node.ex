@@ -136,8 +136,11 @@ defmodule Wallaby.Node do
   @spec choose(Node.t) :: Session.t
 
   def choose(%Session{}=session, query) when is_binary(query) do
-    find(session, {:xpath, radio_button(query)})
+    session
+    |> find({:xpath, radio_button(query)})
     |> click
+
+    session
   end
 
   def choose(%Node{}=node) do
