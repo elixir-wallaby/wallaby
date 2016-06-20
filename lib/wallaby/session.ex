@@ -153,6 +153,15 @@ defmodule Wallaby.Session do
   end
 
   @doc """
+  Gets the title for the current page
+  """
+  @spec page_title(t) :: String.t
+
+  def page_title(session) do
+    Driver.page_title(session)
+  end
+
+  @doc """
   Executes javascript synchoronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
