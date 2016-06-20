@@ -23,7 +23,7 @@ defmodule Wallaby.Driver do
 
     capabilities = Wallaby.Phantom.capabilities(user_agent: user_agent)
     params = %{desiredCapabilities: capabilities}
-    
+
     response = request(:post, "#{base_url}session", params)
     session = %Wallaby.Session{base_url: base_url, id: response["sessionId"], server: server}
     {:ok, session}
@@ -79,6 +79,14 @@ defmodule Wallaby.Driver do
   """
   def text(node) do
     resp = request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/text")
+    resp["value"]
+  end
+
+  @doc """
+  Gets the title of the current page.
+  """
+  def page_title(session) do
+    resp = request(:get, "#{session.base_url}session/#{session.id}/title")
     resp["value"]
   end
 
