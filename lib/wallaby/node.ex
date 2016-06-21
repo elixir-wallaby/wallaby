@@ -52,7 +52,7 @@ defmodule Wallaby.Node do
   @spec find(locator, query, Keyword.t) :: t | list(t)
 
   def find(parent, query, opts \\ []) do
-    Query.find_element(parent, query, opts)
+    Query.find(parent, query, opts)
   end
 
   @doc """
@@ -62,43 +62,20 @@ defmodule Wallaby.Node do
   @spec all(locator, query) :: list(t)
 
   def all(parent, query, opts \\ []) do
-    Query.find_elements(parent, query, opts)
+    Query.all(parent, query, opts)
   end
 
   @doc """
   Fills in the node with the supplied value
   """
-  @spec fill_in(Node.t, [with: String.t]) :: Session.t
+  @spec fill_in(Node.t, [with: String.t]) :: Node.t
 
   def fill_in(%Node{}=node, with: value) when is_binary(value) do
     node
     |> clear
     |> Driver.set_value(value)
-  end
 
-  @doc """
-  Selects an option from a select box. Searches for the select box by id, name or label,
-  then finds the option by visible text.
-
-  The specific node for the select box can also be passed in directly.
-  """
-  @spec select(locator, String.t, [option: query]) :: Session.t
-  @spec select(Node.t, [option: query]) :: Session.t
-
-  def select(session, selector, option: query) do
-    find(session, {:xpath, select_box(selector)})
-    |> find({:xpath, option_for(query)})
-    |> click
-
-    session
-  end
-
-  def select(%Node{session: session}=node, option: query) do
     node
-    |> find({:xpath, option_for(query)})
-    |> click
-
-    session
   end
 
   @doc """
@@ -114,16 +91,7 @@ defmodule Wallaby.Node do
   @doc """
   Chooses a radio button.
   """
-  @spec choose(Session.t, query) :: Session.t
-  @spec choose(Node.t) :: Session.t
-
-  def choose(%Session{}=session, query) when is_binary(query) do
-    session
-    |> find({:xpath, radio_button(query)})
-    |> click
-
-    session
-  end
+  @spec choose(Node.t) :: Node.t
 
   def choose(%Node{}=node) do
     click(node)
@@ -132,7 +100,6 @@ defmodule Wallaby.Node do
   @doc """
   Marks a checkbox as "checked".
   """
-  @spec check(Session.t, query) :: Session.t
   @spec check(Node.t) :: Node.t
 
   def check(%Node{}=node) do
@@ -142,16 +109,9 @@ defmodule Wallaby.Node do
     node
   end
 
-  def check(%Session{}=session, query) do
-    find(session, {:xpath, checkbox(query)})
-    |> check
-    session
-  end
-
   @doc """
   Unchecks a checkbox.
   """
-  @spec uncheck(Session.t, query) :: Session.t
   @spec uncheck(t) :: t
 
   def uncheck(%Node{}=node) do
@@ -161,22 +121,10 @@ defmodule Wallaby.Node do
     node
   end
 
-  def uncheck(%Session{}=session, query) do
-    find(session, {:xpath, checkbox(query)})
-    |> uncheck
-    session
-  end
-
   @doc """
   Clicks a node.
   """
-  @spec click(Session.t, query) :: Session.t
   @spec click(t) :: Session.t
-
-  def click(session, query) do
-    find(session, query)
-    |> click
-  end
 
   def click(locator) do
     Driver.click(locator)

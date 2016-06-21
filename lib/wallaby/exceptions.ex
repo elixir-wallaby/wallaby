@@ -1,5 +1,27 @@
 defmodule Wallaby.AmbiguousMatch do
   defexception [:message]
+
+  def exception({locator, elements, count}) do
+    %__MODULE__{message: msg(locator, elements, count)}
+  end
+
+  def msg({:css, query}, elements, count) do
+    base_msg("the css", query, elements, count)
+  end
+  def msg({_, query}, elements, count) do
+    base_msg("the locator", query, elements, count)
+  end
+
+  def base_msg(locator, query, elements, count) do
+    """
+    The #{locator}: '#{query}' is ambiguous. It was found #{times(length(elements))} but it should have been found #{times(count)}.
+
+    If you expect to find the selector #{times(length(elements))} then you should include the `count: #{length(elements)}` option in your finder.
+    """
+  end
+
+  defp times(1), do: "1 time"
+  defp times(count), do: "#{count} times"
 end
 
 defmodule Wallaby.ElementNotFound do
@@ -125,11 +147,15 @@ defmodule Wallaby.BadHTML do
     %__MODULE__{message: msg(error)}
   end
 
-  def msg({:label_with_no_for, label_text}) do
+  def msg({:label_with_no_for, {type, label_text}}) do
     """
-    The text '#{label_text}' matched a label but the label has no 'for' attribute and can't be used to find the correct input field.
+    The text '#{label_text}' matched a label but the label has no 'for' attribute and can't be used to find the correct #{type}.
 
     You can fix this by including the `for="YOUR_INPUT_ID"` attribute on the appropriate label.
     """
   end
+
+  def type(:radio_button), do: "radio button"
+  def type(:fillable_field), do: "text input or textarea"
+  def type(_), do: "field"
 end

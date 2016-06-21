@@ -1,6 +1,8 @@
 defmodule Wallaby.Actions.FillInTest do
   use Wallaby.SessionCase, async: true
 
+  @moduletag :focus
+  
   setup %{server: server, session: session} do
     page =
       session
@@ -48,5 +50,11 @@ defmodule Wallaby.Actions.FillInTest do
     assert_raise Wallaby.BadHTML, fn ->
       fill_in(bad_form, "Input with bad label", with: "Test Value")
     end
+  end
+
+  test "waits until the input appears", %{page: page} do
+    assert fill_in(page, "Hidden Text Field", with: "Test Label Text")
+    assert fill_in(page, "hidden-text-field-name", with: "Test Name")
+    assert fill_in(page, "hidden-text-field-id", with: "Test ID")
   end
 end

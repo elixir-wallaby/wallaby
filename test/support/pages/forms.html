@@ -43,6 +43,27 @@
         <label>Input with bad label</label>
         <input class="form-control" id="bad_label_input" name="user[name]" type="text">
       </div>
+      <div class="form-group">
+        <label>Radio with bad label</label>
+        <input type="radio" name="radio" value="1">
+      </div>
+      <div class="form-group">
+        <label>Checkbox with bad label</label>
+        <input type="checkbox" name="checkbox">
+      </div>
     </form>
+
+    <form class="wait-form" action="index.html" method="post">
+      <div class="js-hidden" style="display: none;">
+        <label for="hidden-text-field-id">Hidden Text Field</label>
+        <input id="hidden-text-field-id" type="text" name="hidden-text-field-name">
+      </div>
+    </form>
+
+    <script>
+      setTimeout(function() {
+        document.querySelector('.js-hidden').style.display = 'block'
+      }, 1000)
+    </script>
   </body>
 </html>

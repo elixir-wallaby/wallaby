@@ -44,122 +44,160 @@ defmodule Wallaby.Node.Query do
 
   Selections can be scoped by providing a Node as the locator for the query.
   """
-  def find_element(parent, {:fillable_field, query}, opts) do
-    result =
-      parent
-      |> Driver.find_elements({:xpath, XPath.fillable_field(query)})
-      |> assert_visibility(Keyword.get(opts, :visible, true))
-      |> assert_element_count(Keyword.get(opts, :count, 1))
 
-    case result do
-      {:ok, field} ->
-        field
-      {:error, _error, elements} ->
+  def find(parent, selector, opts \\ []) do
+    case find_element(parent, selector, opts) do
+      {:ok, elements} ->
+        elements
+      {:error, e} ->
+        handle_error(e)
+    end
+  end
+
+  def all(parent, selector, opts \\ []) do
+    case find_elements(parent, selector, opts) do
+      {:ok, elements} ->
+        elements
+      {:error, e} ->
+        handle_error(e)
+    end
+  end
+
+  def fillable_field(parent, locator, opts \\ []) do
+    find_field(parent, {:fillable_field, locator}, opts)
+  end
+
+  def radio_button(parent, locator, opts \\ []) do
+    find_field(parent, {:radio_button, locator}, opts)
+  end
+
+  def checkbox(parent, locator, opts \\ []) do
+    find_field(parent, {:checkbox, locator}, opts)
+  end
+
+  def select(parent, locator, opts \\ []) do
+    find_field(parent, {:select, locator}, opts)
+  end
+
+  def option(parent, locator, opts \\ []) do
+    find(parent, {:option, locator}, opts)
+  end
+
+  def button(parent, locator, opts \\ []) do
+    find(parent, {:button, locator}, opts)
+  end
+
+  def link(parent, locator, opts \\ []) do
+    find(parent, {:link, locator}, opts)
+  end
+
+  defp find_field(parent, query, opts) do
+    case find_element(parent, query, opts) do
+      {:ok, elements} ->
+        elements
+      {:error, {:not_found, _}} ->
         parent
         |> check_for_bad_labels(query)
-        |> handle_error(elements, parent, query, opts)
+        |> handle_error
+      {:error, e} ->
+        handle_error(e)
     end
   end
 
-  def find_element(parent, query, opts \\ []) do
-    result =
-      retry fn ->
-        parent
-        |> Driver.find_elements(build_query(query))
-        |> assert_visibility(Keyword.get(opts, :visible, true))
-        |> assert_element_count(Keyword.get(opts, :count, 1))
-      end
+  defp find_element(parent, locator, opts) do
+    query = build_query(locator)
 
-    case result do
-      {:ok, elements}       -> elements
-      {:error, e, elements} -> handle_error(e, elements, parent, query, opts)
-    end
-  end
-
-  def find_elements(parent, query, opts \\ []) do
-    result =
+    retry fn ->
       parent
-      |> Driver.find_elements(build_query(query))
-      |> assert_visibility(Keyword.get(opts, :visible, true))
-
-    case result do
-      {:ok, elements}       -> elements
-      {:error, e, elements} -> handle_error(e, elements, parent, query, opts)
+      |> Driver.find_elements(query)
+      |> assert_visibility(query, Keyword.get(opts, :visible, true))
+      |> assert_element_count(query, Keyword.get(opts, :count, 1))
     end
   end
 
-  def check_for_bad_labels(parent, query) do
+  defp find_elements(parent, locator, opts) do
+    query = build_query(locator)
+
+    parent
+    |> Driver.find_elements(query)
+    |> assert_visibility(query, Keyword.get(opts, :visible, true))
+  end
+
+  def check_for_bad_labels(parent, {_, locator}=query) do
     label =
       parent
-      |> Driver.find_elements(build_query("label"))
-      |> Enum.find(&bad_label?(&1, query))
+      |> all("label")
+      |> Enum.find(&bad_label?(&1, locator))
 
     cond do
-      label -> :label_with_no_for
-      true  -> :not_found
+      label -> {:label_with_no_for, query}
+      true  -> {:not_found, query}
     end
   end
 
-  def bad_label?(node, query) do
-    Node.attr(node, "for") == nil && Node.text(node) == query
+  def bad_label?(node, locator) do
+    Node.attr(node, "for") == nil && Node.text(node) == locator
   end
 
-  defp assert_visibility(elements, visible) when is_list(elements) do
+  defp assert_visibility(elements, query, visible) when is_list(elements) do
     cond do
-      Enum.all?(elements, &(Node.visible?(&1) == visible)) -> {:ok, elements}
-      true -> {:error, :not_visible, elements}
+      Enum.all?(elements, &(Node.visible?(&1) == visible)) ->
+        {:ok, elements}
+      true ->
+        {:error, {:not_visible, query}}
     end
   end
 
-  defp assert_element_count({:ok, elements}, count) when is_list(elements) do
-    assert_count(elements, count)
+  defp assert_element_count({:ok, elements}, query, count) when is_list(elements) do
+    assert_count(elements, query, count)
   end
-  defp assert_element_count(error, _) do
+  defp assert_element_count(error, _query, _) do
     error
   end
 
-  defp assert_count(elements, :any) when length(elements) > 0 do
+  defp assert_count(elements, _query, :any) when length(elements) > 0 do
     {:ok, elements}
   end
-  defp assert_count([element], 1) do
+  defp assert_count([element], _query, 1) do
     {:ok, element}
   end
-  defp assert_count(elements, count) when length(elements) == count do
+  defp assert_count(elements, _query, count) when length(elements) == count do
     {:ok, elements}
   end
-  defp assert_count(elements, 0) when length(elements) > 0 do
-    {:error, :found, elements}
+  defp assert_count(elements, query, 0) when length(elements) > 0 do
+    {:error, {:found, query}}
   end
-  defp assert_count([], _) do
-    {:error, :not_found, []}
+  defp assert_count([], query, _) do
+    {:error, {:not_found, query}}
   end
-  defp assert_count(elements, _) do
-    {:error, :ambiguous, elements}
+  defp assert_count(elements, query, count) do
+    {:error, {:ambiguous, query, elements, count}}
   end
 
-  defp handle_error(:not_found, _, parent, query, opts) do
-    raise Wallaby.ElementNotFound, build_query(query)
+  defp handle_error({:not_found, locator}) do
+    raise Wallaby.ElementNotFound, locator
   end
-  defp handle_error(:ambiguous, elements, parent, query, opts) do
-    raise Wallaby.AmbiguousMatch, message: "Ambiguous match, found #{length(elements)}"
+  defp handle_error({:ambiguous, locator, elements, count}) do
+    raise Wallaby.AmbiguousMatch, {locator, elements, count}
   end
-  defp handle_error(:found, _, parent, query, opts) do
-    raise Wallaby.ElementFound, build_query(query)
+  defp handle_error({:found, locator}) do
+    raise Wallaby.ElementFound, locator
   end
-  defp handle_error(:not_visible, _, parent, query, opts) do
-    raise Wallaby.InvisibleElement, build_query(query)
+  defp handle_error({:not_visible, locator}) do
+    raise Wallaby.InvisibleElement, locator
   end
-  defp handle_error(:label_with_no_for, _, parent, query, opts) do
-    raise Wallaby.BadHTML, {:label_with_no_for, query}
+  defp handle_error({:label_with_no_for, locator}) do
+    raise Wallaby.BadHTML, {:label_with_no_for, locator}
   end
 
   defp retry(find_fn, start_time \\ :erlang.monotonic_time(:milli_seconds)) do
     case find_fn.() do
-      {:ok, elements}       -> {:ok, elements}
-      {:error, e, elements} ->
+      {:ok, elements} ->
+        {:ok, elements}
+      {:error, e} ->
         cond do
           max_time_exceeded?(start_time) -> retry(find_fn, start_time)
-          true                           -> {:error, e, elements}
+          true                           -> {:error, e}
         end
     end
   end

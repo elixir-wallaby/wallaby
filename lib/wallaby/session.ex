@@ -73,28 +73,6 @@ defmodule Wallaby.Session do
   end
 
   @doc """
-  Clicks the matching link. Links can be found based on id, name, or link text.
-  """
-  @spec click_link(t, String.t) :: t
-
-  def click_link(session, link) do
-    Node.find(session, {:xpath, XPath.link(link)})
-    |> Node.click
-    session
-  end
-
-  @doc """
-  Clicks the matching button. Buttons can be found based on id, name, or button text.
-  """
-  @spec click_button(t, String.t) :: t
-
-  def click_button(session, button) do
-    Node.find(session, {:xpath, XPath.button(button)})
-    |> Node.click
-    session
-  end
-
-  @doc """
   Takes a screenshot of the current window.
   Screenshots are saved to a "screenshots" directory in the same directory the
   tests are run in.

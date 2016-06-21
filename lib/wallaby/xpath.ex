@@ -47,14 +47,14 @@ defmodule Wallaby.XPath do
   @doc """
   Match any `select` by name, id, or label.
   """
-  def select_box(query) do
+  def select(query) do
     ".//select[(((./@id = '#{query}' or ./@name = '#{query}')) or ./@name = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//select"
   end
 
   @doc """
   Match any `option` by visible text
   """
-  def option_for(query) do
+  def option(query) do
     ".//option[normalize-space(text())='#{query}']"
   end
 end
