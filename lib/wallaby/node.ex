@@ -36,8 +36,6 @@ defmodule Wallaby.Node do
   alias Wallaby.Session
   alias Wallaby.Node.Query
 
-  import Wallaby.XPath
-
   @default_max_wait_time 3_000
 
   @doc """

@@ -51,4 +51,8 @@ defmodule Wallaby.Actions.ChooseTest do
       choose(bad_form, "Radio with bad label")
     end
   end
+
+  test "waits until the radio button appears", %{page: page} do
+    assert choose(page, "Hidden Radio Button")
+  end
 end

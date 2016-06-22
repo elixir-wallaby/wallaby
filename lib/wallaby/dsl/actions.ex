@@ -92,11 +92,14 @@ defmodule Wallaby.DSL.Actions do
     parent
   end
 
+  def click_on(parent, locator) do
+    click_button(parent, locator)
+  end
 
-  @doc """
-  Clears an input field. Input nodes are looked up by id, label text, or name.
-  The node can also be passed in directly.
-  """
+  # @doc """
+  # Clears an input field. Input nodes are looked up by id, label text, or name.
+  # The node can also be passed in directly.
+  # """
   # @spec clear(Session.t, query) :: Session.t
   # def clear(session, query) when is_binary(query) do
   #   session

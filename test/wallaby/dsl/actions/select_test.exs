@@ -1,8 +1,6 @@
 defmodule Wallaby.Actions.SelectTest do
   use Wallaby.SessionCase, async: true
 
-  @moduletag :focus
-
   setup %{session: session, server: server} do
     page =
       session
@@ -42,5 +40,13 @@ defmodule Wallaby.Actions.SelectTest do
     assert_raise Wallaby.BadHTML, fn ->
       select(page, "Select with bad label", option: "Option")
     end
+  end
+
+  test "waits until the select appears", %{session: session, server: server} do
+    page =
+      session
+      |> visit(server.base_url <> "forms.html")
+
+    assert select(page, "Hidden Select", option: "Option")
   end
 end

@@ -1,5 +1,5 @@
 defmodule Wallaby.Node.Query do
-  @doc """
+  @moduledoc """
   Queries are used to find things on the page.
   If a dom node has already been found then any future queries will
   be nested under the first query.
@@ -44,7 +44,6 @@ defmodule Wallaby.Node.Query do
 
   Selections can be scoped by providing a Node as the locator for the query.
   """
-
   def find(parent, selector, opts \\ []) do
     case find_element(parent, selector, opts) do
       {:ok, elements} ->
@@ -91,7 +90,7 @@ defmodule Wallaby.Node.Query do
     find(parent, {:link, locator}, opts)
   end
 
-  defp find_field(parent, query, opts) do
+  def find_field(parent, query, opts) do
     case find_element(parent, query, opts) do
       {:ok, elements} ->
         elements
@@ -123,20 +122,27 @@ defmodule Wallaby.Node.Query do
     |> assert_visibility(query, Keyword.get(opts, :visible, true))
   end
 
-  def check_for_bad_labels(parent, {_, locator}=query) do
-    label =
+  defp check_for_bad_labels(parent, {_, locator}=query) do
+    labels =
       parent
       |> all("label")
-      |> Enum.find(&bad_label?(&1, locator))
 
     cond do
-      label -> {:label_with_no_for, query}
-      true  -> {:not_found, query}
+      Enum.any?(labels, &(missing_for?(&1) && matching_text?(&1, locator))) ->
+        {:label_with_no_for, query}
+      label=Enum.find(labels, &matching_text?(&1, locator)) ->
+        {:label_does_not_find_field, query, Node.attr(label, "for")}
+      true  ->
+        {:not_found, query}
     end
   end
 
-  def bad_label?(node, locator) do
-    Node.attr(node, "for") == nil && Node.text(node) == locator
+  defp missing_for?(node) do
+    Node.attr(node, "for") == nil
+  end
+
+  defp matching_text?(node, locator) do
+    Node.text(node) == locator
   end
 
   defp assert_visibility(elements, query, visible) when is_list(elements) do
@@ -188,6 +194,9 @@ defmodule Wallaby.Node.Query do
   end
   defp handle_error({:label_with_no_for, locator}) do
     raise Wallaby.BadHTML, {:label_with_no_for, locator}
+  end
+  defp handle_error({:label_does_not_find_field, locator, for_text}) do
+    raise Wallaby.BadHTML, {:label_does_not_find_field, locator, for_text}
   end
 
   defp retry(find_fn, start_time \\ :erlang.monotonic_time(:milli_seconds)) do

@@ -1,8 +1,6 @@
 defmodule Wallaby.DSL.Actions.CheckTest do
   use Wallaby.SessionCase, async: true
 
-  @moduletag :focus
-
   setup %{session: session, server: server} do
     page =
       session
@@ -68,5 +66,9 @@ defmodule Wallaby.DSL.Actions.CheckTest do
     assert_raise Wallaby.BadHTML, fn ->
       check(page, "Checkbox with bad label")
     end
+  end
+
+  test "waits until the checkbox appears", %{page: page} do
+    assert check(page, "Hidden Checkbox")
   end
 end

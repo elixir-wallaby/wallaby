@@ -46,7 +46,6 @@ defmodule Wallaby.Session do
   alias __MODULE__
   alias Wallaby.Driver
   alias Wallaby.Node
-  alias Wallaby.XPath
 
   defstruct [:id, :base_url, :server, screenshots: []]
 

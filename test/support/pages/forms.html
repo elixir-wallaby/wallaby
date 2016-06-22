@@ -44,6 +44,10 @@
         <input class="form-control" id="bad_label_input" name="user[name]" type="text">
       </div>
       <div class="form-group">
+        <label for="input-with-bad-id">Input with bad id</label>
+        <input type="text" name="input-with-bad-id-name">
+      </div>
+      <div class="form-group">
         <label>Radio with bad label</label>
         <input type="radio" name="radio" value="1">
       </div>
@@ -55,8 +59,27 @@
 
     <form class="wait-form" action="index.html" method="post">
       <div class="js-hidden" style="display: none;">
-        <label for="hidden-text-field-id">Hidden Text Field</label>
-        <input id="hidden-text-field-id" type="text" name="hidden-text-field-name">
+        <div class="form-group">
+          <label for="hidden-text-field-id">Hidden Text Field</label>
+          <input id="hidden-text-field-id" type="text" name="hidden-text-field-name">
+        </div>
+        <div class="form-group">
+          <label for="hidden-select-name">Hidden Select</label>
+          <select id="hidden-select-id" name="hidden-select-name">
+            <option>Option</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="hidden-radio">Hidden Radio Button</label>
+          <input id="hidden-radio" type="radio" name="hidden-radio" value="1">
+        </div>
+        <div class="form-group">
+          <label for="hidden-checkbox">Hidden Checkbox</label>
+          <input type="checkbox" name="hidden-checkbox" id="hidden-checkbox">
+        </div>
+        <div class="form-group">
+          <button type="button" name="button">Hidden Button</button>
+        </div>
       </div>
     </form>
 
