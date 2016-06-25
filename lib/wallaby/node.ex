@@ -140,7 +140,7 @@ defmodule Wallaby.Node do
   @doc """
   Gets the value of the nodes attribute.
   """
-  @spec attr(t, String.t) :: String.t
+  @spec attr(t, String.t) :: String.t | nil
 
   def attr(node, name) do
     Driver.attribute(node, name)

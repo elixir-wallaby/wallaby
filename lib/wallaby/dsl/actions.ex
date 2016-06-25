@@ -1,18 +1,19 @@
 defmodule Wallaby.DSL.Actions do
   alias Wallaby.Node
 
-  @type parent :: Wallaby.Node.t | Wallaby.Session.t
-  @type locator :: {atom, String.t}
+  @type parent :: Wallaby.Node.Query.parent
+  @type locator :: Wallaby.Node.Query.locator
+  @type opts :: Wallaby.Node.Query.opts
 
   @doc """
   Fills in a "fillable" node with text. Input nodes are looked up by id, label text,
   or name.
   """
-  @spec fill_in(parent, locator, [with: String.t]) :: parent
+  @spec fill_in(parent, locator, opts) :: parent
 
-  def fill_in(parent, locator, with: value) when is_binary(value) do
+  def fill_in(parent, locator, [with: value]=opts) when is_binary(value) do
     parent
-    |> Node.Query.fillable_field(locator)
+    |> Node.Query.fillable_field(locator, opts)
     |> Node.fill_in(with: value)
 
     parent
@@ -21,11 +22,11 @@ defmodule Wallaby.DSL.Actions do
   @doc """
   Chooses a radio button based on id, label text, or name.
   """
-  @spec choose(parent, locator) :: parent
+  @spec choose(parent, locator, opts) :: parent
 
-  def choose(parent, locator) when is_binary(locator) do
+  def choose(parent, locator, opts\\[]) when is_binary(locator) do
     parent
-    |> Node.Query.radio_button(locator)
+    |> Node.Query.radio_button(locator, opts)
     |> Node.click
 
     parent
@@ -34,9 +35,11 @@ defmodule Wallaby.DSL.Actions do
   @doc """
   Checks a checkbox based on id, label text, or name.
   """
-  def check(parent, locator) do
+  @spec check(parent, locator, opts) :: parent
+
+  def check(parent, locator, opts\\[]) do
     parent
-    |> Node.Query.checkbox(locator)
+    |> Node.Query.checkbox(locator, opts)
     |> Node.check
 
     parent
@@ -45,9 +48,11 @@ defmodule Wallaby.DSL.Actions do
   @doc """
   Unchecks a checkbox based on id, label text, or name.
   """
-  def uncheck(parent, locator) do
+  @spec uncheck(parent, locator, opts) :: parent
+
+  def uncheck(parent, locator, opts\\[]) do
     parent
-    |> Node.Query.checkbox(locator)
+    |> Node.Query.checkbox(locator, opts)
     |> Node.uncheck
 
     parent
@@ -57,10 +62,12 @@ defmodule Wallaby.DSL.Actions do
   Selects an option from a select box. The select box can be found by id, label
   text, or name. The option can be found by its text.
   """
-  def select(parent, locator, option: option_text) do
+  @spec select(parent, locator, option: String.t) :: parent
+
+  def select(parent, locator, [option: option_text]=opts) do
     parent
-    |> Node.Query.select(locator)
-    |> Node.Query.option(option_text)
+    |> Node.Query.select(locator, opts)
+    |> Node.Query.option(option_text, [])
     |> Node.click
 
     parent
@@ -69,11 +76,11 @@ defmodule Wallaby.DSL.Actions do
   @doc """
   Clicks the matching link. Links can be found based on id, name, or link text.
   """
-  @spec click_link(parent, locator) :: parent
+  @spec click_link(parent, locator, opts) :: parent
 
-  def click_link(parent, locator) do
+  def click_link(parent, locator, opts\\[]) do
     parent
-    |> Node.Query.link(locator)
+    |> Node.Query.link(locator, opts)
     |> Node.click
 
     parent
@@ -82,18 +89,23 @@ defmodule Wallaby.DSL.Actions do
   @doc """
   Clicks the matching button. Buttons can be found based on id, name, or button text.
   """
-  @spec click_button(parent, locator) :: parent
+  @spec click_button(parent, locator, opts) :: parent
 
-  def click_button(parent, locator) do
+  def click_button(parent, locator, opts\\[]) do
     parent
-    |> Node.Query.button(locator)
+    |> Node.Query.button(locator, opts)
     |> Node.click
 
     parent
   end
 
-  def click_on(parent, locator) do
-    click_button(parent, locator)
+  @doc """
+  Clicks on the matching button. Alias for `click_button`.
+  """
+  @spec click_on(parent, locator, opts) :: parent
+
+  def click_on(parent, locator, opts\\[]) do
+    click_button(parent, locator, opts)
   end
 
   # @doc """

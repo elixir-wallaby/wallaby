@@ -35,6 +35,11 @@ defmodule Wallaby.Node.Query do
 
   @default_max_wait_time 3_000
 
+  @type parent :: Wallaby.Node.t | Wallaby.Session.t
+  @type locator :: String.t | {atom(), String.t}
+  @type opts :: list()
+  @type result :: list(Node.t) | Node.t
+
   @doc """
   Finds a specific DOM node on the page based on a css selector. Blocks until
   it either finds the node or until the max time is reached. By default only
@@ -43,8 +48,14 @@ defmodule Wallaby.Node.Query do
   are returned.
 
   Selections can be scoped by providing a Node as the locator for the query.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
   """
-  def find(parent, selector, opts \\ []) do
+  @spec find(parent, locator, opts) :: result
+
+  def find(parent, selector, opts) do
     case find_element(parent, selector, opts) do
       {:ok, elements} ->
         elements
@@ -53,7 +64,17 @@ defmodule Wallaby.Node.Query do
     end
   end
 
-  def all(parent, selector, opts \\ []) do
+  @doc """
+  Finds all of the DOM nodes that match the css selector. If no elements are
+  found then an empty list is immediately returned.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec all(parent, locator, opts) :: list(Node.t)
+
+  def all(parent, selector, opts\\[]) do
     case find_elements(parent, selector, opts) do
       {:ok, elements} ->
         elements
@@ -62,35 +83,99 @@ defmodule Wallaby.Node.Query do
     end
   end
 
-  def fillable_field(parent, locator, opts \\ []) do
+  @doc """
+  Locates a text field or textarea by its id, name, placeholder, or label text.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec fillable_field(parent, locator, opts) :: result
+
+  def fillable_field(parent, locator, opts) do
     find_field(parent, {:fillable_field, locator}, opts)
   end
 
-  def radio_button(parent, locator, opts \\ []) do
+  @doc """
+  Locates a radio button by its id, name, or label text.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec radio_button(parent, locator, opts) :: result
+
+  def radio_button(parent, locator, opts) do
     find_field(parent, {:radio_button, locator}, opts)
   end
 
-  def checkbox(parent, locator, opts \\ []) do
+  @doc """
+  Finds a checkbox field by its id, name, or label text.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec checkbox(parent, locator, opts) :: result
+
+  def checkbox(parent, locator, opts) do
     find_field(parent, {:checkbox, locator}, opts)
   end
 
-  def select(parent, locator, opts \\ []) do
+  @doc """
+  Finds a select field by its id, name, or label text.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec select(parent, locator, opts) :: result
+
+  def select(parent, locator, opts) do
     find_field(parent, {:select, locator}, opts)
   end
 
-  def option(parent, locator, opts \\ []) do
+  @doc """
+  Finds an option field by its option text.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec option(parent, locator, opts) :: result
+
+  def option(parent, locator, opts) do
     find(parent, {:option, locator}, opts)
   end
 
-  def button(parent, locator, opts \\ []) do
+  @doc """
+  Finds a button by its id, name, or label text.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec button(parent, locator, opts) :: result
+
+  def button(parent, locator, opts) do
     find(parent, {:button, locator}, opts)
   end
 
-  def link(parent, locator, opts \\ []) do
+  @doc """
+  Finds a link field by its id, name, or text. If the link contains an image
+  then it can find the link by the image's alt text.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec link(parent, locator, opts) :: result
+
+  def link(parent, locator, opts) do
     find(parent, {:link, locator}, opts)
   end
 
-  def find_field(parent, query, opts) do
+  defp find_field(parent, query, opts) do
     case find_element(parent, query, opts) do
       {:ok, elements} ->
         elements
@@ -228,6 +313,5 @@ defmodule Wallaby.Node.Query do
   defp build_query({:radio_button, query}), do: {:xpath, XPath.radio_button(query)}
   defp build_query({:option, query}), do: {:xpath, XPath.option(query)}
   defp build_query({:select, query}), do: {:xpath, XPath.select(query)}
-  defp build_query({:field, query}), do: {:xpath, XPath.field(query)}
   defp build_query(query) when is_binary(query), do: {:css, query}
 end

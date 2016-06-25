@@ -17,7 +17,7 @@ defmodule Wallaby.SessionCase do
     {:ok, %{server: server}}
   end
 
-  setup %{server: server} do
+  setup do
     {:ok, session} = Wallaby.start_session
 
     on_exit fn ->

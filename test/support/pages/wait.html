@@ -4,13 +4,15 @@
     <title>Wait</title>
   </head>
   <body>
+    <div id="container">
+    </div>
     <script type="text/javascript">
       function addElement(className) {
         var node = document.createElement("div")
           , text = document.createTextNode(className)
         node.className = className
         node.appendChild(text)
-        
+
         document.getElementById("container").appendChild(node)
       }
 
@@ -18,9 +20,7 @@
         addElement("main")
 
         for (i = 0; i < 5; i++) { addElement("orange") }
-      }, 1000)
+      }, 400)
     </script>
-    <div id="container">
-    </div>
   </body>
 </html>

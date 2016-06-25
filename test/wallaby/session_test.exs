@@ -1,16 +1,6 @@
 defmodule Wallaby.SessionTest do
-  use Wallaby.ServerCase, async: false
+  use Wallaby.SessionCase, async: false
   use Wallaby.DSL
-
-  setup do
-    {:ok, session} = Wallaby.start_session
-
-    on_exit fn ->
-      Wallaby.end_session(session)
-    end
-
-    {:ok, %{session: session}}
-  end
 
   test "click through to another page", %{server: server, session: session} do
     session
