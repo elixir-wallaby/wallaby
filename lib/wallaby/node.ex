@@ -1,24 +1,6 @@
 defmodule Wallaby.Node do
   @moduledoc """
   Common functionality for interacting with DOM nodes.
-
-  Nodes can be found by executing css queries against a page:
-
-  ```
-  visit("/page.html")
-  |> find("#main-page .dashboard")
-  ```
-
-  Finders can also be chained together to provide scoping:
-
-  ```
-  visit("/page.html")
-  |> find(".users")
-  |> find(".user", count: 3)
-  |> List.first
-  |> find(".user-name")
-  |> text
-  ```
   """
 
   defstruct [:session, :id]

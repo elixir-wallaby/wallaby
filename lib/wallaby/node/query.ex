@@ -1,33 +1,48 @@
 defmodule Wallaby.Node.Query do
-  @moduledoc """
-  Queries are used to find things on the page.
-  If a dom node has already been found then any future queries will
-  be nested under the first query.
+  @moduledoc ~S"""
+  Provides the query DSL.
 
-  Querying is not lazy. Which means that once we've done a query we're now talking
-  about a Node.
+  Queries are used to locate and retrieve DOM nodes. The standard method for
+  querying is css selectors:
 
-  Node's have actions associated with them. You can access values from that node.
+  ```
+  visit("/page.html")
+  |> find("#main-page .dashboard")
+  ```
 
-  In some cases queries allow you to interact with elements by using real world
-  text. For instance if you want to click a button you just say `click_button('Enter the form')`
+  If more complex querying is needed then its possible to use XPath:
 
-  This allows you to construct much more readable tests.
+  ```
+  find(page, {:xpath, "//input"})
+  ```
 
-  However, it presents a problem in the code. Each of those queries has to be
-  done with xpath. In general thats not a big deal though.
+  By default finders only work with elements that would be visible to a real
+  user.
 
-  All queries need to be done through the query domain though. That way we can
-  abstract out the query engine itself.
+  ## Scoping
 
-  The query engine is also the right place to handle all of the error handling
-  that we want to do. It also means that we need fewer assertions and then we can
-  derive the rest of the `has_*` matchers from them.
+  Finders can also be chained together to provide scoping:
 
-  This could probably be managed with a protocol as well.
+  ```
+  visit("/page.html")
+  |> find(".users")
+  |> find(".user", count: 3)
+  |> List.first
+  |> find(".user-name")
+  ```
 
-  By default all of the matchers and finders should only work with visible
-  elements.
+  ## Form elements
+
+  There are several custom finders for locating form elements. Each of these allows
+  finding by their name, id text, or label text. This allows for more robust querying
+  and decouples the query from presentation selectors like css classes.
+
+  ## Query Options
+
+  All of the query operations accept the following options:
+
+    * `:count` - The number of elements that should be found (default: 1).
+    * `:visible` - Determines if the query should return only visible elements (default: true).
   """
 
   alias Wallaby.{Node, Driver}
