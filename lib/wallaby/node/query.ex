@@ -209,8 +209,8 @@ defmodule Wallaby.Node.Query do
     retry fn ->
       parent
       |> Driver.find_elements(query)
-      |> assert_visibility(query, Keyword.get(opts, :visible, true))
-      |> assert_element_count(query, Keyword.get(opts, :count, 1))
+      |> assert_visibility(locator, Keyword.get(opts, :visible, true))
+      |> assert_element_count(locator, Keyword.get(opts, :count, 1))
     end
   end
 
@@ -225,7 +225,7 @@ defmodule Wallaby.Node.Query do
   defp check_for_bad_labels(parent, {_, locator}=query) do
     labels =
       parent
-      |> all("label")
+      |> all({:css, "label"})
 
     cond do
       Enum.any?(labels, &(missing_for?(&1) && matching_text?(&1, locator))) ->
@@ -328,5 +328,5 @@ defmodule Wallaby.Node.Query do
   defp build_query({:radio_button, query}), do: {:xpath, XPath.radio_button(query)}
   defp build_query({:option, query}), do: {:xpath, XPath.option(query)}
   defp build_query({:select, query}), do: {:xpath, XPath.select(query)}
-  defp build_query(query) when is_binary(query), do: {:css, query}
+  # defp build_query(query) when is_binary(query), do: {:css, query}
 end

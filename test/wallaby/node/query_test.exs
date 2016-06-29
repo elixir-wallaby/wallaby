@@ -22,4 +22,11 @@ defmodule Wallaby.Node.QueryTest do
       fill_in(page, "Input with bad id", with: "Test")
     end
   end
+
+  @tag :focus
+  test "find returns not found if the element could not be found", %{page: page} do
+    assert_raise Wallaby.ElementNotFound, "Could not find a button that matched: 'Test Button'\n", fn ->
+      click_on page, "Test Button"
+    end
+  end
 end
