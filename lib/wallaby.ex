@@ -5,7 +5,7 @@ defmodule Wallaby do
     pool_opts =
       [name: {:local, Wallaby.ServerPool},
        worker_module: Wallaby.Server,
-       size: :erlang.system_info(:schedulers_online),
+       size: :erlang.system_info(:schedulers_online) * 2,
        max_overflow: 0]
 
     :poolboy.start_link(pool_opts, [])

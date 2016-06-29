@@ -29,7 +29,7 @@ defmodule Wallaby.Mixfile do
       {:httpoison, "~> 0.8"},
       {:poison, ">= 1.4.0"},
       {:poolboy, "~> 1.5"},
-      {:dialyze, "~> 0.2.0"},
+      {:dialyze, "~> 0.2.0", only: :dev},
       {:earmark, "~> 0.2", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
     ]

@@ -46,7 +46,6 @@ defmodule Wallaby.Session do
   alias __MODULE__
   alias Wallaby.Driver
   alias Wallaby.Node
-  alias Wallaby.XPath
 
   defstruct [:id, :base_url, :server, screenshots: []]
 
@@ -69,28 +68,6 @@ defmodule Wallaby.Session do
         Driver.visit(session, request_url(path))
     end
 
-    session
-  end
-
-  @doc """
-  Clicks the matching link. Links can be found based on id, name, or link text.
-  """
-  @spec click_link(t, String.t) :: t
-
-  def click_link(session, link) do
-    Node.find(session, {:xpath, XPath.link(link)})
-    |> Node.click
-    session
-  end
-
-  @doc """
-  Clicks the matching button. Buttons can be found based on id, name, or button text.
-  """
-  @spec click_button(t, String.t) :: t
-
-  def click_button(session, button) do
-    Node.find(session, {:xpath, XPath.button(button)})
-    |> Node.click
     session
   end
 

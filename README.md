@@ -145,12 +145,12 @@ There are many ways to interact with form elements on a page:
 
 ```elixir
 fill_in(session, "First Name", with: "Chris")
-fill_in(session, "#last_name_field", with: "Keathley")
+fill_in(session, "last_name_field", with: "Keathley")
 choose(session, "Radio Button 1")
 check(session, "Checkbox")
 uncheck(session, "Checkbox")
 select(session, "My Awesome Select", option: "Option 1")
-click(session, "Some Button")
+click_on(session, "Some Button")
 ```
 
 ### Querying & Finding
@@ -160,11 +160,11 @@ Querying and finding is done with css selectors:
 ```elixir
 find(session, "#some_id")
 find(session, ".user", count: :any)
-find(".single-item", count: 1)
+find(session, ".single-item", count: 1)
 all(session, ".user")
 ```
 
-By default Wallaby will block until it can `find` the matching element. This can be used to keep asynchronous tests in sync (as discussed below).
+By default Wallaby will block until it can `find` the matching element. This is used to keep asynchronous tests in sync (as discussed below).
 
 ### Scoping
 
@@ -194,7 +194,7 @@ It can be difficult to test asynchronous javascript code. You may try to interac
 
 ```elixir
 session
-|> click("Some Async Button")
+|> click_on("Some Async Button")
 |> find(".async-result")
 ```
 

@@ -1,16 +1,6 @@
 defmodule Wallaby.NodeTest do
-  use Wallaby.ServerCase, async: true
+  use Wallaby.SessionCase, async: true
   use Wallaby.DSL
-
-  setup do
-    {:ok, session} = Wallaby.start_session
-
-    on_exit fn ->
-      Wallaby.end_session(session)
-    end
-
-    {:ok, %{session: session}}
-  end
 
   test "can find an element on a page", %{server: server, session: session} do
     element =
@@ -127,41 +117,6 @@ defmodule Wallaby.NodeTest do
     assert class == "bootstrap"
   end
 
-  test "filling in input by name", %{server: server, session: session} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> fill_in("name", with: "Chris")
-
-    assert find(session, "#name_field") |> has_value?("Chris")
-  end
-
-  test "filling in input by id", %{server: server, session: session} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> fill_in("name_field", with: "Chris")
-
-    assert find(session, "#name_field") |> has_value?("Chris")
-  end
-
-  test "filling in multple inputs", %{server: server, session: session} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> fill_in("name", with: "Alex")
-    |> fill_in("email", with: "alex@example.com")
-
-    assert find(session, "#name_field")  |> has_value?("Alex")
-    assert find(session, "#email_field") |> has_value?("alex@example.com")
-  end
-
-  test "fill_in replaces all of the text", %{server: server, session: session} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> fill_in("name", with: "Chris")
-    |> fill_in("name", with: "Alex")
-
-    assert find(session, "#name_field") |> has_value?("Alex")
-  end
-
   test "clearing input", %{server: server, session: session} do
     node =
       session
@@ -174,154 +129,6 @@ defmodule Wallaby.NodeTest do
     clear(node)
     refute has_value?(node, "Chris")
     assert has_value?(node, "")
-  end
-
-  test "choosing an option from a select box by id", %{session: session, server: server} do
-    page =
-      session
-      |> visit(server.base_url <> "select_boxes.html")
-
-    refute find(page, "#select-option-2") |> selected?
-
-    page
-    |> select("select-box", option: "Option 2")
-
-    assert find(session, "#select-option-2") |> selected?
-  end
-
-  test "choosing an option from a select box by name", %{session: session, server: server} do
-    page =
-      session
-      |> visit(server.base_url <> "select_boxes.html")
-
-    refute find(page, "#select-option-5") |> selected?
-
-    page
-    |> select("my-select", option: "Option 2")
-
-    assert find(session, "#select-option-5") |> selected?
-  end
-
-  test "choosing an option from a select box by label", %{session: session, server: server} do
-    page =
-      session
-      |> visit(server.base_url <> "select_boxes.html")
-
-    refute find(page, "#select-option-5") |> selected?
-
-    page
-    |> select("My Select", option: "Option 2")
-
-    assert find(session, "#select-option-5") |> selected?
-  end
-
-  test "choosing an option from a select box by node", %{session: session, server: server} do
-    page =
-      session
-      |> visit(server.base_url <> "select_boxes.html")
-
-    refute find(page, "#select-option-2") |> selected?
-
-    session
-    |> find("#select-box")
-    |> select(option: "Option 2")
-
-    assert find(session, "#select-option-2") |> selected?
-  end
-
-  test "choosing a radio button", %{session: session, server: server} do
-    page =
-      session
-      |> visit(server.base_url <> "forms.html")
-
-    refute find(page, "#option2") |> checked?
-
-    page
-    |> choose("option2")
-
-    assert find(session, "#option2") |> checked?
-  end
-
-  test "choosing a radio button unchecks other buttons in the group", %{session: session, server: server} do
-    session
-    |> visit(server.base_url <> "forms.html")
-
-    choose(session, "Option 1")
-    assert find(session, "#option1") |> checked?
-
-    find(session, "#option2")
-    |> choose()
-
-    refute find(session, "#option1") |> checked?
-    assert find(session, "#option2") |> checked?
-  end
-
-  test "choosing a radio button returns the parent", %{session: session, server: server} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> choose("Option 1")
-    |> choose("option2")
-
-    assert find(session, "#option2") |> checked?
-  end
-
-  test "check/1 checks the specified node", %{session: session, server: server} do
-    checkbox =
-      session
-      |> visit(server.base_url <> "forms.html")
-      |> find("#checkbox1")
-
-    check checkbox
-    assert checked?(checkbox)
-    uncheck checkbox
-    refute checked?(checkbox)
-  end
-
-  test "check/2 does not uncheck the node if called twice", %{session: session, server: server} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> check("Checkbox 1")
-    |> check("Checkbox 1")
-
-    assert find(session, "#checkbox1") |> checked?
-  end
-
-  test "uncheck/2 does not check the node", %{session: session, server: server} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> uncheck("Checkbox 1")
-
-    refute find(session, "#checkbox1") |> checked?
-  end
-
-  test "check/2 finds the node by label", %{session: session, server: server} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> check("Checkbox 1")
-
-    assert find(session, "#checkbox1") |> checked?
-    uncheck(session, "Checkbox 1")
-    refute find(session, "#checkbox1") |> checked?
-  end
-
-  test "check/2 finds the node by id", %{session: session, server: server} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> check("checkbox1")
-
-    assert find(session, "#checkbox1") |> checked?
-    uncheck(session, "checkbox1")
-    refute find(session, "#checkbox1") |> checked?
-  end
-
-  test "check/2 finds the node by name", %{session: session, server: server} do
-    session
-    |> visit(server.base_url <> "forms.html")
-    |> check("testbox")
-
-    assert find(session, "#checkbox1") |> checked?
-    uncheck(session, "testbox")
-    refute find(session, "#checkbox1") |> checked?
   end
 
   test "waits for an element to be visible", %{session: session, server: server} do
@@ -370,7 +177,7 @@ defmodule Wallaby.NodeTest do
   end
 
   test "has_no_css/2 raises error if the css is found", %{session: session, server: server} do
-    assert_raise Wallaby.ExpectationNotMet, fn ->
+    assert_raise Wallaby.ElementFound, fn ->
       session
       |> visit(server.base_url <> "nesting.html")
       |> has_no_css?(".user")
@@ -424,7 +231,7 @@ defmodule Wallaby.NodeTest do
     session
     |> visit(server.base_url <> "page_1.html")
 
-    assert_raise Wallaby.ElementNotFound, fn ->
+    assert_raise Wallaby.InvisibleElement, fn ->
       find(session, "#invisible", count: :any)
     end
 
