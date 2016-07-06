@@ -188,6 +188,28 @@ take_screenshot(session)
 
 All screenshots are saved to a `screenshots` directory in the directory that the tests were run in.
 
+If you want to customize the screenshot directory you can pass it as a config value:
+
+```elixir
+# config/test.exs
+config :wallaby, screenshot_dir: "/file/path"
+
+# test_helper.exs
+Application.put_env(:wallaby, :screenshot_dir, "/file/path")
+```
+
+### Automatic screenshots
+
+You can automatically take screenshots on an error:
+
+```elixir
+# config/test.exs
+config :wallaby, screenshot_on_failure: true
+
+# test_helper.exs
+Application.put_env(:wallaby, :screenshot_on_failure, true)
+```
+
 ## Javascript applications and asynchronous code.
 
 It can be difficult to test asynchronous javascript code. You may try to interact with an element that isn't visible on the page. Wallaby's finders try to help mitigate this problem by blocking until the element becomes visible. You can use this strategy by writing tests in this way:
