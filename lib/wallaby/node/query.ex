@@ -45,7 +45,7 @@ defmodule Wallaby.Node.Query do
     * `:visible` - Determines if the query should return only visible elements (default: true).
   """
 
-  alias Wallaby.{Node, Driver}
+  alias Wallaby.{Node, Driver, Session}
   alias Wallaby.XPath
 
   @default_max_wait_time 3_000
@@ -79,7 +79,7 @@ defmodule Wallaby.Node.Query do
       {:ok, elements} ->
         elements
       {:error, e} ->
-        handle_error(e)
+        cleanup(parent, e)
     end
   end
 
@@ -103,7 +103,7 @@ defmodule Wallaby.Node.Query do
       {:ok, elements} ->
         elements
       {:error, e} ->
-        handle_error(e)
+        cleanup(parent, e)
     end
   end
 
@@ -204,11 +204,10 @@ defmodule Wallaby.Node.Query do
       {:ok, elements} ->
         elements
       {:error, {:not_found, _}} ->
-        parent
-        |> check_for_bad_labels(query)
-        |> handle_error
-      {:error, e} ->
-        handle_error(e)
+        error = check_for_bad_labels(parent, query)
+        cleanup(parent, error)
+      {:error, error} ->
+        cleanup(parent, error)
     end
   end
 
@@ -287,6 +286,14 @@ defmodule Wallaby.Node.Query do
   end
   defp assert_count(elements, query, count) do
     {:error, {:ambiguous, query, elements, count}}
+  end
+
+  defp cleanup(parent, error) do
+    if Wallaby.screenshot_on_failure? do
+      Session.take_screenshot(parent)
+    end
+
+    handle_error(error)
   end
 
   defp handle_error({:not_found, locator}) do
