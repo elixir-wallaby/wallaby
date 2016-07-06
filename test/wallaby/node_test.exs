@@ -11,7 +11,6 @@ defmodule Wallaby.NodeTest do
     assert element
   end
 
-  @tag :focus
   test "finding nonexistent elements raises an exception", %{server: server, session: session} do
     assert_raise Wallaby.ElementNotFound, fn ->
       session

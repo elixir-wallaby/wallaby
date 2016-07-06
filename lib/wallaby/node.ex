@@ -32,7 +32,7 @@ defmodule Wallaby.Node do
   @spec find(locator, query, Keyword.t) :: t | list(t)
 
   def find(parent, query, opts \\ []) do
-    Query.find(parent, {:css, query}, opts)
+    Query.find(parent, query, opts)
   end
 
   @doc """
@@ -42,7 +42,7 @@ defmodule Wallaby.Node do
   @spec all(locator, query) :: list(t)
 
   def all(parent, query, opts \\ []) do
-    Query.all(parent, {:css, query}, opts)
+    Query.all(parent, query, opts)
   end
 
   @doc """
