@@ -48,4 +48,22 @@ defmodule Wallaby.Session.ScreenshotTest do
     Application.put_env(:wallaby, :screenshot_dir, nil)
     File.rm_rf! "#{File.cwd!}/shots"
   end
+
+  test "automatically taking screenshots on failure", %{page: page} do
+    assert_raise Wallaby.ElementNotFound, fn ->
+      find(page, ".some-selector")
+    end
+    refute File.exists?("#{File.cwd!}/screenshots")
+
+    Application.put_env(:wallaby, :screenshot_on_failure, true)
+
+    assert_raise Wallaby.ElementNotFound, fn ->
+      find(page, ".some-selector")
+    end
+    assert File.exists?("#{File.cwd!}/screenshots")
+    assert File.ls!("#{File.cwd!}/screenshots") |> Enum.count == 1
+
+    File.rm_rf! "#{File.cwd!}/screenshots"
+    Application.put_env(:wallaby, :screenshot_on_failure, nil)
+  end
 end

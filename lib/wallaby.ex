@@ -19,4 +19,8 @@ defmodule Wallaby do
   def end_session(%Wallaby.Session{server: server}) do
     :poolboy.checkin(Wallaby.ServerPool, server)
   end
+
+  def screenshot_on_failure? do
+    Application.get_env(:wallaby, :screenshot_on_failure)
+  end
 end
