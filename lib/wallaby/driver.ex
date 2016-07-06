@@ -160,14 +160,9 @@ defmodule Wallaby.Driver do
   Takes a screenshot.
   """
   def take_screenshot(session) do
-    image_data =
-      request(:get, "#{session.base_url}session/#{session.id}/screenshot")
-      |> Map.get("value")
-      |> :base64.decode
-
-    path = path_for_screenshot
-    File.write! path, image_data
-    path
+    request(:get, "#{session.base_url}session/#{session.id}/screenshot")
+    |> Map.get("value")
+    |> :base64.decode
   end
 
   @doc """
@@ -222,15 +217,6 @@ defmodule Wallaby.Driver do
       :post,
       "#{session.base_url}session/#{session.id}/keys",
       %{value: [text]})
-  end
-
-  defp path_for_screenshot do
-    {hour, minutes, seconds} = :erlang.time()
-    {year, month, day} = :erlang.date()
-
-    screenshot_dir = "#{File.cwd!()}/screenshots"
-    File.mkdir_p!(screenshot_dir)
-    "#{screenshot_dir}/#{year}-#{month}-#{day}-#{hour}-#{minutes}-#{seconds}.png"
   end
 
   defp window_handle(session) do

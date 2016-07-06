@@ -80,16 +80,19 @@ defmodule Wallaby.Session do
 
   def take_screenshot(%Node{session: session}=node) do
     session = take_screenshot(session)
+
     %Node{node | session: session}
   end
 
   def take_screenshot(%Session{}=session) do
-    path =
+    image_data =
       session
       |> Driver.take_screenshot
-      |> List.wrap
 
-    Map.update(session, :screenshots, [], &(&1 ++ path))
+    path = path_for_screenshot
+    File.write! path, image_data
+
+    Map.update(session, :screenshots, [], &(&1 ++ [path]))
   end
 
   @doc """
@@ -174,5 +177,17 @@ defmodule Wallaby.Session do
 
   defp base_url do
     Application.get_env(:wallaby, :base_url) || ""
+  end
+
+  defp path_for_screenshot do
+    {hour, minutes, seconds} = :erlang.time()
+    {year, month, day} = :erlang.date()
+
+    File.mkdir_p!(screenshot_dir)
+    "#{screenshot_dir}/#{year}-#{month}-#{day}-#{hour}-#{minutes}-#{seconds}.png"
+  end
+
+  defp screenshot_dir do
+    Application.get_env(:wallaby, :screenshot_dir) || "#{File.cwd!()}/screenshots"
   end
 end

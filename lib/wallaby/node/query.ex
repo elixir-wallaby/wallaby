@@ -79,7 +79,7 @@ defmodule Wallaby.Node.Query do
       {:ok, elements} ->
         elements
       {:error, e} ->
-        handle_error(e)
+        cleanup(e)
     end
   end
 
@@ -103,7 +103,7 @@ defmodule Wallaby.Node.Query do
       {:ok, elements} ->
         elements
       {:error, e} ->
-        handle_error(e)
+        cleanup(e)
     end
   end
 
@@ -206,9 +206,9 @@ defmodule Wallaby.Node.Query do
       {:error, {:not_found, _}} ->
         parent
         |> check_for_bad_labels(query)
-        |> handle_error
+        |> cleanup
       {:error, e} ->
-        handle_error(e)
+        cleanup(e)
     end
   end
 
@@ -287,6 +287,10 @@ defmodule Wallaby.Node.Query do
   end
   defp assert_count(elements, query, count) do
     {:error, {:ambiguous, query, elements, count}}
+  end
+
+  defp cleanup(error) do
+    handle_error(error)
   end
 
   defp handle_error({:not_found, locator}) do
