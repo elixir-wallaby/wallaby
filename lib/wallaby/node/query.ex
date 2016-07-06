@@ -70,6 +70,10 @@ defmodule Wallaby.Node.Query do
   """
   @spec find(parent, locator, opts) :: result
 
+  def find(parent, locator, opts) when is_binary(locator) do
+    find(parent, {:css, locator}, opts)
+  end
+
   def find(parent, selector, opts) do
     case find_element(parent, selector, opts) do
       {:ok, elements} ->
@@ -78,6 +82,7 @@ defmodule Wallaby.Node.Query do
         handle_error(e)
     end
   end
+
 
   @doc """
   Finds all of the DOM nodes that match the css selector. If no elements are
@@ -89,7 +94,11 @@ defmodule Wallaby.Node.Query do
   """
   @spec all(parent, locator, opts) :: list(Node.t)
 
-  def all(parent, selector, opts\\[]) do
+  def all(parent, locator, opts) when is_binary(locator) do
+    all(parent, {:css, locator}, opts)
+  end
+
+  def all(parent, selector, opts) do
     case find_elements(parent, selector, opts) do
       {:ok, elements} ->
         elements
@@ -209,8 +218,8 @@ defmodule Wallaby.Node.Query do
     retry fn ->
       parent
       |> Driver.find_elements(query)
-      |> assert_visibility(query, Keyword.get(opts, :visible, true))
-      |> assert_element_count(query, Keyword.get(opts, :count, 1))
+      |> assert_visibility(locator, Keyword.get(opts, :visible, true))
+      |> assert_element_count(locator, Keyword.get(opts, :count, 1))
     end
   end
 
@@ -225,7 +234,7 @@ defmodule Wallaby.Node.Query do
   defp check_for_bad_labels(parent, {_, locator}=query) do
     labels =
       parent
-      |> all("label")
+      |> all("label", [])
 
     cond do
       Enum.any?(labels, &(missing_for?(&1) && matching_text?(&1, locator))) ->
@@ -328,5 +337,4 @@ defmodule Wallaby.Node.Query do
   defp build_query({:radio_button, query}), do: {:xpath, XPath.radio_button(query)}
   defp build_query({:option, query}), do: {:xpath, XPath.option(query)}
   defp build_query({:select, query}), do: {:xpath, XPath.select(query)}
-  defp build_query(query) when is_binary(query), do: {:css, query}
 end

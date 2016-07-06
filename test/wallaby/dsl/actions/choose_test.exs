@@ -1,8 +1,6 @@
 defmodule Wallaby.Actions.ChooseTest do
   use Wallaby.SessionCase, async: true
 
-  @moduletag :focus
-
   setup %{session: session, server: server} do
     page =
       session

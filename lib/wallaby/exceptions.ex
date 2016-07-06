@@ -40,6 +40,7 @@ defmodule Wallaby.ElementNotFound do
   def msg({:radio_button, query}), do: base_msg("a radio button", query)
   def msg({:button, query}), do: base_msg("a button", query)
   def msg({:link, query}), do: base_msg("a link", query)
+  def msg({:xpath, query}), do: base_msg("an element with an xpath", query)
   def msg({_, query}), do: base_msg("an element", query)
 
   def base_msg(locator, query) do
