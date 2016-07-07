@@ -5,7 +5,7 @@ defmodule Wallaby do
     pool_opts =
       [name: {:local, Wallaby.ServerPool},
        worker_module: Wallaby.Server,
-       size: :erlang.system_info(:schedulers_online) * 2,
+       size: pool_size,
        max_overflow: 0]
 
     :poolboy.start_link(pool_opts, [])
@@ -22,5 +22,13 @@ defmodule Wallaby do
 
   def screenshot_on_failure? do
     Application.get_env(:wallaby, :screenshot_on_failure)
+  end
+
+  def pool_size do
+    Application.get_env(:wallaby, :pool_size) || default_pool_size
+  end
+
+  defp default_pool_size do
+    :erlang.system_info(:schedulers_online) * 2
   end
 end
