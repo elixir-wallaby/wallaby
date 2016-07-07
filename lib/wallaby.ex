@@ -1,4 +1,16 @@
 defmodule Wallaby do
+  @moduledoc """
+  A concurrent feature testing library.
+
+  ## Configuration
+
+  Wallaby supports the following options:
+
+  * `:pool_size` - Maximum amount of phantoms to run. The default is `:erlang.system_info(:schedulers_online) * 2`.
+  * `:screenshot_dir` - The directory to store screenshots.
+  * `:screenshot_on_failure` - if Wallaby should take screenshots on test failures (defaults to `false`).
+  * `:max_wait_time` - The amount of time that Wallaby should wait to find an element on the page. (defaults to `3_000`)
+  """
   use Application
 
   def start(_type, _args) do
