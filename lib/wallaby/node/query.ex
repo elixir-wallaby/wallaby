@@ -182,7 +182,7 @@ defmodule Wallaby.Node.Query do
   @spec button(parent, locator, opts) :: result
 
   def button(parent, locator, opts) do
-    find(parent, {:button, locator}, opts)
+    find_field(parent, {:button, locator}, opts)
   end
 
   @doc """
@@ -204,7 +204,7 @@ defmodule Wallaby.Node.Query do
       {:ok, elements} ->
         elements
       {:error, {:not_found, _}} ->
-        error = check_for_bad_labels(parent, query)
+        error = check_for_bad_html(parent, query)
         cleanup(parent, error)
       {:error, error} ->
         cleanup(parent, error)
@@ -230,6 +230,22 @@ defmodule Wallaby.Node.Query do
     |> assert_visibility(query, Keyword.get(opts, :visible, true))
   end
 
+  defp check_for_bad_html(parent, {:button, locator}=query) do
+    buttons =
+      parent
+      |> all("button", [])
+
+    cond do
+      Enum.any?(buttons, &(missing_button_type?(&1) && matching_text?(&1, locator))) ->
+        {:button_with_no_type, query}
+      true ->
+        {:not_found, query}
+    end
+  end
+  defp check_for_bad_html(parent, query) do
+    check_for_bad_labels(parent, query)
+  end
+
   defp check_for_bad_labels(parent, {_, locator}=query) do
     labels =
       parent
@@ -243,6 +259,12 @@ defmodule Wallaby.Node.Query do
       true  ->
         {:not_found, query}
     end
+  end
+
+  defp missing_button_type?(node) do
+    valid_button_types = ~w(submit reset button image)
+    type = Node.attr(node, "type")
+    Enum.member?(valid_button_types, type)
   end
 
   defp missing_for?(node) do
@@ -320,6 +342,9 @@ defmodule Wallaby.Node.Query do
   end
   defp handle_error({:label_does_not_find_field, locator, for_text}) do
     raise Wallaby.BadHTML, {:label_does_not_find_field, locator, for_text}
+  end
+  defp handle_error({:button_with_no_type, locator}) do
+    raise Wallaby.BadHTML, {:button_with_no_type, locator}
   end
 
   defp retry(find_fn, start_time \\ :erlang.monotonic_time(:milli_seconds)) do

@@ -56,4 +56,12 @@ defmodule Wallaby.Node.QueryTest do
       find(page, "#visible", visible: false)
     end
   end
+
+  describe "button/3" do
+    test "throws an error if the button does not include a valid type attribute", %{page: page} do
+      assert_raise Wallaby.BadHTML, fn ->
+        Wallaby.Node.Query.button(page, "button without type", [])
+      end
+    end
+  end
 end

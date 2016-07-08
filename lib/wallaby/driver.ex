@@ -38,17 +38,17 @@ defmodule Wallaby.Driver do
   def find_elements(%Session{base_url: base_url, id: id}=session, query) do
     request(:post, "#{base_url}session/#{id}/elements", to_params(query))
     |> Map.get("value")
-    |> Enum.map(&cast_as_node({session, &1}))
+    |> Enum.map(&cast_as_node({session, &1, query}))
   end
 
   def find_elements(%Node{id: id, session: session}, query) do
     request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/elements", to_params(query))
     |> Map.get("value")
-    |> Enum.map(&cast_as_node({session, &1}))
+    |> Enum.map(&cast_as_node({session, &1, query}))
   end
 
-  defp cast_as_node({session, %{"ELEMENT" => id}}) do
-    %Wallaby.Node{id: id, session: session}
+  defp cast_as_node({session, %{"ELEMENT" => id}, query}) do
+    %Wallaby.Node{id: id, session: session, query: query}
   end
 
   @doc """

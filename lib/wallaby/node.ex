@@ -3,15 +3,16 @@ defmodule Wallaby.Node do
   Common functionality for interacting with DOM nodes.
   """
 
-  defstruct [:session, :id]
-
-  @type t :: %__MODULE__{
-    session: Session.t,
-    id: String.t
-  }
+  defstruct [:session, :id, :query]
 
   @type locator :: Session.t | t
-  @type query :: String.t | {:xpath, String.t}
+  @type query :: String.t | {atom, String.t}
+  @type t :: %__MODULE__{
+    session: Session.t,
+    id: String.t,
+    query: query
+  }
+
 
   alias __MODULE__
   alias Wallaby.Driver
@@ -240,5 +241,18 @@ defmodule Wallaby.Node do
 
   defp max_wait_time do
     Application.get_env(:wallaby, :max_wait_time, @default_max_wait_time)
+  end
+end
+
+defimpl String.Chars, for: Wallaby.Node do
+  def to_string(node) do
+    stringify_query(node.query)
+  end
+
+  def stringify_query({:css, locator}) do
+    locator
+  end
+  def stringify_query({_, locator}) do
+    locator
   end
 end
