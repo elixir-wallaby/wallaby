@@ -255,10 +255,14 @@ defmodule Wallaby.Node.Query do
 
   defp assert_visibility(elements, query, visible) when is_list(elements) do
     cond do
-      Enum.all?(elements, &(Node.visible?(&1) == visible)) ->
+      visible && Enum.all?(elements, &(Node.visible?(&1))) ->
         {:ok, elements}
-      true ->
+      !visible && Enum.all?(elements, &(!Node.visible?(&1))) ->
+        {:ok, elements}
+      visible ->
         {:error, {:not_visible, query}}
+      !visible ->
+        {:error, {:visible, query}}
     end
   end
 
@@ -304,6 +308,9 @@ defmodule Wallaby.Node.Query do
   end
   defp handle_error({:found, locator}) do
     raise Wallaby.ElementFound, locator
+  end
+  defp handle_error({:visible, locator}) do
+    raise Wallaby.VisibleElement, locator
   end
   defp handle_error({:not_visible, locator}) do
     raise Wallaby.InvisibleElement, locator
