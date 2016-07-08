@@ -48,7 +48,7 @@ defmodule Wallaby.XPath do
   Match any `select` by name, id, or label.
   """
   def select(query) do
-    ".//select[(((./@id = '#{query}' or ./@name = '#{query}')) or ./@name = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//select"
+    ".//select[(((./@id = '#{query}' or ./@name = '#{query}')) or ./@name = //label[contains(normalize-space(string(.)), '#{query}')]/@for or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//select"
   end
 
   @doc """
