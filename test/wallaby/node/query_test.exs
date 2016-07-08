@@ -38,4 +38,22 @@ defmodule Wallaby.Node.QueryTest do
       find page, {:xpath, "//test-element"}
     end
   end
+
+  test "find/3 finds invisible elements", %{session: session, server: server} do
+    page =
+      session
+      |> visit(server.base_url <> "page_1.html")
+
+    assert find(page, "#invisible", visible: false)
+  end
+
+  test "find/3 throws errors if element should not be visible", %{session: session, server: server} do
+    page =
+      session
+      |> visit(server.base_url <> "page_1.html")
+
+    assert_raise Wallaby.VisibleElement, fn ->
+      find(page, "#visible", visible: false)
+    end
+  end
 end

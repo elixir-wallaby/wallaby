@@ -238,19 +238,40 @@ defmodule Wallaby.NodeTest do
     assert find(session, "#visible", count: :any) |> length == 1
   end
 
-  test "visible?/1 determines if the node is visible on the page", %{session: session, server: server} do
+  describe "visible?/1" do
+    setup :visit_page
+
+    test "determines if the node is visible to the user", %{page: page} do
+      page
+      |> find("#visible")
+      |> visible?
+      |> assert
+
+      page
+      |> find("#invisible", visible: false)
+      |> visible?
+      |> refute
+    end
+
+    test "handles elements that are not on the page", %{page: page} do
+      node = find(page, "#off-the-page", visible: false)
+
+      assert visible?(node) == false
+    end
+
+    @tag skip: "Unsuported in phantom"
+    test "handles obscured elements", %{page: page} do
+      node = find(page, "#obscured", visible: false)
+
+      assert visible?(node) == false
+    end
+  end
+
+  def visit_page(%{session: session, server: server}) do
     page =
       session
       |> visit(server.base_url <> "page_1.html")
 
-    page
-    |> find("#visible")
-    |> visible?
-    |> assert
-
-    page
-    |> find("#invisible", visible: false)
-    |> visible?
-    |> refute
+    {:ok, page: page}
   end
 end

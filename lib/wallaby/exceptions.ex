@@ -101,6 +101,30 @@ defmodule Wallaby.InvisibleElement do
   end
 end
 
+defmodule Wallaby.VisibleElement do
+  defexception [:message]
+
+  def exception(locator) do
+    %__MODULE__{message: msg(locator)}
+  end
+
+  def msg({:css, query}) do
+    base_msg("the css", query)
+  end
+  def msg({_, query}) do
+    base_msg("the locator", query)
+  end
+
+  def base_msg(locator, query) do
+    """
+    An element with #{locator}: '#{query}' should not have been visible but was.
+
+    If you expect the element to be visible to the user then you should
+    remove the `visible: false` option from your finder.
+    """
+  end
+end
+
 defmodule Wallaby.BadMetadata do
   defexception [:message]
 end
