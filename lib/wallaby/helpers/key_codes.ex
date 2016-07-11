@@ -1,9 +1,21 @@
 defmodule Wallaby.Helpers.KeyCodes do
+  @moduledoc """
+  Helper utility for converting key atoms into key codes sutiable to send over
+  the wire.
+  """
 
-  def json(keys) do
-    unicode_string = Enum.map(keys, fn(key)-> "\"#{code(key)}\"" end)
-    |> Enum.join(",")
-    "{\"value\": [#{unicode_string}]}"
+  @doc """
+  Encode a list of key codes to a usable json representation.
+  """
+  @spec json(list(atom)) :: String.t
+
+  def json(keys) when is_list(keys) do
+    unicode =
+      keys
+      |> Enum.map(&"\"#{code(&1)}\"")
+      |> Enum.join(",")
+
+    "{\"value\": [#{unicode}]}"
   end
 
   defp code(:null),      do: "\\uE000"
@@ -53,5 +65,4 @@ defmodule Wallaby.Helpers.KeyCodes do
   defp code(:divide),    do: "\\uE029"
 
   defp code(:command),   do: "\\uE03D"
-
 end
