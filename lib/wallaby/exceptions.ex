@@ -38,9 +38,9 @@ defmodule Wallaby.ElementNotFound do
   def msg({:fillable_field, query}), do: base_msg("a text input or textarea", query)
   def msg({:checkbox, query}), do: base_msg("a checkbox", query)
   def msg({:radio_button, query}), do: base_msg("a radio button", query)
-  def msg({:button, query}), do: base_msg("a button", query)
   def msg({:link, query}), do: base_msg("a link", query)
   def msg({:xpath, query}), do: base_msg("an element with an xpath", query)
+  def msg({:button, query}), do: base_msg("a button", query)
   def msg({_, query}), do: base_msg("an element", query)
 
   def base_msg(locator, query) do
@@ -171,6 +171,14 @@ defmodule Wallaby.BadHTML do
     doesn't match the id of any #{type(type)}.
 
     Make sure that id on your #{type(type)} is `id="#{for_text}"`.
+    """
+  end
+
+  def msg({:button_with_no_type, {_, button_locator}}) do
+    """
+    The text '#{button_locator}' matched a button but the button has no 'type' attribute.
+
+    You can fix this by including `type="[submit|reset|button|image]"` on the appropriate button.
     """
   end
 
