@@ -36,6 +36,15 @@ defmodule Wallaby.Actions.SelectTest do
     assert find(page, "#select-option-5") |> selected?
   end
 
+  test "choosing an option from a select box by label when for is id", %{page: page} do
+    refute find(page, "#select-option-2") |> selected?
+
+    page
+    |> select("Select With ID", option: "Option 2")
+
+    assert find(page, "#select-option-2") |> selected?
+  end
+
   test "throw an error if a label exists but does not have a for attribute", %{page: page} do
     assert_raise Wallaby.BadHTML, fn ->
       select(page, "Select with bad label", option: "Option")
