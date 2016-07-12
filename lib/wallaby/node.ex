@@ -112,6 +112,14 @@ defmodule Wallaby.Node do
   end
 
   @doc """
+  Clicks a link.
+  """
+  @spec click_link(t) :: Session.t
+  def click_link(locator) do
+    Driver.click_link(locator)
+  end
+
+  @doc """
   Gets the Node's text value.
   """
   @spec text(t) :: String.t

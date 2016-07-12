@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Links</title>
+    <script>
+			window.addEventListener('click', function (event) {
+				if(event.target && event.target.matches('a[data-submit=parent]')) {
+					var message = event.target.getAttribute('data-confirm');
+					if (message === null || confirm(message)) {
+						event.target.parentNode.submit();
+					};
+					event.preventDefault();
+					return false;
+				}
+			}, false);
+    </script>
+  </head>
+  <body>
+    <a href="index.html">Index</a>
+    <a href="index.html" id="id_link">ID Link</a>
+
+    <form action="index.html" class="link" method="post">
+      <input name="_method" value="delete" type="hidden">
+      <a data-submit="parent" href="#" rel="nofollow">Phoenix Method Link</a>
+    </form>
+
+    <a href="links.html">Same Page</a>
+  </body>
+</html>
