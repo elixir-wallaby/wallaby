@@ -152,7 +152,16 @@ defmodule Wallaby.Session do
   end
 
   @doc """
-  Sends a list of key strokes to active element
+  Sends a list of key strokes to active element. Keys should be provided as a
+  list of atoms, which are automatically converted into the corresponding key
+  codes.
+
+  For a list of available key codes see `Wallaby.Helpers.KeyCodes`.
+
+  ## Example
+
+      iex> Wallaby.Session.send_keys(session, [:enter])
+      iex> Wallaby.Session.send_keys(session, [:shift, :enter])
   """
   @spec send_keys(t, list(atom)) :: t
 
