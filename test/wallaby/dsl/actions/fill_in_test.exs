@@ -23,6 +23,13 @@ defmodule Wallaby.Actions.FillInTest do
     assert find(page, "#name_field") |> has_value?("Chris")
   end
 
+  test "fill_in accepts numbers", %{page: page} do
+    page
+    |> fill_in("password", with: 1234)
+
+    assert find(page, "#password_field") |> has_value?("1234")
+  end
+
   test "filling in multiple inputs", %{page: page} do
     page
     |> fill_in("name", with: "Alex")
