@@ -63,6 +63,9 @@ defmodule Wallaby.DSL.Actions do
 
     parent
   end
+  def fill_in(parent, locator, [with: value]=opts) when is_number(value) do
+    fill_in(parent, locator,  Keyword.merge(opts, [with: to_string(value)]))
+  end
 
   @doc """
   Chooses a radio button based on id, label text, or name.
