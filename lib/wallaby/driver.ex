@@ -75,6 +75,14 @@ defmodule Wallaby.Driver do
   end
 
   @doc """
+  Clicks a link
+  """
+  def click_link(%Node{session: session, id: id}) do
+    request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/click")
+    request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/submit")
+  end
+
+  @doc """
   Gets the text for an element
   """
   def text(node) do

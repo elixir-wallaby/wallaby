@@ -129,7 +129,7 @@ defmodule Wallaby.DSL.Actions do
   def click_link(parent, locator, opts\\[]) do
     parent
     |> Node.Query.link(locator, opts)
-    |> Node.click
+    |> Node.click_link
 
     parent
   end
