@@ -1,67 +1,48 @@
 defmodule Wallaby.Node.QueryTest do
   use Wallaby.SessionCase, async: true
 
-  setup %{session: session, server: server} do
-    page =
-      session
-      |> visit(server.base_url <> "forms.html")
+  alias Wallaby.Node
+  alias Wallaby.Node.Query
 
-    {:ok, page: page}
-  end
+  describe "build_query/3" do
+    test "assigns the parent of the query" do
+      parent = %Node{}
+      locator = {:css, ".user"}
+      query = Query.build_query(parent, locator, [])
 
-  test "find_field/3 checks for labels without for attributes", %{page: page} do
-    assert_raise Wallaby.BadHTML, fn ->
-      fill_in(page, "Input with bad label", with: "Test")
+      assert query.parent == parent
     end
-  end
 
-  test "find_field/3 checks for mismatched ids on labels", %{page: page} do
-    assert_raise Wallaby.BadHTML, fn ->
-      fill_in(page, "Input with bad id", with: "Test")
+    test "builds the correct locator" do
+      parent = %Node{}
+      locator = {:css, ".user"}
+      query = Query.build_query(parent, locator, [])
+
+      assert query.locator == locator
     end
-  end
 
-  test "find returns not found if the element could not be found", %{page: page} do
-    assert_raise Wallaby.ElementNotFound, "Could not find a button that matched: 'Test Button'\n", fn ->
-      click_on page, "Test Button"
+    test "merges default conditions" do
+      parent = %Node{}
+      locator = {:css, ".user"}
+      query = Query.build_query(parent, locator, [])
+
+      assert query.conditions == [visible: true, count: 1]
     end
-  end
 
-  test "find returns not found if the css could not be found", %{page: page} do
-    assert_raise Wallaby.ElementNotFound, "Could not find an element with the css that matched: '.test-css'\n", fn ->
-      find page, ".test-css"
+    test "doesn't override user specified conditions" do
+      parent = %Node{}
+      locator = {:css, ".user"}
+      query = Query.build_query(parent, locator, [visible: false, count: :any])
+
+      assert query.conditions == [visible: false, count: :any]
     end
-  end
 
-  test "find returns not found if the xpath could not be found", %{page: page} do
-    assert_raise Wallaby.ElementNotFound, "Could not find an element with an xpath that matched: '//test-element'\n", fn ->
-      find page, {:xpath, "//test-element"}
-    end
-  end
+    test "defaults to no errors" do
+      parent = %Node{}
+      locator = {:css, ".user"}
+      query = Query.build_query(parent, locator, [visible: false, count: :any])
 
-  test "find/3 finds invisible elements", %{session: session, server: server} do
-    page =
-      session
-      |> visit(server.base_url <> "page_1.html")
-
-    assert find(page, "#invisible", visible: false)
-  end
-
-  test "find/3 throws errors if element should not be visible", %{session: session, server: server} do
-    page =
-      session
-      |> visit(server.base_url <> "page_1.html")
-
-    assert_raise Wallaby.VisibleElement, fn ->
-      find(page, "#visible", visible: false)
-    end
-  end
-
-  describe "button/3" do
-    test "throws an error if the button does not include a valid type attribute", %{page: page} do
-      assert_raise Wallaby.BadHTML, fn ->
-        Wallaby.Node.Query.button(page, "button without type", [])
-      end
+      assert query.errors == []
     end
   end
 end

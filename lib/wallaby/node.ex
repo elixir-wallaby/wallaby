@@ -3,16 +3,17 @@ defmodule Wallaby.Node do
   Common functionality for interacting with DOM nodes.
   """
 
-  defstruct [:session, :id, :query]
+  defstruct [:url, :session_url, :parent, :id, screenshots: []]
 
+  @type url :: String.t
+  @type query :: String.t
   @type locator :: Session.t | t
-  @type query :: String.t | {atom, String.t}
   @type t :: %__MODULE__{
-    session: Session.t,
+    session_url: url,
+    url: url,
     id: String.t,
-    query: query
+    screenshots: list,
   }
-
 
   alias __MODULE__
   alias Wallaby.Driver
@@ -67,6 +68,7 @@ defmodule Wallaby.Node do
 
   def clear(node) do
     Driver.clear(node)
+    node
   end
 
   @doc """
@@ -107,8 +109,9 @@ defmodule Wallaby.Node do
   """
   @spec click(t) :: Session.t
 
-  def click(locator) do
-    Driver.click(locator)
+  def click(node) do
+    Driver.click(node)
+    node
   end
 
   @doc """
@@ -228,7 +231,7 @@ defmodule Wallaby.Node do
     try do
       find_fn.()
     rescue
-      e in [Wallaby.ElementNotFound, Wallaby.AmbiguousMatch, Wallaby.ExpectationNotMet] ->
+      e in [Wallaby.ExpectationNotMet] ->
         current_time = :erlang.monotonic_time(:milli_seconds)
         if (current_time - start_time) < max_wait_time do
           :timer.sleep(25)
@@ -249,9 +252,6 @@ defimpl String.Chars, for: Wallaby.Node do
     stringify_query(node.query)
   end
 
-  def stringify_query({:css, locator}) do
-    locator
-  end
   def stringify_query({_, locator}) do
     locator
   end

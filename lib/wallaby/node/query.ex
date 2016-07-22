@@ -47,13 +47,47 @@ defmodule Wallaby.Node.Query do
 
   alias Wallaby.{Node, Driver, Session}
   alias Wallaby.XPath
+  alias __MODULE__
+
+  defstruct [
+    query: nil,
+    parent: nil,
+    locator: nil,
+    result: nil,
+    conditions: [],
+    errors: []
+  ]
 
   @default_max_wait_time 3_000
 
+  @type t :: %__MODULE__{
+    parent: parent,
+    locator: locator,
+    conditions: opts,
+    result: result,
+    errors: errors,
+  }
+
   @type parent :: Wallaby.Node.t | Wallaby.Session.t
   @type locator :: String.t | {atom(), String.t}
+  @type query :: {atom(), String.t}
   @type opts :: list()
   @type result :: list(Node.t) | Node.t
+  @type errors :: list()
+
+  @doc """
+  Builds a query struct to send to webdriver.
+  """
+  @spec build_query(parent, locator, opts) :: t
+  
+  def build_query(parent, locator, opts) do
+    %__MODULE__{
+      parent: parent,
+      locator: locator,
+      query: build_locator(locator),
+      conditions: build_conditions(opts),
+    }
+  end
 
   @doc """
   Finds a specific DOM node on the page based on a css selector. Blocks until
@@ -78,11 +112,10 @@ defmodule Wallaby.Node.Query do
     case find_element(parent, selector, opts) do
       {:ok, elements} ->
         elements
-      {:error, e} ->
-        cleanup(parent, e)
+      {:error, query} ->
+        handle_error(query)
     end
   end
-
 
   @doc """
   Finds all of the DOM nodes that match the css selector. If no elements are
@@ -102,8 +135,8 @@ defmodule Wallaby.Node.Query do
     case find_elements(parent, selector, opts) do
       {:ok, elements} ->
         elements
-      {:error, e} ->
-        cleanup(parent, e)
+      {:error, query} ->
+        handle_error(query)
     end
   end
 
@@ -121,7 +154,7 @@ defmodule Wallaby.Node.Query do
   end
 
   @doc """
-  Locates a radio button by its id, name, or label text.
+  Locates a radio button by its id, name, or label text.
 
   ## Options
 
@@ -134,7 +167,7 @@ defmodule Wallaby.Node.Query do
   end
 
   @doc """
-  Finds a checkbox field by its id, name, or label text.
+  Finds a checkbox field by its id, name, or label text.
 
   ## Options
 
@@ -147,7 +180,7 @@ defmodule Wallaby.Node.Query do
   end
 
   @doc """
-  Finds a select field by its id, name, or label text.
+  Finds a select field by its id, name, or label text.
 
   ## Options
 
@@ -160,7 +193,7 @@ defmodule Wallaby.Node.Query do
   end
 
   @doc """
-  Finds an option field by its option text.
+  Finds an option field by its option text.
 
   ## Options
 
@@ -173,7 +206,7 @@ defmodule Wallaby.Node.Query do
   end
 
   @doc """
-  Finds a button by its id, name, or label text.
+  Finds a button by its id, name, or label text.
 
   ## Options
 
@@ -186,7 +219,7 @@ defmodule Wallaby.Node.Query do
   end
 
   @doc """
-  Finds a link field by its id, name, or text. If the link contains an image
+  Finds a link field by its id, name, or text. If the link contains an image
   then it can find the link by the image's alt text.
 
   ## Options
@@ -203,61 +236,64 @@ defmodule Wallaby.Node.Query do
     case find_element(parent, query, opts) do
       {:ok, elements} ->
         elements
-      {:error, {:not_found, _}} ->
-        error = check_for_bad_html(parent, query)
-        cleanup(parent, error)
-      {:error, error} ->
-        cleanup(parent, error)
+      {:error, query} ->
+        query
+        |> check_for_bad_html
+        |> handle_error
     end
   end
 
   defp find_element(parent, locator, opts) do
-    query = build_query(locator)
+    query = build_query(parent, locator, opts)
 
     retry fn ->
-      parent
-      |> Driver.find_elements(query)
-      |> assert_visibility(locator, Keyword.get(opts, :visible, true))
-      |> assert_element_count(locator, Keyword.get(opts, :count, 1))
+      query
+      |> Driver.find_elements
+      |> assert_text
+      |> assert_visibility
+      |> assert_count
     end
   end
 
   defp find_elements(parent, locator, opts) do
-    query = build_query(locator)
+    query = build_query(parent, locator, opts)
 
-    parent
-    |> Driver.find_elements(query)
-    |> assert_visibility(query, Keyword.get(opts, :visible, true))
+    retry fn ->
+      query
+      |> Driver.find_elements
+      |> assert_text
+      |> assert_visibility
+    end
   end
 
-  defp check_for_bad_html(parent, {:button, locator}=query) do
+  defp check_for_bad_html(%Query{locator: {:button, locator}}=query) do
     buttons =
-      parent
+      query.parent
       |> all("button", [])
 
     cond do
       Enum.any?(buttons, &(missing_button_type?(&1) && matching_text?(&1, locator))) ->
-        {:button_with_no_type, query}
+        add_error(query, :button_with_no_type)
       true ->
-        {:not_found, query}
+        query
     end
   end
-  defp check_for_bad_html(parent, query) do
-    check_for_bad_labels(parent, query)
+  defp check_for_bad_html(query) do
+    check_for_bad_labels(query)
   end
 
-  defp check_for_bad_labels(parent, {_, locator}=query) do
+  defp check_for_bad_labels(%Query{parent: parent, locator: {_, text}}=query) do
     labels =
       parent
       |> all("label", [])
 
     cond do
-      Enum.any?(labels, &(missing_for?(&1) && matching_text?(&1, locator))) ->
-        {:label_with_no_for, query}
-      label=Enum.find(labels, &matching_text?(&1, locator)) ->
-        {:label_does_not_find_field, query, Node.attr(label, "for")}
+      Enum.any?(labels, &(missing_for?(&1) && matching_text?(&1, text))) ->
+        add_error(query, :label_with_no_for)
+      label=Enum.find(labels, &matching_text?(&1, text)) ->
+        add_error(query, {:label_does_not_find_field, Node.attr(label, "for")})
       true  ->
-        {:not_found, query}
+        add_error(query, :not_found)
     end
   end
 
@@ -275,86 +311,66 @@ defmodule Wallaby.Node.Query do
     Node.text(node) == locator
   end
 
-  defp assert_visibility(elements, query, visible) when is_list(elements) do
+  defp assert_text(%Query{result: nodes, conditions: opts}=query) do
+    text = Keyword.get(opts, :text)
+
+    if text do
+      %Query{query | result: Enum.filter(nodes, &matching_text?(&1, text))}
+    else
+      query
+    end
+  end
+
+  defp assert_visibility(%Query{result: nodes, conditions: opts}=query) do
+    visible = Keyword.get(opts, :visible)
+
     cond do
-      visible && Enum.all?(elements, &(Node.visible?(&1))) ->
-        {:ok, elements}
-      !visible && Enum.all?(elements, &(!Node.visible?(&1))) ->
-        {:ok, elements}
+      visible && Enum.all?(nodes, &(Node.visible?(&1))) ->
+        query
+      !visible && Enum.all?(nodes, &(!Node.visible?(&1))) ->
+        query
       visible ->
-        {:error, {:not_visible, query}}
+        add_error(query, :not_visible)
       !visible ->
-        {:error, {:visible, query}}
+        add_error(query, :visible)
     end
   end
 
-  defp assert_element_count({:ok, elements}, query, count) when is_list(elements) do
-    assert_count(elements, query, count)
-  end
-  defp assert_element_count(error, _query, _) do
-    error
+  defp assert_count(%Query{result: nodes, conditions: opts}=query) do
+    count = Keyword.get(opts, :count)
+
+    cond do
+      count == 1    && length(nodes) == 1 -> %Query{query | result: hd(nodes)}
+      count == :any && length(nodes) > 0  -> query
+      count == length(nodes)              -> query
+      count == 0    && length(nodes) > 0  -> add_error(query, :found)
+      length(nodes) == 0                  -> add_error(query, :not_found)
+      true                                -> add_error(query, :ambiguous)
+    end
   end
 
-  defp assert_count(elements, _query, :any) when length(elements) > 0 do
-    {:ok, elements}
-  end
-  defp assert_count([element], _query, 1) do
-    {:ok, element}
-  end
-  defp assert_count(elements, _query, count) when length(elements) == count do
-    {:ok, elements}
-  end
-  defp assert_count(elements, query, 0) when length(elements) > 0 do
-    {:error, {:found, query}}
-  end
-  defp assert_count([], query, _) do
-    {:error, {:not_found, query}}
-  end
-  defp assert_count(elements, query, count) do
-    {:error, {:ambiguous, query, elements, count}}
+  defp add_error(query, error) do
+    %Query{query | errors: [error | query.errors]}
   end
 
-  defp cleanup(parent, error) do
+  defp handle_error(query) do
     if Wallaby.screenshot_on_failure? do
-      Session.take_screenshot(parent)
+      Session.take_screenshot(query.parent)
     end
 
-    handle_error(error)
-  end
-
-  defp handle_error({:not_found, locator}) do
-    raise Wallaby.ElementNotFound, locator
-  end
-  defp handle_error({:ambiguous, locator, elements, count}) do
-    raise Wallaby.AmbiguousMatch, {locator, elements, count}
-  end
-  defp handle_error({:found, locator}) do
-    raise Wallaby.ElementFound, locator
-  end
-  defp handle_error({:visible, locator}) do
-    raise Wallaby.VisibleElement, locator
-  end
-  defp handle_error({:not_visible, locator}) do
-    raise Wallaby.InvisibleElement, locator
-  end
-  defp handle_error({:label_with_no_for, locator}) do
-    raise Wallaby.BadHTML, {:label_with_no_for, locator}
-  end
-  defp handle_error({:label_does_not_find_field, locator, for_text}) do
-    raise Wallaby.BadHTML, {:label_does_not_find_field, locator, for_text}
-  end
-  defp handle_error({:button_with_no_type, locator}) do
-    raise Wallaby.BadHTML, {:button_with_no_type, locator}
+    raise Wallaby.QueryError, query
   end
 
   defp retry(find_fn, start_time \\ :erlang.monotonic_time(:milli_seconds)) do
-    case find_fn.() do
-      {:ok, elements} ->
-        {:ok, elements}
-      {:error, e} ->
+    query = find_fn.()
+
+    cond do
+      query.errors == [] ->
+        {:ok, query.result}
+      true ->
         cond do
           max_time_exceeded?(start_time) -> retry(find_fn, start_time)
-          true                           -> {:error, e}
+          true                           -> {:error, query}
         end
     end
   end
@@ -367,13 +383,25 @@ defmodule Wallaby.Node.Query do
     Application.get_env(:wallaby, :max_wait_time, @default_max_wait_time)
   end
 
-  defp build_query({:css, query}), do: {:css, query}
-  defp build_query({:xpath, query}), do: {:xpath, query}
-  defp build_query({:link, query}), do: {:xpath, XPath.link(query)}
-  defp build_query({:button, query}), do: {:xpath, XPath.button(query)}
-  defp build_query({:fillable_field, query}), do: {:xpath, XPath.fillable_field(query)}
-  defp build_query({:checkbox, query}), do: {:xpath, XPath.checkbox(query)}
-  defp build_query({:radio_button, query}), do: {:xpath, XPath.radio_button(query)}
-  defp build_query({:option, query}), do: {:xpath, XPath.option(query)}
-  defp build_query({:select, query}), do: {:xpath, XPath.select(query)}
+  defp build_locator({:css, query}), do: {:css, query}
+  defp build_locator({:xpath, query}), do: {:xpath, query}
+  defp build_locator({:link, query}), do: {:xpath, XPath.link(query)}
+  defp build_locator({:button, query}), do: {:xpath, XPath.button(query)}
+  defp build_locator({:fillable_field, query}), do: {:xpath, XPath.fillable_field(query)}
+  defp build_locator({:checkbox, query}), do: {:xpath, XPath.checkbox(query)}
+  defp build_locator({:radio_button, query}), do: {:xpath, XPath.radio_button(query)}
+  defp build_locator({:option, query}), do: {:xpath, XPath.option(query)}
+  defp build_locator({:select, query}), do: {:xpath, XPath.select(query)}
+
+  defp build_conditions(conditions) do
+    default_conditions
+    |> Keyword.merge(conditions)
+  end
+
+  defp default_conditions do
+    [
+      visible: true,
+      count: 1,
+    ]
+  end
 end

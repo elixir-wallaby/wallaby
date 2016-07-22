@@ -216,4 +216,10 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
   test "waits until the button appears", %{page: page} do
     assert click_on(page, "Hidden Button")
   end
+
+  test "throws an error if the button does not include a valid type attribute", %{page: page} do
+    assert_raise Wallaby.QueryError, fn ->
+      click_button(page, "button without type", [])
+    end
+  end
 end

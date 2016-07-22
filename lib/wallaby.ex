@@ -41,6 +41,6 @@ defmodule Wallaby do
   end
 
   defp default_pool_size do
-    :erlang.system_info(:schedulers_online) * 2
+    :erlang.system_info(:schedulers_online)
   end
 end

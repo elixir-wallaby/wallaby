@@ -8,7 +8,7 @@ defmodule Wallaby.Session do
   ## Fields
 
   * `id` - The session id generated from the webdriver
-  * `base_url` - The base url for the application under test.
+  * `session_url` - The base url for the application under test.
   * `server` - The specific webdriver server that the session is running in.
 
   ## Multiple sessions
@@ -38,16 +38,16 @@ defmodule Wallaby.Session do
 
   @type t :: %__MODULE__{
     id: integer(),
-    base_url: String.t,
+    session_url: String.t,
+    url: String.t,
     server: pid(),
     screenshots: list
   }
 
-  alias __MODULE__
   alias Wallaby.Driver
   alias Wallaby.Node
 
-  defstruct [:id, :base_url, :server, screenshots: []]
+  defstruct [:id, :url, :session_url, :server, screenshots: []]
 
   @doc """
   Changes the current page to the provided route.
@@ -76,23 +76,17 @@ defmodule Wallaby.Session do
   Screenshots are saved to a "screenshots" directory in the same directory the
   tests are run in.
   """
-  @spec take_screenshot(t) :: t
+  @spec take_screenshot(Node.t | t) :: Node.t | t
 
-  def take_screenshot(%Node{session: session}=node) do
-    session = take_screenshot(session)
-
-    %Node{node | session: session}
-  end
-
-  def take_screenshot(%Session{}=session) do
+  def take_screenshot(screenshotable) do
     image_data =
-      session
+      screenshotable
       |> Driver.take_screenshot
 
     path = path_for_screenshot
     File.write! path, image_data
 
-    Map.update(session, :screenshots, [], &(&1 ++ [path]))
+    Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
   end
 
   @doc """

@@ -47,17 +47,21 @@ defmodule Wallaby.Actions.FillInTest do
     assert find(page, "#name_field") |> has_value?("Alex")
   end
 
-  test "throw an error if a label exists but does not have a for attribute", %{page: page} do
-    bad_form =
-      page
-      |> find(".bad-form")
+  test "waits until the input appears", %{page: page} do
+    assert fill_in(page, "Hidden Text Field", with: "Test Label Text")
+  end
 
-    assert_raise Wallaby.BadHTML, fn ->
-      fill_in(bad_form, "Input with bad label", with: "Test Value")
+  test "checks for labels without for attributes", %{page: page} do
+    msg = Wallaby.QueryError.error_message(:label_with_no_for, %{locator: {:fillable_field, "Input with bad label"}})
+    assert_raise Wallaby.QueryError, msg, fn ->
+      fill_in(page, "Input with bad label", with: "Test")
     end
   end
 
-  test "waits until the input appears", %{page: page} do
-    assert fill_in(page, "Hidden Text Field", with: "Test Label Text")
+  test "checks for mismatched ids on labels", %{page: page} do
+    msg = Wallaby.QueryError.error_message({:label_does_not_find_field, "input-with-bad-id"}, %{locator: {:fillable_field, "Input with bad id"}})
+    assert_raise Wallaby.QueryError, msg, fn ->
+      fill_in(page, "Input with bad id", with: "Test")
+    end
   end
 end

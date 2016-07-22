@@ -63,7 +63,7 @@ defmodule Wallaby.DSL.Actions.CheckTest do
   end
 
   test "throw an error if a label exists but does not have a for attribute", %{page: page} do
-    assert_raise Wallaby.BadHTML, fn ->
+    assert_raise Wallaby.QueryError, fn ->
       check(page, "Checkbox with bad label")
     end
   end
