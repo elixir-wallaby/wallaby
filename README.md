@@ -71,6 +71,12 @@ Wallaby requires PhantomJS to work. You can install PhantomJS through NPM or you
 $ npm install -g phantomjs
 ```
 
+You can pass arguments to PhantomJS through the `phantomjs_args` config setting, e.g.:
+
+```elixir
+config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
+```
+
 ### Writing tests
 
 Its easiest to add Wallaby to your test suite by creating a new Case Template:
