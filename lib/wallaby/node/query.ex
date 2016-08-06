@@ -43,6 +43,7 @@ defmodule Wallaby.Node.Query do
 
     * `:count` - The number of elements that should be found (default: 1).
     * `:visible` - Determines if the query should return only visible elements (default: true).
+    * `:text` - Text that should be found inside the element.
   """
 
   alias Wallaby.{Node, Driver, Session}
@@ -79,7 +80,7 @@ defmodule Wallaby.Node.Query do
   Builds a query struct to send to webdriver.
   """
   @spec build_query(parent, locator, opts) :: t
-  
+
   def build_query(parent, locator, opts) do
     %__MODULE__{
       parent: parent,
