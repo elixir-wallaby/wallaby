@@ -56,14 +56,14 @@ defmodule Wallaby.DSL.Actions do
   """
   @spec fill_in(parent, locator, opts) :: parent
 
-  def fill_in(parent, locator, [with: value]=opts) when is_binary(value) do
+  def fill_in(parent, locator, [{:with, value} | _]=opts) when is_binary(value) do
     parent
     |> Node.Query.fillable_field(locator, opts)
     |> Node.fill_in(with: value)
 
     parent
   end
-  def fill_in(parent, locator, [with: value]=opts) when is_number(value) do
+  def fill_in(parent, locator, [{:with, value} | _]=opts) when is_number(value) do
     fill_in(parent, locator,  Keyword.merge(opts, [with: to_string(value)]))
   end
 

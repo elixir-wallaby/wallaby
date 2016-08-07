@@ -12,7 +12,7 @@ defmodule Wallaby.NodeTest do
   end
 
   test "finding nonexistent elements raises an exception", %{server: server, session: session} do
-    assert_raise Wallaby.ElementNotFound, fn ->
+    assert_raise Wallaby.QueryError, fn ->
       session
       |> visit(server.base_url)
       |> find("#not-there")
@@ -20,7 +20,7 @@ defmodule Wallaby.NodeTest do
   end
 
   test "ambiguous queries raise an exception", %{server: server, session: session} do
-    assert_raise Wallaby.AmbiguousMatch, fn ->
+    assert_raise Wallaby.QueryError, fn ->
       session
       |> visit(server.base_url)
       |> find("a")
@@ -153,7 +153,7 @@ defmodule Wallaby.NodeTest do
     session
     |> visit(server.base_url <> "page_1.html")
 
-    assert_raise Wallaby.ElementNotFound, fn ->
+    assert_raise Wallaby.QueryError, fn ->
       find(session, ".not-there", count: :any)
     end
 
@@ -177,7 +177,7 @@ defmodule Wallaby.NodeTest do
   end
 
   test "has_no_css/2 raises error if the css is found", %{session: session, server: server} do
-    assert_raise Wallaby.ElementFound, fn ->
+    assert_raise Wallaby.QueryError, fn ->
       session
       |> visit(server.base_url <> "nesting.html")
       |> has_no_css?(".user")
@@ -231,7 +231,7 @@ defmodule Wallaby.NodeTest do
     session
     |> visit(server.base_url <> "page_1.html")
 
-    assert_raise Wallaby.InvisibleElement, fn ->
+    assert_raise Wallaby.QueryError, fn ->
       find(session, "#invisible", count: :any)
     end
 

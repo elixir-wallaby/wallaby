@@ -1,128 +1,170 @@
-defmodule Wallaby.AmbiguousMatch do
+defmodule Wallaby.QueryError do
   defexception [:message]
 
-  def exception({locator, elements, count}) do
-    %__MODULE__{message: msg(locator, elements, count)}
+  alias Wallaby.Node.Query
+
+  @doc false
+  @spec exception(Query.t) :: Exception.t
+
+  def exception(query) do
+    msg =
+      query
+      |> errors
+      |> hd
+
+    %__MODULE__{message: msg}
   end
 
-  def msg({:css, query}, elements, count) do
-    base_msg("the css", query, elements, count)
-  end
-  def msg({_, query}, elements, count) do
-    base_msg("the locator", query, elements, count)
+  @doc """
+  Generates an error message based on errors present in the query struct.
+  If there are multiple errors in a query then we'll only show the first one.
+  Because of this errors always need to be in order from most specific to most
+  generic. That way we always show the most specific error to the user.
+  """
+  @spec errors(Query.t) :: String.t
+
+  def errors(%{errors: errors}=query) do
+    errors
+    |> hd
+    |> error_message(query)
+    |> List.wrap
   end
 
-  def base_msg(locator, query, elements, count) do
+  @doc """
+  Compose an error message based on the error type and query information
+  """
+  @spec error_message(atom(), %{}) :: String.t
+
+  def error_message(:not_found, %{locator: locator, conditions: opts}) do
+    msg = "Could not find any #{visibility(opts)} #{method(locator)} that matched: '#{expression(locator)}'"
+    [msg] ++ conditions(opts)
+    |> Enum.join(" and ")
+  end
+  def error_message(:found, %{locator: locator}) do
     """
-    The #{locator}: '#{query}' is ambiguous. It was found #{times(length(elements))}
-    but it should have been found #{times(count)}.
+    The element with #{method locator}: '#{expression locator}' should not have been found but was
+    found.
+    """
+  end
+  def error_message(:visible, %{locator: locator}) do
+    """
+    The #{method(locator)} that matched: '#{expression(locator)}' should not have been visible but was.
+
+    If you expect the element to be visible to the user then you should
+    remove the `visible: false` option from your finder.
+    """
+  end
+  def error_message(:ambiguous, %{locator: locator, result: elements, conditions: opts}) do
+    count = Keyword.get(opts, :count)
+
+    """
+    The #{method(locator)} that matched: '#{expression(locator)}' was found but
+    the results are ambiguous. It was found #{times(length(elements))} but it
+    should have been found #{times(count)}.
 
     If you expect to find the selector #{times(length(elements))} then you
     should include the `count: #{length(elements)}` option in your finder.
     """
   end
-
-  defp times(1), do: "1 time"
-  defp times(count), do: "#{count} times"
-end
-
-defmodule Wallaby.ElementNotFound do
-  defexception [:message]
-
-  def exception(locator) do
-    %__MODULE__{message: msg(locator)}
-  end
-
-  def msg({:css, query}), do: base_msg("an element with the css", query)
-  def msg({:select, query}), do: base_msg("a select", query)
-  def msg({:fillable_field, query}), do: base_msg("a text input or textarea", query)
-  def msg({:checkbox, query}), do: base_msg("a checkbox", query)
-  def msg({:radio_button, query}), do: base_msg("a radio button", query)
-  def msg({:link, query}), do: base_msg("a link", query)
-  def msg({:xpath, query}), do: base_msg("an element with an xpath", query)
-  def msg({:button, query}), do: base_msg("a button", query)
-  def msg({_, query}), do: base_msg("an element", query)
-
-  def base_msg(locator, query) do
+  def error_message(:not_visible, %{locator: locator}) do
     """
-    Could not find #{locator} that matched: '#{query}'
-    """
-  end
-end
-
-defmodule Wallaby.ElementFound do
-  defexception [:message]
-
-  def exception(locator) do
-    %__MODULE__{message: msg(locator)}
-  end
-
-  def msg({:css, query}) do
-    base_msg("the css", query)
-  end
-  def msg({_, query}) do
-    base_msg("the locator", query)
-  end
-
-  def base_msg(locator, query) do
-    """
-    The element with #{locator}: '#{query}' should not have been found but was
-    found.
-    """
-  end
-end
-
-defmodule Wallaby.ExpectationNotMet do
-  defexception [:message]
-end
-
-defmodule Wallaby.InvisibleElement do
-  defexception [:message]
-
-  def exception(locator) do
-    %__MODULE__{message: msg(locator)}
-  end
-
-  def msg({:css, query}) do
-    base_msg("the css", query)
-  end
-  def msg({_, query}) do
-    base_msg("the locator", query)
-  end
-
-  def base_msg(locator, query) do
-    """
-    An element with #{locator}: '#{query}' was found but its not visible to a
+    The #{method locator}: '#{expression locator}' was found but its not visible to a
     real user.
 
     If you expect the element to be invisible to the user then you should
     include the `visible: false` option in your finder.
     """
   end
+  def error_message(:label_with_no_for, %{locator: locator}) do
+    """
+    The text '#{expression locator}' matched a label but the label has no 'for'
+    attribute and can't be used to find the correct #{method(locator)}.
+
+    You can fix this by including the `for="YOUR_INPUT_ID"` attribute on the
+    appropriate label.
+    """
+  end
+  def error_message({:label_does_not_find_field, for_text}, %{locator: locator}) do
+    """
+    The text '#{expression locator}' matched a label but the label's 'for' attribute
+    doesn't match the id of any #{method(locator)}.
+
+    Make sure that id on your #{method(locator)} is `id="#{for_text}"`.
+    """
+  end
+  def error_message(:button_with_no_type, %{locator: locator}) do
+    """
+    The text '#{expression locator}' matched a button but the button has no 'type' attribute.
+
+    You can fix this by including `type="[submit|reset|button|image]"` on the appropriate button.
+    """
+  end
+
+  @doc """
+  Extracts the locator method from the locator and converts it into a human
+  readable format
+  """
+  @spec method({atom(), any()}) :: String.t
+
+  def method({:css, _}), do: "element with css"
+  def method({:select, _}), do: "select"
+  def method({:fillable_field, _}), do: "text input or textarea"
+  def method({:checkbox, _}), do: "checkbox"
+  def method({:radio_button, _}), do: "radio button"
+  def method({:link, _}), do: "link"
+  def method({:xpath, _}), do: "element with an xpath"
+  def method({:button, _}), do: "button"
+  def method(_), do: "element"
+
+  @doc """
+  Extracts the expression from the locator.
+  """
+  @spec expression({any(), String.t}) :: String.t
+
+  def expression({_, expr}) when is_binary(expr), do: expr
+
+  @doc """
+  Generates failure conditions based on query conditions.
+  """
+  @spec conditions(Keyword.t) :: list(String.t)
+
+  def conditions(opts) do
+    opts
+    |> Keyword.delete(:visible)
+    |> Keyword.delete(:count)
+    |> Enum.map(&condition/1)
+    |> Enum.reject(& &1 == nil)
+  end
+
+  @doc """
+  Converts a condition into a human readable failure message.
+  """
+  @spec condition({atom(), String.t}) :: String.t | nil
+
+  def condition({:text, text}) when is_binary(text) do
+    "text: '#{text}'"
+  end
+  def condition(_), do: nil
+
+  @doc """
+  Converts the visibilty attribute into a human readable form.
+  """
+  @spec visibility(Keyword.t) :: String.t
+
+  def visibility(opts) do
+    if Keyword.get(opts, :visible) do
+      "visible"
+    else
+      "invisible"
+    end
+  end
+
+  defp times(1), do: "1 time"
+  defp times(count), do: "#{count} times"
 end
 
-defmodule Wallaby.VisibleElement do
+defmodule Wallaby.ExpectationNotMet do
   defexception [:message]
-
-  def exception(locator) do
-    %__MODULE__{message: msg(locator)}
-  end
-
-  def msg({:css, query}) do
-    base_msg("the css", query)
-  end
-  def msg({_, query}) do
-    base_msg("the locator", query)
-  end
-
-  def base_msg(locator, query) do
-    """
-    An element with #{locator}: '#{query}' should not have been visible but was.
-
-    If you expect the element to be visible to the user then you should
-    remove the `visible: false` option from your finder.
-    """
-  end
 end
 
 defmodule Wallaby.BadMetadata do
@@ -146,45 +188,4 @@ defmodule Wallaby.NoBaseUrl do
 
     %__MODULE__{message: msg}
   end
-end
-
-defmodule Wallaby.BadHTML do
-  defexception [:message]
-
-  def exception(error) do
-    %__MODULE__{message: msg(error)}
-  end
-
-  def msg({:label_with_no_for, {type, label_text}}) do
-    """
-    The text '#{label_text}' matched a label but the label has no 'for'
-    attribute and can't be used to find the correct #{type(type)}.
-
-    You can fix this by including the `for="YOUR_INPUT_ID"` attribute on the
-    appropriate label.
-    """
-  end
-
-  def msg({:label_does_not_find_field, {type, label_text}, for_text}) do
-    """
-    The text '#{label_text}' matched a label but the label's 'for' attribute
-    doesn't match the id of any #{type(type)}.
-
-    Make sure that id on your #{type(type)} is `id="#{for_text}"`.
-    """
-  end
-
-  def msg({:button_with_no_type, {_, button_locator}}) do
-    """
-    The text '#{button_locator}' matched a button but the button has no 'type' attribute.
-
-    You can fix this by including `type="[submit|reset|button|image]"` on the appropriate button.
-    """
-  end
-
-  def type(:radio_button), do: "radio button"
-  def type(:fillable_field), do: "text input or textarea"
-  def type(:checkbox), do: "checkbox"
-  def type(:select), do: "select"
-  def type(_), do: "field"
 end

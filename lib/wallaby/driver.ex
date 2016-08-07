@@ -5,6 +5,7 @@ defmodule Wallaby.Driver do
 
   alias Wallaby.Session
   alias Wallaby.Node
+  alias Wallaby.Node.Query
 
   @type method :: :post | :get | :delete
   @type url :: String.t
@@ -25,7 +26,13 @@ defmodule Wallaby.Driver do
     params = %{desiredCapabilities: capabilities}
 
     response = request(:post, "#{base_url}session", params)
-    session = %Wallaby.Session{base_url: base_url, id: response["sessionId"], server: server}
+    id = response["sessionId"]
+    session = %Wallaby.Session{
+      session_url: base_url <> "session/#{id}",
+      url: base_url <> "session/#{id}",
+      id: id,
+      server: server
+    }
     {:ok, session}
   end
 
@@ -35,50 +42,51 @@ defmodule Wallaby.Driver do
   """
   # @spec find_elements(Locator.t, query) :: t
 
-  def find_elements(%Session{base_url: base_url, id: id}=session, query) do
-    request(:post, "#{base_url}session/#{id}/elements", to_params(query))
-    |> Map.get("value")
-    |> Enum.map(&cast_as_node({session, &1, query}))
+  def find_elements(%Query{parent: parent, query: q}=query) do
+    nodes =
+      request(:post, parent.url <> "/elements", to_params(q))
+      |> Map.get("value")
+      |> Enum.map(& cast_as_node(parent, &1) )
+
+    %Query{ query | result: nodes }
   end
 
-  def find_elements(%Node{id: id, session: session}, query) do
-    request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/elements", to_params(query))
-    |> Map.get("value")
-    |> Enum.map(&cast_as_node({session, &1, query}))
-  end
-
-  defp cast_as_node({session, %{"ELEMENT" => id}, query}) do
-    %Wallaby.Node{id: id, session: session, query: query}
+  defp cast_as_node(parent, %{"ELEMENT" => id}) do
+    %Wallaby.Node{
+      id: id,
+      session_url: parent.session_url,
+      url: parent.session_url <> "/element/#{id}",
+      parent: parent,
+    }
   end
 
   @doc """
   Sets the value of an element.
   """
-  def set_value(%Node{session: session, id: id}, value) do
-    request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/value", %{value: [value]})
+  def set_value(%Node{url: url}, value) do
+    request(:post, "#{url}/value", %{value: [value]})
   end
 
   @doc """
   Clears the value in an element
   """
   # @spec clear(Locator.t, query) :: t
-  def clear(%Node{session: session, id: id}=node) do
-    request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/clear")
-    node
+  def clear(%Node{url: url}) do
+    request(:post, "#{url}/clear")
   end
 
   @doc """
   Clicks an element
   """
-  def click(%Node{session: session, id: id}) do
-    request(:post, "#{session.base_url}session/#{session.id}/element/#{id}/click")
+  def click(%Node{url: url}) do
+    request(:post, "#{url}/click")
   end
 
   @doc """
   Gets the text for an element
   """
   def text(node) do
-    resp = request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/text")
+    resp = request(:get, "#{node.url}/text")
     resp["value"]
   end
 
@@ -86,7 +94,7 @@ defmodule Wallaby.Driver do
   Gets the title of the current page.
   """
   def page_title(session) do
-    resp = request(:get, "#{session.base_url}session/#{session.id}/title")
+    resp = request(:get, "#{session.url}/title")
     resp["value"]
   end
 
@@ -94,15 +102,15 @@ defmodule Wallaby.Driver do
   Gets the value of an elements attribute
   """
   def attribute(node, name) do
-    response = request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/attribute/#{name}")
-    response["value"]
+    resp = request(:get, "#{node.url}/attribute/#{name}")
+    resp["value"]
   end
 
   @doc """
   Visits a specific page.
   """
   def visit(session, path) do
-    request(:post, "#{session.base_url}session/#{session.id}/url", %{url: path})
+    request(:post, "#{session.url}/url", %{url: path})
     session
   end
 
@@ -110,7 +118,7 @@ defmodule Wallaby.Driver do
   Gets the current url.
   """
   def current_url(session) do
-    resp = request(:get, "#{session.base_url}session/#{session.id}/url")
+    resp = request(:get, "#{session.url}/url")
     resp["value"]
   end
 
@@ -121,7 +129,7 @@ defmodule Wallaby.Driver do
   For options selects it returns the selected option
   """
   def selected(node) do
-    response = request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/selected")
+    response = request(:get, "#{node.url}/selected")
     response["value"]
   end
 
@@ -132,7 +140,7 @@ defmodule Wallaby.Driver do
   specification.
   """
   def displayed(node) do
-    response = request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/displayed")
+    response = request(:get, "#{node.url}/displayed")
     response["value"]
   end
 
@@ -142,7 +150,7 @@ defmodule Wallaby.Driver do
   This is non-standard and only works in Phantom.
   """
   def size(node) do
-    response = request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/size")
+    response = request(:get, "#{node.url}/size")
     response["value"]
   end
 
@@ -152,7 +160,7 @@ defmodule Wallaby.Driver do
   This is based on the standard but currently is un-supported by Phantom.
   """
   def rect(node) do
-    response = request(:get, "#{node.session.base_url}session/#{node.session.id}/element/#{node.id}/rect")
+    response = request(:get, "#{node.url}/rect")
     response["value"]
   end
 
@@ -160,7 +168,7 @@ defmodule Wallaby.Driver do
   Takes a screenshot.
   """
   def take_screenshot(session) do
-    request(:get, "#{session.base_url}session/#{session.id}/screenshot")
+    request(:get, "#{session.url}/screenshot")
     |> Map.get("value")
     |> :base64.decode
   end
@@ -171,7 +179,7 @@ defmodule Wallaby.Driver do
   def set_window_size(session, width, height) do
     request(
       :post,
-      "#{session.base_url}session/#{session.id}/window/#{window_handle(session)}/size",
+      "#{session.url}/window/#{window_handle(session)}/size",
       %{width: width, height: height})
     session
   end
@@ -180,9 +188,7 @@ defmodule Wallaby.Driver do
   Gets the size of the window
   """
   def get_window_size(session) do
-    request(
-      :get,
-      "#{session.base_url}session/#{session.id}/window/#{window_handle(session)}/size")
+    request(:get, "#{session.url}/window/#{window_handle(session)}/size")
     |> Map.get("value")
   end
 
@@ -191,10 +197,7 @@ defmodule Wallaby.Driver do
   and optionally a list of arguments available in the script via `arguments`
   """
   def execute_script(session, script, arguments \\ []) do
-    request(
-      :post,
-      "#{session.base_url}session/#{session.id}/execute",
-      %{script: script, args: arguments})
+    request(:post, "#{session.url}/execute", %{script: script, args: arguments})
     |> Map.get("value")
   end
 
@@ -202,25 +205,18 @@ defmodule Wallaby.Driver do
   Sends a list of key strokes to active element
   """
   def send_keys(session, keys) when is_list(keys) do
-    request(
-      :post,
-      "#{session.base_url}session/#{session.id}/keys",
-      Wallaby.Helpers.KeyCodes.json(keys),
-      encode_json: false)
+    request(:post, "#{session.url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false)
   end
 
   @doc """
   Sends text characters to the active element
   """
   def send_text(session, text) do
-    request(
-      :post,
-      "#{session.base_url}session/#{session.id}/keys",
-      %{value: [text]})
+    request(:post, "#{session.url}/keys", %{value: [text]})
   end
 
   defp window_handle(session) do
-    request(:get, "#{session.base_url}session/#{session.id}/window_handle")
+    request(:get, "#{session.url}/window_handle")
     |> Map.get("value")
   end
 

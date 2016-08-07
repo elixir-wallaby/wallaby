@@ -45,7 +45,7 @@ defmodule Wallaby.Actions.ChooseTest do
       page
       |> find(".bad-form")
 
-    assert_raise Wallaby.BadHTML, fn ->
+    assert_raise Wallaby.QueryError, fn ->
       choose(bad_form, "Radio with bad label")
     end
   end

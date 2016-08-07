@@ -174,6 +174,18 @@ all(session, ".user")
 
 By default Wallaby will block until it can `find` the matching element. This is used to keep asynchronous tests in sync (as discussed below).
 
+Nodes can be found by their inner text.
+
+```elixir
+# <div class="user">
+#   <span class="name">
+#     Chris K
+#   </span>
+# </div>
+
+find(page, ".user", text: "Chris K")
+```
+
 ### Scoping
 
 Finders can be scoped to a specific node by chaining finds together:

@@ -46,7 +46,7 @@ defmodule Wallaby.Actions.SelectTest do
   end
 
   test "throw an error if a label exists but does not have a for attribute", %{page: page} do
-    assert_raise Wallaby.BadHTML, fn ->
+    assert_raise Wallaby.QueryError, fn ->
       select(page, "Select with bad label", option: "Option")
     end
   end

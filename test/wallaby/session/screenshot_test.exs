@@ -16,14 +16,19 @@ defmodule Wallaby.Session.ScreenshotTest do
       |> find("#header")
       |> take_screenshot
 
-    screenshots =
+    parent_screenshots =
       node
-      |> Map.get(:session)
+      |> Map.get(:parent)
       |> Map.get(:screenshots)
 
-    assert Enum.count(screenshots) == 2
+    node_screenshots =
+      node
+      |> Map.get(:screenshots)
 
-    Enum.each(screenshots, fn(path) ->
+    assert Enum.count(node_screenshots) == 1
+    assert Enum.count(parent_screenshots) == 1
+
+    Enum.each(node_screenshots ++ parent_screenshots, fn(path) ->
       assert File.exists? path
     end)
 
@@ -50,14 +55,14 @@ defmodule Wallaby.Session.ScreenshotTest do
   end
 
   test "automatically taking screenshots on failure", %{page: page} do
-    assert_raise Wallaby.ElementNotFound, fn ->
+    assert_raise Wallaby.QueryError, fn ->
       find(page, ".some-selector")
     end
     refute File.exists?("#{File.cwd!}/screenshots")
 
     Application.put_env(:wallaby, :screenshot_on_failure, true)
 
-    assert_raise Wallaby.ElementNotFound, fn ->
+    assert_raise Wallaby.QueryError, fn ->
       find(page, ".some-selector")
     end
     assert File.exists?("#{File.cwd!}/screenshots")

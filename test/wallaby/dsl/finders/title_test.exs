@@ -1,4 +1,4 @@
-defmodule Wallaby.Finders.TitleTest do
+defmodule Wallaby.DSL.Finders.TitleTest do
   use Wallaby.SessionCase, async: true
   use Wallaby.DSL
 
