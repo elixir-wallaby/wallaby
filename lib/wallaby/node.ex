@@ -246,13 +246,3 @@ defmodule Wallaby.Node do
     Application.get_env(:wallaby, :max_wait_time, @default_max_wait_time)
   end
 end
-
-defimpl String.Chars, for: Wallaby.Node do
-  def to_string(node) do
-    stringify_query(node.query)
-  end
-
-  def stringify_query({_, locator}) do
-    locator
-  end
-end
