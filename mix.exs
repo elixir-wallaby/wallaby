@@ -26,7 +26,7 @@ defmodule Wallaby.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 0.8"},
+      {:httpoison, "~> 0.9"},
       {:poison, ">= 1.4.0"},
       {:poolboy, "~> 1.5"},
       {:dialyze, "~> 0.2.0", only: :dev},

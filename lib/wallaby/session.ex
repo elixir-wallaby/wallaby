@@ -114,7 +114,7 @@ defmodule Wallaby.Session do
   @spec get_current_url(t) :: String.t
 
   def get_current_url(session) do
-     Driver.current_url(session)
+    Driver.current_url(session)
   end
 
   @doc """
@@ -123,7 +123,7 @@ defmodule Wallaby.Session do
   @spec get_current_path(t) :: String.t
 
   def get_current_path(session) do
-     URI.parse(get_current_url(session)).path
+    URI.parse(get_current_url(session)).path
   end
 
   @doc """

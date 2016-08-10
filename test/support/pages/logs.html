@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Wallaby - JS log test page</title>
+  </head>
+  <body>
+    <button class="js-print-log" type="button" name="button">
+      Print Log
+    </button>
+
+    <script>
+      console.log('Capture console logs');
+
+      document.querySelector('.js-print-log').addEventListener('click', printLog, false)
+
+      function printLog() {
+        console.log('Button clicked');
+      }
+    </script>
+  </body>
+</html>

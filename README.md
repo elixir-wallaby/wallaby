@@ -230,7 +230,9 @@ config :wallaby, screenshot_on_failure: true
 Application.put_env(:wallaby, :screenshot_on_failure, true)
 ```
 
-## Javascript applications and asynchronous code.
+## Javascript
+
+### Asynchronous code.
 
 It can be difficult to test asynchronous javascript code. You may try to interact with an element that isn't visible on the page. Wallaby's finders try to help mitigate this problem by blocking until the element becomes visible. You can use this strategy by writing tests in this way:
 
@@ -240,10 +242,13 @@ session
 |> find(".async-result")
 ```
 
+### Logging and errors
+
+Wallaby captures both javascript logs and errors. Any uncaught exceptions in javascript will be re-thrown in elixir. This can be disabled by specifying `js_errors: false` in your Wallaby config.
+
 ## Future Work
 
 * Support other drivers (such as Selenium)
-* Implement the rest of the webdriver spec.
 
 ## Contributing
 

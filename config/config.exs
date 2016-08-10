@@ -2,7 +2,9 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-config :wallaby, max_wait_time: 750
+config :wallaby,
+  max_wait_time: 1000,
+  pool_size: 3
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
