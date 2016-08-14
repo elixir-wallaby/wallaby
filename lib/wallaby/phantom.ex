@@ -7,13 +7,14 @@ defmodule Wallaby.Phantom do
   def default_capabilities do
     %{
       javascriptEnabled: false,
+      loadImages: false,
       version: "",
       rotatable: false,
       takesScreenshot: true,
       cssSelectorsEnabled: true,
       browserName: "phantomjs",
       nativeEvents: false,
-      platform: "ANY"
+      platform: "ANY",
     }
   end
 

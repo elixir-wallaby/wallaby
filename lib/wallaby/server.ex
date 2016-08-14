@@ -12,8 +12,8 @@ defmodule Wallaby.Server do
   def init(_) do
     port = find_available_port
     args = Application.get_env(:wallaby, :phantomjs_args, "")
-    command = "#{script_path} --webdriver=#{port} #{args}"
 
+    command = "#{script_path} --webdriver=#{port} #{args}"
     Port.open({:spawn, command}, [:binary, :stream, :use_stdio, :exit_status])
 
     {:ok, %{running: false, awaiting_url: [], base_url: "http://localhost:#{port}/"}}

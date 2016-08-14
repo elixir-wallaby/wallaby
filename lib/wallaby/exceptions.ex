@@ -189,3 +189,17 @@ defmodule Wallaby.NoBaseUrl do
     %__MODULE__{message: msg}
   end
 end
+
+defmodule Wallaby.JSError do
+  defexception [:message]
+
+  def exception(js_error) do
+    msg = """
+    There was an uncaught javascript error:
+
+    #{js_error}
+    """
+
+    %__MODULE__{message: msg}
+  end
+end

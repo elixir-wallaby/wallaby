@@ -10,21 +10,26 @@ defmodule Wallaby do
   * `:screenshot_dir` - The directory to store screenshots.
   * `:screenshot_on_failure` - if Wallaby should take screenshots on test failures (defaults to `false`).
   * `:max_wait_time` - The amount of time that Wallaby should wait to find an element on the page. (defaults to `3_000`)
+  * `:js_errors` - if Wallaby should re-throw javascript errors in elixir (defaults to true).
   """
   use Application
 
-  def start(_type, _args) do
-    pool_opts =
-      [name: {:local, Wallaby.ServerPool},
-       worker_module: Wallaby.Server,
-       size: pool_size,
-       max_overflow: 0]
+  @pool_name Wallaby.ServerPool
 
-    :poolboy.start_link(pool_opts, [])
+  def start(_type, _args) do
+    import Supervisor.Spec, warn: false
+
+    children = [
+      :poolboy.child_spec(@pool_name, poolboy_config, []),
+      worker(Wallaby.LogStore, []),
+    ]
+
+    opts = [strategy: :one_for_one, name: Wallaby.Supervisor]
+    Supervisor.start_link(children, opts)
   end
 
   def start_session(opts \\ []) do
-    server = :poolboy.checkout(Wallaby.ServerPool)
+    server = :poolboy.checkout(@pool_name)
     Wallaby.Driver.create(server, opts)
   end
 
@@ -38,6 +43,17 @@ defmodule Wallaby do
 
   def pool_size do
     Application.get_env(:wallaby, :pool_size) || default_pool_size
+  end
+
+  def js_errors? do
+    Application.get_env(:wallaby, :js_errors) || true
+  end
+
+  defp poolboy_config do
+    [name: {:local, @pool_name},
+     worker_module: Wallaby.Server,
+     size: pool_size,
+     max_overflow: 0]
   end
 
   defp default_pool_size do
