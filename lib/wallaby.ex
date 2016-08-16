@@ -11,6 +11,8 @@ defmodule Wallaby do
   * `:screenshot_on_failure` - if Wallaby should take screenshots on test failures (defaults to `false`).
   * `:max_wait_time` - The amount of time that Wallaby should wait to find an element on the page. (defaults to `3_000`)
   * `:js_errors` - if Wallaby should re-throw javascript errors in elixir (defaults to true).
+  * `:phantomjs` - The path to the phantomjs executable (defaults to "phantomjs")
+  * `:phantomjs_args` - Any extra arguments that should be passed to phantomjs (defaults to "")
   """
   use Application
 
@@ -47,6 +49,10 @@ defmodule Wallaby do
 
   def js_errors? do
     Application.get_env(:wallaby, :js_errors) || true
+  end
+
+  def phantomjs_path do
+    Application.get_env(:wallaby, :phantomjs, "phantomjs")
   end
 
   defp poolboy_config do

@@ -11,12 +11,14 @@ defmodule Wallaby.Server do
 
   def init(_) do
     port = find_available_port
-    args = Application.get_env(:wallaby, :phantomjs_args, "")
 
-    command = "#{script_path} --webdriver=#{port} #{args}"
-    Port.open({:spawn, command}, [:binary, :stream, :use_stdio, :exit_status])
+    Port.open({:spawn, phantomjs_command(port)}, [:binary, :stream, :use_stdio, :exit_status])
 
     {:ok, %{running: false, awaiting_url: [], base_url: "http://localhost:#{port}/"}}
+  end
+
+  def phantomjs_command(port) do
+    "#{script_path} #{phantomjs_path} --webdriver=#{port} #{args}"
   end
 
   defp find_available_port do
@@ -28,6 +30,14 @@ defmodule Wallaby.Server do
 
   defp script_path do
     Path.absname("priv/run_phantom.sh", Application.app_dir(:wallaby))
+  end
+
+  defp phantomjs_path do
+    Wallaby.phantomjs_path
+  end
+
+  defp args do
+    Application.get_env(:wallaby, :phantomjs_args, "")
   end
 
   def handle_info({_port, {:data, output}}, %{running: false} = state) do
