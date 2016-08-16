@@ -1,4 +1,4 @@
-defmodule Wallaby.DriverTest do
+defmodule Wallaby.Driver.JSErrorsTest do
   use Wallaby.SessionCase, async: true
 
   import ExUnit.CaptureIO
