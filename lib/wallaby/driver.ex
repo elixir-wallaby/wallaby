@@ -295,7 +295,7 @@ defmodule Wallaby.Driver do
 
   defp make_request(method, url, body) do
     headers = [{"Content-Type", "text/json"}]
-    case HTTPoison.request(method, url, body, headers, [timeout: :infinity]) do
+    case HTTPoison.request(method, url, body, headers, [timeout: :infinity, recv_timeout: :infinity]) do
       {:ok, response} ->
         Poison.decode!(response.body)
       {:error, e} ->
