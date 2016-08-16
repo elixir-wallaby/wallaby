@@ -65,13 +65,19 @@ Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
 
 ### PhantomJS
 
-Wallaby requires PhantomJS to work. You can install PhantomJS through NPM or your package manager of choice:
+Wallaby requires PhantomJS. You can install PhantomJS through NPM or your package manager of choice:
 
 ```
 $ npm install -g phantomjs
 ```
 
-You can pass arguments to PhantomJS through the `phantomjs_args` config setting, e.g.:
+Wallaby will use whatever phantomjs you have installed in your path. If you need to specify a specific phantomjs you can pass the path in the configuration:
+
+```elixir
+config :wallaby, phantomjs: "some/path/to/phantomjs"
+```
+
+You can also pass arguments to PhantomJS through the `phantomjs_args` config setting, e.g.:
 
 ```elixir
 config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
