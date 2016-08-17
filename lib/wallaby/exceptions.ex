@@ -114,6 +114,7 @@ defmodule Wallaby.QueryError do
   def method({:link, _}), do: "link"
   def method({:xpath, _}), do: "element with an xpath"
   def method({:button, _}), do: "button"
+  def method({:file_field, _}), do: "file field"
   def method(_), do: "element"
 
   @doc """

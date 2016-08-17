@@ -57,4 +57,11 @@ defmodule Wallaby.XPath do
   def option(query) do
     ".//option[normalize-space(text())='#{query}']"
   end
+
+  @doc """
+  Matches any file field by name, id, or label
+  """
+  def file_field(query) do
+    ".//input[./@type = 'file'][(((./@id = '#{query}' or ./@name = '#{query}')) or ./@id = //label[contains(normalize-space(string(.)), '#{query}')]/@for)] | .//label[contains(normalize-space(string(.)), '#{query}')]//.//input[./@type = 'file']"
+  end
 end

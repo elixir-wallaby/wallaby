@@ -233,6 +233,19 @@ defmodule Wallaby.Node.Query do
     find(parent, {:link, locator}, opts)
   end
 
+  @doc """
+  Finds a field field by its id, name, or label text.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec file_field(parent, locator, opts) :: result
+
+  def file_field(parent, locator, opts) do
+    find_field(parent, {:file_field, locator}, opts)
+  end
+
   defp find_field(parent, query, opts) do
     case find_element(parent, query, opts) do
       {:ok, elements} ->
@@ -393,6 +406,7 @@ defmodule Wallaby.Node.Query do
   defp build_locator({:radio_button, query}), do: {:xpath, XPath.radio_button(query)}
   defp build_locator({:option, query}), do: {:xpath, XPath.option(query)}
   defp build_locator({:select, query}), do: {:xpath, XPath.select(query)}
+  defp build_locator({:file_field, query}), do: {:xpath, XPath.file_field(query)}
 
   defp build_conditions(conditions) do
     default_conditions

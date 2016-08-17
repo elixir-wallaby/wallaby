@@ -31,6 +31,7 @@ defmodule Wallaby.DSL.Actions do
   uncheck(page, "Checkbox")
   select(page, "My Awesome Select", option: "Option 1")
   click_on(page, "Some Button")
+  attach_file(page, "Avatar", path: "test/fixtures/avatar.jpg")
   ```
 
   Actions return their parent node so that they can be chained together:
@@ -167,4 +168,19 @@ defmodule Wallaby.DSL.Actions do
   #   |> clear()
   # end
 
+  @doc """
+  Attaches a file to a file input. Input nodes are looked up by id, label text,
+  or name.
+  """
+  @spec attach_file(parent, locator, opts) :: parent
+
+  def attach_file(parent, locator, [{:path, value} | _]=opts) do
+    path = :filename.absname(value)
+
+    parent
+    |> Node.Query.file_field(locator, opts)
+    |> Node.fill_in(with: path)
+
+    parent
+  end
 end
