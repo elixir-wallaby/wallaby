@@ -6,7 +6,7 @@ defmodule Wallaby.Server do
   end
 
   def get_base_url(server) do
-    GenServer.call(server, :get_base_url)
+    GenServer.call(server, :get_base_url, :infinity)
   end
 
   def init(_) do

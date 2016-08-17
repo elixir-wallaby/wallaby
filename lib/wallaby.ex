@@ -31,7 +31,7 @@ defmodule Wallaby do
   end
 
   def start_session(opts \\ []) do
-    server = :poolboy.checkout(@pool_name)
+    server = :poolboy.checkout(@pool_name, true, :infinity)
     Wallaby.Driver.create(server, opts)
   end
 
