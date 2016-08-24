@@ -183,11 +183,8 @@ defmodule Wallaby.Session do
   end
 
   defp path_for_screenshot do
-    {hour, minutes, seconds} = :erlang.time()
-    {year, month, day} = :erlang.date()
-
     File.mkdir_p!(screenshot_dir)
-    "#{screenshot_dir}/#{year}-#{month}-#{day}-#{hour}-#{minutes}-#{seconds}.png"
+    "#{screenshot_dir}/#{:erlang.system_time}.png"
   end
 
   defp screenshot_dir do
