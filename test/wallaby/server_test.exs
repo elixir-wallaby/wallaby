@@ -30,7 +30,15 @@ defmodule Wallaby.ServerTest do
     assert local_storage != other_local_storage
   end
 
-  test "it cleans up the local storage directory properly", %{server: server}  do
+  test "it clears local storage properly", %{server: server} do
+    local_storage = Server.get_local_storage_dir(server)
+    assert File.exists?(local_storage)
+
+    Server.clear_local_storage(server)
+    refute File.exists?(local_storage)
+  end
+
+  test "it cleans up the local storage directory properly", %{server: server} do
     local_storage = Server.get_local_storage_dir(server)
     assert File.exists?(local_storage)
 
