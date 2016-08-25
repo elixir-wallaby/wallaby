@@ -217,9 +217,24 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     assert click_on(page, "Hidden Button")
   end
 
+  test "throws an error if the button is missing the type attribute", %{page: page} do
+    msg = Wallaby.QueryError.error_message(:button_with_no_type, %{locator: {:button, "button with no type"}})
+    assert_raise Wallaby.QueryError, msg, fn ->
+      click_button(page, "button with no type", [])
+    end
+  end
+
   test "throws an error if the button does not include a valid type attribute", %{page: page} do
-    assert_raise Wallaby.QueryError, fn ->
-      click_button(page, "button without type", [])
+    msg = Wallaby.QueryError.error_message(:button_with_no_type, %{locator: {:button, "button with bad type"}})
+    assert_raise Wallaby.QueryError, msg, fn ->
+      click_button(page, "button with bad type", [])
+    end
+  end
+
+  test "throws an error if the button cannot be found on the page", %{page: page} do
+    msg = Wallaby.QueryError.error_message(:not_found, %{locator: {:button, "unfound button"}, conditions: [count: 1, visible: true]})
+    assert_raise Wallaby.QueryError, msg, fn ->
+      click_button(page, "unfound button", [])
     end
   end
 end
