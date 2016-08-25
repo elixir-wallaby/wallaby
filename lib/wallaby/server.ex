@@ -84,4 +84,8 @@ defmodule Wallaby.Server do
   def handle_call(:get_local_storage_dir, _from, state) do
     {:reply, state.local_storage, state}
   end
+
+  def terminate(_reason, state) do
+    File.rm_rf(state.local_storage)
+  end
 end
