@@ -13,6 +13,10 @@ defmodule Wallaby.Server do
     GenServer.call(server, :get_local_storage_dir, :infinity)
   end
 
+  def clear_local_storage(server) do
+    GenServer.call(server, :clear_local_storage, :infinity)
+  end
+
   def init(_) do
     port = find_available_port
     local_storage = tmp_local_storage
@@ -83,6 +87,12 @@ defmodule Wallaby.Server do
 
   def handle_call(:get_local_storage_dir, _from, state) do
     {:reply, state.local_storage, state}
+  end
+
+  def handle_call(:clear_local_storage, _from, state) do
+    result = File.rm_rf(state.local_storage)
+
+    {:reply, result, state}
   end
 
   def terminate(_reason, state) do
