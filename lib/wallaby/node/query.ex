@@ -316,7 +316,7 @@ defmodule Wallaby.Node.Query do
   end
 
   defp matching_text?(node, locator) do
-    Node.text(node) == locator
+    Node.text(node) =~ ~r/#{Regex.escape(locator)}/
   end
 
   defp assert_text(%Query{result: nodes, conditions: opts}=query) do
