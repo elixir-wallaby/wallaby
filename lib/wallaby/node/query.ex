@@ -286,7 +286,7 @@ defmodule Wallaby.Node.Query do
       |> all("button", [])
 
     cond do
-      Enum.any?(buttons, &(missing_button_type?(&1) && matching_text?(&1, locator))) ->
+      Enum.any?(buttons, &(matching_text?(&1, locator))) ->
         add_error(query, :button_with_no_type)
       true ->
         query
@@ -309,12 +309,6 @@ defmodule Wallaby.Node.Query do
       true  ->
         add_error(query, :not_found)
     end
-  end
-
-  defp missing_button_type?(node) do
-    valid_button_types = ~w(submit reset button image)
-    type = Node.attr(node, "type")
-    Enum.member?(valid_button_types, type)
   end
 
   defp missing_for?(node) do
