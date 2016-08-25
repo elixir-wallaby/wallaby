@@ -237,4 +237,8 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
       click_button(page, "unfound button", [])
     end
   end
+
+  test "escapes quotes", %{page: page} do
+    assert click_on(page, "I'm a button")
+  end
 end

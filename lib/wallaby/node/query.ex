@@ -85,7 +85,7 @@ defmodule Wallaby.Node.Query do
     %__MODULE__{
       parent: parent,
       locator: locator,
-      query: build_locator(locator),
+      query: locator |> build_locator,
       conditions: build_conditions(opts),
     }
   end
@@ -251,10 +251,20 @@ defmodule Wallaby.Node.Query do
       {:ok, elements} ->
         elements
       {:error, query} ->
-        query
-        |> check_for_bad_html
-        |> handle_error
+        if not_found?(query) do
+          query
+          |> check_for_bad_html
+          |> handle_error
+        else
+          query
+          |> handle_error
+        end
     end
+  end
+
+  defp not_found?(query) do
+    query.errors
+    |> Enum.any?(& &1 == :not_found)
   end
 
   defp find_element(parent, locator, opts) do
