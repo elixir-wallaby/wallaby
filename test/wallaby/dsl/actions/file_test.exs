@@ -12,7 +12,7 @@ defmodule Wallaby.Actions.FileTest do
   describe "attaching a file to a form" do
     test "by name", %{page: page} do
       page
-      |> attach_file("file", path: "test/support/fixtures/file.txt")
+      |> attach_file("file_input", path: "test/support/fixtures/file.txt")
 
       assert find(page, "#file_field") |> has_value?("C:\\fakepath\\file.txt")
     end
@@ -44,5 +44,9 @@ defmodule Wallaby.Actions.FileTest do
     assert_raise Wallaby.QueryError, msg, fn ->
       attach_file(page, "File field with bad label", path: "test/support/fixtures/file.txt")
     end
+  end
+
+  test "escapes quotes", %{page: page} do
+    assert attach_file(page, "I'm a file field", path: "test/support/fixtures/file.txt")
   end
 end

@@ -64,4 +64,8 @@ defmodule Wallaby.Actions.FillInTest do
       fill_in(page, "Input with bad id", with: "Test")
     end
   end
+
+  test "escapes quotes", %{page: page} do
+    assert fill_in(page, "I'm a text field", with: "Stuff")
+  end
 end

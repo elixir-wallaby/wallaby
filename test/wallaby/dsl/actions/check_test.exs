@@ -71,4 +71,8 @@ defmodule Wallaby.DSL.Actions.CheckTest do
   test "waits until the checkbox appears", %{page: page} do
     assert check(page, "Hidden Checkbox")
   end
+
+  test "escapes quotes", %{page: page} do
+    assert check(page, "I'm a checkbox")
+  end
 end

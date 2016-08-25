@@ -58,4 +58,8 @@ defmodule Wallaby.Actions.SelectTest do
 
     assert select(page, "Hidden Select", option: "Option")
   end
+
+  test "escapes quotes", %{page: page} do
+    assert select(page, "I'm a select", option: "I'm an option")
+  end
 end

@@ -53,4 +53,8 @@ defmodule Wallaby.Actions.ChooseTest do
   test "waits until the radio button appears", %{page: page} do
     assert choose(page, "Hidden Radio Button")
   end
+
+  test "escape quotes", %{page: page} do
+    assert choose(page, "I'm a radio button")
+  end
 end
