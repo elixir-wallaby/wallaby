@@ -5,6 +5,10 @@ defmodule Wallaby.Server do
     GenServer.start_link(__MODULE__, [])
   end
 
+  def stop(server) do
+    GenServer.stop(server)
+  end
+
   def get_base_url(server) do
     GenServer.call(server, :get_base_url, :infinity)
   end
