@@ -41,6 +41,13 @@ defmodule Wallaby.Driver do
   end
 
   @doc """
+  Deletes a session with the driver.
+  """
+  def delete(session) do
+    request(:delete, session.session_url, %{})
+  end
+
+  @doc """
   Finds an element on the page for a session. If an element is provided then
   the query will be scoped to within that element.
   """
