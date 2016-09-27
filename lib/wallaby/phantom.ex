@@ -6,7 +6,7 @@ defmodule Wallaby.Phantom do
 
   def default_capabilities do
     %{
-      javascriptEnabled: false,
+      javascriptEnabled: true,
       loadImages: false,
       version: "",
       rotatable: false,

@@ -31,7 +31,7 @@ defmodule Wallaby.Server do
   end
 
   def phantomjs_command(port, local_storage) do
-    "#{script_path} #{phantomjs_path} --webdriver=#{port} --local-storage-path #{local_storage} #{args}"
+    "#{script_path} #{phantomjs_path} --webdriver=#{port} --local-storage-path=#{local_storage} #{args}"
   end
 
   defp find_available_port do

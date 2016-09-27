@@ -50,6 +50,17 @@ defmodule Wallaby.Session do
   defstruct [:id, :url, :session_url, :server, screenshots: []]
 
   @doc """
+  Deletes a session.
+  """
+  @spec delete(t) :: :ok
+
+  def delete(session) do
+    Driver.execute_script(session, "localStorage.clear()")
+    Driver.delete(session)
+    :ok
+  end
+
+  @doc """
   Changes the current page to the provided route.
   Relative paths are appended to the provided base_url.
   Absolute paths do not use the base_url.
