@@ -266,7 +266,7 @@ defmodule Wallaby.Driver do
   @doc """
   Retrives the current page source from session
   """
-  def source(session) do
+  def page_source(session) do
     check_logs! session, fn ->
       response = request(:get, "#{session.url}/source")
       response["value"]
