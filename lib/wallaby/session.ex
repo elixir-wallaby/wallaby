@@ -50,6 +50,17 @@ defmodule Wallaby.Session do
   defstruct [:id, :url, :session_url, :server, screenshots: []]
 
   @doc """
+  Deletes a session.
+  """
+  @spec delete(t) :: :ok
+
+  def delete(session) do
+    Driver.execute_script(session, "localStorage.clear()")
+    Driver.delete(session)
+    :ok
+  end
+
+  @doc """
   Changes the current page to the provided route.
   Relative paths are appended to the provided base_url.
   Absolute paths do not use the base_url.
@@ -183,11 +194,8 @@ defmodule Wallaby.Session do
   end
 
   defp path_for_screenshot do
-    {hour, minutes, seconds} = :erlang.time()
-    {year, month, day} = :erlang.date()
-
     File.mkdir_p!(screenshot_dir)
-    "#{screenshot_dir}/#{year}-#{month}-#{day}-#{hour}-#{minutes}-#{seconds}.png"
+    "#{screenshot_dir}/#{:erlang.system_time}.png"
   end
 
   defp screenshot_dir do

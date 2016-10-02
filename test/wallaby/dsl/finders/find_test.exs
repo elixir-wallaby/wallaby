@@ -52,6 +52,15 @@ defmodule Wallaby.DSL.Finders.FindTest do
       assert user1 != user2
     end
 
+    test "can be scoped by inner text when there are multiple elements with text", %{page: page} do
+      element = find(page, ".inner-text", text: "Inner Text")
+      assert element
+    end
+
+    test "scoping with text escapes the text", %{page: page} do
+      assert find(page, ".plus-one", text: "+ 1")
+    end
+
     test "scopes can be composed together", %{page: page} do
       assert find(page, ".user", text: "Same User", count: 2)
       assert find(page, ".user", text: "Visible User", visible: true)

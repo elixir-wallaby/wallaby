@@ -85,7 +85,7 @@ defmodule Wallaby.Node.Query do
     %__MODULE__{
       parent: parent,
       locator: locator,
-      query: build_locator(locator),
+      query: locator |> build_locator,
       conditions: build_conditions(opts),
     }
   end
@@ -233,15 +233,38 @@ defmodule Wallaby.Node.Query do
     find(parent, {:link, locator}, opts)
   end
 
+  @doc """
+  Finds a field field by its id, name, or label text.
+
+  ## Options
+
+  See the "Query Options" section in the module documentation
+  """
+  @spec file_field(parent, locator, opts) :: result
+
+  def file_field(parent, locator, opts) do
+    find_field(parent, {:file_field, locator}, opts)
+  end
+
   defp find_field(parent, query, opts) do
     case find_element(parent, query, opts) do
       {:ok, elements} ->
         elements
       {:error, query} ->
-        query
-        |> check_for_bad_html
-        |> handle_error
+        if not_found?(query) do
+          query
+          |> check_for_bad_html
+          |> handle_error
+        else
+          query
+          |> handle_error
+        end
     end
+  end
+
+  defp not_found?(query) do
+    query.errors
+    |> Enum.any?(& &1 == :not_found)
   end
 
   defp find_element(parent, locator, opts) do
@@ -273,7 +296,7 @@ defmodule Wallaby.Node.Query do
       |> all("button", [])
 
     cond do
-      Enum.any?(buttons, &(missing_button_type?(&1) && matching_text?(&1, locator))) ->
+      Enum.any?(buttons, &(matching_text?(&1, locator))) ->
         add_error(query, :button_with_no_type)
       true ->
         query
@@ -298,18 +321,12 @@ defmodule Wallaby.Node.Query do
     end
   end
 
-  defp missing_button_type?(node) do
-    valid_button_types = ~w(submit reset button image)
-    type = Node.attr(node, "type")
-    Enum.member?(valid_button_types, type)
-  end
-
   defp missing_for?(node) do
     Node.attr(node, "for") == nil
   end
 
   defp matching_text?(node, locator) do
-    Node.text(node) == locator
+    Node.text(node) =~ ~r/#{Regex.escape(locator)}/
   end
 
   defp assert_text(%Query{result: nodes, conditions: opts}=query) do
@@ -393,6 +410,7 @@ defmodule Wallaby.Node.Query do
   defp build_locator({:radio_button, query}), do: {:xpath, XPath.radio_button(query)}
   defp build_locator({:option, query}), do: {:xpath, XPath.option(query)}
   defp build_locator({:select, query}), do: {:xpath, XPath.select(query)}
+  defp build_locator({:file_field, query}), do: {:xpath, XPath.file_field(query)}
 
   defp build_conditions(conditions) do
     default_conditions

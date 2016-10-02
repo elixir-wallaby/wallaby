@@ -46,6 +46,10 @@ defmodule Wallaby.Exceptions.QueryErrorTest do
     test "any unspecified locators" do
       assert method({:random, nil}) == "element"
     end
+
+    test "file field" do
+      assert method({:file_field, nil}) == "file field"
+    end
   end
 
   describe "conditions/1" do

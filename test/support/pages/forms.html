@@ -11,6 +11,9 @@
       <input id="email_field" type="email" name="email" value="">
       <input id="password_field" type="password" name="password" value="">
 
+      <label for="file_field">File</label>
+      <input id="file_field" type="file" name="file_input">
+
       <label>
         <input type="checkbox" id="checkbox1" value="" name="testbox">
         Checkbox 1
@@ -55,7 +58,12 @@
         <label>Checkbox with bad label</label>
         <input type="checkbox" name="checkbox">
       </div>
-      <button>button without type</button>
+      <div class="form-group">
+        <label>File field with bad label</label>
+        <input type="file" name="unlabelled-file">
+      </div>
+      <button type="other">button with bad type</button>
+      <button>button with no type</button>
     </form>
 
     <form class="wait-form" action="index.html" method="post">
@@ -82,6 +90,26 @@
           <button type="button" name="button">Hidden Button</button>
         </div>
       </div>
+    </form>
+
+    <form class="escape-characters">
+      <label for="escape_name_field">I'm a text field</label>
+      <input id="escape_name_field" type="text" name="escape_name" value="">
+
+      <label for="escape_file">I'm a file field</label>
+      <input id="escape_file" type="file" name="escape_file">
+
+      <label>
+        <input type="checkbox" id="escape-checkbox" value="" name="escapebox">
+        I'm a checkbox
+      </label>
+
+      <label>
+        <input type="radio" id="escape-radio" name="escaperadio" value="escape-option-1">
+        I'm a radio button
+      </label>
+
+      <button type="button" name="button">I'm a button</button>
     </form>
 
     <script>
