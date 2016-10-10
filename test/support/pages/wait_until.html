@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Wait until ...</title>
+
+    <script type="text/html" id="template">
+      <div class="main">
+        <div class="orange">orange</div>
+        <a id="link" href="#">a link</a>
+      </div>
+    </script>
+
+    <script type="text/javascript">
+      setTimeout(function() {
+        var template = document.getElementById("template").innerHTML;
+        document.body.innerHTML = template;
+      }, 700)
+    </script>
+  </head>
+
+  <body>
+  </body>
+</html>
