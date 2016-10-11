@@ -32,7 +32,7 @@ defmodule Wallaby.Helpers.KeyCodes do
   defp code(:pause),     do: "\\uE00B"
   defp code(:escape),    do: "\\uE00C"
 
-  defp code(:space),       do: "\\eE00D"
+  defp code(:space),       do: "\\uE00D"
   defp code(:pageup),      do: "\\uE00E"
   defp code(:pagedown),    do: "\\uE00F"
   defp code(:end),         do: "\\uE010"
