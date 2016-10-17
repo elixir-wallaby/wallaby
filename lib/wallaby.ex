@@ -56,6 +56,9 @@ defmodule Wallaby do
     Application.get_env(:wallaby, :phantomjs, "phantomjs")
   end
 
+  defp explicitly_set(:false), do: false
+  defp explicitly_set(_), do: true
+
   defp poolboy_config do
     [name: {:local, @pool_name},
      worker_module: Wallaby.Server,
