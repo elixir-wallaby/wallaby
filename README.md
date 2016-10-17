@@ -19,7 +19,7 @@ Add wallaby to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:wallaby, "~> 0.11.1"}]
+  [{:wallaby, "~> 0.12.0"}]
 end
 ```
 
