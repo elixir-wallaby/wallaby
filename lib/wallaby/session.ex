@@ -185,6 +185,15 @@ defmodule Wallaby.Session do
     session
   end
 
+  @doc """
+  Retrieves the source of the current page.
+  """
+  @spec page_source(t) :: String.t
+
+  def page_source(session) do
+    Driver.page_source(session)
+  end
+
   defp request_url(path) do
     base_url <> path
   end
