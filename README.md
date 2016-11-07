@@ -248,13 +248,18 @@ session
 |> find(".async-result")
 ```
 
-### Logging and errors
+### Javascript logging and errors
 
 Wallaby captures both javascript logs and errors. Any uncaught exceptions in javascript will be re-thrown in elixir. This can be disabled by specifying `js_errors: false` in your Wallaby config.
 
-## Future Work
+Javascript logs are written to :stdio by default. This can be changed to any IO device by setting the `:js_logger` option in your wallaby config. For instance if you want to write all Javascript console logs to a file you could do something like this:
 
-* Support other drivers (such as Selenium)
+```elixir
+{:ok, file} = File.open("browser_logs.log", [:write])
+Application.put_env(:wallaby, :js_logger, file)
+```
+
+Logging can be disabled by setting `:js_logger` to `nil`.
 
 ## Contributing
 

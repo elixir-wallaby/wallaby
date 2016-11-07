@@ -13,9 +13,10 @@ defmodule Wallaby.Phantom.Logger do
   end
 
   def parse_log(%{"level" => "INFO", "message" => msg}) do
-    @line_number_regex
-    |> Regex.replace(msg, "")
-    |> IO.puts()
+    if Wallaby.js_logger do
+      msg = Regex.replace(@line_number_regex, msg, "")
+      IO.puts(Wallaby.js_logger, msg)
+    end
   end
 
   def parse_log(_), do: nil

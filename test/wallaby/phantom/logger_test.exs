@@ -1,11 +1,11 @@
 defmodule Wallaby.Phantom.LoggerTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   alias Wallaby.Phantom.Logger
   import ExUnit.CaptureIO
 
-  describe "parse_log/1 INFO logs" do
-    test "removes line numbers from the end of the log" do
+  describe "parse_log/1" do
+    test "removes line numbers from the end of INFO logs" do
       fun = fn ->
         build_log("test (:)")
         |> Logger.parse_log
@@ -26,6 +26,20 @@ defmodule Wallaby.Phantom.LoggerTest do
       end
 
       assert capture_io(fun) == "test (1:3)\n"
+    end
+
+    test "can be disabled" do
+      Application.put_env(:wallaby, :js_logger, nil)
+
+      fun = fn ->
+        "test log"
+        |> build_log()
+        |> Logger.parse_log
+      end
+
+      assert capture_io(fun) == ""
+
+      Application.put_env(:wallaby, :js_logger, :stdio)
     end
   end
 
