@@ -32,6 +32,7 @@ defmodule Wallaby.Mixfile do
       {:dialyze, "~> 0.2.0", only: :dev},
       {:earmark, "~> 0.2", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
+      {:issuer, "~> 0.1.2", only: :dev},
     ]
   end
 
