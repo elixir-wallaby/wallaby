@@ -1,7 +1,7 @@
-defmodule Wallaby.ServerTest do
+defmodule Wallaby.Phantom.ServerTest do
   use ExUnit.Case, async: true
 
-  alias Wallaby.Server
+  alias Wallaby.Phantom.Server
 
   setup do
     {:ok, server} = Server.start_link([])

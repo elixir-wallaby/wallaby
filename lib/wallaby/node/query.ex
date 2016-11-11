@@ -46,7 +46,8 @@ defmodule Wallaby.Node.Query do
     * `:text` - Text that should be found inside the element.
   """
 
-  alias Wallaby.{Node, Driver, Session}
+  alias Wallaby.{Node, Session}
+  alias Wallaby.Phantom.Driver
   alias Wallaby.XPath
   alias __MODULE__
 
