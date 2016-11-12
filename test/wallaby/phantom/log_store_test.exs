@@ -1,7 +1,7 @@
-defmodule Wallaby.LogStoreTest do
+defmodule Wallaby.Phantom.LogStoreTest do
   use ExUnit.Case, async: true
 
-  alias Wallaby.LogStore
+  alias Wallaby.Phantom.LogStore
 
   @l1 %{"level" => "INFO", "message" => "l1 (:)", "timestamp" => 1470795015152}
   @l2 %{"level" => "INFO", "message" => "l2 (:)", "timestamp" => 1470795015290}

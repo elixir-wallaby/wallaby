@@ -1,4 +1,4 @@
-defmodule Wallaby.Driver.ConfigurationTest do
+defmodule Wallaby.Phantom.Driver.ConfigurationTest do
   use Wallaby.SessionCase, async: false
 
   test "js errors can be disabled", %{session: session, server: server} do

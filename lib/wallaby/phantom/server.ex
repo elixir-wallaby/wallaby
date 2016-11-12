@@ -1,4 +1,4 @@
-defmodule Wallaby.Server do
+defmodule Wallaby.Phantom.Server do
   use GenServer
 
   def start_link(_args) do

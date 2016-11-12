@@ -1,4 +1,4 @@
-defmodule Wallaby.LogStore do
+defmodule Wallaby.Phantom.LogStore do
   def start_link do
     Agent.start_link(fn -> Map.new end, name: __MODULE__)
   end

@@ -16,7 +16,7 @@ defmodule Wallaby.Node do
   }
 
   alias __MODULE__
-  alias Wallaby.Driver
+  alias Wallaby.Phantom.Driver
   alias Wallaby.Session
   alias Wallaby.Node.Query
 

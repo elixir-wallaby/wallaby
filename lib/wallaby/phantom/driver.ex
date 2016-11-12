@@ -1,4 +1,4 @@
-defmodule Wallaby.Driver do
+defmodule Wallaby.Phantom.Driver do
   @moduledoc """
   Implements the webdriver protocol for Phantomjs
   """
@@ -7,7 +7,7 @@ defmodule Wallaby.Driver do
   alias Wallaby.Node
   alias Wallaby.Node.Query
   alias Wallaby.Phantom.Logger
-  alias Wallaby.LogStore
+  alias Wallaby.Phantom.LogStore
 
   @type method :: :post | :get | :delete
   @type url :: String.t
@@ -19,7 +19,7 @@ defmodule Wallaby.Driver do
   Creates a new session with the driver.
   """
   def create(server, opts) do
-    base_url = Wallaby.Server.get_base_url(server)
+    base_url = Wallaby.Phantom.Server.get_base_url(server)
     user_agent =
       Wallaby.Phantom.user_agent
       |> Wallaby.Metadata.append(opts[:metadata])

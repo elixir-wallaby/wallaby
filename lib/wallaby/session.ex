@@ -44,7 +44,7 @@ defmodule Wallaby.Session do
     screenshots: list
   }
 
-  alias Wallaby.Driver
+  alias Wallaby.Phantom.Driver
   alias Wallaby.Node
 
   defstruct [:id, :url, :session_url, :server, screenshots: []]

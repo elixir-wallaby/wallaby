@@ -17,14 +17,12 @@ defmodule Wallaby do
   """
   use Application
 
-  @pool_name Wallaby.ServerPool
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
     children = [
-      :poolboy.child_spec(@pool_name, poolboy_config, []),
-      worker(Wallaby.LogStore, []),
+      supervisor(driver, [[name: Driver.Supervisor]])
     ]
 
     opts = [strategy: :one_for_one, name: Wallaby.Supervisor]
@@ -32,21 +30,15 @@ defmodule Wallaby do
   end
 
   def start_session(opts \\ []) do
-    server = :poolboy.checkout(@pool_name, true, :infinity)
-    Wallaby.Driver.create(server, opts)
+    driver.start_session(opts)
   end
 
-  def end_session(%Wallaby.Session{server: server}=session) do
-    :ok = Wallaby.Session.delete(session)
-    :poolboy.checkin(Wallaby.ServerPool, server)
+  def end_session(session) do
+    driver.end_session(session)
   end
 
   def screenshot_on_failure? do
     Application.get_env(:wallaby, :screenshot_on_failure)
-  end
-
-  def pool_size do
-    Application.get_env(:wallaby, :pool_size) || default_pool_size
   end
 
   def js_errors? do
@@ -61,14 +53,7 @@ defmodule Wallaby do
     Application.get_env(:wallaby, :phantomjs, "phantomjs")
   end
 
-  defp poolboy_config do
-    [name: {:local, @pool_name},
-     worker_module: Wallaby.Server,
-     size: pool_size,
-     max_overflow: 0]
-  end
-
-  defp default_pool_size do
-    :erlang.system_info(:schedulers_online)
+  def driver do
+    Application.get_env(:wallaby, :driver, Wallaby.Phantom)
   end
 end
