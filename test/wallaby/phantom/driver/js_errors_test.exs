@@ -3,23 +3,23 @@ defmodule Wallaby.Phantom.Driver.JSErrorsTest do
 
   import ExUnit.CaptureIO
 
-  test "it captures javascript errors", %{session: session, server: server} do
+  test "it captures javascript errors", %{session: session} do
     assert_raise Wallaby.JSError, fn ->
       session
-      |> visit(server.base_url <> "/errors.html")
-      |> click_on("Throw an Error")
+      |> visit("/errors.html")
+      |> click_button("Throw an Error")
     end
   end
 
-  test "it captures javascript console logs", %{session: session, server: server} do
+  test "it captures javascript console logs", %{session: session} do
     fun = fn ->
       session
-      |> visit(server.base_url <> "/logs.html")
+      |> visit("/logs.html")
     end
     assert capture_io(fun) == "Capture console logs\n"
   end
 
-  test "it only captures logs once", %{session: session, server: server} do
+  test "it only captures logs once", %{session: session} do
     output = """
     Capture console logs
     Button clicked
@@ -27,8 +27,8 @@ defmodule Wallaby.Phantom.Driver.JSErrorsTest do
 
     fun = fn ->
       session
-      |> visit(server.base_url <> "/logs.html")
-      |> click_on("Print Log")
+      |> visit("/logs.html")
+      |> click_button("Print Log")
     end
 
     assert capture_io(fun) == output

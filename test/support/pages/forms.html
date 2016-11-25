@@ -6,7 +6,7 @@
   <body>
     <h1>Forms</h1>
     <form class="form" action="index.html" method="post">
-      <label for="name">Name</label>
+      <label for="name_field">Name</label>
       <input id="name_field" type="text" name="name" value="">
       <input id="email_field" type="email" name="email" value="">
       <input id="password_field" type="password" name="password" value="">
@@ -31,6 +31,14 @@
       <input id="option2" type="radio" name="optionsRadios" value="option2">
 
       <textarea name="text" rows="8" cols="40"></textarea>
+
+      <label for='my-select'>My Select</label>
+      <select name='my-select'>
+        <option id='select-option-1'>Select Option 1</option>
+        <option id='select-option-2'>Select Option 2</option>
+        <option id='select-option-3'>Select Option 3</option>
+      </select>
+
 
       <button id="button-no-type-id" name="button-no-type">button with no type</button>
       <button type="submit" id="button-submit-id" name="button-submit">Submit button</button>

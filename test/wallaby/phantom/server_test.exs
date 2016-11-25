@@ -11,7 +11,7 @@ defmodule Wallaby.Phantom.ServerTest do
       File.rm_rf(local_storage)
     end
 
-    {:ok, server: server}
+    {:ok, %{server: server}}
   end
 
   test "it can start a server", %{server: server}  do

@@ -3,9 +3,11 @@
 use Mix.Config
 
 config :wallaby,
-  max_wait_time: 1000,
+  max_wait_time: 2000,
   pool_size: 3,
-  js_logger: :stdio
+  js_logger: :stdio,
+  screenshot_on_failure: false,
+  js_errors: true
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this

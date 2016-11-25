@@ -3,9 +3,8 @@ defmodule Wallaby.DSL do
 
   defmacro __using__([]) do
     quote do
-      import Wallaby.Node
-      import Wallaby.Session
-      import Wallaby.DSL.Actions
+      alias Wallaby.Query
+      import Wallaby.Browser
     end
   end
 end

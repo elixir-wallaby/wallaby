@@ -17,6 +17,10 @@ defmodule Wallaby.TestServer do
     end
   end
 
+  def port(%Wallaby.TestServer{pid: pid}) do
+    :httpd.info(pid)[:port]
+  end
+
   def stop(%Wallaby.TestServer{pid: pid}) do
     :ok = :inets.stop(:httpd, pid)
   end
