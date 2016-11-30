@@ -18,7 +18,10 @@ defmodule Wallaby.XPath do
   Match any clickable buttons
   """
   def button(query) do
-    ~s{.//*[self::input | self::button][(./@type = 'submit' or ./@type = 'reset' or ./@type = 'button' or ./@type = 'image')][(((./@id = "#{query}" or ./@name = "#{query}" or ./@value = "#{query}" or ./@alt = "#{query}" or ./@title = "#{query}" or contains(normalize-space(string(.)), "#{query}"))))]}
+    types = "./@type = 'submit' or ./@type = 'reset' or ./@type = 'button' or ./@type = 'image'"
+    locator = ~s{(((./@id = "#{query}" or ./@name = "#{query}" or ./@value = "#{query}" or ./@alt = "#{query}" or ./@title = "#{query}" or contains(normalize-space(string(.)), "#{query}"))))}
+
+    ~s{.//input[#{types}][#{locator}] | .//button[(not(./@type) or #{types})][#{locator}]}
   end
 
   @doc """
