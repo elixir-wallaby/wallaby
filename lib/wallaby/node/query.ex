@@ -298,7 +298,7 @@ defmodule Wallaby.Node.Query do
 
     cond do
       Enum.any?(buttons, &(matching_text?(&1, locator))) ->
-        add_error(query, :button_with_no_type)
+        add_error(query, :button_with_bad_type)
       true ->
         query
     end

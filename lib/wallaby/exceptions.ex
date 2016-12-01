@@ -92,9 +92,9 @@ defmodule Wallaby.QueryError do
     Make sure that id on your #{method(locator)} is `id="#{for_text}"`.
     """
   end
-  def error_message(:button_with_no_type, %{locator: locator}) do
+  def error_message(:button_with_bad_type, %{locator: locator}) do
     """
-    The text '#{expression locator}' matched a button but the button has no 'type' attribute.
+    The text '#{expression locator}' matched a button but the button has an invalid 'type' attribute.
 
     You can fix this by including `type="[submit|reset|button|image]"` on the appropriate button.
     """

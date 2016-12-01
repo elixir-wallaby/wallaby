@@ -9,6 +9,33 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     {:ok, page: page}
   end
 
+  test "clicking button with no type via button text (submits form)", %{page: page} do
+    current_url =
+      page
+      |> click_button("Submit button")
+      |> get_current_url
+
+    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+  end
+
+  test "clicking button with no type via name (submits form)", %{page: page} do
+    current_url =
+      page
+      |> click_button("button-no-type")
+      |> get_current_url
+
+    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+  end
+
+  test "clicking button with no type via id (submits form)", %{page: page} do
+    current_url =
+      page
+      |> click_button("button-no-type-id")
+      |> get_current_url
+
+    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+  end
+
   test "clicking button type[submit] via button text (submits form)", %{page: page} do
     current_url =
       page
@@ -217,17 +244,17 @@ defmodule Wallaby.DSL.Actions.ClickButtonTest do
     assert click_on(page, "Hidden Button")
   end
 
-  test "throws an error if the button is missing the type attribute", %{page: page} do
-    msg = Wallaby.QueryError.error_message(:button_with_no_type, %{locator: {:button, "button with no type"}})
+  test "throws an error if the button does not include a valid type attribute", %{page: page} do
+    msg = Wallaby.QueryError.error_message(:button_with_bad_type, %{locator: {:button, "button with bad type"}})
     assert_raise Wallaby.QueryError, msg, fn ->
-      click_button(page, "button with no type", [])
+      click_button(page, "button with bad type", [])
     end
   end
 
-  test "throws an error if the button does not include a valid type attribute", %{page: page} do
-    msg = Wallaby.QueryError.error_message(:button_with_no_type, %{locator: {:button, "button with bad type"}})
+  test "throws an error if clicking on an input with no type", %{page: page} do
+    msg = Wallaby.QueryError.error_message(:not_found, %{locator: {:button, "input-no-type"}, conditions: [count: 1, visible: true]})
     assert_raise Wallaby.QueryError, msg, fn ->
-      click_button(page, "button with bad type", [])
+      click_button(page, "input-no-type", [])
     end
   end
 
