@@ -24,7 +24,10 @@ defmodule Wallaby.Phantom.Driver do
       Wallaby.Phantom.user_agent
       |> Wallaby.Metadata.append(opts[:metadata])
 
-    capabilities = Wallaby.Phantom.capabilities(user_agent: user_agent)
+    capabilities = Wallaby.Phantom.capabilities(
+      user_agent: user_agent,
+      custom_headers: opts[:custom_headers]
+    )
     params = %{desiredCapabilities: capabilities}
 
     response = request(:post, "#{base_url}session", params)
