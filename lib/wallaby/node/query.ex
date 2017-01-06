@@ -395,7 +395,7 @@ defmodule Wallaby.Node.Query do
   end
 
   def max_time_exceeded?(start_time) do
-    :erlang.monotonic_time(:milli_seconds) - start_time < max_wait_time
+    :erlang.monotonic_time(:milli_seconds) - start_time < max_wait_time()
   end
 
   defp max_wait_time do
@@ -414,7 +414,7 @@ defmodule Wallaby.Node.Query do
   defp build_locator({:file_field, query}), do: {:xpath, XPath.file_field(query)}
 
   defp build_conditions(conditions) do
-    default_conditions
+    default_conditions()
     |> Keyword.merge(conditions)
   end
 

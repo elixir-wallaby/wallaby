@@ -10,7 +10,7 @@ defmodule Wallaby.Phantom do
 
   def init(:ok) do
     children = [
-      :poolboy.child_spec(@pool_name, poolboy_config, []),
+      :poolboy.child_spec(@pool_name, poolboy_config(), []),
       worker(Wallaby.Phantom.LogStore, []),
     ]
 
@@ -18,7 +18,7 @@ defmodule Wallaby.Phantom do
   end
 
   def capabilities(opts) do
-    default_capabilities
+    default_capabilities()
     |> Map.merge(user_agent_capability(opts[:user_agent]))
   end
 
@@ -56,13 +56,13 @@ defmodule Wallaby.Phantom do
   end
 
   def pool_size do
-    Application.get_env(:wallaby, :pool_size) || default_pool_size
+    Application.get_env(:wallaby, :pool_size) || default_pool_size()
   end
 
   defp poolboy_config do
     [name: {:local, @pool_name},
      worker_module: Wallaby.Phantom.Server,
-     size: pool_size,
+     size: pool_size(),
      max_overflow: 0]
   end
 

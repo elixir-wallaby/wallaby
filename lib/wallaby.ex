@@ -22,7 +22,7 @@ defmodule Wallaby do
     import Supervisor.Spec, warn: false
 
     children = [
-      supervisor(driver, [[name: Driver.Supervisor]])
+      supervisor(driver(), [[name: Driver.Supervisor]])
     ]
 
     opts = [strategy: :one_for_one, name: Wallaby.Supervisor]
@@ -30,11 +30,11 @@ defmodule Wallaby do
   end
 
   def start_session(opts \\ []) do
-    driver.start_session(opts)
+    driver().start_session(opts)
   end
 
   def end_session(session) do
-    driver.end_session(session)
+    driver().end_session(session)
   end
 
   def screenshot_on_failure? do
