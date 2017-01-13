@@ -71,7 +71,7 @@ defmodule Wallaby.Session do
     uri = URI.parse(path)
 
     cond do
-      uri.host == nil && String.length(base_url) == 0 ->
+      uri.host == nil && String.length(base_url()) == 0 ->
         raise Wallaby.NoBaseUrl, path
       uri.host ->
         Driver.visit(session, path)
@@ -94,7 +94,7 @@ defmodule Wallaby.Session do
       screenshotable
       |> Driver.take_screenshot
 
-    path = path_for_screenshot
+    path = path_for_screenshot()
     File.write! path, image_data
 
     Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
@@ -195,7 +195,7 @@ defmodule Wallaby.Session do
   end
 
   defp request_url(path) do
-    base_url <> path
+    base_url() <> path
   end
 
   defp base_url do
@@ -203,8 +203,8 @@ defmodule Wallaby.Session do
   end
 
   defp path_for_screenshot do
-    File.mkdir_p!(screenshot_dir)
-    "#{screenshot_dir}/#{:erlang.system_time}.png"
+    File.mkdir_p!(screenshot_dir())
+    "#{screenshot_dir()}/#{:erlang.system_time}.png"
   end
 
   defp screenshot_dir do

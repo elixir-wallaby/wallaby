@@ -10,10 +10,10 @@ defmodule Wallaby.Mixfile do
      elixirc_paths: elixirc_paths(Mix.env),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     package: package,
+     package: package(),
      description: "Concurrent feature tests for elixir",
-     deps: deps,
-     docs: docs
+     deps: deps(),
+     docs: docs()
    ]
   end
 
