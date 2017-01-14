@@ -183,4 +183,23 @@ defmodule Wallaby.DSL.Actions do
 
     parent
   end
+
+  # @doc """
+  # Waits until the provided query is satisfied
+  #
+  # ## Examples
+  # ```
+  # session
+  #   |> click_on("Some Button that fires async action")
+  #   |> wait_until(& find(&1, ".result-of-async-action"))
+  # ```
+  # ```
+  # session
+  #   |> click_on("Some Button that fires async action")
+  #   |> wait_until(& link(&1, "Added by async action"))
+  # ```
+  def wait_until(parent, fun) do
+    fun.(parent)
+    parent
+  end
 end
