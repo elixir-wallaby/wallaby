@@ -148,14 +148,7 @@ defmodule Wallaby.DSL.Actions do
     parent
   end
 
-  @doc """
-  Clicks on the matching button. Alias for `click_button`.
-  """
-  @spec click_on(parent, locator, opts) :: parent
-
-  def click_on(parent, locator, opts\\[]) do
-    click_button(parent, locator, opts)
-  end
+  defdelegate click_on, to: __MODULE__, to: :click_button
 
   # @doc """
   # Clears an input field. Input nodes are looked up by id, label text, or name.
