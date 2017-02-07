@@ -33,6 +33,7 @@ defmodule Wallaby.Mixfile do
       {:earmark, "~> 0.2", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
       {:issuer, "~> 0.1.2", only: :dev},
+      {:quixir, "~> 0.9.0", only: [:dev, :test]},
     ]
   end
 

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Wallaby Test Page - Stale Nodes</title>
+  </head>
+  <body>
+    <div id="removed-node" class="stale-node">
+      Stale
+    </div>
+    <div class="stale-node">
+      Stale
+    </div>
+  </body>
+
+  <script>
+    setTimeout(function() {
+      var node = document.getElementById('removed-node')
+      node.remove()
+    }, 300)
+  </script>
+</html>

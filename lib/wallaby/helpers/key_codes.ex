@@ -12,11 +12,15 @@ defmodule Wallaby.Helpers.KeyCodes do
   def json(keys) when is_list(keys) do
     unicode =
       keys
-      |> Enum.map(&"\"#{code(&1)}\"")
+      |> Enum.reduce([], fn (x, acc) -> acc ++ split_strings(x) end)
+      |> Enum.map( &"\"#{code(&1)}\"" )
       |> Enum.join(",")
 
     "{\"value\": [#{unicode}]}"
   end
+
+  defp split_strings(x) when is_binary(x), do: String.graphemes(x)
+  defp split_strings(x), do: [x]
 
   defp code(:null),      do: "\\uE000"
   defp code(:cancel),    do: "\\uE001"
@@ -65,4 +69,6 @@ defmodule Wallaby.Helpers.KeyCodes do
   defp code(:divide),    do: "\\uE029"
 
   defp code(:command),   do: "\\uE03D"
+
+  defp code(char), do: char
 end

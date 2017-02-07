@@ -5,7 +5,8 @@
   </head>
   <body>
     <h1>Page 1</h1>
-    <div class="blue" id="1234" name="foo"><p>Test Div</p>
+    <div class="blue" id="1234" name="foo">
+      <p>Test Div</p>
 
       <a href="index.html" class="link">Back to Index</a>
 
@@ -60,5 +61,11 @@
     </div>
 
     <p class="plus-one">+ 1</p>
+
+    <div id="same-selectors-with-different-visibilities">
+      <span class="conflicting">Visible</span>
+      <span class="conflicting">Visible</span>
+      <span class="conflicting" style="display: none;">Visible</span>
+    </div>
   </body>
 </html>

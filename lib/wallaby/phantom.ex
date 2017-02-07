@@ -1,6 +1,8 @@
 defmodule Wallaby.Phantom do
   use Supervisor
 
+  alias Wallaby.Phantom.Driver
+
   @moduledoc false
   @pool_name Wallaby.ServerPool
 
@@ -42,7 +44,8 @@ defmodule Wallaby.Phantom do
   end
 
   def end_session(%Wallaby.Session{server: server}=session) do
-    :ok = Wallaby.Session.delete(session)
+    Driver.execute_script(session, "localStorage.clear()")
+    Driver.delete(session)
     :poolboy.checkin(Wallaby.ServerPool, server)
   end
 
