@@ -6,25 +6,25 @@ defmodule Wallaby.Browser.VisibleTest do
 
     test "determines if the element is visible to the user", %{page: page} do
       page
-      |> find("#visible")
+      |> find(Query.css("#visible"))
       |> visible?
       |> assert
 
       page
-      |> find("#invisible", visible: false)
+      |> find(Query.css("#invisible", visible: false))
       |> visible?
       |> refute
     end
 
     test "handles elements that are not on the page", %{page: page} do
-      element = find(page, "#off-the-page", visible: false)
+      element = find(page, Query.css("#off-the-page", visible: false))
 
       assert visible?(element) == false
     end
 
     @tag skip: "Unsuported in phantom"
     test "handles obscured elements", %{page: page} do
-      element = find(page, "#obscured", visible: false)
+      element = find(page, Query.css("#obscured", visible: false))
 
       assert visible?(element) == false
     end

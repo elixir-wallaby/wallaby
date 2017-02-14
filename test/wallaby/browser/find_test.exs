@@ -21,7 +21,7 @@ defmodule Wallaby.Browser.FindTest do
     test "can find an element on a page", %{session: session} do
       element =
         session
-        |> find(".blue")
+        |> find(Query.css(".blue"))
 
       assert element
     end
@@ -30,8 +30,8 @@ defmodule Wallaby.Browser.FindTest do
       users =
         session
         |> visit("nesting.html")
-        |> find(".dashboard")
-        |> find(".users")
+        |> find(Query.css(".dashboard"))
+        |> find(Query.css(".users"))
         |> all(".user")
 
       assert Enum.count(users) == 3
@@ -58,7 +58,7 @@ defmodule Wallaby.Browser.FindTest do
 
     test "throws errors if element should not be visible", %{page: page} do
       assert_raise Wallaby.QueryError, ~r/invisible/, fn ->
-        find(page, "#visible", visible: false)
+        find(page, Query.css("#visible", visible: false))
       end
     end
 
@@ -70,33 +70,33 @@ defmodule Wallaby.Browser.FindTest do
         find(session, "#invisible")
       end
 
-      assert find(session, "#visible", count: :any)
+      assert find(session, Query.css("#visible", count: :any))
       |> length == 1
     end
 
     test "finds invisible elements", %{page: page} do
-      assert find(page, "#invisible", visible: false)
+      assert find(page, Query.css("#invisible", visible: false))
     end
 
     test "can be scoped with inner text", %{page: page} do
-      user1 = find(page, ".user", text: "Chris K.")
-      user2 = find(page, ".user", text: "Grace H.")
+      user1 = find(page, Query.css(".user", text: "Chris K."))
+      user2 = find(page, Query.css(".user", text: "Grace H."))
       assert user1 != user2
     end
 
     test "can be scoped by inner text when there are multiple elements with text", %{page: page} do
-      element = find(page, ".inner-text", text: "Inner Text")
+      element = find(page, Query.css(".inner-text", text: "Inner Text"))
       assert element
     end
 
     test "scoping with text escapes the text", %{page: page} do
-      assert find(page, ".plus-one", text: "+ 1")
+      assert find(page, Query.css(".plus-one", text: "+ 1"))
     end
 
     test "scopes can be composed together", %{page: page} do
-      assert find(page, ".user", text: "Same User", count: 2)
-      assert find(page, ".user", text: "Visible User", visible: true)
-      assert find(page, ".invisible-elements", visible: false, count: 3)
+      assert find(page, Query.css(".user", text: "Same User", count: 2))
+      assert find(page, Query.css(".user", text: "Visible User", visible: true))
+      assert find(page, Query.css(".invisible-elements", visible: false, count: 3))
     end
   end
 
@@ -111,7 +111,7 @@ defmodule Wallaby.Browser.FindTest do
     session
     |> visit("wait.html")
 
-    assert find(session, ".orange", count: 5) |> length == 5
+    assert find(session, Query.css(".orange", count: 5)) |> length == 5
   end
 
   test "finding one or more elements", %{session: session} do
@@ -122,6 +122,26 @@ defmodule Wallaby.Browser.FindTest do
       find(session, ".not-there")
     end
 
-    assert find(session, "li", count: :any) |> length == 4
+    assert find(session, Query.css("li", count: :any)) |> length == 4
+  end
+
+  describe "find/3" do
+    setup %{session: session} do
+      page = visit(session, "page_1.html")
+
+      {:ok, %{page: page}}
+    end
+
+    @tag :focus
+    test "returns the element as the argument to the callback", %{page: page} do
+      page
+      |> find(Query.css("h1"), & assert has_text?(&1, "Page 1") )
+    end
+
+    @tag :focus
+    test "returns the parent", %{page: page} do
+      assert page
+      |> find(Query.css("h1"), fn(_) -> nil end) == page
+    end
   end
 end

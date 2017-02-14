@@ -13,7 +13,7 @@ defmodule Wallaby.Browser.ScreenshotTest do
     element =
       page
       |> take_screenshot
-      |> find("#header")
+      |> find(Query.css("#header"))
       |> take_screenshot
 
     parent_screenshots =

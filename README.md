@@ -128,10 +128,10 @@ defmodule YourApp.UserListTest do
     first_employee =
       session
       |> visit("/users")
-      |> find(".dashboard")
+      |> find(Query.css(".dashboard"))
       |> all(".user")
       |> List.first
-      |> find(".user-name")
+      |> find(Query.css(".user-name"))
       |> text
 
     assert first_employee == "Chris"
@@ -178,8 +178,8 @@ Querying and finding is done with css selectors:
 
 ```elixir
 find(session, "#some_id")
-find(session, ".user", count: :any)
-find(session, ".single-item", count: 1)
+find(session, Query.css(".user", count: :any))
+find(session, Query.css(".single-item", count: 1))
 all(session, ".user")
 ```
 
@@ -194,7 +194,7 @@ Nodes can be found by their inner text.
 #   </span>
 # </div>
 
-find(page, ".user", text: "Chris K")
+find(page, Query.css(".user", text: "Chris K"))
 ```
 
 ### Scoping
@@ -203,7 +203,7 @@ Finders can be scoped to a specific node by chaining finds together:
 
 ```elixir
 session
-|> find(".user-form")
+|> find(Query.css(".user-form"))
 |> fill_in("User Name", with: "Chris")
 ```
 
@@ -250,7 +250,7 @@ It can be difficult to test asynchronous javascript code. You may try to interac
 ```elixir
 session
 |> click_on("Some Async Button")
-|> find(".async-result")
+|> find(Query.css(".async-result"))
 ```
 
 ### Javascript logging and errors

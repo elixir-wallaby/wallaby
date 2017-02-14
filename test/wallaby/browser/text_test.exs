@@ -5,7 +5,7 @@ defmodule Wallaby.Browser.TextTest do
     text =
       session
       |> visit("/")
-      |> find("#header")
+      |> find(Query.css("#header"))
       |> text()
 
     assert text == "Test Index"
@@ -15,7 +15,7 @@ defmodule Wallaby.Browser.TextTest do
     text =
       session
       |> visit("/")
-      |> find("#parent")
+      |> find(Query.css("#parent"))
       |> text()
 
     assert text == "The Parent\nThe Child"

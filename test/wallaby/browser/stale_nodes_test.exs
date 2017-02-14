@@ -6,7 +6,7 @@ defmodule Wallaby.Browser.StaleElementsTest do
       element =
         session
         |> visit("stale_nodes.html")
-        |> find(".stale-node", text: "Stale", count: 1)
+        |> find(Query.css(".stale-node", text: "Stale", count: 1))
 
       assert element
     end
@@ -15,7 +15,7 @@ defmodule Wallaby.Browser.StaleElementsTest do
       element =
         session
         |> visit("stale_nodes.html")
-        |> find("#removed-node.stale-node")
+        |> find(Query.css("#removed-node.stale-node"))
 
       Process.sleep(1_000)
 

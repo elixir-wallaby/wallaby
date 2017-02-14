@@ -50,10 +50,10 @@ defmodule Wallaby.Browser do
 
   ```
   visit("/page.html")
-  |> find(".users")
-  |> find(".user", count: 3)
+  |> find(Query.css(".users"))
+  |> find(Query.css(".user", count: 3))
   |> List.first
-  |> find(".user-name")
+  |> find(Query.css(".user-name"))
   ```
   """
 
@@ -118,17 +118,11 @@ defmodule Wallaby.Browser do
 
   def fill_in(parent, locator, [{:with, value} | _]=opts) when is_binary(locator) do
     parent
-    |> find(Query.fillable_field(locator, opts))
-    |> fill_in(with: value)
-
-    parent
+    |> find(Query.fillable_field(locator, opts), & fill_in(&1, with: value))
   end
   def fill_in(parent, query, with: value) do
     parent
-    |> find(query)
-    |> fill_in(with: value)
-
-    parent
+    |> find(query, &(fill_in(&1, with: value)))
   end
   def fill_in(%Element{}=element, with: value) when is_number(value) do
     fill_in(element, with: to_string(value))
@@ -137,8 +131,6 @@ defmodule Wallaby.Browser do
     element
     |> clear
     |> set_value(value)
-
-    element
   end
 
   @doc """
@@ -150,24 +142,15 @@ defmodule Wallaby.Browser do
 
   def choose(parent, locator, opts) when is_binary(locator) do
     parent
-    |> find(Query.radio_button(locator, opts))
-    |> click
-
-    parent
+    |> find(Query.radio_button(locator, opts), &(click(&1)))
   end
   def choose(parent, locator) when is_binary(locator) do
     parent
-    |> find(Query.radio_button(locator, []))
-    |> click
-
-    parent
+    |> find(Query.radio_button(locator, []), &(click(&1)))
   end
   def choose(parent, query) do
     parent
-    |> find(query)
-    |> click
-
-    parent
+    |> find(query, &(click(&1)))
   end
   def choose(%Element{}=element) do
     click(element)
@@ -188,24 +171,15 @@ defmodule Wallaby.Browser do
   end
   def check(parent, locator) when is_binary(locator) do
     parent
-    |> find(Query.checkbox(locator, []))
-    |> check
-
-    parent
+    |> find(Query.checkbox(locator, []), &(check(&1)))
   end
   def check(parent, query) do
     parent
-    |> find(query)
-    |> check
-
-    parent
+    |> find(query, &(check(&1)))
   end
   def check(parent, locator, opts) when is_binary(locator) do
     parent
-    |> find(Query.checkbox(locator, opts))
-    |> check
-
-    parent
+    |> find(Query.checkbox(locator, opts), &(check(&1)))
   end
 
   @doc """
@@ -217,18 +191,15 @@ defmodule Wallaby.Browser do
 
   def uncheck(parent, locator, opts) when is_binary(locator) do
     parent
-    |> find(Query.checkbox(locator, opts))
-    |> uncheck
+    |> find(Query.checkbox(locator, opts), &(uncheck(&1)))
   end
   def uncheck(parent, locator) when is_binary(locator) do
     parent
-    |> find(Query.checkbox(locator, []))
-    |> uncheck
+    |> find(Query.checkbox(locator, []), &(uncheck(&1)))
   end
   def uncheck(parent, query) do
     parent
-    |> find(query)
-    |> uncheck
+    |> find(query, &(uncheck(&1)))
   end
   def uncheck(%Element{}=element) do
     if checked?(element) do
@@ -252,14 +223,14 @@ defmodule Wallaby.Browser do
   end
   def select(parent, query) do
     parent
-    |> find(query)
-    |> click
+    |> find(query, &(click(&1)))
   end
   def select(parent, locator, [option: option_text]=opts) do
-    parent
-    |> find(Query.select(locator, opts))
-    |> find(Query.option(option_text, []))
-    |> click
+    find(parent, Query.select(locator, opts), fn(select_field) ->
+      find(select_field, Query.option(option_text, []), fn(option) ->
+        click(option)
+      end)
+    end)
   end
 
   @doc """
@@ -270,13 +241,11 @@ defmodule Wallaby.Browser do
 
   def click_link(parent, locator, opts) when is_binary(locator) do
     parent
-    |> find(Query.link(locator, opts))
-    |> click
+    |> click(Query.link(locator, opts))
   end
   def click_link(parent, locator) when is_binary(locator) do
     parent
-    |> find(Query.link(locator, []))
-    |> click
+    |> click(Query.link(locator, []))
   end
   def click_link(parent, query) do
     click(parent, query)
@@ -290,13 +259,11 @@ defmodule Wallaby.Browser do
 
   def click_button(parent, locator, opts) when is_binary(locator) do
     parent
-    |> find(Query.button(locator, opts))
-    |> click
+    |> click(Query.button(locator, opts))
   end
   def click_button(parent, locator) when is_binary(locator) do
     parent
-    |> find(Query.button(locator, []))
-    |> click
+    |> click(Query.button(locator, []))
   end
   def click_button(parent, query) do
     click(parent, query)
@@ -315,8 +282,7 @@ defmodule Wallaby.Browser do
   end
   def clear(parent, query) do
     parent
-    |> find(query)
-    |> clear()
+    |> find(query, &clear/1)
   end
   def clear(element) do
     {:ok, _} = Driver.clear(element)
@@ -434,10 +400,11 @@ defmodule Wallaby.Browser do
   @spec send_keys(parent, Query.t, list(atom)) :: parent
 
   def send_keys(parent, query, list) do
-    parent
-    |> find(query)
-    |> click()
-    |> send_keys(list)
+    find(parent, query, fn(element) ->
+      element
+      |> click()
+      |> send_keys(list)
+    end)
   end
   def send_keys(parent, keys) when is_list(keys) do
     {:ok, _} = Driver.send_keys(parent, keys)
@@ -457,8 +424,11 @@ defmodule Wallaby.Browser do
   @doc """
   Sets the value of an element.
   """
+  @spec set_value(element, any()) :: element
+
   def set_value(element, value) do
     {:ok, _} = Driver.set_value(element, value)
+    element
   end
 
   @doc """
@@ -469,10 +439,7 @@ defmodule Wallaby.Browser do
 
   def click(parent, query) do
     parent
-    |> find(query)
-    |> click()
-
-    parent
+    |> find(query, &click/1)
   end
   def click(element) do
     Driver.click(element)
@@ -491,7 +458,7 @@ defmodule Wallaby.Browser do
     |> find(query)
     |> text
   end
-  def text(element) do
+  def text(%Element{}=element) do
     case Driver.text(element) do
       {:ok, text} ->
         text
@@ -537,8 +504,7 @@ defmodule Wallaby.Browser do
 
   def selected?(parent, query) do
     parent
-    |> find(query)
-    |> selected?
+    |> find(query, &selected?/1)
   end
   def selected?(%Element{}=element) do
     {:ok, value} = Driver.selected(element)
@@ -556,8 +522,7 @@ defmodule Wallaby.Browser do
   end
   def visible?(parent, query) do
     parent
-    |> find(query)
-    |> visible?
+    |> find(query, &visible?/1)
   end
 
   @doc """
@@ -572,20 +537,16 @@ defmodule Wallaby.Browser do
   By default finders only work with elements that would be visible to a real
   user.
   """
-  @spec find(parent, locator, opts) :: [Element.t] | Element.t
-  @spec find(parent, locator) :: [Element.t] | Element.t
-  @spec find(parent, Query.t) :: [Element.t] | Element.t
+  @spec find(parent, Query.t, ((Element.t) -> any())) :: parent
 
-  def find(parent, css, opts) when is_binary(css) do
-    find(parent, Query.css(css, opts))
-  end
   def find(parent, css) when is_binary(css) do
     find(parent, Query.css(css))
   end
   def find(parent, %Query{}=query) do
     case execute_query(parent, query) do
       {:ok, query} ->
-        Query.result(query)
+        query
+        |> Query.result
 
       {:error, {:not_found, result}} ->
         query = %Query{query | result: result}
@@ -608,6 +569,38 @@ defmodule Wallaby.Browser do
 
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
     end
+  end
+
+  def find(parent, %Query{}=query, callback) do
+    case execute_query(parent, query) do
+      {:ok, query} ->
+        query
+        |> Query.result
+        |> callback.()
+
+      {:error, {:not_found, result}} ->
+        query = %Query{query | result: result}
+
+        if Wallaby.screenshot_on_failure? do
+          take_screenshot(parent)
+        end
+
+        case validate_html(parent, query) do
+          {:ok, _} ->
+            raise Wallaby.QueryError, ErrorMessage.message(query, :not_found)
+          {:error, html_error} ->
+            raise Wallaby.QueryError, ErrorMessage.message(query, html_error)
+        end
+
+      {:error, e} ->
+        if Wallaby.screenshot_on_failure? do
+          take_screenshot(parent)
+        end
+
+        raise Wallaby.QueryError, ErrorMessage.message(query, e)
+    end
+
+    parent
   end
 
   @doc """

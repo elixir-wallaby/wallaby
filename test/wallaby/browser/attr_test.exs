@@ -5,7 +5,7 @@ defmodule Wallaby.Browser.AttrTest do
     class =
       session
       |> visit("/")
-      |> find("body")
+      |> find(Query.css("body"))
       |> attr("class")
 
     assert class == "bootstrap"
