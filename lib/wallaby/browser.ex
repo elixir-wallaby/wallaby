@@ -572,34 +572,8 @@ defmodule Wallaby.Browser do
   end
 
   def find(parent, %Query{}=query, callback) do
-    case execute_query(parent, query) do
-      {:ok, query} ->
-        query
-        |> Query.result
-        |> callback.()
-
-      {:error, {:not_found, result}} ->
-        query = %Query{query | result: result}
-
-        if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent)
-        end
-
-        case validate_html(parent, query) do
-          {:ok, _} ->
-            raise Wallaby.QueryError, ErrorMessage.message(query, :not_found)
-          {:error, html_error} ->
-            raise Wallaby.QueryError, ErrorMessage.message(query, html_error)
-        end
-
-      {:error, e} ->
-        if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent)
-        end
-
-        raise Wallaby.QueryError, ErrorMessage.message(query, e)
-    end
-
+    results = find(parent, query)
+    callback.(results)
     parent
   end
 

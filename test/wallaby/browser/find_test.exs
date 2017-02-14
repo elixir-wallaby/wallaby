@@ -132,16 +132,20 @@ defmodule Wallaby.Browser.FindTest do
       {:ok, %{page: page}}
     end
 
-    @tag :focus
     test "returns the element as the argument to the callback", %{page: page} do
       page
       |> find(Query.css("h1"), & assert has_text?(&1, "Page 1") )
     end
 
-    @tag :focus
     test "returns the parent", %{page: page} do
       assert page
       |> find(Query.css("h1"), fn(_) -> nil end) == page
+    end
+
+    test "returns all the elements found with the query", %{page: page} do
+      assert find page, Query.css(".user", count: 5), fn(elements) ->
+         assert Enum.count(elements) == 5
+      end
     end
   end
 end
