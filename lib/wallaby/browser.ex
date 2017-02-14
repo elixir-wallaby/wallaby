@@ -343,6 +343,8 @@ defmodule Wallaby.Browser do
     session
   end
 
+  defdelegate set_window_size(parent, x, y), to: Wallaby.Browser, as: :resize_window
+
   @doc """
   Gets the current url of the session
   """
@@ -351,6 +353,8 @@ defmodule Wallaby.Browser do
   def current_url(parent) do
     Driver.current_url!(parent)
   end
+
+  defdelegate get_current_url(parent), to: __MODULE__, as: :current_url
 
   @doc """
   Gets the current path of the session
@@ -406,10 +410,15 @@ defmodule Wallaby.Browser do
       |> send_keys(list)
     end)
   end
+  def send_keys(parent, text) when is_binary(text) do
+    send_keys(parent, [text])
+  end
   def send_keys(parent, keys) when is_list(keys) do
     {:ok, _} = Driver.send_keys(parent, keys)
     parent
   end
+
+  defdelegate send_text(parent, keys), to: __MODULE__, as: :send_keys
 
   @doc """
   Retrieves the source of the current page.
@@ -437,6 +446,10 @@ defmodule Wallaby.Browser do
   @spec click(parent, Query.t) :: parent
   @spec click(Element.t) :: Element.t
 
+  def click(parent, locator) when is_binary(locator) do
+    parent
+    |> find(Query.button(locator), &click/1)
+  end
   def click(parent, query) do
     parent
     |> find(query, &click/1)
@@ -446,6 +459,8 @@ defmodule Wallaby.Browser do
 
     element
   end
+
+  defdelegate click_on(parent, query), to: __MODULE__, as: :click
 
   @doc """
   Gets the Element's text value.
@@ -457,6 +472,11 @@ defmodule Wallaby.Browser do
     parent
     |> find(query)
     |> text
+  end
+  def text(%Session{}=session) do
+    session
+    |> find(Query.css("body"))
+    |> text()
   end
   def text(%Element{}=element) do
     case Driver.text(element) do
@@ -546,6 +566,17 @@ defmodule Wallaby.Browser do
   @spec find(parent, Query.t) :: Element.t | [Element.t]
   @spec find(parent, locator) :: Element.t | [Element.t]
 
+  def find(parent, css, opts) when is_binary(css) and is_list(opts) do
+    find(parent, Query.css(css, opts))
+  end
+  def find(parent, %Query{}=query, callback) when is_function(callback) do
+    results = find(parent, query)
+    callback.(results)
+    parent
+  end
+  def find(parent, {:xpath, path}) when is_binary(path) do
+    find(parent, Query.xpath(path))
+  end
   def find(parent, css) when is_binary(css) do
     find(parent, Query.css(css))
   end
@@ -576,11 +607,6 @@ defmodule Wallaby.Browser do
 
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
     end
-  end
-  def find(parent, %Query{}=query, callback) do
-    results = find(parent, query)
-    callback.(results)
-    parent
   end
 
   @doc """
@@ -642,8 +668,8 @@ defmodule Wallaby.Browser do
     |> find(query)
     |> has_text?(text)
   end
-  def has_text?(%Element{}=element, text) when is_binary(text) do
-    text(element) == text || has?(element, Query.text(text))
+  def has_text?(parent, text) when is_binary(text) do
+    text(parent) =~ text || has?(parent, Query.text(text))
   end
 
   @doc """

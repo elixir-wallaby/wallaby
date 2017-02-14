@@ -21,5 +21,16 @@ defmodule Wallaby.Browser.HasTextTest do
       |> find(@h1)
       |> has_text?("Page 1")
     end
+
+    test "matches all text under the element", %{page: page} do
+      assert page
+      |> find(Query.css(".lots-of-text"))
+      |> has_text?("Text 2")
+    end
+
+    test "works with sessions", %{page: page} do
+      assert page
+      |> has_text?("Page 1")
+    end
   end
 end
