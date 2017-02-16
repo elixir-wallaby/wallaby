@@ -12,5 +12,10 @@ defmodule Wallaby.Browser.ClickTest do
       assert page
       |> click(Query.button("Submit button"))
     end
+
+    test "can click invisible elements", %{page: page} do
+      assert page
+      |> click(Query.button("Invisible Button", visible: false))
+    end
   end
 end
