@@ -471,6 +471,8 @@ defmodule Wallaby.Browser do
     parent
     |> find(query)
     |> click()
+
+    parent
   end
   def click(element) do
     Driver.click(element)
