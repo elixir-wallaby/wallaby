@@ -22,7 +22,7 @@ defmodule Wallaby.Browser.ChooseTest do
   test "choosing a radio button unchecks other buttons in the group", %{page: page} do
     page
     |> choose("Option 1")
-    |> find("#option1")
+    |> find(Query.css("#option1"))
     |> checked?
     |> assert
 
@@ -44,7 +44,7 @@ defmodule Wallaby.Browser.ChooseTest do
   test "throw an error if a label exists but does not have a for attribute", %{page: page} do
     bad_form =
       page
-      |> find(".bad-form")
+      |> find(Query.css(".bad-form"))
 
     assert_raise Wallaby.QueryError, fn ->
       choose(bad_form, "Radio with bad label")

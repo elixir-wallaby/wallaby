@@ -8,7 +8,7 @@ defmodule Wallaby.Browser.ClickLinkTest do
 
     element =
       session
-      |> find(".blue")
+      |> find(Query.css(".blue"))
 
     assert element
   end

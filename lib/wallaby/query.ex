@@ -78,6 +78,7 @@ defmodule Wallaby.Query do
     count: non_neg_integer,
     text: String.t,
     visible: boolean(),
+    minimum: non_neg_integer,
   ]
   @type result :: list(Element.t)
   @type opts :: nonempty_list()

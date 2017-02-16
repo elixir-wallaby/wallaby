@@ -18,7 +18,7 @@ defmodule Wallaby.Browser.ExecuteScriptTest do
 
     assert result == "return value"
     assert session
-    |> find("#new-element")
+    |> find(Query.css("#new-element"))
     |> text == "now you see me"
   end
 end

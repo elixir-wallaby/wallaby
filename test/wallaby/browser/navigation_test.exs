@@ -6,7 +6,7 @@ defmodule Wallaby.Browser.NavigationTest do
 
     element =
       session
-      |> find(".blue")
+      |> find(Query.css(".blue"))
 
     assert element
   end

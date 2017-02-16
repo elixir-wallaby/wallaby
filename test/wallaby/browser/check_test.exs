@@ -12,7 +12,7 @@ defmodule Wallaby.Browser.CheckTest do
   test "check/1 checks the specified element", %{page: page} do
     checkbox =
       page
-      |> find("#checkbox1")
+      |> find(Query.css("#checkbox1"))
 
     check checkbox
     assert checked?(checkbox)

@@ -5,7 +5,7 @@ defmodule Wallaby.Browser.AssertTextTest do
     element =
     session
       |> visit("wait.html")
-      |> find("#container")
+      |> find(Query.css("#container"))
 
     assert has_text?(element, "main")
     refute has_text?(element, "rain")
@@ -15,7 +15,7 @@ defmodule Wallaby.Browser.AssertTextTest do
     element =
     session
       |> visit("wait.html")
-      |> find("#container")
+      |> find(Query.css("#container"))
 
     assert assert_text(element, "main")
   end
@@ -24,7 +24,7 @@ defmodule Wallaby.Browser.AssertTextTest do
     element =
     session
       |> visit("wait.html")
-      |> find("#container")
+      |> find(Query.css("#container"))
 
     assert_raise Wallaby.ExpectationNotMet, "Text 'rain' was not found.", fn ->
       assert_text(element, "rain")
