@@ -504,11 +504,16 @@ defmodule Wallaby.Browser do
 
   def selected?(parent, query) do
     parent
-    |> find(query, &selected?/1)
+    |> find(query)
+    |> selected?
   end
   def selected?(%Element{}=element) do
-    {:ok, value} = Driver.selected(element)
-    value
+    case Driver.selected(element) do
+      {:ok, value} ->
+        value
+      {:error, _} ->
+        false
+    end
   end
 
   @doc """
@@ -522,7 +527,7 @@ defmodule Wallaby.Browser do
   end
   def visible?(parent, query) do
     parent
-    |> find(query, &visible?/1)
+    |> has?(query)
   end
 
   @doc """
@@ -538,6 +543,8 @@ defmodule Wallaby.Browser do
   user.
   """
   @spec find(parent, Query.t, ((Element.t) -> any())) :: parent
+  @spec find(parent, Query.t) :: Element.t | [Element.t]
+  @spec find(parent, locator) :: Element.t | [Element.t]
 
   def find(parent, css) when is_binary(css) do
     find(parent, Query.css(css))
@@ -570,7 +577,6 @@ defmodule Wallaby.Browser do
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
     end
   end
-
   def find(parent, %Query{}=query, callback) do
     results = find(parent, query)
     callback.(results)
@@ -592,7 +598,9 @@ defmodule Wallaby.Browser do
     find(parent, Query.css(css, minimum: 0))
   end
   def all(parent, %Query{}=query) do
-    find(parent, %Query{query | conditions: Keyword.merge(query.conditions, [count: nil, minimum: 0])})
+    find(
+      parent,
+      %Query{query | conditions: Keyword.merge(query.conditions, [count: nil, minimum: 0])})
   end
 
   @doc """

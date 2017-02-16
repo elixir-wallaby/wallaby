@@ -30,6 +30,18 @@ defmodule Wallaby.Browser.VisibleTest do
     end
   end
 
+  describe "visible?/2" do
+    setup :visit_page
+
+    test "returns a boolean", %{page: page} do
+      assert page
+      |> visible?(Query.css("#visible")) == true
+
+      assert page
+      |> visible?(Query.css("#invisible")) == false
+    end
+  end
+
   def visit_page(%{session: session}) do
     page =
       session

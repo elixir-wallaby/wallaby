@@ -70,4 +70,23 @@ defmodule Wallaby.Browser.SelectTest do
       |> select(Query.option("Option 2"))
     end
   end
+
+  describe "selected?/2" do
+    test "returns a boolean if the option is selected", %{page: page} do
+      assert page
+      |> find(Query.select("My Select"))
+      |> select(Query.option("Option 2"))
+      |> selected?(Query.option("Option 2")) == true
+    end
+  end
+
+  describe "selected?/1" do
+    test "returns a boolean if the option is selected", %{page: page} do
+      assert page
+      |> find(Query.select("My Select"))
+      |> select(Query.option("Option 2"))
+      |> find(Query.option("Option 2"))
+      |> selected? == true
+    end
+  end
 end
