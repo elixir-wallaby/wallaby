@@ -22,6 +22,7 @@ defmodule Wallaby.Phantom do
   def capabilities(opts) do
     default_capabilities()
     |> Map.merge(user_agent_capability(opts[:user_agent]))
+    |> Map.merge(custom_headers_capability(opts[:custom_headers]))
   end
 
   def default_capabilities do
@@ -56,6 +57,13 @@ defmodule Wallaby.Phantom do
   def user_agent_capability(nil), do: %{}
   def user_agent_capability(ua) do
     %{"phantomjs.page.settings.userAgent" => ua}
+  end
+
+  def custom_headers_capability(nil), do: %{}
+  def custom_headers_capability(ch) do
+    Enum.reduce(ch, %{}, fn ({k, v}, acc) ->
+      Map.merge(acc, %{ "phantomjs.page.customHeaders.#{k}" => v })
+    end)
   end
 
   def pool_size do
