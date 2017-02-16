@@ -26,13 +26,12 @@ defmodule Wallaby.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 0.9"},
+      {:httpoison, "~> 0.11.0"},
       {:poison, ">= 1.4.0"},
       {:poolboy, "~> 1.5"},
       {:dialyze, "~> 0.2.0", only: :dev},
-      {:earmark, "~> 0.2", only: :dev},
-      {:ex_doc, "~> 0.11", only: :dev},
-      {:issuer, "~> 0.1.2", only: :dev},
+      {:earmark, "~> 1.1.1", only: :dev},
+      {:ex_doc, "~> 0.14.5", only: :dev},
       {:quixir, "~> 0.9.0", only: [:dev, :test]},
     ]
   end
