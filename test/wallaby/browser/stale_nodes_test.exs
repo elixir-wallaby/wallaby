@@ -10,18 +10,5 @@ defmodule Wallaby.Browser.StaleElementsTest do
 
       assert element
     end
-
-    test "it surfaces the stale element error", %{session: session} do
-      element =
-        session
-        |> visit("stale_nodes.html")
-        |> find(Query.css("#removed-node.stale-node"))
-
-      Process.sleep(1_000)
-
-      assert_raise Wallaby.StaleReferenceException, fn ->
-        text(element)
-      end
-    end
   end
 end
