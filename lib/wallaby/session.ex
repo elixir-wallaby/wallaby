@@ -49,4 +49,6 @@ defmodule Wallaby.Session do
   }
 
   defstruct [:id, :url, :session_url, :server, screenshots: []]
+
+  defdelegate set_window_size(parent, x, y), to: Wallaby.Browser
 end

@@ -29,4 +29,13 @@ defmodule Wallaby.Browser.TextTest do
 
     assert text == "The Parent\nThe Child"
   end
+
+  test "can get text of a session", %{session: session} do
+    text =
+      session
+      |> visit("/")
+      |> text()
+      
+    assert text == "Test Index\nPage 1\nPage 2\nPage 3\nThe Parent\nThe Child"
+  end
 end
