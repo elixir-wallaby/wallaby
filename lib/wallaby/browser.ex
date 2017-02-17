@@ -669,7 +669,21 @@ defmodule Wallaby.Browser do
     |> has_text?(text)
   end
   def has_text?(parent, text) when is_binary(text) do
-    text(parent) =~ text || has?(parent, Query.text(text))
+    result = retry fn ->
+      cond do
+        text(parent) =~ text ->
+          {:ok, true}
+        true ->
+          {:error, false}
+      end
+    end
+
+    case result do
+      {:ok, true} ->
+        true
+      {:error, false} ->
+        false
+    end
   end
 
   @doc """

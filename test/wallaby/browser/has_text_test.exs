@@ -32,5 +32,12 @@ defmodule Wallaby.Browser.HasTextTest do
       assert page
       |> has_text?("Page 1")
     end
+
+    @tag :focus
+    test "retries the query", %{page: page} do
+      assert page
+      |> visit("wait.html")
+      |> has_text?("orange") == true
+    end
   end
 end
