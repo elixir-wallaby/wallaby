@@ -50,5 +50,9 @@ defmodule Wallaby.Session do
 
   defstruct [:id, :url, :session_url, :server, screenshots: []]
 
-  defdelegate set_window_size(parent, x, y), to: Wallaby.Browser
+  def set_window_size(parent, x, y) do
+    IO.warn "set_window_size/3 has been deprecated. Please use Browser.resize_window/3"
+
+    Wallaby.Browser.resize_window(parent, x, y)
+  end
 end

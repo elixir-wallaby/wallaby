@@ -90,8 +90,8 @@ defmodule Wallaby.Browser do
   state. However, if this error does continue to occur it will cause wallaby to
   loop forever (or until the test is killed by exunit).
   """
-  @opaque result :: {:ok, any()} | {:error, any()}
-  @spec retry((() -> result), timeout) :: result()
+  @opaque sync_result :: {:ok, any()} | {:error, any()}
+  @spec retry((() -> sync_result), timeout) :: sync_result()
 
   def retry(f, start_time \\ current_time()) do
     case f.() do
@@ -117,6 +117,12 @@ defmodule Wallaby.Browser do
   @spec fill_in(parent, locator, opts) :: parent
 
   def fill_in(parent, locator, [{:with, value} | _]=opts) when is_binary(locator) do
+    IO.warn """
+    fill_in/3 with string locators has been deprecated. Please use a query:
+    
+    fill_in(parent, Query.text_field("#{locator}"), with: "#{value}")
+    """
+
     parent
     |> find(Query.fillable_field(locator, opts), & fill_in(&1, with: value))
   end
@@ -128,6 +134,8 @@ defmodule Wallaby.Browser do
     fill_in(element, with: to_string(value))
   end
   def fill_in(%Element{}=element, with: value) when is_binary(value) do
+    IO.warn "fill_in/2 has been deprecated. Please use Element.fill_in/2"
+
     element
     |> clear
     |> set_value(value)
@@ -141,18 +149,34 @@ defmodule Wallaby.Browser do
   @spec choose(parent, locator, opts) :: parent
 
   def choose(parent, locator, opts) when is_binary(locator) do
+    IO.warn """
+    choose/3 has been deprecated. Please use:
+    
+    click(parent, Query.radio_button("#{locator}", #{opts}))
+    """
+
     parent
     |> find(Query.radio_button(locator, opts), &(click(&1)))
   end
   def choose(parent, locator) when is_binary(locator) do
+    IO.warn """
+    choose/2 has been deprecated. Please use:
+    
+    click(parent, Query.radio_button("#{locator}"))
+    """
+
     parent
     |> find(Query.radio_button(locator, []), &(click(&1)))
   end
   def choose(parent, query) do
+    IO.warn "choose/2 has been deprecated. Please use click/2"
+
     parent
     |> find(query, &(click(&1)))
   end
   def choose(%Element{}=element) do
+    IO.warn "choose/1 has been deprecated. Please use Element.click/1"
+
     click(element)
   end
 
@@ -164,20 +188,36 @@ defmodule Wallaby.Browser do
   @spec check(parent, locator, opts) :: parent
 
   def check(%Element{}=element) do
+    IO.warn "check/1 has been deprecated. Please use Element.check/1"
+
     cond do
       checked?(element) -> element
       true -> click(element)
     end
   end
   def check(parent, locator) when is_binary(locator) do
+    IO.warn """
+    check/2 has been deprecated. Please use:
+    
+    click(parent, Query.checkbox("#{locator}"))
+    """
+
     parent
     |> find(Query.checkbox(locator, []), &(check(&1)))
   end
   def check(parent, query) do
+    IO.warn "check/2 has been deprecated. Please use click/2"
+
     parent
     |> find(query, &(check(&1)))
   end
   def check(parent, locator, opts) when is_binary(locator) do
+    IO.warn """
+    check/2 has been deprecated. Please use:
+    
+    click(parent, Query.checkbox("#{locator}", #{opts}))
+    """
+
     parent
     |> find(Query.checkbox(locator, opts), &(check(&1)))
   end
@@ -190,18 +230,34 @@ defmodule Wallaby.Browser do
   @spec uncheck(parent, locator, opts) :: parent
 
   def uncheck(parent, locator, opts) when is_binary(locator) do
+    IO.warn """
+    uncheck/2 has been deprecated. Please use:
+    
+    click(parent, Query.checkbox("#{locator}", #{opts}))
+    """
+
     parent
     |> find(Query.checkbox(locator, opts), &(uncheck(&1)))
   end
   def uncheck(parent, locator) when is_binary(locator) do
+    IO.warn """
+    check/2 has been deprecated. Please use:
+    
+    click(parent, Query.checkbox("#{locator}"))
+    """
+
     parent
     |> find(Query.checkbox(locator, []), &(uncheck(&1)))
   end
   def uncheck(parent, query) do
+    IO.warn "uncheck/2 has been deprecated. Please use click/2"
+
     parent
     |> find(query, &(uncheck(&1)))
   end
   def uncheck(%Element{}=element) do
+    IO.warn "uncheck/1 has been deprecated. Please use Element.click/1"
+
     if checked?(element) do
       click(element)
     end
@@ -218,14 +274,24 @@ defmodule Wallaby.Browser do
   @spec select(parent, locator, opts) :: parent
 
   def select(element) do
+    IO.warn "select/1 has been deprecated. Please use Element.click/1"
+
     element
     |> click
   end
   def select(parent, query) do
+    IO.warn "select/2 has been deprecated. Please use click/2"
+
     parent
     |> find(query, &(click(&1)))
   end
   def select(parent, locator, [option: option_text]=opts) do
+    IO.warn """
+    select/3 has been deprecated. Please use:
+
+    click(parent, Query.option("#{option_text}"))
+    """
+
     find(parent, Query.select(locator, opts), fn(select_field) ->
       find(select_field, Query.option(option_text, []), fn(option) ->
         click(option)
@@ -240,14 +306,28 @@ defmodule Wallaby.Browser do
   @spec click_link(parent, locator, opts) :: parent
 
   def click_link(parent, locator, opts) when is_binary(locator) do
+    IO.warn """
+    click_link/3 has been deprecated. Please use:
+
+    click(parent, Query.link("#{locator}", #{opts}))
+    """
+
     parent
     |> click(Query.link(locator, opts))
   end
   def click_link(parent, locator) when is_binary(locator) do
+    IO.warn """
+    click_link/2 has been deprecated. Please use:
+
+    click(parent, Query.link("#{locator}"))
+    """
+
     parent
     |> click(Query.link(locator, []))
   end
   def click_link(parent, query) do
+    IO.warn "click_link/2 has been deprecated. Please use click/2"
+
     click(parent, query)
   end
 
@@ -258,14 +338,28 @@ defmodule Wallaby.Browser do
   @spec click_button(parent, locator, opts) :: parent
 
   def click_button(parent, locator, opts) when is_binary(locator) do
+    IO.warn """
+    click_button/3 has been deprecated. Please use:
+
+    click(parent, Query.button("#{locator}", #{opts}))
+    """
+
     parent
     |> click(Query.button(locator, opts))
   end
   def click_button(parent, locator) when is_binary(locator) do
+    IO.warn """
+    click_button/2 has been deprecated. Please use:
+
+    click(parent, Query.button("#{locator}"))
+    """
+
     parent
     |> click(Query.button(locator, []))
   end
   def click_button(parent, query) do
+    IO.warn "click_button/2 has been deprecated. Please use click/2"
+
     click(parent, query)
   end
 
@@ -278,6 +372,12 @@ defmodule Wallaby.Browser do
   @spec clear(Element.t) :: Element.t
 
   def clear(parent, locator, opts) when is_binary(locator) do
+    IO.warn """
+    clear/3 has been deprecated. Please use:
+
+    clear(parent, Query.css("#{locator}", #{opts}))
+    """
+
     clear(parent, Query.fillable_field(locator, opts))
   end
   def clear(parent, query) do
@@ -285,6 +385,8 @@ defmodule Wallaby.Browser do
     |> find(query, &clear/1)
   end
   def clear(element) do
+    IO.warn "clear/1 has been deprecated. Please use Element.clear/1"
+
     {:ok, _} = Driver.clear(element)
     element
   end
@@ -297,6 +399,12 @@ defmodule Wallaby.Browser do
   @spec attach_file(parent, queryable, path: String.t) :: parent
 
   def attach_file(parent, locator, [{:path, value} | _]=opts) when is_binary(locator) do
+    IO.warn """
+    attach_file/3 with string locators has been deprecated. Please use:
+
+    attach_file(parent, Query.file_field("#{locator}"))
+    """
+
     parent
     |> fill_in(Query.file_field(locator, opts), with: :filename.absname(value))
   end
@@ -343,7 +451,11 @@ defmodule Wallaby.Browser do
     session
   end
 
-  defdelegate set_window_size(parent, x, y), to: Wallaby.Browser, as: :resize_window
+  def set_window_size(parent, x, y) do
+    IO.warn "set_window_size/3 has been deprecated. Please use resize_window/3"
+
+    resize_window(parent, x, y)
+  end
 
   @doc """
   Gets the current url of the session
@@ -354,7 +466,11 @@ defmodule Wallaby.Browser do
     Driver.current_url!(parent)
   end
 
-  defdelegate get_current_url(parent), to: __MODULE__, as: :current_url
+  def get_current_url(parent) do
+    IO.warn "get_current_url/1 has been deprecated. Please use current_url/1"
+
+    current_url(parent)
+  end
 
   @doc """
   Gets the current path of the session
@@ -418,7 +534,11 @@ defmodule Wallaby.Browser do
     parent
   end
 
-  defdelegate send_text(parent, keys), to: __MODULE__, as: :send_keys
+  def send_text(parent, keys) do
+    IO.warn "send_text/2 has been deprecated. Please use send_keys/2"
+
+    send_keys(parent, keys)
+  end
 
   @doc """
   Retrieves the source of the current page.
@@ -447,6 +567,12 @@ defmodule Wallaby.Browser do
   @spec click(Element.t) :: Element.t
 
   def click(parent, locator) when is_binary(locator) do
+    IO.warn """
+    click/2 with string locator has been deprecated. Please use:
+    
+    click(parent, Query.button("#{locator}"))
+    """
+
     parent
     |> find(Query.button(locator), &click/1)
   end
@@ -455,12 +581,20 @@ defmodule Wallaby.Browser do
     |> find(query, &click/1)
   end
   def click(element) do
+    IO.warn "click/1 has been deprecated. Please use Element.click/1"
+
     Driver.click(element)
 
     element
   end
 
-  defdelegate click_on(parent, query), to: __MODULE__, as: :click
+  def click_on(parent, query) do
+    IO.warn """
+    click_on/2 has been deprecated. Please use Browser.click/2.
+    """
+
+    click(parent, query)
+  end
 
   @doc """
   Gets the Element's text value.
@@ -479,6 +613,8 @@ defmodule Wallaby.Browser do
     |> text()
   end
   def text(%Element{}=element) do
+    IO.warn "text/1 has been deprecated. Please use Element.text/1"
+
     case Driver.text(element) do
       {:ok, text} ->
         text
@@ -494,6 +630,8 @@ defmodule Wallaby.Browser do
   @spec attr(Element.t, String.t) :: String.t | nil
 
   def attr(element, name) do
+    IO.warn "attr/2 has been deprecated. Please use Element.attr/2"
+
     {:ok, attribute} = Driver.attribute(element, name)
     attribute
   end
@@ -510,9 +648,11 @@ defmodule Wallaby.Browser do
   @spec checked?(Element.t) :: boolean()
 
   def checked?(parent, query) do
+    IO.warn "checked?/2 has been deprecated. Please use selected?/2"
     selected?(parent, query)
   end
   def checked?(%Element{}=element) do
+    IO.warn "checked?/1 has been deprecated. Please use Element.selected?/1"
     selected?(element)
   end
 
@@ -528,6 +668,8 @@ defmodule Wallaby.Browser do
     |> selected?
   end
   def selected?(%Element{}=element) do
+    IO.warn "selected?/1 has been deprecated. Please use Element.selected?/1"
+
     case Driver.selected(element) do
       {:ok, value} ->
         value
@@ -543,6 +685,8 @@ defmodule Wallaby.Browser do
   @spec visible?(Element.t) :: boolean()
 
   def visible?(%Element{}=element) do
+    IO.warn "visible?/1 has been deprecated. Please use Element.visible?/1"
+
     Driver.displayed!(element)
   end
   def visible?(parent, query) do
@@ -567,6 +711,12 @@ defmodule Wallaby.Browser do
   @spec find(parent, locator) :: Element.t | [Element.t]
 
   def find(parent, css, opts) when is_binary(css) and is_list(opts) do
+    IO.warn """
+    find/3 with string locators has beeen deprecated. Please use:
+
+    find(parent, Query.css("#{css}", #{opts}))
+    """
+
     find(parent, Query.css(css, opts))
   end
   def find(parent, %Query{}=query, callback) when is_function(callback) do
@@ -575,9 +725,21 @@ defmodule Wallaby.Browser do
     parent
   end
   def find(parent, {:xpath, path}) when is_binary(path) do
+    IO.warn """
+    find/3 with {:xpath, locator} has beeen deprecated. Please use:
+
+    find(parent, Query.xpath("#{path}"))
+    """
+
     find(parent, Query.xpath(path))
   end
   def find(parent, css) when is_binary(css) do
+    IO.warn """
+    find/3 with string locators has beeen deprecated. Please use:
+
+    find(parent, Query.css("#{css}"))
+    """
+
     find(parent, Query.css(css))
   end
   def find(parent, %Query{}=query) do
@@ -618,9 +780,21 @@ defmodule Wallaby.Browser do
   @spec all(parent, Query.t) :: [Element.t]
 
   def all(parent, locator, opts) when is_binary(locator) do
+    IO.warn """
+    all/3 with string locators has been deprecated. Please use:
+
+    all(parent, Query.css("#{locator}", #{opts}))
+    """
+
     find(parent, Query.css(locator, Keyword.merge(opts, [count: nil, minimum: 0])))
   end
   def all(parent, css) when is_binary(css) do
+    IO.warn """
+    all/2 with string locators has been deprecated. Please use:
+
+    all(parent, Query.css("#{css}"))
+    """
+
     find(parent, Query.css(css, minimum: 0))
   end
   def all(parent, %Query{}=query) do
@@ -727,7 +901,6 @@ defmodule Wallaby.Browser do
   @spec has_no_css?(parent, Query.t, String.t) :: boolean()
   @spec has_no_css?(parent, locator) :: boolean()
 
-  # TODO: Untested
   def has_no_css?(parent, query, css) when is_binary(css) do
     parent
     |> find(query)
