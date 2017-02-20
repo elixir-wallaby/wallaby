@@ -130,15 +130,10 @@ defmodule Wallaby.Browser do
     parent
     |> find(query, &(fill_in(&1, with: value)))
   end
-  def fill_in(%Element{}=element, with: value) when is_number(value) do
-    fill_in(element, with: to_string(value))
-  end
-  def fill_in(%Element{}=element, with: value) when is_binary(value) do
+  def fill_in(%Element{}=element, with: value) do
     IO.warn "fill_in/2 has been deprecated. Please use Element.fill_in/2"
 
-    element
-    |> clear
-    |> set_value(value)
+    Element.fill_in(element, with: value)
   end
 
   @doc """
@@ -386,9 +381,7 @@ defmodule Wallaby.Browser do
   end
   def clear(element) do
     IO.warn "clear/1 has been deprecated. Please use Element.clear/1"
-
-    {:ok, _} = Driver.clear(element)
-    element
+    Element.clear(element)
   end
 
   @doc """
@@ -556,8 +549,9 @@ defmodule Wallaby.Browser do
   @spec set_value(element, any()) :: element
 
   def set_value(element, value) do
-    {:ok, _} = Driver.set_value(element, value)
-    element
+    IO.warn "set_value/2 has been deprecated. Please use Element.set_value/2"
+
+    Element.set_value(element, value)
   end
 
   @doc """
@@ -583,9 +577,7 @@ defmodule Wallaby.Browser do
   def click(element) do
     IO.warn "click/1 has been deprecated. Please use Element.click/1"
 
-    Driver.click(element)
-
-    element
+    Element.click(element)
   end
 
   def click_on(parent, query) do
@@ -615,12 +607,7 @@ defmodule Wallaby.Browser do
   def text(%Element{}=element) do
     IO.warn "text/1 has been deprecated. Please use Element.text/1"
 
-    case Driver.text(element) do
-      {:ok, text} ->
-        text
-      {:error, :stale_reference_error} ->
-        raise Wallaby.StaleReferenceException
-    end
+    Element.text(element)
   end
 
   @doc """
@@ -631,14 +618,12 @@ defmodule Wallaby.Browser do
 
   def attr(element, name) do
     IO.warn "attr/2 has been deprecated. Please use Element.attr/2"
-
-    {:ok, attribute} = Driver.attribute(element, name)
-    attribute
+    Element.attr(element, name)
   end
   def attr(parent, query, name) do
     parent
     |> find(query)
-    |> attr(name)
+    |> Element.attr(name)
   end
 
   @doc """
@@ -653,7 +638,7 @@ defmodule Wallaby.Browser do
   end
   def checked?(%Element{}=element) do
     IO.warn "checked?/1 has been deprecated. Please use Element.selected?/1"
-    selected?(element)
+    Element.selected?(element)
   end
 
   @doc """
@@ -670,12 +655,7 @@ defmodule Wallaby.Browser do
   def selected?(%Element{}=element) do
     IO.warn "selected?/1 has been deprecated. Please use Element.selected?/1"
 
-    case Driver.selected(element) do
-      {:ok, value} ->
-        value
-      {:error, _} ->
-        false
-    end
+    Element.selected?(element)
   end
 
   @doc """
@@ -687,7 +667,7 @@ defmodule Wallaby.Browser do
   def visible?(%Element{}=element) do
     IO.warn "visible?/1 has been deprecated. Please use Element.visible?/1"
 
-    Driver.displayed!(element)
+    Element.visible?(element)
   end
   def visible?(parent, query) do
     parent
