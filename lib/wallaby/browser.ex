@@ -841,9 +841,9 @@ defmodule Wallaby.Browser do
     |> find(query)
     |> assert_text(text)
   end
-  def assert_text(%Element{}=element, text) when is_binary(text) do
+  def assert_text(parent, text) when is_binary(text) do
     cond do
-      has_text?(element, text) -> true
+      has_text?(parent, text) -> true
       true -> raise Wallaby.ExpectationNotMet, "Text '#{text}' was not found."
     end
   end

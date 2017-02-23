@@ -30,4 +30,11 @@ defmodule Wallaby.Browser.AssertTextTest do
       assert_text(element, "rain")
     end
   end
+
+  test "assert_text/2 works with sessions", %{session: session} do
+    session
+    |> Browser.visit("wait.html")
+
+    assert Browser.assert_text(session, "main")
+  end
 end
