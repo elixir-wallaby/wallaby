@@ -122,11 +122,11 @@ defmodule Wallaby.Browser do
     """
 
     parent
-    |> find(Query.fillable_field(locator, opts), &(fill_in(&1, with: value)))
+    |> find(Query.fillable_field(locator, opts), &(Element.fill_in(&1, with: value)))
   end
   def fill_in(parent, query, with: value) do
     parent
-    |> find(query, &(fill_in(&1, with: value)))
+    |> find(query, &(Element.fill_in(&1, with: value)))
   end
   def fill_in(%Element{}=element, with: value) do
     IO.warn "fill_in/2 has been deprecated. Please use Element.fill_in/2"
@@ -180,7 +180,7 @@ defmodule Wallaby.Browser do
     IO.warn "check/1 has been deprecated. Please use Element.click/1"
 
     cond do
-      checked?(element) -> element
+      Element.selected?(element) -> element
       true -> Element.click(element)
     end
   end
