@@ -33,7 +33,6 @@ defmodule Wallaby.Browser.HasTextTest do
       |> has_text?("Page 1")
     end
 
-    @tag :focus
     test "retries the query", %{page: page} do
       assert page
       |> visit("wait.html")
