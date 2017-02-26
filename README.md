@@ -129,7 +129,7 @@ defmodule YourApp.UserListTest do
       session
       |> visit("/users")
       |> find(Query.css(".dashboard"))
-      |> all(".user")
+      |> all(Query.css(".user"))
       |> List.first
       |> find(Query.css(".user-name"))
       |> text
@@ -155,35 +155,38 @@ visit(session, user_path(Endpoint, :index, 17))
 Its also possible to click links directly:
 
 ```elixir
-click_link(session, "Page 1")
-```
-
-### Interacting with forms
-
-There are many ways to interact with form elements on a page:
-
-```elixir
-fill_in(session, "First Name", with: "Chris")
-fill_in(session, "last_name_field", with: "Keathley")
-choose(session, "Radio Button 1")
-check(session, "Checkbox")
-uncheck(session, "Checkbox")
-select(session, "My Awesome Select", option: "Option 1")
-click_on(session, "Some Button")
+click(session, Query.link("Page 1"))
 ```
 
 ### Querying & Finding
 
-Querying and finding is done with css selectors:
+Queries are used to find and interact with elements through a browser (see `Wallaby.Browser`). You can create queries like so:
 
 ```elixir
-find(session, "#some_id")
-find(session, Query.css(".user", count: :any))
-find(session, Query.css(".single-item", count: 1))
-all(session, ".user")
+Query.css(".some-css")
+Query.xpath(".//input")
+Query.button("Some Button")
 ```
 
-By default Wallaby will block until it can `find` the matching element. This is used to keep asynchronous tests in sync (as discussed below).
+These queries can then be used to find or interact with an element
+
+```elixir
+@user_form   Query.css(".user-form")
+@name_field  Query.text_field("Name")
+@email_field Query.text_field("Email")
+@save_button Query.button("Save")
+
+find(page, @user_form, fn(form) ->
+  form
+  |> fill_in(@name_field, with: "Chris")
+  |> fill_in(@email_field, with: "c@keathley.io")
+  |> click(@save_button)
+end)
+```
+
+If a callback is passed to `find` then the `find` will return the parent and the callback can be used to interact with the element.
+
+By default Wallaby will block until it can find the matching element. This is used to keep asynchronous tests in sync (as discussed below).
 
 Nodes can be found by their inner text.
 
@@ -197,14 +200,15 @@ Nodes can be found by their inner text.
 find(page, Query.css(".user", text: "Chris K"))
 ```
 
-### Scoping
+### Interacting with forms
 
-Finders can be scoped to a specific node by chaining finds together:
+There are a few ways to interact with form elements on a page:
 
 ```elixir
-session
-|> find(Query.css(".user-form"))
-|> fill_in("User Name", with: "Chris")
+fill_in(session, Query.text_field("First Name"), with: "Chris")
+clear(session, Query.text_field("last_name"))
+click(session, Query.option(Some option))
+click(session, Query.button("Some Button"))
 ```
 
 ### Windows and Screenshots
@@ -249,7 +253,7 @@ It can be difficult to test asynchronous javascript code. You may try to interac
 
 ```elixir
 session
-|> click_on("Some Async Button")
+|> click(Query.button("Some Async Button"))
 |> find(Query.css(".async-result"))
 ```
 
