@@ -26,10 +26,11 @@ defmodule Wallaby.Browser do
 
   ```
   fill_in(page, Query.text_field("First Name"), with: "Chris")
-  choose(page, Query.radio_button("Radio Button 1"))
-  check(page, Query.checkbox("Checkbox"))
-  uncheck(page, Query.checkbox("Checkbox"))
-  select(page, Query.select("My Awesome Select"), option: "Option 1")
+  clear(page, Query.text_field("user_email"))
+  click(page, Query.radio_button("Radio Button 1"))
+  click(page, Query.checkbox("Checkbox"))
+  click(page, Query.checkbox("Checkbox"))
+  click(page, Query.option("Option 1"))
   click(page, Query.button("Some Button"))
   attach_file(page, Query.file_field("Avatar"), path: "test/fixtures/avatar.jpg")
   ```
@@ -38,23 +39,68 @@ defmodule Wallaby.Browser do
 
   ```
   page
-  |> find(Query.css(".signup-form"))
-  |> fill_in(Query.text_field("Name"), with: "Grace Hopper")
-  |> fill_in(Query.text_field("Email"), with: "grace@hopper.com")
-  |> click(Query.button("Submit"))
+  |> find(Query.css(".signup-form"), fn(form) ->
+    form
+    |> fill_in(Query.text_field("Name"), with: "Grace Hopper")
+    |> fill_in(Query.text_field("Email"), with: "grace@hopper.com")
+    |> click(Query.button("Submit"))
+  end)
   ```
 
   ## Scoping
 
-  Finders can also be chained together to provide scoping:
+  Finders provide scoping like so:
 
   ```
-  visit("/page.html")
+  session
+  |> visit("/page.html")
   |> find(Query.css(".users"))
   |> find(Query.css(".user", count: 3))
   |> List.first
   |> find(Query.css(".user-name"))
   ```
+
+  If a callback is passed to find then the scoping will only apply to the callback
+  and the parent will be passed to the next action in the chain:
+
+  ```
+  page
+  |> find(Query.css(".todo-form"), fn(form) ->
+    form
+    |> fill_in(Query.text_field("What needs doing?"), with: "Write Wallaby Documentation")
+    |> click(Query.button("Save"))
+  end)
+  |> find(Query.css(".success-notification"), fn(notification) ->
+    assert notification
+    |> has_text?("Todo created successfully!")
+  end)
+  ```
+
+  This allows you to create a test that is logically grouped together in a single pipeline.
+  It also means that its easy to create re-usable helper functions without having to worry about
+  chaining. You could re-write the above example like this:
+
+  ```
+  def create_todo(page, todo) do
+    find(Query.css(".todo-form"), & fill_in_and_save_todo(&1, todo))
+  end
+
+  def fill_in_and_save_todo(form, todo) do
+    form
+    |> fill_in(Query.text_field("What needs doing?"), with: todo)
+    |> click(Query.button("Save"))
+  end
+
+  def todo_was_created?(page) do
+    find Query.css(page, ".success-notification"), fn(notification) ->
+      assert notification
+      |> has_text?("Todo created successfully!")
+    end
+  end
+
+  assert page
+  |> create_todo("Write Wallaby Documentation")
+  |> todo_was_created?
   """
 
   alias Wallaby.Element
@@ -558,7 +604,7 @@ defmodule Wallaby.Browser do
   def click(parent, locator) when is_binary(locator) do
     IO.warn """
     click/2 with string locator has been deprecated. Please use:
-    
+
     click(parent, Query.button("#{locator}"))
     """
 
