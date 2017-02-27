@@ -550,29 +550,34 @@ defmodule Wallaby.Browser do
       iex> Wallaby.Session.send_keys(session, [:enter])
       iex> Wallaby.Session.send_keys(session, [:shift, :enter])
   """
-  @spec send_keys(parent, list(atom)) :: parent
-  @spec send_keys(parent, Query.t, list(atom)) :: parent
+  @spec send_keys(parent, Query.t, list(atom) | String.t) :: parent
+  @spec send_keys(parent, list(atom) | String.t) :: parent
 
   def send_keys(parent, query, list) do
     find(parent, query, fn(element) ->
       element
-      |> click()
-      |> send_keys(list)
+      |> Element.send_keys(list)
     end)
   end
-  def send_keys(parent, text) when is_binary(text) do
-    send_keys(parent, [text])
+  def send_keys(%Element{}=element, keys) do
+    Element.send_keys(element, keys)
   end
+
   def send_keys(parent, keys) when is_list(keys) do
     {:ok, _} = Driver.send_keys(parent, keys)
     parent
   end
 
+  def send_text(parent, query, keys) do
+    IO.warn "send_text/3 has been deprecated. Please use send_keys/3"
+    send_keys(parent, query, keys)
+  end
+
   def send_text(parent, keys) do
     IO.warn "send_text/2 has been deprecated. Please use send_keys/2"
-
     send_keys(parent, keys)
   end
+
 
   @doc """
   Retrieves the source of the current page.
@@ -839,7 +844,7 @@ defmodule Wallaby.Browser do
     |> has_value?(value)
   end
   def has_value?(%Element{}=element, value) do
-    Element.attr(element, "value") == value
+    Element.value(element) == value
   end
 
   @doc """

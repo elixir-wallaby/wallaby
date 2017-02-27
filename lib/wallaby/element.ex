@@ -155,4 +155,30 @@ defmodule Wallaby.Element do
 	raise Wallaby.StaleReferenceException
     end
   end
+
+  @doc """
+  Sends keys to the element.
+  """
+  @spec send_keys(Element.t, String.t | list(atom | String.t)) :: Element.t
+
+  def send_keys(element, text) when is_binary(text) do
+    send_keys(element, [text])
+  end
+  def send_keys(element, keys) when is_list(keys) do
+    case Driver.send_keys(element, keys) do
+      {:ok, _} ->
+	element
+      {:error, :stale_reference_error} ->
+	raise Wallaby.StaleReferenceException
+    end
+  end
+
+  @doc """
+  Matches the Element's value with the provided value.
+  """
+  @spec value(Element.t) :: String.t
+
+  def value(element) do
+    attr(element, "value")
+  end
 end
