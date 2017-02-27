@@ -216,8 +216,8 @@ click(session, Query.button("Some Button"))
 Its possible to interact with the window and take screenshots:
 
 ```elixir
-set_window_size(session, 100, 100)
-get_window_size(session)
+resize_windowe(session, 100, 100)
+window_size(session)
 take_screenshot(session)
 ```
 
