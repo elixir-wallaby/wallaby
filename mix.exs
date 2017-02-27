@@ -31,7 +31,7 @@ defmodule Wallaby.Mixfile do
       {:poolboy, "~> 1.5"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:earmark, "~> 1.1.1", only: :dev},
-      {:ex_doc, "~> 0.14.5", only: :dev},
+      {:ex_doc, "~> 0.15.0", only: :dev},
       {:quixir, "~> 0.9.0", only: [:dev, :test]},
     ]
   end
