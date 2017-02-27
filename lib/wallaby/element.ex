@@ -42,7 +42,7 @@ defmodule Wallaby.Element do
   @doc """
   Clears any value set in the element.
   """
-  @spec clear(Element.t) :: Element.t
+  @spec clear(t) :: t
 
   def clear(element) do
     case Driver.clear(element) do
@@ -56,7 +56,7 @@ defmodule Wallaby.Element do
   @doc """
   Fills in the element with the specified value.
   """
-  @spec fill_in(Element.t, with: String.t | number()) :: Element.t
+  @spec fill_in(t, with: String.t | number()) :: t
 
   def fill_in(element, with: value) when is_number(value) do
     fill_in(element, with: to_string(value))
@@ -70,7 +70,7 @@ defmodule Wallaby.Element do
   @doc """
   Clicks the element.
   """
-  @spec click(Element.t) :: Element.t
+  @spec click(t) :: t
 
   def click(element) do
     case Driver.click(element) do
@@ -84,7 +84,7 @@ defmodule Wallaby.Element do
   @doc """
   Returns the text from the element.
   """
-  @spec text(Element.t) :: String.t
+  @spec text(t) :: String.t
 
   def text(element) do
     case Driver.text(element) do
@@ -98,7 +98,7 @@ defmodule Wallaby.Element do
   @doc """
   Gets the value of the element's attribute.
   """
-  @spec attr(Element.t, attr()) :: String.t | nil
+  @spec attr(t, attr()) :: String.t | nil
 
   def attr(element, name) do
     case Driver.attribute(element, name) do
@@ -117,7 +117,7 @@ defmodule Wallaby.Element do
   Everything else will simply return false because they have no notion of
   "selected".
   """
-  @spec selected?(Element.t) :: boolean()
+  @spec selected?(t) :: boolean()
 
   def selected?(element) do
     case Driver.selected(element) do
@@ -131,7 +131,7 @@ defmodule Wallaby.Element do
   @doc """
   Returns a boolean based on whether or not the element is visible.
   """
-  @spec visible?(Element.t) :: boolean()
+  @spec visible?(t) :: boolean()
 
   def visible?(element) do
     case Driver.displayed(element) do
@@ -145,7 +145,7 @@ defmodule Wallaby.Element do
   @doc """
   Sets the value of the element.
   """
-  @spec set_value(Element.t, value()) :: Element.t
+  @spec set_value(t, value()) :: t
 
   def set_value(element, value) do
     case Driver.set_value(element, value) do
@@ -159,7 +159,7 @@ defmodule Wallaby.Element do
   @doc """
   Sends keys to the element.
   """
-  @spec send_keys(Element.t, String.t | list(atom | String.t)) :: Element.t
+  @spec send_keys(t, String.t | list(atom | String.t)) :: t
 
   def send_keys(element, text) when is_binary(text) do
     send_keys(element, [text])
@@ -176,7 +176,7 @@ defmodule Wallaby.Element do
   @doc """
   Matches the Element's value with the provided value.
   """
-  @spec value(Element.t) :: String.t
+  @spec value(t) :: String.t
 
   def value(element) do
     attr(element, "value")
