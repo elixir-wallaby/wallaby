@@ -18,7 +18,7 @@ defmodule Wallaby.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :httpoison], mod: {Wallaby, []}]
+    [applications: [:logger, :httpoison, :poolboy, :poison], mod: {Wallaby, []}]
   end
 
   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
@@ -29,7 +29,7 @@ defmodule Wallaby.Mixfile do
       {:httpoison, "~> 0.11.0"},
       {:poison, ">= 1.4.0"},
       {:poolboy, "~> 1.5"},
-      {:dialyze, "~> 0.2.0", only: :dev},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:earmark, "~> 1.1.1", only: :dev},
       {:ex_doc, "~> 0.14.5", only: :dev},
       {:quixir, "~> 0.9.0", only: [:dev, :test]},

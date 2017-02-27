@@ -66,7 +66,7 @@ end
 defmodule Wallaby.InvalidSelector do
   defexception [:message]
 
-  @spec exception(%{}) :: %__MODULE__{message: String.t}
+  @spec exception(%{}) :: Exception.t
   def exception(%{"using" => method, "value" => selector}) do
     msg = """
     The #{method} '#{selector}' is invalid.

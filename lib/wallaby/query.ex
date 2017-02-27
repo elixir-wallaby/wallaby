@@ -53,6 +53,9 @@ defmodule Wallaby.Query do
   end
   ```
   """
+  alias __MODULE__
+  alias Wallaby.Query.XPath
+  alias Wallaby.Element
 
   defstruct method: nil,
             selector: nil,
@@ -91,8 +94,6 @@ defmodule Wallaby.Query do
     result: result(),
   }
 
-  alias __MODULE__
-  alias Wallaby.Query.XPath
 
   def css(selector, opts \\ []) do
     %Query{
