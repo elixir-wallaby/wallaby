@@ -281,9 +281,16 @@ defmodule Wallaby.Phantom.Driver do
   @doc """
   Sends a list of key strokes to active element
   """
+  def send_keys(%Session{}=session, keys) when is_list(keys) do
+    check_logs! session, fn ->
+      with {:ok, resp} <- request(:post, "#{session.session_url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
+           {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+    end
+  end
   def send_keys(parent, keys) when is_list(keys) do
     check_logs! parent, fn ->
-      with {:ok, resp} <- request(:post, "#{parent.session_url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
+      with {:ok, resp} <- request(:post, "#{parent.url}/value", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
            {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
     end
