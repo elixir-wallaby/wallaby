@@ -75,9 +75,9 @@ defmodule Wallaby.Element do
   def click(element) do
     case Driver.click(element) do
       {:ok, _} ->
-	element
+      	element
       {:error, _} ->
-	raise Wallaby.StaleReferenceException
+      	raise Wallaby.StaleReferenceException
     end
   end
 
