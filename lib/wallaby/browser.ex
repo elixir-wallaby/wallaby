@@ -189,7 +189,7 @@ defmodule Wallaby.Browser do
 
   def choose(parent, locator, opts) when is_binary(locator) do
     IO.warn """
-    choose/3 has been deprecated. Please use: click(parent, Query.radio_button("#{locator}", #{opts}))
+    choose/3 has been deprecated. Please use: click(parent, Query.radio_button("#{locator}", #{inspect(opts)}))
     """
 
     parent
@@ -238,7 +238,7 @@ defmodule Wallaby.Browser do
     parent
     |> find(Query.checkbox(locator, []), fn(element) ->
       if !Element.selected?(element) do
-	Element.click(element)
+      	Element.click(element)
       end
     end)
   end
@@ -248,19 +248,19 @@ defmodule Wallaby.Browser do
     parent
     |> find(query, fn (element) ->
       if !Element.selected?(element) do
-	Element.click(element)
+      	Element.click(element)
       end
     end)
   end
   def check(parent, locator, opts) when is_binary(locator) do
     IO.warn """
-    check/2 has been deprecated. Please use: click(parent, Query.checkbox("#{locator}", #{opts}))
+    check/2 has been deprecated. Please use: click(parent, Query.checkbox("#{locator}", #{inspect(opts)}))
     """
 
     parent
     |> find(Query.checkbox(locator, opts), fn(element) ->
       if ! Element.selected?(element) do
-	Element.click(element)
+      	Element.click(element)
       end
     end)
   end
@@ -274,7 +274,7 @@ defmodule Wallaby.Browser do
 
   def uncheck(parent, locator, opts) when is_binary(locator) do
     IO.warn """
-    uncheck/2 has been deprecated. Please use: click(parent, Query.checkbox("#{locator}", #{opts}))
+    uncheck/2 has been deprecated. Please use: click(parent, Query.checkbox("#{locator}", #{inspect(opts)}))
     """
 
     parent
@@ -287,7 +287,7 @@ defmodule Wallaby.Browser do
     parent
     |> find(Query.checkbox(locator, []), fn (element) ->
       if Element.selected?(element) do
-	Element.click(element)
+      	Element.click(element)
       end
     end)
   end
@@ -297,7 +297,7 @@ defmodule Wallaby.Browser do
     parent
     |> find(query, fn(element) ->
       if Element.selected?(element) do
-	Element.click(element)
+      	Element.click(element)
       end
     end)
   end
@@ -352,7 +352,7 @@ defmodule Wallaby.Browser do
 
   def click_link(parent, locator, opts) when is_binary(locator) do
     IO.warn """
-    click_link/3 has been deprecated. Please use: click(parent, Query.link("#{locator}", #{opts}))
+    click_link/3 has been deprecated. Please use: click(parent, Query.link("#{locator}", #{inspect(opts)}))
     """
 
     parent
@@ -380,7 +380,7 @@ defmodule Wallaby.Browser do
 
   def click_button(parent, locator, opts) when is_binary(locator) do
     IO.warn """
-    click_button/3 has been deprecated. Please use: click(parent, Query.button("#{locator}", #{opts}))
+    click_button/3 has been deprecated. Please use: click(parent, Query.button("#{locator}", #{inspect(opts)}))
     """
 
     parent
@@ -410,7 +410,7 @@ defmodule Wallaby.Browser do
 
   def clear(parent, locator, opts) when is_binary(locator) do
     IO.warn """
-    clear/3 has been deprecated. Please use: clear(parent, Query.css("#{locator}", #{opts}))
+    clear/3 has been deprecated. Please use: clear(parent, Query.css("#{locator}", #{inspect(opts)}))
     """
 
     clear(parent, Query.fillable_field(locator, opts))
@@ -563,6 +563,9 @@ defmodule Wallaby.Browser do
     Element.send_keys(element, keys)
   end
 
+  def send_keys(parent, keys) when is_binary(keys) do
+    send_keys(parent, [keys])
+  end
   def send_keys(parent, keys) when is_list(keys) do
     {:ok, _} = Driver.send_keys(parent, keys)
     parent
@@ -738,7 +741,7 @@ defmodule Wallaby.Browser do
 
   def find(parent, css, opts) when is_binary(css) and is_list(opts) do
     IO.warn """
-    find/3 with string locators has beeen deprecated. Please use: find(parent, Query.css("#{css}", #{opts}))
+    find/3 with string locators has beeen deprecated. Please use: find(parent, Query.css("#{css}", #{inspect(opts)}))
     """
 
     find(parent, Query.css(css, opts))
@@ -801,7 +804,7 @@ defmodule Wallaby.Browser do
 
   def all(parent, locator, opts) when is_binary(locator) do
     IO.warn """
-    all/3 with string locators has been deprecated. Please use: all(parent, Query.css("#{locator}", #{opts}))
+    all/3 with string locators has been deprecated. Please use: all(parent, Query.css("#{locator}", #{inspect(opts)}))
     """
 
     find(parent, Query.css(locator, Keyword.merge(opts, [count: nil, minimum: 0])))
