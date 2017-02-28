@@ -1,7 +1,7 @@
 defmodule Wallaby.Mixfile do
   use Mix.Project
 
-  @version "0.16.0"
+  @version "0.16.1"
 
   def project do
     [app: :wallaby,
