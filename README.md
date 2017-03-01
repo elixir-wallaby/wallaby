@@ -207,7 +207,7 @@ There are a few ways to interact with form elements on a page:
 ```elixir
 fill_in(session, Query.text_field("First Name"), with: "Chris")
 clear(session, Query.text_field("last_name"))
-click(session, Query.option(Some option))
+click(session, Query.option("Some option"))
 click(session, Query.button("Some Button"))
 ```
 
