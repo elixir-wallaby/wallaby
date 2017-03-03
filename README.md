@@ -132,7 +132,7 @@ defmodule YourApp.UserListTest do
       |> all(Query.css(".user"))
       |> List.first
       |> find(Query.css(".user-name"))
-      |> text
+      |> Element.text
 
     assert first_employee == "Chris"
   end
