@@ -25,13 +25,18 @@ defmodule Wallaby.Phantom.Server do
     port = find_available_port()
     local_storage = tmp_local_storage()
 
-    Port.open({:spawn, phantomjs_command(port, local_storage)}, [:binary, :stream, :use_stdio, :exit_status])
+    Port.open({:spawn_executable, script_path()},
+      [:binary, :stream, :use_stdio, :exit_status, args: script_args(port, local_storage)])
 
     {:ok, %{running: false, awaiting_url: [], base_url: "http://localhost:#{port}/", local_storage: local_storage}}
   end
 
-  def phantomjs_command(port, local_storage) do
-    "#{script_path()} #{phantomjs_path()} --webdriver=#{port} --local-storage-path=#{local_storage} #{args()}"
+  def script_args(port, local_storage) do
+    [
+      phantomjs_path(),
+      "--webdriver=#{port}",
+      "--local-storage-path=#{local_storage}"
+    ] ++ args()
   end
 
   defp find_available_port do
@@ -61,6 +66,13 @@ defmodule Wallaby.Phantom.Server do
 
   defp args do
     Application.get_env(:wallaby, :phantomjs_args, "")
+    |> case do
+      string when is_binary(string) ->
+        # Backwards compatible. Should be deprecated?
+        String.split(string)
+      list when is_list(list) ->
+        list
+    end
   end
 
   def handle_info({_port, {:data, output}}, %{running: false} = state) do
