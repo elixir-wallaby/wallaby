@@ -15,7 +15,7 @@ defmodule Wallaby.Phantom.ConfigrationTest do
     end
 
     test "updates the phantomjs command" do
-      assert Wallaby.Phantom.Server.phantomjs_command(1234, '/tmp/dir') =~ ~r/test\/path\/phantomjs/
+      assert "test/path/phantomjs" in Wallaby.Phantom.Server.script_args(1234, '/tmp/dir')
     end
   end
 end
