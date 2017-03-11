@@ -957,6 +957,18 @@ defmodule Wallaby.Browser do
     session
   end
 
+  def cookies(%Session{}=session) do
+    {:ok, cookies_list} = Driver.cookies(session)
+
+    cookies_list
+  end
+
+  def set_cookie(%Session{}=session, key, value) do
+    {:ok, _list} = Driver.set_cookies(session, key, value)
+
+    session
+  end
+
   defp validate_html(parent, %{html_validation: :button_type}=query) do
     buttons = all(parent, Query.css("button", [text: query.selector]))
 

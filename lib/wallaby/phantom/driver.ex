@@ -244,6 +244,23 @@ defmodule Wallaby.Phantom.Driver do
     end
   end
 
+  def cookies(session) do
+    check_logs! session, fn ->
+      with {:ok, resp}  <- request(:get, "#{session.url}/cookie"),
+           {:ok, value} <- Map.fetch(resp, "value"),
+       do: {:ok, value}
+    end
+  end
+
+  def set_cookies(session, key, value) do
+    check_logs! session, fn ->
+      with {:ok, resp}  <- request(:post, "#{session.url}/cookie", %{cookie: %{name: key, value: value}}),
+           {:ok, value} <- Map.fetch(resp, "value"),
+       do: {:ok, value}
+    end
+  end
+
+
   @doc """
   Sets the size of the window.
   """
