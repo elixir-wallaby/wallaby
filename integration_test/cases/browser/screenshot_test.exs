@@ -73,4 +73,16 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
     File.rm_rf! "#{File.cwd!}/screenshots"
     Application.put_env(:wallaby, :screenshot_on_failure, nil)
   end
+
+  test "includes test name in file name", %{page: page} do
+    [path] =
+      page
+      |> take_screenshot()
+      |> Map.get(:screenshots)
+
+    assert path =~ ~r/screenshots\/wallaby_browser_screenshottest_test_includes_test_name_in_file_name_.*$/
+    assert File.exists? path
+
+    File.rm_rf! "#{File.cwd!}/screenshots"
+  end
 end

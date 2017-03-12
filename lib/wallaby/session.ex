@@ -6,11 +6,12 @@ defmodule Wallaby.Session do
     session_url: String.t,
     url: String.t,
     server: pid | :none,
+    context: [case: String.t, describe: String.t, test: String.t],
     screenshots: list,
     driver: module,
   }
 
-  defstruct [:id, :url, :session_url, :driver, server: :none, screenshots: []]
+  defstruct [:id, :url, :session_url, :driver, :context, server: :none, screenshots: []]
 
   def set_window_size(parent, x, y) do
     IO.warn "set_window_size/3 has been deprecated. Please use Browser.resize_window/3"

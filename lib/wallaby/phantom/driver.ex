@@ -37,7 +37,8 @@ defmodule Wallaby.Phantom.Driver do
       url: base_url <> "session/#{id}",
       id: id,
       server: server,
-      driver: Wallaby.Phantom
+      driver: Wallaby.Phantom,
+      context: opts[:context]
     }
 
     {:ok, session}
