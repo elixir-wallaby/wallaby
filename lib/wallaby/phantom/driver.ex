@@ -107,7 +107,7 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   @doc """
-  Gets the title of the current page.
+  Gets the title of the current page.
   """
   def page_title(session) do
     check_logs! session, fn ->
