@@ -957,6 +957,29 @@ defmodule Wallaby.Browser do
     session
   end
 
+  def cookies(%Session{}=session) do
+    {:ok, cookies_list} = Driver.cookies(session)
+
+    cookies_list
+  end
+
+  def set_cookie(%Session{}=session, key, value) do
+    if blank_page?(session) do
+      raise Wallaby.CookieException
+    end
+
+    case Driver.set_cookies(session, key, value) do
+      {:ok, _list} ->
+      	session
+      {:error, :invalid_cookie_domain} ->
+      	raise Wallaby.CookieException
+    end
+  end
+
+  defp blank_page?(session) do
+    current_url(session) == "about:blank"
+  end
+
   defp validate_html(parent, %{html_validation: :button_type}=query) do
     buttons = all(parent, Query.css("button", [text: query.selector]))
 

@@ -75,3 +75,19 @@ defmodule Wallaby.InvalidSelector do
     %__MODULE__{message: msg}
   end
 end
+
+defmodule Wallaby.CookieException do
+  defexception [:message]
+
+  def exception(_) do
+    msg = """
+    The cookie you are trying to set has no domain.
+
+    You're most likely seeing this error because you're trying to set a cookie before
+    you have visited a page. You can fix this issue by calling `visit/1`
+    before you call `set_cookie/3`.
+    """
+
+    %__MODULE__{message: msg}
+  end
+end
