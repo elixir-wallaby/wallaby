@@ -727,8 +727,8 @@ defmodule Wallaby.Browser do
   Finds a specific DOM element on the page based on a css selector. Blocks until
   it either finds the element or until the max time is reached. By default only
   1 element is expected to match the query. If more elements are present then a
-  count can be specified. By default only elements that are visible on the page
-  are returned.
+  count can be specified. Use `:any` to allow any number of elements to be present.
+  By default only elements that are visible on the page are returned.
 
   Selections can be scoped by providing a Element as the locator for the query.
 
