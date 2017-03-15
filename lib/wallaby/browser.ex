@@ -830,8 +830,11 @@ defmodule Wallaby.Browser do
 
   def has?(parent, query) do
     case execute_query(parent, query) do
-      {:ok, _} -> true
-      {:error, _} -> false
+      {:ok, _} ->
+	true
+      {:error, _} ->
+	take_screenshot(parent)
+	false
     end
   end
 
