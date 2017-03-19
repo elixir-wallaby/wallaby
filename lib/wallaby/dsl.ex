@@ -7,6 +7,7 @@ defmodule Wallaby.DSL do
       alias Wallaby.Browser
       alias Wallaby.Element
       import Wallaby.Browser
+      require Wallaby.Browser
     end
   end
 end
