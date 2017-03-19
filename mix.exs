@@ -13,7 +13,12 @@ defmodule Wallaby.Mixfile do
      package: package(),
      description: "Concurrent feature tests for elixir",
      deps: deps(),
-     docs: docs()
+     docs: docs(),
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: [
+       "coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test,
+       "coveralls.html": :test, "coveralls.travis": :test
+     ]
    ]
   end
 
@@ -33,6 +38,7 @@ defmodule Wallaby.Mixfile do
       {:earmark, "~> 1.1.1", only: :dev},
       {:ex_doc, "~> 0.15.0", only: :dev},
       {:quixir, "~> 0.9.0", only: [:dev, :test]},
+      {:excoveralls, "~> 0.6.2",  only: :test},
     ]
   end
 
