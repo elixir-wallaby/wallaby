@@ -1,4 +1,4 @@
-defmodule Wallaby.Browser.AssertCssTest do
+defmodule Wallaby.Browser.AssertRefuteHasTest do
   use Wallaby.SessionCase, async: true
 
   @found_query Query.css(".user", count: :any)
