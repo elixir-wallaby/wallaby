@@ -68,7 +68,7 @@ Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
 Wallaby requires PhantomJS. You can install PhantomJS through NPM or your package manager of choice:
 
 ```
-$ npm install -g phantomjs
+$ npm install -g phantomjs-prebuilt
 ```
 
 Wallaby will use whatever phantomjs you have installed in your path. If you need to specify a specific phantomjs you can pass the path in the configuration:
