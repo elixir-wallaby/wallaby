@@ -273,3 +273,11 @@ Logging can be disabled by setting `:js_logger` to `nil`.
 ## Contributing
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
+
+To get started and setup the project, make sure you got elixir 1.3+ installed and then:
+
+```
+mix deps.get
+npm install -g phantomjs-prebuilt # unless you already got phantomjs installed
+mix test # Make sure the tests pass!
+```
