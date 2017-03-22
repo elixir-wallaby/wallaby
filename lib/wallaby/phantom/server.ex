@@ -68,7 +68,6 @@ defmodule Wallaby.Phantom.Server do
     Application.get_env(:wallaby, :phantomjs_args, "")
     |> case do
       string when is_binary(string) ->
-        # Backwards compatible. Should be deprecated?
         String.split(string)
       list when is_list(list) ->
         list
