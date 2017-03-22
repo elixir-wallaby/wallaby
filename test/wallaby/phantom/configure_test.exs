@@ -3,10 +3,11 @@ defmodule Wallaby.Phantom.ConfigrationTest do
 
   describe "changing phantom path" do
     setup do
+      old_env = Application.get_env(:wallaby, :phantomjs)
       Application.put_env(:wallaby, :phantomjs, "test/path/phantomjs")
 
       on_exit fn ->
-        Application.put_env(:wallaby, :phantomjs, nil)
+        Application.put_env(:wallaby, :phantomjs, old_env)
       end
     end
 
