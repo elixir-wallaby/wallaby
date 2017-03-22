@@ -7,7 +7,7 @@ defmodule Wallaby.Phantom.ConfigrationTest do
       Application.put_env(:wallaby, :phantomjs, "test/path/phantomjs")
 
       on_exit fn ->
-        Application.put_env(:wallaby, :phantomjs, old_env)
+        restore_env(:phantomjs, old_env)
       end
     end
 
@@ -33,7 +33,7 @@ defmodule Wallaby.Phantom.ConfigrationTest do
     end
 
     defp reset_env(%{old_env: old_env}) do
-      Application.put_env(:wallaby, :phantomjs_args, old_env)
+      restore_env(:phantomjs_args, old_env)
     end
 
     test "updates the phantomjs command", context do
@@ -48,5 +48,12 @@ defmodule Wallaby.Phantom.ConfigrationTest do
       assert opt1 in Wallaby.Phantom.Server.script_args(1234, '/tmp/dir')
       assert opt2 in Wallaby.Phantom.Server.script_args(1234, '/tmp/dir')
     end
+  end
+
+  def restore_env(key, nil) do
+    Application.delete_env(:wallaby, key)
+  end
+  def restore_env(key, value) do
+    Application.put_env(:wallaby, key, value)
   end
 end
