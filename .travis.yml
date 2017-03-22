@@ -3,7 +3,7 @@ elixir: 1.4.0
 otp_release: 19.2
 
 script:
-  - mix test
+  - mix coveralls.travis
 
 matrix:
   include:
