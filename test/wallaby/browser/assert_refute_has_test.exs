@@ -13,7 +13,7 @@ defmodule Wallaby.Browser.AssertRefuteHasTest do
     end
 
     test "raises if the query is not found", %{session: session} do
-      assert_raise Wallaby.ExpectationNotMet, ~r/css.*\.something-else/i, fn ->
+      assert_raise Wallaby.ExpectationNotMet, ~r/Expected.+ 1.*css.*\.something-else.*0/i, fn ->
         session
         |> visit("nesting.html")
         |> assert_has(@not_found_query)
@@ -31,7 +31,7 @@ defmodule Wallaby.Browser.AssertRefuteHasTest do
     end
 
     test "raises if the query is found on the page", %{session: session} do
-      assert_raise Wallaby.ExpectationNotMet, ~r/css.*\.user/i, fn ->
+      assert_raise Wallaby.ExpectationNotMet, ~r/Expected not.+any.*css.*\.user.*6/i, fn ->
         session
         |> visit("nesting.html")
         |> refute_has(@found_query)

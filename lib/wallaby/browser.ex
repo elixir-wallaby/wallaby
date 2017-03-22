@@ -926,8 +926,8 @@ defmodule Wallaby.Browser do
           parent
         false ->
           raise Wallaby.ExpectationNotMet,
-                "Query type '#{query.method}' with selector " <>
-                  "'#{query.selector}' not found"
+                Query.ErrorMessage.message(query, :not_found)
+
       end
     end
   end
@@ -951,13 +951,12 @@ defmodule Wallaby.Browser do
       parent = unquote(parent)
       query  = unquote(query)
 
-      case has?(parent, query) do
-        false ->
+      case execute_query(parent, query) do
+        {:error, _not_found} ->
           parent
-        true ->
+        {:ok, query} ->
           raise Wallaby.ExpectationNotMet,
-                "Query type '#{query.method}' with selector " <>
-                  "'#{query.selector}' found but expected not to be there"
+                Query.ErrorMessage.message(query, :found)
       end
     end
   end
@@ -1103,7 +1102,7 @@ defmodule Wallaby.Browser do
     end
   end
 
-  defp execute_query(parent, query) do
+  def execute_query(parent, query) do
     retry fn ->
       try do
         with {:ok, query}  <- Query.validate(query),
