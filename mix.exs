@@ -27,6 +27,8 @@ defmodule Wallaby.Mixfile do
   end
 
   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
+  # need the testserver in dev for benchmarks to run
+  defp elixirc_paths(:dev),  do: ["lib", "test/support/test_server.ex"]
   defp elixirc_paths(_),     do: ["lib"]
 
   defp deps do
@@ -37,6 +39,8 @@ defmodule Wallaby.Mixfile do
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:earmark, "~> 1.1.1", only: :dev},
       {:ex_doc, "~> 0.15.0", only: :dev},
+      {:benchee, "~> 0.6", only: :dev},
+      {:benchee_html, "~> 0.1", only: :dev},
       {:quixir, "~> 0.9.0", only: [:dev, :test]},
       {:excoveralls, "~> 0.6.2",  only: :test},
     ]
