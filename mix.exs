@@ -2,8 +2,6 @@ defmodule Wallaby.Mixfile do
   use Mix.Project
 
   @version "0.16.1"
-  @drivers ~w(phantom)
-  @selected_driver System.get_env("WALLABY_DRIVER")
 
   def project do
     [app: :wallaby,
@@ -37,7 +35,7 @@ defmodule Wallaby.Mixfile do
     [applications: [:logger, :httpoison, :poolboy, :poison], mod: {Wallaby, []}]
   end
 
-  defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
   # need the testserver in dev for benchmarks to run
   defp elixirc_paths(:dev),  do: ["lib", "integration_test/support/test_server.ex"]
   defp elixirc_paths(_),     do: ["lib"]
