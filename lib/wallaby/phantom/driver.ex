@@ -333,6 +333,34 @@ defmodule Wallaby.Phantom.Driver do
     end
   end
 
+  @doc """
+  Accept all JavaScript dialogs
+  """
+  def accept_dialogs(session) do
+    script = """
+    var page = this;
+    page.onAlert = function(msg) {}
+    page.onConfirm = function(msg) { return true; }
+    page.onPrompt = function(msg, defaultVal) { return defaultVal; }
+    return "ok";
+    """
+    {:ok, "ok"} = execute_phantom_script(session, script)
+  end
+
+  @doc """
+  Dismiss all JavaScript dialogs
+  """
+  def dismiss_dialogs(session) do
+    script = """
+    var page = this;
+    page.onAlert = function(msg) {}
+    page.onConfirm = function(msg) { return false; }
+    page.onPrompt = function(msg, defaultVal) { return null; }
+    return "ok";
+    """
+    {:ok, "ok"} = execute_phantom_script(session, script)
+  end
+
   defp window_handle(session) do
     check_logs! session, fn ->
       with  {:ok, resp} <- request(:get, "#{session.url}/window_handle"),
@@ -424,5 +452,13 @@ defmodule Wallaby.Phantom.Driver do
       url: parent.session_url <> "/element/#{id}",
       parent: parent,
     }
+  end
+
+  defp execute_phantom_script(session, script, arguments \\ []) do
+    check_logs! session, fn ->
+      with {:ok, resp} <- request(:post, "#{session.session_url}/phantom/execute", %{script: script, args: arguments}),
+           {:ok, value} <- Map.fetch(resp, "value"),
+        do: {:ok, value}
+    end
   end
 end

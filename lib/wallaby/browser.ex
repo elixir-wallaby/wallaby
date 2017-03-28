@@ -980,6 +980,22 @@ defmodule Wallaby.Browser do
     current_url(session) == "about:blank"
   end
 
+  @doc """
+  Accepts all subsequent JavaScript dialogs in the given session.
+  """
+  def accept_dialogs(%Session{}=session) do
+    Driver.accept_dialogs(session)
+    session
+  end
+
+  @doc """
+  Dismisses all subsequent JavaScript dialogs in the given session.
+  """
+  def dismiss_dialogs(%Session{}=session) do
+    Driver.dismiss_dialogs(session)
+    session
+  end
+
   defp validate_html(parent, %{html_validation: :button_type}=query) do
     buttons = all(parent, Query.css("button", [text: query.selector]))
 
