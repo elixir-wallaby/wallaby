@@ -996,6 +996,47 @@ defmodule Wallaby.Browser do
     session
   end
 
+  @doc """
+  Accepts one alert dialog, which is triggered within the specified `fun`.
+  Returns the last message that was presented to the user.
+  """
+  def accept_alert(%Session{}=session, fun) do
+    Driver.accept_alert(session, fun)
+  end
+
+  @doc """
+  Accepts one confirm dialog, which is triggered within the specified `fun`.
+  Returns the last message that was presented to the user.
+  """
+  def accept_confirm(%Session{}=session, fun) do
+    Driver.accept_confirm(session, fun)
+  end
+
+  @doc """
+  Dismisses one confirm dialog, which is triggered within the specified `fun`.
+  Returns the last message that was presented to the user.
+  """
+  def dismiss_confirm(%Session{}=session, fun) do
+    Driver.dismiss_confirm(session, fun)
+  end
+
+  @doc """
+  Accepts one confirm dialog, which is triggered within the specified `fun`.
+  Returns the last message that was presented to the user.
+  """
+  def accept_prompt(%Session{}=session, options \\ [], fun) do
+    input_value = Keyword.get(options, :with)
+    Driver.accept_prompt(session, input_value, fun)
+  end
+
+  @doc """
+  Dismisses one confirm dialog, which is triggered within the specified `fun`.
+  Returns the last message that was presented to the user.
+  """
+  def dismiss_prompt(%Session{}=session, fun) do
+    Driver.dismiss_prompt(session, fun)
+  end
+
   defp validate_html(parent, %{html_validation: :button_type}=query) do
     buttons = all(parent, Query.css("button", [text: query.selector]))
 
