@@ -112,6 +112,19 @@ defmodule Wallaby.Browser.DialogTest do
       assert message == "Are you sure?"
       assert result == "Confirm returned true"
     end
+
+    test "resets itself when no window.confirm was triggered", %{page: page} do
+      page
+      |> dismiss_dialogs()
+      |> accept_confirm(fn(_) -> :noop end)
+
+      result = page
+      |> click(Query.link("Confirm"))
+      |> find(Query.css("#result"))
+      |> Element.text()
+
+      assert result == "Confirm returned false"
+    end
   end
 
   describe "dismiss_confirm/2" do
@@ -126,6 +139,19 @@ defmodule Wallaby.Browser.DialogTest do
 
       assert message == "Are you sure?"
       assert result == "Confirm returned false"
+    end
+
+    test "resets itself when no window.confirm was triggered", %{page: page} do
+      page
+      |> accept_dialogs()
+      |> dismiss_confirm(fn(_) -> :noop end)
+
+      result = page
+      |> click(Query.link("Confirm"))
+      |> find(Query.css("#result"))
+      |> Element.text()
+
+      assert result == "Confirm returned true"
     end
   end
 
@@ -154,6 +180,19 @@ defmodule Wallaby.Browser.DialogTest do
 
       assert result == "Prompt returned default"
     end
+
+    test "resets itself when no window.prompt was triggered", %{page: page} do
+      page
+      |> dismiss_dialogs()
+      |> accept_prompt(fn(_) -> :noop end)
+
+      result = page
+      |> click(Query.link("Prompt"))
+      |> find(Query.css("#result"))
+      |> Element.text()
+
+      assert result == "Prompt returned null"
+    end
   end
 
   describe "dismiss_prompt/2" do
@@ -168,6 +207,19 @@ defmodule Wallaby.Browser.DialogTest do
 
       assert message == "What's your name?"
       assert result == "Prompt returned null"
+    end
+
+    test "resets itself when no window.prompt was triggered", %{page: page} do
+      page
+      |> accept_dialogs()
+      |> dismiss_prompt(fn(_) -> :noop end)
+
+      result = page
+      |> click(Query.link("Prompt"))
+      |> find(Query.css("#result"))
+      |> Element.text()
+
+      assert result == "Prompt returned default"
     end
   end
 end

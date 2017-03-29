@@ -378,7 +378,9 @@ defmodule Wallaby.Phantom.Driver do
     {:ok, "ok"} = execute_phantom_script(session, script)
     fun.(session)
     script = """
-    return ["ok", this.__alertMessage];
+    var page = this;
+    page.onAlert = page.__onAlertDefault;
+    return ["ok", page.__alertMessage];
     """
     {:ok, ["ok", message]} = execute_phantom_script(session, script)
     message
@@ -413,7 +415,9 @@ defmodule Wallaby.Phantom.Driver do
     {:ok, "ok"} = execute_phantom_script(session, script, [return_value])
     fun.(session)
     script = """
-    return ["ok", this.__confirmMessage];
+    var page = this;
+    page.onConfirm = page.__onConfirmDefault;
+    return ["ok", page.__confirmMessage];
     """
     {:ok, ["ok", message]} = execute_phantom_script(session, script)
     message
@@ -453,7 +457,9 @@ defmodule Wallaby.Phantom.Driver do
     {:ok, "ok"} = execute_phantom_script(session, script, [return_value, use_default])
     fun.(session)
     script = """
-    return ["ok", this.__promptMessage];
+    var page = this;
+    page.onPrompt = page.__onPromptDefault;
+    return ["ok", page.__promptMessage];
     """
     {:ok, ["ok", message]} = execute_phantom_script(session, script)
     message
