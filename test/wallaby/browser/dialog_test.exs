@@ -110,13 +110,14 @@ defmodule Wallaby.Browser.DialogTest do
     end
 
     test "resets itself when no window.confirm was triggered", %{page: page} do
-      page
+      message = page
       |> dismiss_dialogs()
       |> accept_confirm(fn(_) -> :noop end)
       result = page
       |> click(Query.link("Confirm"))
       |> find(Query.css("#result"))
       |> Element.text()
+      assert message == nil
       assert result == "Confirm returned false"
     end
   end
@@ -168,13 +169,14 @@ defmodule Wallaby.Browser.DialogTest do
     end
 
     test "resets itself when no window.prompt was triggered", %{page: page} do
-      page
+      message = page
       |> dismiss_dialogs()
       |> accept_prompt(fn(_) -> :noop end)
       result = page
       |> click(Query.link("Prompt"))
       |> find(Query.css("#result"))
       |> Element.text()
+      assert message == nil
       assert result == "Prompt returned null"
     end
   end
@@ -192,13 +194,14 @@ defmodule Wallaby.Browser.DialogTest do
     end
 
     test "resets itself when no window.prompt was triggered", %{page: page} do
-      page
+      message = page
       |> accept_dialogs()
       |> dismiss_prompt(fn(_) -> :noop end)
       result = page
       |> click(Query.link("Prompt"))
       |> find(Query.css("#result"))
       |> Element.text()
+      assert message == nil
       assert result == "Prompt returned default"
     end
   end
