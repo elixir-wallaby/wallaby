@@ -997,32 +997,68 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Accepts one alert dialog, which is triggered within the specified `fun`.
-  Returns the last message that was presented to the user.
+  Accepts one alert dialog, which must be triggered within the specified `fun`.
+  Returns the message that was presented to the user. For example:
+
+  ```
+  message = accept_alert session, fn(s) ->
+    click(s, Query.link("Trigger alert"))
+  end
+  ```
   """
   def accept_alert(%Session{}=session, fun) do
     Driver.accept_alert(session, fun)
   end
 
   @doc """
-  Accepts one confirm dialog, which is triggered within the specified `fun`.
-  Returns the last message that was presented to the user.
+  Accepts one confirmation dialog, which must be triggered within the specified
+  `fun`. Returns the message that was presented to the user. For example:
+
+  ```
+  message = accept_confirm session, fn(s) ->
+    click(s, Query.link("Trigger confirm"))
+  end
+  ```
   """
   def accept_confirm(%Session{}=session, fun) do
     Driver.accept_confirm(session, fun)
   end
 
   @doc """
-  Dismisses one confirm dialog, which is triggered within the specified `fun`.
-  Returns the last message that was presented to the user.
+  Dismisses one confirmation dialog, which must be triggered within the
+  specified `fun`. Returns the message that was presented to the user. For
+  example:
+
+  ```
+  message = dismiss_confirm session, fn(s) ->
+    click(s, Query.link("Trigger confirm"))
+  end
+  ```
   """
   def dismiss_confirm(%Session{}=session, fun) do
     Driver.dismiss_confirm(session, fun)
   end
 
   @doc """
-  Accepts one confirm dialog, which is triggered within the specified `fun`.
-  Returns the last message that was presented to the user.
+  Accepts one prompt, which must be triggered within the specified `fun`. The
+  `[with: value]` option allows to simulate user input for the prompt. If no
+  value is provided, the default value that was passed to `window.prompt` will
+  be used instead. Returns the message that was presented to the user. For
+  example:
+
+  ```
+  message = accept_prompt session, fn(s) ->
+    click(s, Query.link("Trigger prompt"))
+  end
+  ```
+
+  Example providing user input:
+
+  ```
+  message = accept_prompt session, [with: "User input"], fn(s) ->
+    click(s, Query.link("Trigger prompt"))
+  end
+  ```
   """
   def accept_prompt(%Session{}=session, options \\ [], fun) do
     input_value = Keyword.get(options, :with)
@@ -1030,8 +1066,14 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Dismisses one confirm dialog, which is triggered within the specified `fun`.
-  Returns the last message that was presented to the user.
+  Dismisses one prompt, which must be triggered within the specified `fun`.
+  Returns the message that was presented to the user. For example:
+
+  ```
+  message = dismiss_prompt session, fn(s) ->
+    click(s, Query.link("Trigger prompt"))
+  end
+  ```
   """
   def dismiss_prompt(%Session{}=session, fun) do
     Driver.dismiss_prompt(session, fun)
