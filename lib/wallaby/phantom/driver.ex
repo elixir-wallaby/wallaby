@@ -367,7 +367,6 @@ defmodule Wallaby.Phantom.Driver do
   def accept_alert(%Session{}=session, fun) do
     script = """
     var page = this;
-    page.__alertMessage = undefined;
     page.__onAlertDefault = page.onAlert;
     page.onAlert = function(msg) {
       page.__alertMessage = msg;
@@ -403,7 +402,6 @@ defmodule Wallaby.Phantom.Driver do
   defp handle_confirm(%Session{}=session, fun, return_value) do
     script = """
     var page = this, returnVal = arguments[0];
-    page.__confirmMessage = undefined;
     page.__onConfirmDefault = page.onConfirm;
     page.onConfirm = function(msg) {
       page.__confirmMessage = msg;
@@ -441,7 +439,6 @@ defmodule Wallaby.Phantom.Driver do
   defp handle_prompt(%Session{}=session, fun, return_value, use_default) do
     script = """
     var page = this, returnVal = arguments[0], useDefault = arguments[1];
-    page.__promptMessage = undefined;
     page.__onPromptDefault = page.onPrompt;
     page.onPrompt = function(msg, defaultVal) {
       page.__promptMessage = msg;
