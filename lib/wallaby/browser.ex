@@ -924,7 +924,8 @@ defmodule Wallaby.Browser do
       case execute_query(parent, query) do
         {:ok, _query_result} ->
           parent
-        {:error, _not_found} ->
+        {:error, {:not_found, results}} ->
+          query = %Query{query | result: results}
           raise Wallaby.ExpectationNotMet,
                 Query.ErrorMessage.message(query, :not_found)
 

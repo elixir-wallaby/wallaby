@@ -3,6 +3,7 @@ defmodule Wallaby.Browser.AssertRefuteHasTest do
 
   @found_query Query.css(".user", count: :any)
   @not_found_query Query.css(".something-else")
+  @wrong_exact_found_query Query.css(".user", count: 5)
   describe "assert_has/2" do
     test "passes if the query is present on the page", %{session: session} do
       return = session
@@ -17,6 +18,14 @@ defmodule Wallaby.Browser.AssertRefuteHasTest do
         session
         |> visit("nesting.html")
         |> assert_has(@not_found_query)
+      end
+    end
+
+    test "mentions the count of found vs. expected elements", %{session: session} do
+      assert_raise Wallaby.ExpectationNotMet, ~r/Expected.+ 5.*css.*\.user.*6/i, fn ->
+        session
+        |> visit("nesting.html")
+        |> assert_has(@wrong_exact_found_query)
       end
     end
   end
