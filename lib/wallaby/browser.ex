@@ -921,10 +921,10 @@ defmodule Wallaby.Browser do
       parent = unquote(parent)
       query  = unquote(query)
 
-      case has?(parent, query) do
-        true ->
+      case execute_query(parent, query) do
+        {:ok, _query_result} ->
           parent
-        false ->
+        {:error, _not_found} ->
           raise Wallaby.ExpectationNotMet,
                 Query.ErrorMessage.message(query, :not_found)
 
