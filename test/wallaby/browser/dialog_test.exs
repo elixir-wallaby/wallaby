@@ -89,11 +89,9 @@ defmodule Wallaby.Browser.DialogTest do
       message = accept_alert page, fn(p) ->
         click(p, Query.link("Alert"))
       end
-
       result = page
       |> find(Query.css("#result"))
       |> Element.text()
-
       assert message == "This is an alert!"
       assert result == "Alert accepted"
     end
@@ -104,11 +102,9 @@ defmodule Wallaby.Browser.DialogTest do
       message = accept_confirm page, fn(p) ->
         click(p, Query.link("Confirm"))
       end
-
       result = page
       |> find(Query.css("#result"))
       |> Element.text()
-
       assert message == "Are you sure?"
       assert result == "Confirm returned true"
     end
@@ -117,12 +113,10 @@ defmodule Wallaby.Browser.DialogTest do
       page
       |> dismiss_dialogs()
       |> accept_confirm(fn(_) -> :noop end)
-
       result = page
       |> click(Query.link("Confirm"))
       |> find(Query.css("#result"))
       |> Element.text()
-
       assert result == "Confirm returned false"
     end
   end
@@ -132,11 +126,9 @@ defmodule Wallaby.Browser.DialogTest do
       message = dismiss_confirm page, fn(p) ->
         click(p, Query.link("Confirm"))
       end
-
       result = page
       |> find(Query.css("#result"))
       |> Element.text()
-
       assert message == "Are you sure?"
       assert result == "Confirm returned false"
     end
@@ -145,12 +137,10 @@ defmodule Wallaby.Browser.DialogTest do
       page
       |> accept_dialogs()
       |> dismiss_confirm(fn(_) -> :noop end)
-
       result = page
       |> click(Query.link("Confirm"))
       |> find(Query.css("#result"))
       |> Element.text()
-
       assert result == "Confirm returned true"
     end
   end
@@ -160,11 +150,9 @@ defmodule Wallaby.Browser.DialogTest do
       message = accept_prompt page, [with: "Wallaby"], fn(p) ->
         click(p, Query.link("Prompt"))
       end
-
       result = page
       |> find(Query.css("#result"))
       |> Element.text()
-
       assert message == "What's your name?"
       assert result == "Prompt returned Wallaby"
     end
@@ -173,11 +161,9 @@ defmodule Wallaby.Browser.DialogTest do
       accept_prompt page, fn(p) ->
         click(p, Query.link("Prompt"))
       end
-
       result = page
       |> find(Query.css("#result"))
       |> Element.text()
-
       assert result == "Prompt returned default"
     end
 
@@ -185,12 +171,10 @@ defmodule Wallaby.Browser.DialogTest do
       page
       |> dismiss_dialogs()
       |> accept_prompt(fn(_) -> :noop end)
-
       result = page
       |> click(Query.link("Prompt"))
       |> find(Query.css("#result"))
       |> Element.text()
-
       assert result == "Prompt returned null"
     end
   end
@@ -200,11 +184,9 @@ defmodule Wallaby.Browser.DialogTest do
       message = dismiss_prompt page, fn(p) ->
         click(p, Query.link("Prompt"))
       end
-
       result = page
       |> find(Query.css("#result"))
       |> Element.text()
-
       assert message == "What's your name?"
       assert result == "Prompt returned null"
     end
@@ -213,12 +195,10 @@ defmodule Wallaby.Browser.DialogTest do
       page
       |> accept_dialogs()
       |> dismiss_prompt(fn(_) -> :noop end)
-
       result = page
       |> click(Query.link("Prompt"))
       |> find(Query.css("#result"))
       |> Element.text()
-
       assert result == "Prompt returned default"
     end
   end
