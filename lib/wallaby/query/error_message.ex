@@ -7,9 +7,10 @@ defmodule Wallaby.Query.ErrorMessage do
   @spec message(Query.t, any()) :: String.t
 
   def message(%Query{}=query, :not_found) do
-    """
-    Expected to find #{expected_count(query)}, #{visibility(query)} #{method(query)} '#{query.selector}' but #{result_count(query.result)}, #{visibility(query)} #{short_method(query.method, Enum.count(query.result))} #{result_expectation(query.result)}.
-    """
+    "Expected to find #{found_error_message(query)}"
+  end
+  def message(%Query{}=query, :found) do
+    "Expected not to find #{found_error_message(query)}"
   end
   def message(%{method: method, selector: selector}, :label_with_no_for) do
     """
@@ -54,6 +55,12 @@ defmodule Wallaby.Query.ErrorMessage do
     """
     If you expect to find the selector #{times(length(elements))} then you
     should include the `count: #{length(elements)}` option in your finder.
+    """
+  end
+
+  defp found_error_message(query) do
+    """
+    #{expected_count(query)}, #{visibility(query)} #{method(query)} '#{query.selector}' but #{result_count(query.result)}, #{visibility(query)} #{short_method(query.method, Enum.count(query.result))} #{result_expectation(query.result)}.
     """
   end
 
