@@ -89,7 +89,7 @@ config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
 Its easiest to add Wallaby to your test suite by creating a new Case Template:
 
 ```elixir
-defmodule YourApp.AcceptanceCase do
+defmodule YourApp.FeatureCase do
   use ExUnit.CaseTemplate
 
   using do
@@ -123,7 +123,7 @@ Then you can write tests like so:
 
 ```elixir
 defmodule YourApp.UserListTest do
-  use YourApp.AcceptanceCase, async: true
+  use YourApp.FeatureCase, async: true
 
   test "users have names", %{session: session} do
     first_employee =
