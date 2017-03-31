@@ -903,6 +903,66 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
+  Checks if `query` is present within `parent` and raises if not found.
+
+  Returns the given `parent` if the assertion is correct so that it is easily
+  pipeable.
+
+  ## Examples
+
+      session
+      |> visit("/")
+      |> assert_has(Query.css(".login-button"))
+  """
+  @spec assert_has(parent, Query.t) :: parent
+
+  defmacro assert_has(parent, query) do
+    quote do
+      parent = unquote(parent)
+      query  = unquote(query)
+
+      case execute_query(parent, query) do
+        {:ok, _query_result} ->
+          parent
+        {:error, {:not_found, results}} ->
+          query = %Query{query | result: results}
+          raise Wallaby.ExpectationNotMet,
+                Query.ErrorMessage.message(query, :not_found)
+
+      end
+    end
+  end
+
+  @doc """
+  Checks if `query` is not present within `parent` and raises if it is found.
+
+  Returns the given `parent` if the query is not found so that it is easily
+  pipeable.
+
+  ## Examples
+
+      session
+      |> visit("/")
+      |> refute_has(Query.css(".secret-admin-content"))
+  """
+  @spec refute_has(parent, Query.t) :: parent
+
+  defmacro refute_has(parent, query) do
+    quote do
+      parent = unquote(parent)
+      query  = unquote(query)
+
+      case execute_query(parent, query) do
+        {:error, _not_found} ->
+          parent
+        {:ok, query} ->
+          raise Wallaby.ExpectationNotMet,
+                Query.ErrorMessage.message(query, :found)
+      end
+    end
+  end
+
+  @doc """
   Searches for CSS on the page.
   """
   @spec has_css?(parent, Query.t, String.t) :: boolean()
@@ -1142,7 +1202,7 @@ defmodule Wallaby.Browser do
     end
   end
 
-  defp execute_query(parent, query) do
+  def execute_query(parent, query) do
     retry fn ->
       try do
         with {:ok, query}  <- Query.validate(query),
