@@ -156,6 +156,15 @@ defmodule Wallaby.Browser do
 
   @doc """
   Fills in an element identified by `query` with `value`.
+
+  All inputs previously present in the input field will be overridden.
+
+  ### Examples
+
+      page
+      |> fill_in(Query.text_field("name"), with: "Chris")
+      |> fill_in(Query.css("#password_field", with: "secret42"))
+
   """
   @spec fill_in(parent, Query.t, with: String.t) :: parent
   def fill_in(parent, query, with: value) do
