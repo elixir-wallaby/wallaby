@@ -65,7 +65,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking button type[button] via button text (resets input via JS)", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -76,7 +76,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking button type[button] via name (resets input via JS)", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -87,7 +87,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking button type[button] via id (resets input via JS)", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -98,7 +98,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking button type[reset] via button text resets form", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -109,7 +109,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking button type[reset] via name resets form", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -120,7 +120,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking button type[reset] via id resets form", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -158,7 +158,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking input type[button] via button text resets input via JS", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -169,7 +169,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking input type[button] via name resets input via JS", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -180,7 +180,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking input type[button] via id resets input via JS", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -191,7 +191,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking input type[reset] via button text resets form", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -202,7 +202,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking input type[reset] via name resets form", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
@@ -213,7 +213,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
 
   test "clicking input type[reset] via id resets form", %{page: page} do
     page
-    |> fill_in("name_field", with: "Erlich Bachman")
+    |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 

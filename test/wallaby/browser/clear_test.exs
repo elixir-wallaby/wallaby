@@ -7,7 +7,7 @@ defmodule Wallaby.Browser.ClearTest do
       |> visit("forms.html")
       |> find(Query.css("#name_field"))
 
-    fill_in(element, with: "Chris")
+    Element.fill_in(element, with: "Chris")
     assert has_value?(element, "Chris")
 
     clear(element)

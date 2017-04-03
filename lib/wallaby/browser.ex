@@ -155,29 +155,21 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Fills in a "fillable" element with text. Input elements are looked up by id, label text,
-  or name.
+  Fills in an element identified by `query` with `value`.
+
+  All inputs previously present in the input field will be overridden.
+
+  ### Examples
+
+      page
+      |> fill_in(Query.text_field("name"), with: "Chris")
+      |> fill_in(Query.css("#password_field", with: "secret42"))
+
   """
-  @spec fill_in(element, opts) :: element
   @spec fill_in(parent, Query.t, with: String.t) :: parent
-  @spec fill_in(parent, locator, opts) :: parent
-
-  def fill_in(parent, locator, [{:with, value} | _]=opts) when is_binary(locator) do
-    IO.warn """
-    fill_in/3 with string locators has been deprecated. Please use a query: fill_in(parent, Query.text_field("#{locator}"), with: "#{value}")
-    """
-
-    parent
-    |> find(Query.fillable_field(locator, opts), &(Element.fill_in(&1, with: value)))
-  end
   def fill_in(parent, query, with: value) do
     parent
     |> find(query, &(Element.fill_in(&1, with: value)))
-  end
-  def fill_in(%Element{}=element, with: value) do
-    IO.warn "fill_in/2 has been deprecated. Please use Element.fill_in/2"
-
-    Element.fill_in(element, with: value)
   end
 
   @doc """
