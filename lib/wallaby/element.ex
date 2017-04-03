@@ -32,6 +32,7 @@ defmodule Wallaby.Element do
   @opaque value :: String.t | number()
 
   @type attr :: String.t
+  @type keys_to_send :: String.t | list(atom | String.t)
   @type t :: %__MODULE__{
     session_url: String.t,
     url: String.t,
@@ -159,7 +160,7 @@ defmodule Wallaby.Element do
   @doc """
   Sends keys to the element.
   """
-  @spec send_keys(t, String.t | list(atom | String.t)) :: t
+  @spec send_keys(t, keys_to_send) :: t
 
   def send_keys(element, text) when is_binary(text) do
     send_keys(element, [text])

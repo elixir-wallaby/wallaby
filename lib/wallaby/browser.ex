@@ -542,8 +542,8 @@ defmodule Wallaby.Browser do
       iex> Wallaby.Session.send_keys(session, [:enter])
       iex> Wallaby.Session.send_keys(session, [:shift, :enter])
   """
-  @spec send_keys(parent, Query.t, list(atom) | String.t) :: parent
-  @spec send_keys(parent, list(atom) | String.t) :: parent
+  @spec send_keys(parent, Query.t, Element.keys_to_send) :: parent
+  @spec send_keys(parent, Element.keys_to_send) :: parent
 
   def send_keys(parent, query, list) do
     find(parent, query, fn(element) ->
