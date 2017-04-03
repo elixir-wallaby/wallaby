@@ -25,7 +25,7 @@ defmodule Wallaby.Phantom.Server do
     port = find_available_port()
     local_storage = tmp_local_storage()
 
-    Port.open({:spawn_executable, script_path()},
+    Port.open({:spawn_executable, String.to_charlist(script_path())},
       [:binary, :stream, :use_stdio, :exit_status, args: script_args(port, local_storage)])
 
     {:ok, %{running: false, awaiting_url: [], base_url: "http://localhost:#{port}/", local_storage: local_storage}}
