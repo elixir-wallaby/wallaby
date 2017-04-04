@@ -41,7 +41,7 @@ defmodule Wallaby.Session do
   """
 
   @type t :: %__MODULE__{
-    id: integer(),
+    id: String.t,
     session_url: String.t,
     url: String.t,
     server: pid(),
