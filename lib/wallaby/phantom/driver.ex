@@ -14,6 +14,8 @@ defmodule Wallaby.Phantom.Driver do
   @type params :: %{using: String.t, value: query}
   @type locator :: Session.t | Element.t
 
+  # Start a Session for the given Phantom.Server
+  @spec create(pid, Keyword.t) :: {:ok, Session.t}
   def create(server, opts) do
     base_url = Wallaby.Phantom.Server.get_base_url(server)
     user_agent =
@@ -24,9 +26,8 @@ defmodule Wallaby.Phantom.Driver do
       user_agent: user_agent,
       custom_headers: opts[:custom_headers]
     )
-    params = %{desiredCapabilities: capabilities}
 
-    {:ok, response} = request(:post, "#{base_url}session", params)
+    {:ok, response} =  create_session(base_url, capabilities)
     id = response["sessionId"]
 
     session = %Wallaby.Session{
@@ -37,6 +38,15 @@ defmodule Wallaby.Phantom.Driver do
     }
 
     {:ok, session}
+  end
+
+  # Create a session with the base url.
+  @doc false
+  @spec create_session(String.t, map) :: {:ok, map}
+  def create_session(base_url, capabilities) do
+    params = %{desiredCapabilities: capabilities}
+
+    request(:post, "#{base_url}session", params)
   end
 
   @doc """
@@ -414,7 +424,8 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   def headers do
-    [{"Content-Type", "text/json"}]
+    [{"Accept", "application/json"},
+      {"Content-Type", "application/json"}]
   end
 
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
