@@ -542,8 +542,8 @@ defmodule Wallaby.Browser do
       iex> Wallaby.Session.send_keys(session, [:enter])
       iex> Wallaby.Session.send_keys(session, [:shift, :enter])
   """
-  @spec send_keys(parent, Query.t, list(atom) | String.t) :: parent
-  @spec send_keys(parent, list(atom) | String.t) :: parent
+  @spec send_keys(parent, Query.t, Element.keys_to_send) :: parent
+  @spec send_keys(parent, Element.keys_to_send) :: parent
 
   def send_keys(parent, query, list) do
     find(parent, query, fn(element) ->
@@ -906,7 +906,6 @@ defmodule Wallaby.Browser do
       |> visit("/")
       |> assert_has(Query.css(".login-button"))
   """
-  @spec assert_has(parent, Query.t) :: parent
 
   defmacro assert_has(parent, query) do
     quote do
@@ -937,7 +936,6 @@ defmodule Wallaby.Browser do
       |> visit("/")
       |> refute_has(Query.css(".secret-admin-content"))
   """
-  @spec refute_has(parent, Query.t) :: parent
 
   defmacro refute_has(parent, query) do
     quote do
