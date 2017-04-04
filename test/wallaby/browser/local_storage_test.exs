@@ -16,24 +16,32 @@ defmodule Wallaby.Browser.LocalStorageTest do
     |> visit("index.html")
     |> execute_script(@set_value_script)
 
-    assert session
-    |> execute_script(@get_value_script) == "foo"
+    session
+    |> execute_script(@get_value_script, fn(value) -> send self(), {:result, value} end)
 
-    assert s2
-    |> visit("index.html")
-    |> execute_script(@get_value_script) == nil
+    assert_received {:result, "foo"}
 
-    assert s3
+    s2
     |> visit("index.html")
-    |> execute_script(@get_value_script) == nil
+    |> execute_script(@get_value_script, fn(value) -> send self, {:callback, value} end)
+
+    assert_received {:callback, nil}
+
+    s3
+    |> visit("index.html")
+    |> execute_script(@get_value_script, fn(value) -> send self, {:callback2, value} end)
+
+    assert_received {:callback2, nil}
 
     Wallaby.end_session(session)
     {:ok, new_session} = Wallaby.start_session
 
     assert session.server == new_session.server
 
-    assert new_session
+    new_session
     |> visit("index.html")
-    |> execute_script(@get_value_script) == nil
+    |> execute_script(@get_value_script, fn(value) -> send self, {:callback3, value} end)
+
+    assert_received {:callback3, nil}
   end
 end
