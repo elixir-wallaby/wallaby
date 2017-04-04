@@ -1,15 +1,19 @@
 language: elixir
 elixir: 1.4.0
 otp_release: 19.2
+# Run in bigger container so we don't run out of memory generating the plt
+sudo: required
 cache:
   directories:
     - _build
     - deps
 before_script:
   - MIX_ENV=test mix compile --warnings-as-errors
+  - travis_wait mix dialyzer --plt
 
 script:
   - mix coveralls.travis
+  - mix dialyzer --halt-exit-status
 
 matrix:
   include:
