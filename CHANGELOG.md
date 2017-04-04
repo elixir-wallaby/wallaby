@@ -4,6 +4,7 @@
 
 * New cookie API with `cookies/1` and `set_cookie/3`
 * New assert macros `assert_has/2` and `refute_has/2`
+* execute_script now returns the session again and is pipable, there is an optional callback if you need access to the return value - thanks @krankin
 
 ### Bugfixes
 
