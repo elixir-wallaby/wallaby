@@ -7,11 +7,9 @@ cache:
     - deps
 before_script:
   - MIX_ENV=test mix compile --warnings-as-errors
-  - mix dialyzer --plt
 
 script:
   - mix coveralls.travis
-  - mix dialyzer --halt-exit-status
 
 matrix:
   include:
