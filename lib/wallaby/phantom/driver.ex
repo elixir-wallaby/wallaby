@@ -14,7 +14,6 @@ defmodule Wallaby.Phantom.Driver do
   @type params :: %{using: String.t, value: query}
   @type locator :: Session.t | Element.t
 
-  # Start a Session for the given Phantom.Server
   @spec create(pid, Keyword.t) :: {:ok, Session.t}
   def create(server, opts) do
     base_url = Wallaby.Phantom.Server.get_base_url(server)

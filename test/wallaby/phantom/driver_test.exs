@@ -135,7 +135,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, nil} = Driver.set_value(element, value)
     end
   end
@@ -156,7 +155,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, nil} = Driver.clear(element)
     end
   end
@@ -177,7 +175,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, %{}} = Driver.click(element)
     end
   end
@@ -198,7 +195,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, ""} = Driver.text(element)
     end
   end
@@ -218,7 +214,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, ^page_title} = Driver.page_title(session)
     end
   end
@@ -240,7 +235,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, "password"} = Driver.attribute(element, "name")
     end
   end
@@ -262,7 +256,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, %{}} = Driver.visit(session, url)
     end
   end
@@ -282,7 +275,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, ^url} = Driver.current_url(session)
     end
   end
@@ -302,7 +294,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert ^url = Driver.current_url!(session)
     end
   end
@@ -322,7 +313,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert "/search" = Driver.current_path!(session)
     end
   end
@@ -343,7 +333,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, true} = Driver.selected(element)
     end
   end
@@ -364,7 +353,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, true} = Driver.displayed(element)
     end
 
@@ -405,7 +393,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert true = Driver.displayed!(element)
     end
 
@@ -448,7 +435,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, "not quite sure"} = Driver.size(element)
     end
   end
@@ -469,7 +455,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, "not quite sure"} = Driver.rect(element)
     end
   end
@@ -661,7 +646,6 @@ defmodule Wallaby.Phantom.DriverTest do
         }>)
       end
 
-      # Returns only the value
       assert {:ok, []} = Driver.log(session)
     end
   end
@@ -681,7 +665,6 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      # Returns only the value
       assert {:ok, ^page_source} = Driver.page_source(session)
     end
   end
