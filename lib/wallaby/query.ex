@@ -94,6 +94,8 @@ defmodule Wallaby.Query do
     result: result(),
   }
 
+  @type compiled_query :: {:css | :xpath, String.t}
+
 
   def css(selector, opts \\ []) do
     %Query{
@@ -212,6 +214,7 @@ defmodule Wallaby.Query do
     end
   end
 
+  @spec compile(t) :: compiled_query
   def compile(%{method: :css, selector: selector}), do: {:css, selector}
   def compile(%{method: :xpath, selector: selector}), do: {:xpath, selector}
   def compile(%{method: :link, selector: selector}), do: {:xpath, XPath.link(selector)}

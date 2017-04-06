@@ -6,36 +6,6 @@ defmodule Wallaby.Phantom.DriverTest do
 
   @window_handle_id "bdc333b0-1989-11e7-a2c3-d1d2d92b0e58"
 
-  describe "create_session/2" do
-    test "sends the correct request to the webdriver backend", %{bypass: bypass} do
-      base_url = bypass_url(bypass) <> "/"
-      new_session_id = "abc123"
-      capabilities = %{
-        "platform" => "OS X",
-        "browser" => "chrome"
-      }
-
-      Bypass.expect bypass, fn conn ->
-        conn = parse_body(conn)
-        assert "POST" == conn.method
-        assert "/session" == conn.request_path
-        assert %{"desiredCapabilities" => capabilities} == conn.body_params
-
-        send_resp(conn, 200, ~s<{
-          "sessionId": "#{new_session_id}",
-          "status": 0,
-          "value": {
-            "acceptSslCerts": false,
-            "browserName": "phantomjs"
-          }
-        }>)
-      end
-
-      assert {:ok, response} = Driver.create_session(base_url, capabilities)
-      assert %{"sessionId" => ^new_session_id} =  response
-    end
-  end
-
   describe "delete/1" do
     test "sends a delete request to Session.session_url", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
