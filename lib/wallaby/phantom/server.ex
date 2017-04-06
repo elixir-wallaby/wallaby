@@ -1,6 +1,9 @@
 defmodule Wallaby.Phantom.Server do
   use GenServer
 
+  @external_resource "priv/run_phantom.sh"
+  @run_phantom_script_contents File.read! "priv/run_phantom.sh"
+
   def start_link(_args) do
     GenServer.start_link(__MODULE__, [])
   end
@@ -25,14 +28,29 @@ defmodule Wallaby.Phantom.Server do
     port = find_available_port()
     local_storage = tmp_local_storage()
 
-    Port.open({:spawn_executable, String.to_charlist(script_path())},
-      [:binary, :stream, :use_stdio, :exit_status, args: script_args(port, local_storage)])
+    start_phantom(port, local_storage)
 
     {:ok, %{running: false, awaiting_url: [], base_url: "http://localhost:#{port}/", local_storage: local_storage}}
   end
 
+  defp start_phantom(port, local_storage) do
+    # Starts phantomjs using the run_phantom.sh wrapper script so phantomjs will
+    # be shutdown when stdin closes and when the beam terminates unexpectedly.
+    # When running as an escript, priv/run_phantom.sh will not be present so we
+    # pipe the script contents into sh -s. Here is the basic command we are
+    # running below:
+    #
+    #   <wrapper_script_contents > | sh -s phantomjs --arg-1 --arg-2
+    #
+    port = Port.open({:spawn_executable, System.find_executable("sh")},
+            [:binary, :stream, :use_stdio, :exit_status, args: script_args(port, local_storage)])
+    Port.command(port, @run_phantom_script_contents)
+    port
+  end
+
   def script_args(port, local_storage) do
     [
+      "-s",
       phantomjs_path(),
       "--webdriver=#{port}",
       "--local-storage-path=#{local_storage}"
@@ -54,10 +72,6 @@ defmodule Wallaby.Phantom.Server do
     File.mkdir_p(local_storage)
 
     local_storage
-  end
-
-  defp script_path do
-    Path.absname("priv/run_phantom.sh", Application.app_dir(:wallaby))
   end
 
   defp phantomjs_path do
