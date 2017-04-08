@@ -173,6 +173,20 @@ defmodule Wallaby.Browser.DialogTest do
       assert result == "Prompt returned default"
     end
 
+    test "ensure the input value is a string", %{page: page} do
+      assert_raise FunctionClauseError, fn ->
+        accept_prompt(page, [with: nil], fn(_) -> :noop end)
+      end
+
+      assert_raise FunctionClauseError, fn ->
+        accept_prompt(page, [with: 123], fn(_) -> :noop end)
+      end
+
+      assert_raise FunctionClauseError, fn ->
+        accept_prompt(page, [with: :foo], fn(_) -> :noop end)
+      end
+    end
+
     test "resets itself when no window.prompt was triggered", %{page: page} do
       message =
         page

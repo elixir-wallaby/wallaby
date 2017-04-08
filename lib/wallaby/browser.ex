@@ -1120,8 +1120,15 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def accept_prompt(%Session{}=session, options \\ [], fun) do
-    input_value = Keyword.get(options, :with)
+  def accept_prompt(%Session{}=session, fun) do
+    do_accept_prompt(session, nil, fun)
+  end
+
+  def accept_prompt(%Session{}=session, [with: input_value], fun) when is_binary(input_value) do
+    do_accept_prompt(session, input_value, fun)
+  end
+
+  defp do_accept_prompt(%Session{}=session, input_value, fun) do
     Driver.accept_prompt(session, input_value, fun)
   end
 
