@@ -160,6 +160,34 @@ defmodule Wallaby.Browser.DialogTest do
     end
   end
 
+  describe "accept_prompt/2" do
+    test "accept window.prompt with default value and get message", %{page: page} do
+      message = accept_prompt page, fn(p) ->
+        click(p, Query.link("Prompt"))
+      end
+      result =
+        page
+        |> find(Query.css("#result"))
+        |> Element.text()
+      assert message == "What's your name?"
+      assert result == "Prompt returned default"
+    end
+
+    test "resets itself when no window.prompt was triggered", %{page: page} do
+      message =
+        page
+        |> dismiss_dialogs()
+        |> accept_prompt(fn(_) -> :noop end)
+      result =
+        page
+        |> click(Query.link("Prompt"))
+        |> find(Query.css("#result"))
+        |> Element.text()
+      assert message == nil
+      assert result == "Prompt returned null"
+    end
+  end
+
   describe "accept_prompt/3" do
     test "accept window.prompt with value and get message", %{page: page} do
       message = accept_prompt page, [with: "Wallaby"], fn(p) ->
@@ -173,22 +201,11 @@ defmodule Wallaby.Browser.DialogTest do
       assert result == "Prompt returned Wallaby"
     end
 
-    test "accept window.prompt with default", %{page: page} do
-      accept_prompt page, fn(p) ->
-        click(p, Query.link("Prompt"))
-      end
-      result =
-        page
-        |> find(Query.css("#result"))
-        |> Element.text()
-      assert result == "Prompt returned default"
-    end
-
     test "resets itself when no window.prompt was triggered", %{page: page} do
       message =
         page
         |> dismiss_dialogs()
-        |> accept_prompt(fn(_) -> :noop end)
+        |> accept_prompt([with: "Wallaby"], fn(_) -> :noop end)
       result =
         page
         |> click(Query.link("Prompt"))
