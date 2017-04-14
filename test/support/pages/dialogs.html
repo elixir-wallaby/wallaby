@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Dialog Test</title>
+  </head>
+  <body>
+    <h1>Dialog Test</h1>
+    <a id='alert' href=# onclick="doAlert()")>Alert</a>
+    <a id='confirm' href=# onclick="doConfirm()">Confirm</a>
+    <a id='prompt' href=# onclick="doPrompt()">Prompt</a>
+    <p id='result'></p>
+    <script>
+      function doAlert() {
+        alert("This is an alert!");
+        document.getElementById("result").innerHTML = "Alert accepted";
+      }
+
+      function doConfirm() {
+        var confirmed = confirm("Are you sure?");
+        document.getElementById("result").innerHTML = "Confirm returned " + confirmed;
+      }
+
+      function doPrompt() {
+        var result = prompt("What's your name?", "default");
+        document.getElementById("result").innerHTML = "Prompt returned " + result;
+      }
+    </script>
+  </body>
+</html>

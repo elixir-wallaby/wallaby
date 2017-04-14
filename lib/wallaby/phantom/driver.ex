@@ -342,6 +342,135 @@ defmodule Wallaby.Phantom.Driver do
     end
   end
 
+  @doc """
+  Accept all JavaScript dialogs
+  """
+  def accept_dialogs(session) do
+    script = """
+    var page = this;
+    page.onAlert = function(msg) {}
+    page.onConfirm = function(msg) { return true; }
+    page.onPrompt = function(msg, defaultVal) { return defaultVal; }
+    return "ok";
+    """
+    {:ok, "ok"} = execute_phantom_script(session, script)
+  end
+
+  @doc """
+  Dismiss all JavaScript dialogs
+  """
+  def dismiss_dialogs(session) do
+    script = """
+    var page = this;
+    page.onAlert = function(msg) {}
+    page.onConfirm = function(msg) { return false; }
+    page.onPrompt = function(msg, defaultVal) { return null; }
+    return "ok";
+    """
+    {:ok, "ok"} = execute_phantom_script(session, script)
+  end
+
+  @doc """
+  Accept one alert triggered within `fun` and return the alert message.
+  """
+  def accept_alert(%Session{}=session, fun) do
+    script = """
+    var page = this;
+    page.__onAlertDefault = page.onAlert;
+    page.onAlert = function(msg) {
+      page.__alertMessage = msg;
+      page.onAlert = page.__onAlertDefault;
+    }
+    return "ok";
+    """
+    {:ok, "ok"} = execute_phantom_script(session, script)
+    fun.(session)
+    script = """
+    var page = this;
+    page.onAlert = page.__onAlertDefault;
+    return ["ok", page.__alertMessage];
+    """
+    {:ok, ["ok", message]} = execute_phantom_script(session, script)
+    message
+  end
+
+  @doc """
+  Accept one confirm triggered within `fun` and return the confirm message.
+  """
+  def accept_confirm(%Session{}=session, fun) do
+    handle_confirm(session, fun, true)
+  end
+
+  @doc """
+  Dismiss one confirm triggered within `fun` and return the confirm message.
+  """
+  def dismiss_confirm(%Session{}=session, fun) do
+    handle_confirm(session, fun, false)
+  end
+
+  defp handle_confirm(%Session{}=session, fun, return_value) do
+    script = """
+    var page = this, returnVal = arguments[0];
+    page.__onConfirmDefault = page.onConfirm;
+    page.onConfirm = function(msg) {
+      page.__confirmMessage = msg;
+      page.onConfirm = page.__onConfirmDefault;
+      return returnVal;
+    }
+    return "ok";
+    """
+    {:ok, "ok"} = execute_phantom_script(session, script, [return_value])
+    fun.(session)
+    script = """
+    var page = this;
+    page.onConfirm = page.__onConfirmDefault;
+    return ["ok", page.__confirmMessage];
+    """
+    {:ok, ["ok", message]} = execute_phantom_script(session, script)
+    message
+  end
+
+  @doc """
+  Accept one prompt triggered within `fun` with the specified `input_value`
+  and return the confirm message.
+  """
+  def accept_prompt(%Session{}=session, input_value, fun) do
+    handle_prompt(session, fun, input_value, true)
+  end
+
+  @doc """
+  Dismiss one prompt triggered within `fun` and return the confirm message.
+  """
+  def dismiss_prompt(%Session{}=session, fun) do
+    handle_prompt(session, fun, nil, false)
+  end
+
+  defp handle_prompt(%Session{}=session, fun, return_value, use_default) do
+    script = """
+    var page = this, returnVal = arguments[0], useDefault = arguments[1];
+    page.__onPromptDefault = page.onPrompt;
+    page.onPrompt = function(msg, defaultVal) {
+      page.__promptMessage = msg;
+      page.onPrompt = page.__onPromptDefault;
+      if (useDefault) {
+        return returnVal || defaultVal;
+      } else {
+        return returnVal;
+      }
+    }
+    return "ok";
+    """
+    {:ok, "ok"} = execute_phantom_script(session, script, [return_value, use_default])
+    fun.(session)
+    script = """
+    var page = this;
+    page.onPrompt = page.__onPromptDefault;
+    return ["ok", page.__promptMessage];
+    """
+    {:ok, ["ok", message]} = execute_phantom_script(session, script)
+    message
+  end
+
   defp window_handle(session) do
     check_logs! session, fn ->
       with  {:ok, resp} <- request(:get, "#{session.url}/window_handle"),
@@ -434,5 +563,13 @@ defmodule Wallaby.Phantom.Driver do
       url: parent.session_url <> "/element/#{id}",
       parent: parent,
     }
+  end
+
+  defp execute_phantom_script(session, script, arguments \\ []) do
+    check_logs! session, fn ->
+      with {:ok, resp} <- request(:post, "#{session.session_url}/phantom/execute", %{script: script, args: arguments}),
+           {:ok, value} <- Map.fetch(resp, "value"),
+        do: {:ok, value}
+    end
   end
 end

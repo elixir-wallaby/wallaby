@@ -262,6 +262,32 @@ session
 |> find(Query.css(".async-result"))
 ```
 
+### Interacting with dialogs
+
+Wallaby provides several ways to interact with JavaScript dialogs such as `window.alert`, `window.confirm` and `window.prompt`. To accept/dismiss all dialogs in the current session you can use `accept_dialogs` and `dismiss_dialogs`. The default behavior is equivalent to using `dismiss_dialogs`.
+
+For more fine-grained control over individual dialogs, you can use one of the following functions:
+
+* For `window.alert` use `accept_alert/2`
+* For `window.confirm` use `accept_confirm/2` or `dismiss_confirm/2`
+* For `window.prompt` use `accept_prompt/2-3` or `dismiss_prompt/2`
+
+All of these take a function as last parameter, which must include the necessary interactions to trigger the dialog. For example:
+
+```elixir
+alert_message = accept_alert session, fn(session) ->
+  click(session, Query.link("Trigger alert"))
+end
+```
+
+To emulate user input for a prompt, `accept_prompt` takes an optional parameter:
+
+```elixir
+prompt_message = accept_prompt session, [with: "User input"], fn(session) ->
+  click(session, Query.link("Trigger prompt"))
+end
+```
+
 ### JavaScript logging and errors
 
 Wallaby captures both JavaScript logs and errors. Any uncaught exceptions in JavaScript will be re-thrown in Elixir. This can be disabled by specifying `js_errors: false` in your Wallaby config.

@@ -1047,6 +1047,112 @@ defmodule Wallaby.Browser do
     current_url(session) == "about:blank"
   end
 
+  @doc """
+  Accepts all subsequent JavaScript dialogs in the given session.
+  """
+  def accept_dialogs(%Session{}=session) do
+    Driver.accept_dialogs(session)
+    session
+  end
+
+  @doc """
+  Dismisses all subsequent JavaScript dialogs in the given session.
+  """
+  def dismiss_dialogs(%Session{}=session) do
+    Driver.dismiss_dialogs(session)
+    session
+  end
+
+  @doc """
+  Accepts one alert dialog, which must be triggered within the specified `fun`.
+  Returns the message that was presented to the user. For example:
+
+  ```
+  message = accept_alert session, fn(s) ->
+    click(s, Query.link("Trigger alert"))
+  end
+  ```
+  """
+  def accept_alert(%Session{}=session, fun) do
+    Driver.accept_alert(session, fun)
+  end
+
+  @doc """
+  Accepts one confirmation dialog, which must be triggered within the specified
+  `fun`. Returns the message that was presented to the user. For example:
+
+  ```
+  message = accept_confirm session, fn(s) ->
+    click(s, Query.link("Trigger confirm"))
+  end
+  ```
+  """
+  def accept_confirm(%Session{}=session, fun) do
+    Driver.accept_confirm(session, fun)
+  end
+
+  @doc """
+  Dismisses one confirmation dialog, which must be triggered within the
+  specified `fun`. Returns the message that was presented to the user. For
+  example:
+
+  ```
+  message = dismiss_confirm session, fn(s) ->
+    click(s, Query.link("Trigger confirm"))
+  end
+  ```
+  """
+  def dismiss_confirm(%Session{}=session, fun) do
+    Driver.dismiss_confirm(session, fun)
+  end
+
+  @doc """
+  Accepts one prompt, which must be triggered within the specified `fun`. The
+  `[with: value]` option allows to simulate user input for the prompt. If no
+  value is provided, the default value that was passed to `window.prompt` will
+  be used instead. Returns the message that was presented to the user. For
+  example:
+
+  ```
+  message = accept_prompt session, fn(s) ->
+    click(s, Query.link("Trigger prompt"))
+  end
+  ```
+
+  Example providing user input:
+
+  ```
+  message = accept_prompt session, [with: "User input"], fn(s) ->
+    click(s, Query.link("Trigger prompt"))
+  end
+  ```
+  """
+  def accept_prompt(%Session{}=session, fun) do
+    do_accept_prompt(session, nil, fun)
+  end
+
+  def accept_prompt(%Session{}=session, [with: input_value], fun) when is_binary(input_value) do
+    do_accept_prompt(session, input_value, fun)
+  end
+
+  defp do_accept_prompt(%Session{}=session, input_value, fun) do
+    Driver.accept_prompt(session, input_value, fun)
+  end
+
+  @doc """
+  Dismisses one prompt, which must be triggered within the specified `fun`.
+  Returns the message that was presented to the user. For example:
+
+  ```
+  message = dismiss_prompt session, fn(s) ->
+    click(s, Query.link("Trigger prompt"))
+  end
+  ```
+  """
+  def dismiss_prompt(%Session{}=session, fun) do
+    Driver.dismiss_prompt(session, fun)
+  end
+
   defp validate_html(parent, %{html_validation: :button_type}=query) do
     buttons = all(parent, Query.css("button", [text: query.selector]))
 
