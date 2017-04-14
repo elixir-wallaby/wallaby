@@ -173,41 +173,6 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Chooses a radio button based on id, label text, or name.
-  """
-  @spec choose(Element.t) :: Element.t
-  @spec choose(parent, Query.t) :: parent
-  @spec choose(parent, locator, opts) :: parent
-
-  def choose(parent, locator, opts) when is_binary(locator) do
-    IO.warn """
-    choose/3 has been deprecated. Please use: click(parent, Query.radio_button("#{locator}", #{inspect(opts)}))
-    """
-
-    parent
-    |> find(Query.radio_button(locator, opts), &Element.click/1)
-  end
-  def choose(parent, locator) when is_binary(locator) do
-    IO.warn """
-    choose/2 has been deprecated. Please use: click(parent, Query.radio_button("#{locator}"))
-    """
-
-    parent
-    |> find(Query.radio_button(locator, []), &Element.click/1)
-  end
-  def choose(parent, query) do
-    IO.warn "choose/2 has been deprecated. Please use click/2"
-
-    parent
-    |> find(query, &Element.click/1)
-  end
-  def choose(%Element{}=element) do
-    IO.warn "choose/1 has been deprecated. Please use Element.click/1"
-
-    Element.click(element)
-  end
-
-  @doc """
   Checks a checkbox based on id, label text, or name.
   """
   @spec check(Element.t) :: Element.t
