@@ -7,6 +7,7 @@
 * execute_script now returns the session again and is pipable, there is an optional callback if you need access to the return value - thanks @krankin
 * Removed deprecated version of fill_in
 * Phantom server is now compatible with escripts - thanks @aaronrenner
+* Ability to handle JavaScript dialogs via `accept_dialogs/1`, `dismiss_dialogs/1`, plus methods for alerts, confirms and prompts - thanks @padde
 
 ### Bugfixes
 
