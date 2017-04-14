@@ -256,7 +256,22 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      assert {:ok, %{}} = Driver.visit(session, url)
+      assert :ok = Driver.visit(session, url)
+    end
+
+    test "when browser sends back a 204 response", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      url = "http://www.google.com"
+
+      stub_backend bypass, session, fn conn ->
+        if conn.method == "POST" && conn.request_path == "/session/#{session.id}/url" do
+          assert conn.body_params == %{"url" => url}
+
+          send_resp(conn, 204, "")
+        end
+      end
+
+      assert :ok = Driver.visit(session, url)
     end
   end
 

@@ -14,6 +14,11 @@ defmodule Wallaby.Phantom.Driver do
   @type params :: %{using: String.t, value: query}
   @type locator :: Session.t | Element.t
 
+  @type response_errors ::
+    {:error, :invalid_selector} |
+    {:error, :stale_reference_error}
+
+
   @spec create(pid, Keyword.t) :: {:ok, Session.t}
   def create(server, opts) do
     base_url = Wallaby.Phantom.Server.get_base_url(server)
@@ -140,11 +145,11 @@ defmodule Wallaby.Phantom.Driver do
   @doc """
   Visits a specific page.
   """
+  @spec visit(Session.t, String.t) :: :ok
   def visit(session, path) do
     check_logs! session, fn ->
-      with {:ok, resp} <- request(:post, "#{session.url}/url", %{url: path}),
-           {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
+      with {:ok, _} <- request(:post, "#{session.url}/url", %{url: path}),
+      do: :ok
     end
   end
 
@@ -514,8 +519,14 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   defp make_request(method, url, body) do
-    with {:ok, response} <- HTTPoison.request(method, url, body, headers(), request_opts()),
-         {:ok, decoded} <- Poison.decode(response.body),
+    HTTPoison.request(method, url, body, headers(), request_opts())
+    |> handle_response
+  end
+
+  defp handle_response({:error, %HTTPoison.Error{}} = response), do: response
+  defp handle_response({:ok, %HTTPoison.Response{status_code: 204}}), do: {:ok, %{"value" => %{}}}
+  defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
+    with {:ok, decoded} <- Poison.decode(body),
          {:ok, validated} <- check_for_response_errors(decoded),
       do: {:ok, validated}
   end
@@ -536,6 +547,7 @@ defmodule Wallaby.Phantom.Driver do
     end
   end
 
+  @spec check_for_response_errors(map) :: {:ok, map} | response_errors
   def check_for_response_errors(response) do
     case Map.get(response, "value") do
       %{"class" => "org.openqa.selenium.StaleElementReferenceException"} ->
