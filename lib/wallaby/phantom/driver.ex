@@ -18,7 +18,6 @@ defmodule Wallaby.Phantom.Driver do
     {:error, :invalid_selector} |
     {:error, :stale_reference_error}
 
-
   @spec create(pid, Keyword.t) :: {:ok, Session.t}
   def create(server, opts) do
     base_url = Wallaby.Phantom.Server.get_base_url(server)
