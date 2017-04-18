@@ -84,10 +84,10 @@ defmodule Wallaby.Mixfile do
   end
 
   defp run_integration_test(driver, args) do
-    args = if IO.ANSI.enabled?, do: ["--color"|args], else: ["--no-color"|args]
+    args = if IO.ANSI.enabled?, do: ["--color" | args], else: ["--no-color" | args]
 
     IO.puts "==> Running tests for WALLABY_DRIVER=#{driver} mix test"
-    {_, res} = System.cmd "mix", ["test"|args],
+    {_, res} = System.cmd "mix", ["test" | args],
                           into: IO.binstream(:stdio, :line),
                           env: [{"WALLABY_DRIVER", driver}]
 

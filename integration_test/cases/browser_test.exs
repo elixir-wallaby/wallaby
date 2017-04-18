@@ -1,8 +1,6 @@
 defmodule Wallaby.Integration.BrowserTest do
   use Wallaby.Integration.SessionCase, async: true
 
-  alias Wallaby.Query
-
   describe "has?/2" do
     test "allows css queries", %{session: session} do
       session
