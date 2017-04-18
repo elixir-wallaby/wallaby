@@ -4,10 +4,11 @@ defmodule Wallaby.Integration.QueryTest do
 
   alias Wallaby.Browser
   alias Wallaby.Query
+  import Wallaby.Integration.SessionCase, only: [start_test_session: 0]
   import Query
 
   test "the driver can execute queries" do
-    {:ok, session} = Wallaby.start_session
+    {:ok, session} = start_test_session()
 
     elements =
       session
@@ -18,7 +19,7 @@ defmodule Wallaby.Integration.QueryTest do
   end
 
   test "disregards elements that don't match all filters" do
-    {:ok, session} = Wallaby.start_session
+    {:ok, session} = start_test_session()
 
     elements =
       session
@@ -30,7 +31,7 @@ defmodule Wallaby.Integration.QueryTest do
 
   describe "filtering queries by visibility" do
     test "finds elements that are invisible" do
-      {:ok, session} = Wallaby.start_session
+      {:ok, session} = start_test_session()
 
       assert_raise Wallaby.QueryError, fn ->
         session
@@ -47,7 +48,7 @@ defmodule Wallaby.Integration.QueryTest do
     end
 
     test "doesn't error if the count is 'any' and some elements are visible" do
-      {:ok, session} = Wallaby.start_session
+      {:ok, session} = start_test_session()
 
       element =
         session
@@ -61,7 +62,7 @@ defmodule Wallaby.Integration.QueryTest do
     # TODO: Probs should totes remove this.
     @tag :pending
     test "informs the user that there are potential matches" do
-      {:ok, session} = Wallaby.start_session
+      {:ok, session} = start_test_session()
 
       session
       |> Browser.visit("/page_1.html")
@@ -70,7 +71,7 @@ defmodule Wallaby.Integration.QueryTest do
   end
 
   test "queries can check the ammount of elements" do
-    {:ok, session} = Wallaby.start_session
+    {:ok, session} = start_test_session()
 
     assert_raise Wallaby.QueryError, fn ->
       session
@@ -87,7 +88,7 @@ defmodule Wallaby.Integration.QueryTest do
   end
 
   test "queries can specify element text" do
-    {:ok, session} = Wallaby.start_session
+    {:ok, session} = start_test_session()
 
     assert_raise Wallaby.QueryError, fn ->
       session
@@ -104,7 +105,7 @@ defmodule Wallaby.Integration.QueryTest do
   end
 
   test "trying to set a text when visible is false throws an error" do
-    {:ok, session} = Wallaby.start_session
+    {:ok, session} = start_test_session()
 
     assert_raise Wallaby.QueryError, fn ->
       session
@@ -113,7 +114,7 @@ defmodule Wallaby.Integration.QueryTest do
   end
 
   test "queries can be retried" do
-    {:ok, session} = Wallaby.start_session
+    {:ok, session} = start_test_session()
 
     element =
       session
@@ -130,7 +131,7 @@ defmodule Wallaby.Integration.QueryTest do
   end
 
   test "queries can find an element by only text" do
-    {:ok, session} = Wallaby.start_session
+    {:ok, session} = start_test_session()
 
     element =
       session
@@ -141,7 +142,7 @@ defmodule Wallaby.Integration.QueryTest do
   end
 
   test "all returns an empty list if nothing is found" do
-    {:ok, session} = Wallaby.start_session
+    {:ok, session} = start_test_session()
 
     elements =
       session
