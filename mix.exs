@@ -28,7 +28,7 @@ defmodule Wallaby.Mixfile do
        "coveralls.travis": :test,
        "test.all": :test,
        "test.drivers": :test],
-     test_coverage: [tool: ExCoveralls],
+     test_coverage: [tool: ExCoveralls, test_task: "test.all"],
      test_paths: test_paths(@selected_driver),
      dialyzer: [plt_add_apps: [:inets]]]
   end
