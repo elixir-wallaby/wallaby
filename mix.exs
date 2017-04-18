@@ -2,6 +2,8 @@ defmodule Wallaby.Mixfile do
   use Mix.Project
 
   @version "0.16.1"
+  @drivers ~w(phantom)
+  @selected_driver System.get_env("WALLABY_DRIVER")
 
   def project do
     [app: :wallaby,
@@ -14,13 +16,21 @@ defmodule Wallaby.Mixfile do
      description: "Concurrent feature tests for elixir",
      deps: deps(),
      docs: docs(),
-     test_coverage: [tool: ExCoveralls],
+
+     # Custom testing
+     aliases: ["test.all": ["test", "test.drivers"],
+               "test.drivers": &test_drivers/1],
      preferred_cli_env: [
-       "coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test,
-       "coveralls.html": :test, "coveralls.travis": :test
-     ],
-    dialyzer: [plt_add_apps: [:inets]]
-   ]
+       "coveralls": :test,
+       "coveralls.detail": :test,
+       "coveralls.post": :test,
+       "coveralls.html": :test,
+       "coveralls.travis": :test,
+       "test.all": :test,
+       "test.drivers": :test],
+     test_coverage: [tool: ExCoveralls],
+     test_paths: test_paths(@selected_driver),
+     dialyzer: [plt_add_apps: [:inets]]]
   end
 
   def application do
@@ -29,7 +39,7 @@ defmodule Wallaby.Mixfile do
 
   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
   # need the testserver in dev for benchmarks to run
-  defp elixirc_paths(:dev),  do: ["lib", "test/support/test_server.ex"]
+  defp elixirc_paths(:dev),  do: ["lib", "integration_test/support/test_server.ex"]
   defp elixirc_paths(_),     do: ["lib"]
 
   defp deps do
@@ -64,5 +74,25 @@ defmodule Wallaby.Mixfile do
       source_url: "https://github.com/keathley/wallaby",
       main: "readme",
     ]
+  end
+
+  defp test_paths(driver) when driver in @drivers, do: ["integration_test/#{driver}"]
+  defp test_paths(_), do: ["test"]
+
+  defp test_drivers(args) do
+    for driver <- @drivers, do: run_integration_test(driver, args)
+  end
+
+  defp run_integration_test(driver, args) do
+    args = if IO.ANSI.enabled?, do: ["--color"|args], else: ["--no-color"|args]
+
+    IO.puts "==> Running tests for WALLABY_DRIVER=#{driver} mix test"
+    {_, res} = System.cmd "mix", ["test"|args],
+                          into: IO.binstream(:stdio, :line),
+                          env: [{"WALLABY_DRIVER", driver}]
+
+    if res > 0 do
+      System.at_exit(fn _ -> exit({:shutdown, 1}) end)
+    end
   end
 end

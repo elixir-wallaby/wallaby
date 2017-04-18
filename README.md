@@ -312,3 +312,14 @@ $ mix deps.get
 $ npm install -g phantomjs-prebuilt # unless you've already got PhantomJS installed
 $ mix test # Make sure the tests pass!
 ```
+
+Besides running the unit tests above, it is recommended to run the driver
+integration tests too:
+
+```
+# Run only phantomjs integration tests
+$ WALLABY_DRIVER=phantom mix test
+
+# Run all tests (unit and all drivers)
+$ mix test.all
+```
