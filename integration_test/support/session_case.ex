@@ -35,6 +35,10 @@ defmodule Wallaby.Integration.SessionCase do
   end
 
   defp default_opts_for_driver("phantom"), do: []
+  defp default_opts_for_driver("selenium") do
+    [driver: Wallaby.Experimental.Selenium,
+     capabilities: %{browserName: "firefox"}]
+  end
   defp default_opts_for_driver(other) do
     raise "Unknown value for WALLABY_DRIVER environment variable: #{other}"
   end

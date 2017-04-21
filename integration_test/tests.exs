@@ -1,3 +1,4 @@
+# Common tests supported by all drivers
 Code.require_file "cases/browser_test.exs", __DIR__
 Code.require_file "cases/browser/all_test.exs", __DIR__
 Code.require_file "cases/browser/assert_css_test.exs", __DIR__
@@ -10,9 +11,7 @@ Code.require_file "cases/browser/click_link_test.exs", __DIR__
 Code.require_file "cases/browser/click_test.exs", __DIR__
 Code.require_file "cases/browser/cookies_test.exs", __DIR__
 Code.require_file "cases/browser/current_path_test.exs", __DIR__
-Code.require_file "cases/browser/dialog_test.exs", __DIR__
 Code.require_file "cases/browser/execute_script_test.exs", __DIR__
-Code.require_file "cases/browser/file_test.exs", __DIR__
 Code.require_file "cases/browser/fill_in_test.exs", __DIR__
 Code.require_file "cases/browser/find_test.exs", __DIR__
 Code.require_file "cases/browser/has_css_test.exs", __DIR__
@@ -21,7 +20,6 @@ Code.require_file "cases/browser/has_value_test.exs", __DIR__
 Code.require_file "cases/browser/local_storage_test.exs", __DIR__
 Code.require_file "cases/browser/navigation_test.exs", __DIR__
 Code.require_file "cases/browser/page_source_test.exs", __DIR__
-Code.require_file "cases/browser/screenshot_test.exs", __DIR__
 Code.require_file "cases/browser/select_test.exs", __DIR__
 Code.require_file "cases/browser/send_text_test.exs", __DIR__
 Code.require_file "cases/browser/stale_nodes_test.exs", __DIR__

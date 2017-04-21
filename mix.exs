@@ -2,7 +2,7 @@ defmodule Wallaby.Mixfile do
   use Mix.Project
 
   @version "0.16.1"
-  @drivers ~w(phantom)
+  @drivers ~w(phantom selenium)
   @selected_driver System.get_env("WALLABY_DRIVER")
 
   def project do
@@ -28,7 +28,7 @@ defmodule Wallaby.Mixfile do
        "coveralls.travis": :test,
        "test.all": :test,
        "test.drivers": :test],
-     test_coverage: [tool: ExCoveralls, test_task: "test.all"],
+     test_coverage: [tool: ExCoveralls],
      test_paths: test_paths(@selected_driver),
      dialyzer: [plt_add_apps: [:inets]]]
   end

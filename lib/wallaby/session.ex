@@ -5,7 +5,7 @@ defmodule Wallaby.Session do
     id: String.t,
     session_url: String.t,
     url: String.t,
-    server: pid(),
+    server: pid | nil,
     screenshots: list,
     driver: module
   }

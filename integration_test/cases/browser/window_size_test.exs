@@ -8,6 +8,6 @@ defmodule Wallaby.Integration.Browser.WindowSizeTest do
       |> resize_window(1234, 1234)
       |> window_size
 
-    assert window_size == %{"height" => 1234, "width" => 1234}
+    assert %{"height" => 1234, "width" => 1234} = window_size
   end
 end
