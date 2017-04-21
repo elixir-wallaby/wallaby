@@ -1,6 +1,8 @@
 defmodule Wallaby.Browser.ScreenshotTest do
   use Wallaby.SessionCase, async: false
 
+  import Wallaby.Query, only: [css: 1]
+
   setup %{session: session} do
     page =
       session
@@ -67,6 +69,9 @@ defmodule Wallaby.Browser.ScreenshotTest do
     end
     assert File.exists?("#{File.cwd!}/screenshots")
     assert File.ls!("#{File.cwd!}/screenshots") |> Enum.count == 1
+
+    refute has?(page, css(".some-selector-that-does-not-exist"))
+    assert File.ls!("#{File.cwd!}/screenshots") |> Enum.count == 2
 
     File.rm_rf! "#{File.cwd!}/screenshots"
     Application.put_env(:wallaby, :screenshot_on_failure, nil)
