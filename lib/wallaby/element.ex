@@ -25,9 +25,7 @@ defmodule Wallaby.Element do
   Unlike `Browser` the actions in `Element` do not retry if the element becomes stale. Instead an exception will be raised.
   """
 
-  alias Wallaby.Phantom.Driver
-
-  defstruct [:url, :session_url, :parent, :id, screenshots: []]
+  defstruct [:url, :session_url, :parent, :id, :driver, screenshots: []]
 
   @opaque value :: String.t | number()
 
@@ -38,6 +36,7 @@ defmodule Wallaby.Element do
     url: String.t,
     id: String.t,
     screenshots: list,
+    driver: module,
   }
 
   @doc """
@@ -45,12 +44,12 @@ defmodule Wallaby.Element do
   """
   @spec clear(t) :: t
 
-  def clear(element) do
-    case Driver.clear(element) do
+  def clear(%__MODULE__{driver: driver} = element) do
+    case driver.clear(element) do
       {:ok, _} ->
-	element
+        element
       {:error, _} ->
-	raise Wallaby.StaleReferenceException
+        raise Wallaby.StaleReferenceException
     end
   end
 
@@ -73,12 +72,12 @@ defmodule Wallaby.Element do
   """
   @spec click(t) :: t
 
-  def click(element) do
-    case Driver.click(element) do
+  def click(%__MODULE__{driver: driver} = element) do
+    case driver.click(element) do
       {:ok, _} ->
-      	element
+        element
       {:error, _} ->
-      	raise Wallaby.StaleReferenceException
+        raise Wallaby.StaleReferenceException
     end
   end
 
@@ -87,8 +86,8 @@ defmodule Wallaby.Element do
   """
   @spec text(t) :: String.t
 
-  def text(element) do
-    case Driver.text(element) do
+  def text(%__MODULE__{driver: driver} = element) do
+    case driver.text(element) do
       {:ok, text} ->
         text
       {:error, :stale_reference_error} ->
@@ -101,12 +100,12 @@ defmodule Wallaby.Element do
   """
   @spec attr(t, attr()) :: String.t | nil
 
-  def attr(element, name) do
-    case Driver.attribute(element, name) do
+  def attr(%__MODULE__{driver: driver} = element, name) do
+    case driver.attribute(element, name) do
       {:ok, attribute} ->
-	attribute
+        attribute
       {:error, _} ->
-	raise Wallaby.StaleReferenceException
+        raise Wallaby.StaleReferenceException
     end
   end
 
@@ -114,14 +113,14 @@ defmodule Wallaby.Element do
   Returns a boolean based on whether or not the element is selected.
 
   ## Note
-  This only really makes sense for options, checkboxes, and radi buttons.
+  This only really makes sense for options, checkboxes, and radio buttons.
   Everything else will simply return false because they have no notion of
   "selected".
   """
   @spec selected?(t) :: boolean()
 
-  def selected?(element) do
-    case Driver.selected(element) do
+  def selected?(%__MODULE__{driver: driver} = element) do
+    case driver.selected(element) do
       {:ok, value} ->
         value
       {:error, _} ->
@@ -134,12 +133,12 @@ defmodule Wallaby.Element do
   """
   @spec visible?(t) :: boolean()
 
-  def visible?(element) do
-    case Driver.displayed(element) do
+  def visible?(%__MODULE__{driver: driver} = element) do
+    case driver.displayed(element) do
       {:ok, value} ->
-	value
+        value
       {:error, _} ->
-	false
+        false
     end
   end
 
@@ -148,12 +147,12 @@ defmodule Wallaby.Element do
   """
   @spec set_value(t, value()) :: t
 
-  def set_value(element, value) do
-    case Driver.set_value(element, value) do
+  def set_value(%__MODULE__{driver: driver} = element, value) do
+    case driver.set_value(element, value) do
       {:ok, _} ->
-	element
+        element
       {:error, :stale_reference_error} ->
-	raise Wallaby.StaleReferenceException
+        raise Wallaby.StaleReferenceException
     end
   end
 
@@ -165,12 +164,12 @@ defmodule Wallaby.Element do
   def send_keys(element, text) when is_binary(text) do
     send_keys(element, [text])
   end
-  def send_keys(element, keys) when is_list(keys) do
-    case Driver.send_keys(element, keys) do
+  def send_keys(%__MODULE{driver: driver} = element, keys) when is_list(keys) do
+    case driver.send_keys(element, keys) do
       {:ok, _} ->
-	element
+        element
       {:error, :stale_reference_error} ->
-	raise Wallaby.StaleReferenceException
+        raise Wallaby.StaleReferenceException
     end
   end
 
