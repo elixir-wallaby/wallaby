@@ -1,4 +1,4 @@
-{:ok, server} = Wallaby.TestServer.start
+{:ok, server} = Wallaby.Integration.TestServer.start
 Application.put_env(:wallaby, :base_url, server.base_url)
 
 use Wallaby.DSL
@@ -30,7 +30,7 @@ html: [file: "benchmarks/html/general.html"])
 
 Wallaby.end_session(session)
 
-# tobi@comfy ~/github/wallaby $ mix run benchmarks/general.exs 
+# tobi@comfy ~/github/wallaby $ mix run benchmarks/general.exs
 # Erlang/OTP 19 [erts-8.1] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false]
 # Elixir 1.4.2
 # Benchmark suite executing with the following configuration:
