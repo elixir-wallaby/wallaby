@@ -988,13 +988,13 @@ defmodule Wallaby.Browser do
     session
   end
 
-  def cookies(%Session{driver: driver}=session) do
+  def cookies(%Session{driver: driver} = session) do
     {:ok, cookies_list} = driver.cookies(session)
 
     cookies_list
   end
 
-  def set_cookie(%Session{driver: driver}=session, key, value) do
+  def set_cookie(%Session{driver: driver} = session, key, value) do
     if blank_page?(session) do
       raise Wallaby.CookieException
     end
@@ -1014,7 +1014,7 @@ defmodule Wallaby.Browser do
   @doc """
   Accepts all subsequent JavaScript dialogs in the given session.
   """
-  def accept_dialogs(%Session{driver: driver}=session) do
+  def accept_dialogs(%Session{driver: driver} = session) do
     driver.accept_dialogs(session)
     session
   end
@@ -1022,7 +1022,7 @@ defmodule Wallaby.Browser do
   @doc """
   Dismisses all subsequent JavaScript dialogs in the given session.
   """
-  def dismiss_dialogs(%Session{driver: driver}=session) do
+  def dismiss_dialogs(%Session{driver: driver} = session) do
     driver.dismiss_dialogs(session)
     session
   end
@@ -1037,7 +1037,7 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def accept_alert(%Session{driver: driver}=session, fun) do
+  def accept_alert(%Session{driver: driver} = session, fun) do
     driver.accept_alert(session, fun)
   end
 
@@ -1051,7 +1051,7 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def accept_confirm(%Session{driver: driver}=session, fun) do
+  def accept_confirm(%Session{driver: driver} = session, fun) do
     driver.accept_confirm(session, fun)
   end
 
@@ -1066,7 +1066,7 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def dismiss_confirm(%Session{driver: driver}=session, fun) do
+  def dismiss_confirm(%Session{driver: driver} = session, fun) do
     driver.dismiss_confirm(session, fun)
   end
 
@@ -1091,15 +1091,15 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def accept_prompt(%Session{}=session, fun) do
+  def accept_prompt(%Session{} = session, fun) do
     do_accept_prompt(session, nil, fun)
   end
 
-  def accept_prompt(%Session{}=session, [with: input_value], fun) when is_binary(input_value) do
+  def accept_prompt(%Session{} = session, [with: input_value], fun) when is_binary(input_value) do
     do_accept_prompt(session, input_value, fun)
   end
 
-  defp do_accept_prompt(%Session{driver: driver}=session, input_value, fun) do
+  defp do_accept_prompt(%Session{driver: driver} = session, input_value, fun) do
     driver.accept_prompt(session, input_value, fun)
   end
 
@@ -1113,7 +1113,7 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def dismiss_prompt(%Session{driver: driver}=session, fun) do
+  def dismiss_prompt(%Session{driver: driver} = session, fun) do
     driver.dismiss_prompt(session, fun)
   end
 
