@@ -321,10 +321,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   defp make_request(method, url, body) do
-    with {:ok, response} <- HTTPoison.request(method, url, body, headers(), request_opts()),
-         {:ok, decoded} <- Poison.decode(response.body),
-         {:ok, validated} <- check_for_response_errors(decoded),
-      do: {:ok, validated}
+    HTTPoison.request(method, url, body, headers(), request_opts())
+    |> handle_response
   end
 
   defp make_request!(method, url, body) do
@@ -351,6 +349,17 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
     [{"Accept", "application/json"},
       {"Content-Type", "application/json"}]
   end
+
+  defp handle_response({:ok, %HTTPoison.Response{status_code: 204}}) do
+    {:ok, %{"value" => nil}}
+  end
+  defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
+    with {:ok, decoded} <- Poison.decode(body),
+          {:ok, validated} <- check_for_response_errors(decoded),
+          do: {:ok, validated}
+  end
+  defp handle_response({:error, reason}), do: {:error, reason}
+
 
   defp check_for_response_errors(response) do
     case Map.get(response, "value") do

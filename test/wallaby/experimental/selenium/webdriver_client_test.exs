@@ -246,6 +246,20 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
 
       assert {:ok, nil} = Client.clear(element)
     end
+
+    test "correctly handles a 204 response", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/clear"
+
+        send_resp(conn, 204, "")
+      end
+
+      assert {:ok, nil} = Client.clear(element)
+    end
   end
 
   describe "click/1" do
