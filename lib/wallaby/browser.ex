@@ -972,7 +972,7 @@ defmodule Wallaby.Browser do
   Relative paths are appended to the provided base_url.
   Absolute paths do not use the base_url.
   """
-  @spec visit(parent, String.t) :: Session.t
+  @spec visit(parent, String.t) :: session
 
   def visit(session, path) do
     uri = URI.parse(path)
