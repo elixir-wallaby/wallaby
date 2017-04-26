@@ -1,4 +1,6 @@
 defmodule Wallaby.Query.XPath do
+  @moduledoc false
+
   @type query :: String.t
   @type xpath :: String.t
   @type name  :: query

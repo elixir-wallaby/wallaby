@@ -1,4 +1,5 @@
 defmodule Wallaby.Phantom.Server do
+  @moduledoc false
   use GenServer
 
   @external_resource "priv/run_phantom.sh"

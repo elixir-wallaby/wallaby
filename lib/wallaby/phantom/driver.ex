@@ -1,7 +1,5 @@
 defmodule Wallaby.Phantom.Driver do
-  @moduledoc ~S"""
-  Implements the webdriver protocol for Phantomjs
-  """
+  @moduledoc false
 
   alias Wallaby.Session
   alias Wallaby.Element
