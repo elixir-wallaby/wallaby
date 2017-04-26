@@ -560,7 +560,7 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   def request_opts do
-    [timeout: :infinity, recv_timeout: :infinity]
+    Application.get_env(:wallaby, :hackney_options, [])
   end
 
   def headers do
