@@ -17,24 +17,39 @@ defmodule Wallaby do
   """
   use Application
 
+  alias Wallaby.Session
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
     children = [
-      supervisor(driver(), [[name: Driver.Supervisor]])
+      supervisor(Wallaby.Phantom, [[name: Driver.Supervisor]])
     ]
 
     opts = [strategy: :one_for_one, name: Wallaby.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
+  @type reason :: any
+  @type start_session_opts ::
+    {:driver, module} |
+    {atom, any}
+
+  @doc """
+  Starts a browser session
+  """
+  @spec start_session([start_session_opts]) :: {:ok, Session.t} | {:error, reason}
   def start_session(opts \\ []) do
-    driver().start_session(opts)
+    driver = Keyword.get_lazy(opts, :driver, &default_driver/0)
+    driver.start_session(opts)
   end
 
-  def end_session(session) do
-    driver().end_session(session)
+  @doc """
+  Ends a browser session
+  """
+  @spec end_session(Session.t) :: {:ok, Session.t} | {:error, reason}
+  def end_session(%Session{driver: driver} = session) do
+    driver.end_session(session)
   end
 
   def screenshot_on_failure? do
@@ -53,7 +68,7 @@ defmodule Wallaby do
     Application.get_env(:wallaby, :phantomjs, "phantomjs")
   end
 
-  def driver do
+  defp default_driver do
     Application.get_env(:wallaby, :driver, Wallaby.Phantom)
   end
 end

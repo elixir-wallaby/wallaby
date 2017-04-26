@@ -104,7 +104,6 @@ defmodule Wallaby.Browser do
   """
 
   alias Wallaby.Element
-  alias Wallaby.Phantom.Driver
   alias Wallaby.Query
   alias Wallaby.Query.ErrorMessage
   alias Wallaby.Session
@@ -411,10 +410,10 @@ defmodule Wallaby.Browser do
   """
   @spec take_screenshot(parent) :: parent
 
-  def take_screenshot(screenshotable) do
+  def take_screenshot(%{driver: driver} = screenshotable) do
     image_data =
       screenshotable
-      |> Driver.take_screenshot
+      |> driver.take_screenshot
 
     path = path_for_screenshot()
     File.write! path, image_data
@@ -427,8 +426,8 @@ defmodule Wallaby.Browser do
   """
   @spec window_size(parent) :: %{String.t => pos_integer, String.t => pos_integer}
 
-  def window_size(session) do
-    {:ok, size} = Driver.get_window_size(session)
+  def window_size(%Session{driver: driver} = session) do
+    {:ok, size} = driver.get_window_size(session)
     size
   end
 
@@ -437,8 +436,8 @@ defmodule Wallaby.Browser do
   """
   @spec resize_window(parent, pos_integer, pos_integer) :: parent
 
-  def resize_window(session, width, height) do
-    {:ok, _} = Driver.set_window_size(session, width, height)
+  def resize_window(%Session{driver: driver} = session, width, height) do
+    {:ok, _} = driver.set_window_size(session, width, height)
     session
   end
 
@@ -453,8 +452,8 @@ defmodule Wallaby.Browser do
   """
   @spec current_url(parent) :: String.t
 
-  def current_url(parent) do
-    Driver.current_url!(parent)
+  def current_url(%Session{driver: driver} = session) do
+    driver.current_url!(session)
   end
 
   def get_current_url(parent) do
@@ -468,8 +467,8 @@ defmodule Wallaby.Browser do
   """
   @spec current_path(parent) :: String.t
 
-  def current_path(parent) do
-    Driver.current_path!(parent)
+  def current_path(%Session{driver: driver} = session) do
+    driver.current_path!(session)
   end
 
   @doc """
@@ -477,8 +476,8 @@ defmodule Wallaby.Browser do
   """
   @spec page_title(parent) :: String.t
 
-  def page_title(session) do
-    {:ok, title} = Driver.page_title(session)
+  def page_title(%Session{driver: driver} = session) do
+    {:ok, title} = driver.page_title(session)
     title
   end
 
@@ -504,10 +503,10 @@ defmodule Wallaby.Browser do
     execute_script(session, script, [], callback)
   end
 
-  def execute_script(session, script, arguments, callback) when is_list(arguments) and is_function(callback) do
-    {:ok, value} = Driver.execute_script(session, script, arguments)
+  def execute_script(%{driver: driver} = parent, script, arguments, callback) when is_list(arguments) and is_function(callback) do
+    {:ok, value} = driver.execute_script(parent, script, arguments)
     callback.(value)
-    session
+    parent
   end
 
   @doc """
@@ -540,8 +539,8 @@ defmodule Wallaby.Browser do
   def send_keys(parent, keys) when is_binary(keys) do
     send_keys(parent, [keys])
   end
-  def send_keys(parent, keys) when is_list(keys) do
-    {:ok, _} = Driver.send_keys(parent, keys)
+  def send_keys(%{driver: driver} = parent, keys) when is_list(keys) do
+    {:ok, _} = driver.send_keys(parent, keys)
     parent
   end
 
@@ -561,8 +560,8 @@ defmodule Wallaby.Browser do
   """
   @spec page_source(parent) :: String.t
 
-  def page_source(session) do
-    {:ok, source} = Driver.page_source(session)
+  def page_source(%Session{driver: driver} = session) do
+    {:ok, source} = driver.page_source(session)
     source
   end
 
@@ -972,39 +971,39 @@ defmodule Wallaby.Browser do
   Relative paths are appended to the provided base_url.
   Absolute paths do not use the base_url.
   """
-  @spec visit(parent, String.t) :: session
+  @spec visit(session, String.t) :: session
 
-  def visit(session, path) do
+  def visit(%Session{driver: driver} = session, path) do
     uri = URI.parse(path)
 
     cond do
       uri.host == nil && String.length(base_url()) == 0 ->
         raise Wallaby.NoBaseUrl, path
       uri.host ->
-        Driver.visit(session, path)
+        driver.visit(session, path)
       true ->
-        Driver.visit(session, request_url(path))
+        driver.visit(session, request_url(path))
     end
 
     session
   end
 
-  def cookies(%Session{}=session) do
-    {:ok, cookies_list} = Driver.cookies(session)
+  def cookies(%Session{driver: driver} = session) do
+    {:ok, cookies_list} = driver.cookies(session)
 
     cookies_list
   end
 
-  def set_cookie(%Session{}=session, key, value) do
+  def set_cookie(%Session{driver: driver} = session, key, value) do
     if blank_page?(session) do
       raise Wallaby.CookieException
     end
 
-    case Driver.set_cookies(session, key, value) do
+    case driver.set_cookies(session, key, value) do
       {:ok, _list} ->
-      	session
+        session
       {:error, :invalid_cookie_domain} ->
-      	raise Wallaby.CookieException
+        raise Wallaby.CookieException
     end
   end
 
@@ -1015,16 +1014,16 @@ defmodule Wallaby.Browser do
   @doc """
   Accepts all subsequent JavaScript dialogs in the given session.
   """
-  def accept_dialogs(%Session{}=session) do
-    Driver.accept_dialogs(session)
+  def accept_dialogs(%Session{driver: driver} = session) do
+    driver.accept_dialogs(session)
     session
   end
 
   @doc """
   Dismisses all subsequent JavaScript dialogs in the given session.
   """
-  def dismiss_dialogs(%Session{}=session) do
-    Driver.dismiss_dialogs(session)
+  def dismiss_dialogs(%Session{driver: driver} = session) do
+    driver.dismiss_dialogs(session)
     session
   end
 
@@ -1038,8 +1037,8 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def accept_alert(%Session{}=session, fun) do
-    Driver.accept_alert(session, fun)
+  def accept_alert(%Session{driver: driver} = session, fun) do
+    driver.accept_alert(session, fun)
   end
 
   @doc """
@@ -1052,8 +1051,8 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def accept_confirm(%Session{}=session, fun) do
-    Driver.accept_confirm(session, fun)
+  def accept_confirm(%Session{driver: driver} = session, fun) do
+    driver.accept_confirm(session, fun)
   end
 
   @doc """
@@ -1067,8 +1066,8 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def dismiss_confirm(%Session{}=session, fun) do
-    Driver.dismiss_confirm(session, fun)
+  def dismiss_confirm(%Session{driver: driver} = session, fun) do
+    driver.dismiss_confirm(session, fun)
   end
 
   @doc """
@@ -1092,16 +1091,16 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def accept_prompt(%Session{}=session, fun) do
+  def accept_prompt(%Session{} = session, fun) do
     do_accept_prompt(session, nil, fun)
   end
 
-  def accept_prompt(%Session{}=session, [with: input_value], fun) when is_binary(input_value) do
+  def accept_prompt(%Session{} = session, [with: input_value], fun) when is_binary(input_value) do
     do_accept_prompt(session, input_value, fun)
   end
 
-  defp do_accept_prompt(%Session{}=session, input_value, fun) do
-    Driver.accept_prompt(session, input_value, fun)
+  defp do_accept_prompt(%Session{driver: driver} = session, input_value, fun) do
+    driver.accept_prompt(session, input_value, fun)
   end
 
   @doc """
@@ -1114,8 +1113,8 @@ defmodule Wallaby.Browser do
   end
   ```
   """
-  def dismiss_prompt(%Session{}=session, fun) do
-    Driver.dismiss_prompt(session, fun)
+  def dismiss_prompt(%Session{driver: driver} = session, fun) do
+    driver.dismiss_prompt(session, fun)
   end
 
   defp validate_html(parent, %{html_validation: :button_type}=query) do
@@ -1172,8 +1171,8 @@ defmodule Wallaby.Browser do
     end
   end
 
-  defp matching_text?(element, text) do
-    case Driver.text(element) do
+  defp matching_text?(%Element{driver: driver} = element, text) do
+    case driver.text(element) do
       {:ok, element_text} ->
         element_text =~ ~r/#{Regex.escape(text)}/
       {:error, _} ->
@@ -1181,12 +1180,12 @@ defmodule Wallaby.Browser do
     end
   end
 
-  def execute_query(parent, query) do
+  def execute_query(%{driver: driver} = parent, query) do
     retry fn ->
       try do
         with {:ok, query}  <- Query.validate(query),
-             {method, selector} <- Query.compile(query),
-             {:ok, elements} <- Driver.find_elements(parent, {method, selector}),
+             compiled_query <- Query.compile(query),
+             {:ok, elements} <- driver.find_elements(parent, compiled_query),
              {:ok, elements} <- validate_visibility(query, elements),
              {:ok, elements} <- validate_text(query, elements),
              {:ok, elements} <- validate_count(query, elements),

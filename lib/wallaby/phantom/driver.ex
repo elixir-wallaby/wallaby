@@ -37,7 +37,8 @@ defmodule Wallaby.Phantom.Driver do
       session_url: base_url <> "session/#{id}",
       url: base_url <> "session/#{id}",
       id: id,
-      server: server
+      server: server,
+      driver: Wallaby.Phantom
     }
 
     {:ok, session}
@@ -573,6 +574,7 @@ defmodule Wallaby.Phantom.Driver do
       session_url: parent.session_url,
       url: parent.session_url <> "/element/#{id}",
       parent: parent,
+      driver: parent.driver,
     }
   end
 

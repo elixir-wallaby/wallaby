@@ -3,6 +3,8 @@ defmodule Wallaby.Phantom do
 
   alias Wallaby.Phantom.Driver
 
+  @behaviour Wallaby.Driver
+
   @moduledoc false
   @pool_name Wallaby.ServerPool
 
@@ -49,6 +51,36 @@ defmodule Wallaby.Phantom do
     Driver.delete(session)
     :poolboy.checkin(Wallaby.ServerPool, server)
   end
+
+  defdelegate accept_dialogs(session),                            to: Driver
+  defdelegate accept_alert(session, open_dialog_fn),              to: Driver
+  defdelegate accept_confirm(session, open_dialog_fn),            to: Driver
+  defdelegate accept_prompt(session, input_va, open_dialog_fn),   to: Driver
+  defdelegate cookies(session),                                   to: Driver
+  defdelegate current_path!(session),                             to: Driver
+  defdelegate current_url!(session),                              to: Driver
+  defdelegate dismiss_dialogs(session),                           to: Driver
+  defdelegate dismiss_confirm(session, open_dialog_fn),           to: Driver
+  defdelegate dismiss_prompt(session, open_dialog_fn),            to: Driver
+  defdelegate get_window_size(session),                           to: Driver
+  defdelegate page_title(session),                                to: Driver
+  defdelegate page_source(session),                               to: Driver
+  defdelegate set_cookies(session, key, value),                   to: Driver
+  defdelegate set_window_size(session, width, height),            to: Driver
+  defdelegate visit(session, url),                                to: Driver
+
+  defdelegate attribute(element, name),                           to: Driver
+  defdelegate click(element),                                     to: Driver
+  defdelegate clear(element),                                     to: Driver
+  defdelegate displayed(element),                                 to: Driver
+  defdelegate selected(element),                                  to: Driver
+  defdelegate set_value(element, value),                          to: Driver
+  defdelegate text(element),                                      to: Driver
+
+  defdelegate execute_script(session_or_element, script, args),   to: Driver
+  defdelegate find_elements(session_or_element, compiled_query),  to: Driver
+  defdelegate send_keys(session_or_element, keys),                to: Driver
+  defdelegate take_screenshot(session_or_element),                to: Driver
 
   def user_agent do
     "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1"
