@@ -8,6 +8,7 @@
 * Removed deprecated version of fill_in
 * Phantom server is now compatible with escripts - thanks @aaronrenner
 * Ability to handle JavaScript dialogs via `accept_dialogs/1`, `dismiss_dialogs/1`, plus methods for alerts, confirms and prompts - thanks @padde
+* Ability to pass options for driver interaction down to the underlying hackney library through `config :wallaby, hackney_options: [your: "option"]` - thanks @aaronrenner
 
 ### Bugfixes
 
