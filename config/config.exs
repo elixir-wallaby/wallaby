@@ -7,7 +7,8 @@ config :wallaby,
   pool_size: 3,
   js_logger: :stdio,
   screenshot_on_failure: false,
-  js_errors: true
+  js_errors: true,
+  hackney_options: [timeout: :infinity, recv_timeout: :infinity]
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this

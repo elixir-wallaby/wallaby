@@ -301,6 +301,25 @@ Application.put_env(:wallaby, :js_logger, file)
 
 Logging can be disabled by setting `:js_logger` to `nil`.
 
+## Config
+
+### Adjusting timeouts
+
+Wallaby uses [hackney](https://github.com/benoitc/hackney) under the hood, so we
+offer a hook that allows you to control any hackney options you'd like to have
+sent along on every request. This can be controlled with the `:hackney_options`
+setting in `config.exs`.
+
+```elixir
+# default values
+config :wallaby,
+  hackney_options: [timeout: :infinity, recv_timeout: :infinity]
+
+# Overriding a value
+config :wallaby,
+  hackney_options: [timeout: 5_000]
+```
+
 ## Contributing
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
