@@ -3,7 +3,7 @@ defmodule Wallaby.Experimental.Selenium do
 
   @behaviour Wallaby.Driver
 
-  alias Wallaby.{Element, Session}
+  alias Wallaby.{Driver, Element, Session}
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   @type start_session_opts ::
@@ -107,6 +107,7 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.attribute(element, name)
   end
 
+  @spec clear(Element.t) :: {:ok, nil} | {:error, Driver.reason}
   def clear(%Element{} = element) do
     WebdriverClient.clear(element)
   end
@@ -123,6 +124,7 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.selected(element)
   end
 
+  @spec set_value(Element.t, String.t) :: {:ok, nil} | {:error, Driver.reason}
   def set_value(%Element{} = element, value) do
     WebdriverClient.set_value(element, value)
   end
