@@ -8,7 +8,7 @@ defmodule Wallaby.Integration.Browser.AttrTest do
       |> find(Query.css("body"))
       |> attr("class")
 
-    assert class == "bootstrap"
+    assert class =~ "bootstrap"
   end
 
   test "can get the attributes of a query", %{session: session} do
@@ -17,6 +17,6 @@ defmodule Wallaby.Integration.Browser.AttrTest do
       |> visit("/")
       |> attr(Query.css("body"), "class")
 
-    assert class == "bootstrap"
+    assert class =~ "bootstrap"
   end
 end
