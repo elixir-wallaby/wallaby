@@ -1,6 +1,8 @@
 defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   use Wallaby.Integration.SessionCase, async: true
 
+  alias Wallaby.Integration.PageObjects.IndexPage
+
   setup %{session: session} do
     page =
       session
@@ -13,54 +15,60 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("Submit button")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "clicking button with no type via name (submits form)", %{page: page} do
     current_url =
       page
       |> click_button("button-no-type")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "clicking button with no type via id (submits form)", %{page: page} do
     current_url =
       page
       |> click_button("button-no-type-id")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "clicking button type[submit] via button text (submits form)", %{page: page} do
     current_url =
       page
       |> click_button("Submit button")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "clicking button type[submit] via name (submits form)", %{page: page} do
     current_url =
       page
       |> click_button("button-submit")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "clicking button type[submit] via id (submits form)", %{page: page} do
     current_url =
       page
       |> click_button("button-submit-id")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "clicking button type[button] via button text (resets input via JS)", %{page: page} do
@@ -133,27 +141,30 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("Submit input")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "clicking input type[submit] via name submits form", %{page: page} do
     current_url =
       page
       |> click_button("input-submit")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "clicking input type[submit] via id submits form", %{page: page} do
     current_url =
       page
       |> click_button("input-submit-id")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "clicking input type[button] via button text resets input via JS", %{page: page} do
@@ -226,18 +237,20 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("input-image")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "clicking input type[image] via id submits form", %{page: page} do
     current_url =
       page
       |> click_button("input-image-id")
+      |> IndexPage.ensure_page_loaded
       |> current_url
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
+    assert current_url =~ "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "waits until the button appears", %{page: page} do
