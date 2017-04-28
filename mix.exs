@@ -2,6 +2,8 @@ defmodule Wallaby.Mixfile do
   use Mix.Project
 
   @version "0.16.1"
+  @drivers ~w(phantom)
+  @selected_driver System.get_env("WALLABY_DRIVER")
 
   def project do
     [app: :wallaby,
