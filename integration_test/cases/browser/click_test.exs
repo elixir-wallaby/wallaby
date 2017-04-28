@@ -68,4 +68,30 @@ defmodule Wallaby.Integration.Browser.ClickTest do
       assert click(page, Query.radio_button("I'm a radio button"))
     end
   end
+
+  describe "click/2 with checkboxes" do
+    test "checking a checkbox", %{page: page} do
+      assert page
+      |> click( Query.checkbox("Checkbox 1") )
+      |> click( Query.checkbox("Checkbox 1") )
+
+      refute page
+      |> find(Query.checkbox("Checkbox 1"))
+      |> Element.selected?
+    end
+
+    test "escapes quotes", %{page: page} do
+      assert click(page, Query.checkbox("I'm a checkbox") )
+    end
+
+    test "throw an error if a label exists but does not have a for attribute", %{page: page} do
+      assert_raise Wallaby.QueryError, fn ->
+        click(page, Query.checkbox("Checkbox with bad label"))
+      end
+    end
+
+    test "waits until the checkbox appears", %{page: page} do
+      assert click(page, Query.checkbox("Hidden Checkbox"))
+    end
+  end
 end
