@@ -27,7 +27,6 @@ defmodule Wallaby.Experimental.Selenium do
         session_url: base_url <> "session/#{id}",
         url: base_url <> "session/#{id}",
         id: id,
-        server: nil,
         driver: __MODULE__
       }
 

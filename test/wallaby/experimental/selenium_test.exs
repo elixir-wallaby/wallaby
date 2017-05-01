@@ -19,7 +19,7 @@ defmodule Wallaby.Experimental.SeleniumTest do
         session_url: "http://localhost:4444/wd/hub/session/#{session_id}",
         url: "http://localhost:4444/wd/hub/session/#{session_id}",
         id: session_id,
-        server: nil,
+        server: :none,
         driver: Wallaby.Experimental.Selenium
       }
 
@@ -58,7 +58,6 @@ defmodule Wallaby.Experimental.SeleniumTest do
       session_url: "http://localhost:4444/wd/hub/session/#{session_id}",
       url: "http://localhost:4444/wd/hub/session/#{session_id}",
       id: session_id,
-      server: nil,
       driver: Wallaby.Experimental.Selenium
     }
   end
