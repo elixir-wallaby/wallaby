@@ -1,4 +1,5 @@
 defmodule Wallaby.Phantom.Logger do
+  @moduledoc false
   @line_number_regex ~r/\s\((undefined)?:(undefined)?\)$/
 
   def log(logs) when is_list(logs) do

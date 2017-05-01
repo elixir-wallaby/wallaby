@@ -1,4 +1,6 @@
 defmodule Wallaby.Query.ErrorMessage do
+  @moduledoc false
+
   alias Wallaby.Query
 
   @doc """

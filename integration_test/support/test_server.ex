@@ -1,4 +1,6 @@
 defmodule Wallaby.Integration.TestServer do
+  @moduledoc false
+
   @config [ port: 0,
             server_root:   String.to_char_list(Path.absname("./", __DIR__)),
             document_root: String.to_char_list(Path.absname("./pages", __DIR__)),

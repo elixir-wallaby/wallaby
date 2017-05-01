@@ -1,8 +1,8 @@
 defmodule Wallaby.Helpers.KeyCodes do
-  @moduledoc """
-  Helper utility for converting key atoms into key codes sutiable to send over
-  the wire.
-  """
+  @moduledoc false
+
+  # Helper utility for converting key atoms into key codes suitable to send over
+  # the wire.
 
   @doc """
   Encode a list of key codes to a usable json representation.

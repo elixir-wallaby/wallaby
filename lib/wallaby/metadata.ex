@@ -1,9 +1,10 @@
 defmodule Wallaby.Metadata do
-  @moduledoc """
-  Metadata is used to encode information about the browser and test. This
-  information is then stored in a User Agent string. The information from the
-  test can then be extracted in the application.
-  """
+  @moduledoc false
+
+  # Metadata is used to encode information about the browser and test. This
+  # information is then stored in a User Agent string. The information from the
+  # test can then be extracted in the application.
+
 
   @prefix "BeamMetadata"
   @regex ~r{#{@prefix} \((.*?)\)}
