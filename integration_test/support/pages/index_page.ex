@@ -1,4 +1,4 @@
-defmodule Wallaby.Integration.PageObjects.IndexPage do
+defmodule Wallaby.Integration.Pages.IndexPage do
   use Wallaby.DSL
 
   def visit(session) do
@@ -8,7 +8,7 @@ defmodule Wallaby.Integration.PageObjects.IndexPage do
 
   def click_page_1_link(session) do
     session
-    |> click_link("Page 1")
+    |> click(Query.link("Page 1"))
   end
 
   def ensure_page_loaded(session) do

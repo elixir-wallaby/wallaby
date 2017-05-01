@@ -1,4 +1,4 @@
-defmodule Wallaby.Integration.PageObjects.Page1 do
+defmodule Wallaby.Integration.Pages.Page1 do
   use Wallaby.DSL
 
   def visit(session) do

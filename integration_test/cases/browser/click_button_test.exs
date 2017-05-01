@@ -1,7 +1,7 @@
 defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   use Wallaby.Integration.SessionCase, async: true
 
-  alias Wallaby.Integration.PageObjects.IndexPage
+  alias Wallaby.Integration.Pages.IndexPage
 
   setup %{session: session} do
     page =
