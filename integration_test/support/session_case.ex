@@ -8,15 +8,7 @@ defmodule Wallaby.Integration.SessionCase do
     end
   end
 
-  setup do
-    {:ok, session} = start_test_session()
-
-    on_exit fn ->
-      Wallaby.end_session(session)
-    end
-
-    {:ok, %{session: session}}
-  end
+  setup :inject_test_session
 
   @doc """
   Starts a test session with the default opts for the given driver
@@ -27,7 +19,19 @@ defmodule Wallaby.Integration.SessionCase do
       |> default_opts_for_driver
       |> Keyword.merge(opts)
 
-    Wallaby.start_session(session_opts)
+    with {:ok, session} <- Wallaby.start_session(session_opts),
+        :ok <- on_exit(fn -> Wallaby.end_session(session) end),
+        do: {:ok, session}
+  end
+
+  @doc """
+  Injects a test session into the test context
+  """
+  def inject_test_session(%{skip_test_session: true}), do: :ok
+  def inject_test_session(_context) do
+    {:ok, session} = start_test_session()
+
+    {:ok, %{session: session}}
   end
 
   defp default_opts_for_driver("phantom"), do: []

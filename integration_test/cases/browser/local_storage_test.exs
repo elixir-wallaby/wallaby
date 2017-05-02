@@ -7,6 +7,7 @@ defmodule Wallaby.Integration.Browser.LocalStorageTest do
   @get_value_script "return localStorage.getItem('test')"
   @set_value_script "localStorage.setItem('test', 'foo')"
 
+  @tag :skip_test_session
   test "local storage is not shared between sessions" do
     # Checkout all sessions
     {:ok, session}  = start_test_session()
