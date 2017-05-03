@@ -22,7 +22,6 @@
 * Updated hackney and httpoison dependencies - thanks @aaronrenner
 * Removed documentation for modules that aren't intended for external use - thanks @aaronrenner
 * Fixed leaking sessions in wallaby's test suite - thanks @aaronrenner
-* 
 
 ## <= 0.16.1
 
