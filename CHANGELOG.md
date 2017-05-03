@@ -9,6 +9,8 @@
 * Phantom server is now compatible with escripts - thanks @aaronrenner
 * Ability to handle JavaScript dialogs via `accept_dialogs/1`, `dismiss_dialogs/1`, plus methods for alerts, confirms and prompts - thanks @padde
 * Ability to pass options for driver interaction down to the underlying hackney library through `config :wallaby, hackney_options: [your: "option"]` - thanks @aaronrenner
+* Added `check_log` option to `execute_script` - thanks @aaronrenner
+* Removed `check`
 
 ### Bugfixes
 
@@ -18,6 +20,9 @@
 ### Chores
 
 * Updated hackney and httpoison dependencies - thanks @aaronrenner
+* Removed documentation for modules that aren't intended for external use - thanks @aaronrenner
+* Fixed leaking sessions in wallaby's test suite - thanks @aaronrenner
+* 
 
 ## <= 0.16.1
 
