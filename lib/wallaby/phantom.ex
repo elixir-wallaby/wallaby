@@ -83,7 +83,8 @@ defmodule Wallaby.Phantom do
 
   @doc false
   def end_session(%Wallaby.Session{server: server}=session) do
-    Driver.execute_script(session, "localStorage.clear()")
+    Driver.execute_script(session, "localStorage.clear()", [],
+                          check_logs: false)
     Driver.delete(session)
     :poolboy.checkin(Wallaby.ServerPool, server)
   end

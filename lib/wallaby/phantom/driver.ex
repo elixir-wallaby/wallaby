@@ -1,8 +1,7 @@
 defmodule Wallaby.Phantom.Driver do
   @moduledoc false
 
-  alias Wallaby.Session
-  alias Wallaby.Element
+  alias Wallaby.{Driver, Element, Session}
   alias Wallaby.Phantom.Logger
   alias Wallaby.Phantom.LogStore
 
@@ -295,15 +294,26 @@ defmodule Wallaby.Phantom.Driver do
     end
   end
 
+  @type execute_script_opts :: {:check_logs, boolean}
+
   @doc """
   Executes javascript synchoronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
-  def execute_script(session, script, arguments \\ []) do
-    check_logs! session, fn ->
+  @spec execute_script(Session.t, String.t, [any], [execute_script_opts]) ::
+    {:ok, any} | {:error, Driver.reason}
+  def execute_script(session, script, arguments \\ [], opts \\ []) do
+    check_logs = Keyword.get(opts, :check_logs, true)
+    request_fn = fn ->
       with {:ok, resp} <- request(:post, "#{session.session_url}/execute", %{script: script, args: arguments}),
            {:ok, value} <- Map.fetch(resp, "value"),
         do: {:ok, value}
+    end
+
+    if check_logs do
+      check_logs! session, request_fn
+    else
+      request_fn.()
     end
   end
 
