@@ -3,15 +3,17 @@ defmodule Wallaby.Driver do
 
   alias Wallaby.{Element, Query, Session}
 
-  @type reason :: any
+  @type reason :: :not_implemented | :not_supported | any
   @type url :: String.t
   @type open_dialog_fn :: ((Session.t) -> any)
   @type window_dimension :: %{String.t => pos_integer, String.t => pos_integer}
 
+  @type on_start_session :: {:ok, Session.t} | {:error, reason}
+
   @doc """
   Invoked to start a browser session.
   """
-  @callback start_session(Keyword.t) :: {:ok, Session.t} | {:error, reason}
+  @callback start_session(Keyword.t) :: on_start_session
 
   @doc """
   Invoked to stop a browser sesssion.
@@ -21,22 +23,22 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to accept one alert triggered within `open_dialog_fn` and return the alert message.
   """
-  @callback accept_alert(Session.t, open_dialog_fn) :: {:ok, [String.t]}
+  @callback accept_alert(Session.t, open_dialog_fn) :: {:ok, [String.t]} | {:error, reason}
 
   @doc """
   Invoked to accept one confirm triggered within `open_dialog_fn` and return the confirm message.
   """
-  @callback accept_confirm(Session.t, open_dialog_fn) :: {:ok, [String.t]}
+  @callback accept_confirm(Session.t, open_dialog_fn) :: {:ok, [String.t]} | {:error, reason}
 
   @doc """
   Invoked to accept all open dialogs.
   """
-  @callback accept_dialogs(Session.t) :: {:ok, String.t}
+  @callback accept_dialogs(Session.t) :: {:ok, String.t} | {:error, reason}
 
   @doc """
   Invoked to accept one prompt triggered within `open_dialog_fn` and return the prompt message.
   """
-  @callback accept_prompt(Session.t, String.t | nil, open_dialog_fn) :: {:ok, [String.t]}
+  @callback accept_prompt(Session.t, String.t | nil, open_dialog_fn) :: {:ok, [String.t]} | {:error, reason}
 
   @doc """
   Invoked to retrieve cookies for the given session.
@@ -56,17 +58,17 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to dismiss all open dialogs.
   """
-  @callback dismiss_dialogs(Session.t) :: {:ok, String.t}
+  @callback dismiss_dialogs(Session.t) :: {:ok, String.t} | {:error, reason}
 
   @doc """
   Invoked to dismiss one confirm triggered within `open_dialog_fn` and return the confirm message.
   """
-  @callback dismiss_confirm(Session.t, open_dialog_fn) :: {:ok, [String.t]}
+  @callback dismiss_confirm(Session.t, open_dialog_fn) :: {:ok, [String.t]} | {:error, reason}
 
   @doc """
   Invoked to dismiss one prompt triggered within `open_dialog_fn` and return the prompt message.
   """
-  @callback dismiss_prompt(Session.t, open_dialog_fn) :: {:ok, [String.t]}
+  @callback dismiss_prompt(Session.t, open_dialog_fn) :: {:ok, [String.t]} | {:error, reason}
 
   @doc """
   Invoked to retrieve the size of the window.
@@ -154,5 +156,5 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to take a screenshot of the session/element.
   """
-  @callback take_screenshot(Session.t | Element.t) :: binary
+  @callback take_screenshot(Session.t | Element.t) :: binary | {:error, reason}
 end

@@ -14,7 +14,8 @@ defmodule Wallaby.Integration.Browser.PageSourceTest do
       |> File.read!
       |> clean_up_html
 
-    assert source == actual_html
+    # Firefox inserts a <!doctype html> so you can't do an exact comparison
+    assert actual_html =~ source
   end
 
   def clean_up_html(string) do

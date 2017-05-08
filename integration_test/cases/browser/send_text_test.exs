@@ -6,16 +6,6 @@ defmodule Wallaby.Integration.Browser.SendTextTest do
     {:ok, %{page: page}}
   end
 
-  test "sending key presses", %{session: session} do
-    session
-    |> visit("/")
-
-    session
-    |> send_keys([:tab, :enter])
-
-    assert find(session, ".blue")
-  end
-
   describe "send_keys/3" do
     test "accepts a query", %{page: page} do
       page

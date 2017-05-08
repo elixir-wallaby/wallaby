@@ -19,7 +19,7 @@ defmodule Wallaby.Integration.SessionCase do
       |> default_opts_for_driver
       |> Keyword.merge(opts)
 
-    with {:ok, session} <- Wallaby.start_session(session_opts),
+    with {:ok, session} <- retry(2, fn -> Wallaby.start_session(session_opts) end),
         :ok <- on_exit(fn -> Wallaby.end_session(session) end),
         do: {:ok, session}
   end
@@ -34,7 +34,19 @@ defmodule Wallaby.Integration.SessionCase do
     {:ok, %{session: session}}
   end
 
+  defp retry(0, f), do: f.()
+  defp retry(times, f) do
+    case f.() do
+      {:ok, session} -> {:ok, session}
+      _ -> retry(times - 1, f)
+    end
+  end
+
   defp default_opts_for_driver("phantom"), do: []
+  defp default_opts_for_driver("selenium") do
+    [driver: Wallaby.Experimental.Selenium,
+     capabilities: %{browserName: "firefox"}]
+  end
   defp default_opts_for_driver(other) do
     raise "Unknown value for WALLABY_DRIVER environment variable: #{other}"
   end
