@@ -1,6 +1,8 @@
 defmodule Wallaby.Integration.Phantom.ConfigurationTest do
   use Wallaby.Integration.SessionCase, async: false
 
+  import Wallaby.Query, only: [button: 1]
+
   setup :ensure_settings_are_reset
 
   test "js errors can be disabled", %{session: session} do
@@ -8,7 +10,7 @@ defmodule Wallaby.Integration.Phantom.ConfigurationTest do
 
     session
     |> visit("/errors.html")
-    |> click_button("Throw an Error")
+    |> click(button("Throw an Error"))
     |> assert
   end
 

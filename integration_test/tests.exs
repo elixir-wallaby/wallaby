@@ -7,7 +7,6 @@ Code.require_file "cases/browser/assert_text_test.exs", __DIR__
 Code.require_file "cases/browser/attr_test.exs", __DIR__
 Code.require_file "cases/browser/clear_test.exs", __DIR__
 Code.require_file "cases/browser/click_button_test.exs", __DIR__
-Code.require_file "cases/browser/click_link_test.exs", __DIR__
 Code.require_file "cases/browser/click_test.exs", __DIR__
 Code.require_file "cases/browser/cookies_test.exs", __DIR__
 Code.require_file "cases/browser/current_path_test.exs", __DIR__

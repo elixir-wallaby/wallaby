@@ -2,6 +2,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   use Wallaby.Integration.SessionCase, async: true
 
   alias Wallaby.Integration.Pages.IndexPage
+  import Wallaby.Query, only: [button: 1, button: 2]
 
   setup %{session: session} do
     page =
@@ -14,7 +15,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking button with no type via button text (submits form)", %{page: page} do
     current_url =
       page
-      |> click_button("Submit button")
+      |> click(button("Submit button"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -24,7 +25,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking button with no type via name (submits form)", %{page: page} do
     current_url =
       page
-      |> click_button("button-no-type")
+      |> click(button("button-no-type"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -34,7 +35,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking button with no type via id (submits form)", %{page: page} do
     current_url =
       page
-      |> click_button("button-no-type-id")
+      |> click(button("button-no-type-id"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -44,7 +45,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking button type[submit] via button text (submits form)", %{page: page} do
     current_url =
       page
-      |> click_button("Submit button")
+      |> click(button("Submit button"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -54,7 +55,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking button type[submit] via name (submits form)", %{page: page} do
     current_url =
       page
-      |> click_button("button-submit")
+      |> click(button("button-submit"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -64,7 +65,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking button type[submit] via id (submits form)", %{page: page} do
     current_url =
       page
-      |> click_button("button-submit-id")
+      |> click(button("button-submit-id"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -77,7 +78,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "Button button")
+    click(page, button("Button button"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -88,7 +89,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "button-button")
+    click(page, button("button-button"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -99,7 +100,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "button-button-id")
+    click(page, button("button-button-id"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -110,7 +111,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "Reset button")
+    click(page, button("Reset button"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -121,7 +122,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "button-reset")
+    click(page, button("button-reset"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -132,7 +133,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "button-reset-id")
+    click(page, button("button-reset-id"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -140,7 +141,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking input type[submit] via button text submits form", %{page: page} do
     current_url =
       page
-      |> click_button("Submit input")
+      |> click(button("Submit input"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -150,7 +151,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking input type[submit] via name submits form", %{page: page} do
     current_url =
       page
-      |> click_button("input-submit")
+      |> click(button("input-submit"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -160,7 +161,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking input type[submit] via id submits form", %{page: page} do
     current_url =
       page
-      |> click_button("input-submit-id")
+      |> click(button("input-submit-id"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -173,7 +174,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "Button input")
+    click(page, button("Button input"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -184,7 +185,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "input-button")
+    click(page, button("input-button"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -195,7 +196,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "input-button-id")
+    click(page, button("input-button-id"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -206,7 +207,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "Reset input")
+    click(page, button("Reset input"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -217,7 +218,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "input-reset")
+    click(page, button("input-reset"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -228,7 +229,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
     assert find(page, "#name_field") |> has_value?("Erlich Bachman")
 
-    click_button(page, "input-reset-id")
+    click(page, button("input-reset-id"))
 
     assert find(page, "#name_field") |> has_value?("")
   end
@@ -236,7 +237,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking input type[image] via name submits form", %{page: page} do
     current_url =
       page
-      |> click_button("input-image")
+      |> click(button("input-image"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -246,7 +247,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking input type[image] via id submits form", %{page: page} do
     current_url =
       page
-      |> click_button("input-image-id")
+      |> click(button("input-image-id"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -254,35 +255,28 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   end
 
   test "waits until the button appears", %{page: page} do
-    assert click_button(page, "Hidden Button")
+    assert click(page, button("Hidden Button"))
   end
 
   test "throws an error if the button does not include a valid type attribute", %{page: page} do
     assert_raise Wallaby.QueryError, ~r/button has an invalid 'type'/, fn ->
-      click_button(page, "button with bad type", [])
+      click(page, button("button with bad type", []))
     end
   end
 
   test "throws an error if clicking on an input with no type", %{page: page} do
     assert_raise Wallaby.QueryError, ~r/Expected (.*) 1/, fn ->
-      click_button(page, "input-no-type", [])
+      click(page, button("input-no-type", []))
     end
   end
 
   test "throws an error if the button cannot be found on the page", %{page: page} do
     assert_raise Wallaby.QueryError, ~r/Expected (.*) 1/, fn ->
-      click_button(page, "unfound button", [])
+      click(page, button("unfound button", []))
     end
   end
 
   test "escapes quotes", %{page: page} do
-    assert click_button(page, "I'm a button")
-  end
-
-  describe "click_button/2" do
-    test "works with queries", %{page: page} do
-      assert page
-      |> click_button(Query.button("Reset input"))
-    end
+    assert click(page, button("I'm a button"))
   end
 end

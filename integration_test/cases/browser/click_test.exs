@@ -94,4 +94,20 @@ defmodule Wallaby.Integration.Browser.ClickTest do
       assert click(page, Query.checkbox("Hidden Checkbox"))
     end
   end
+
+  describe "click/2 with links" do
+    test "works with queries", %{page: page} do
+      assert page
+      |> visit("")
+      |> click(Query.link("Page 1"))
+      |> assert_has(Query.css(".blue"))
+    end
+  end
+
+  describe "click/2 with buttons" do
+    test "works with queries", %{page: page} do
+      assert page
+      |> click(Query.button("Reset input"))
+    end
+  end
 end
