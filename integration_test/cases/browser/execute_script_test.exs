@@ -15,7 +15,7 @@ defmodule Wallaby.Integration.Browser.ExecuteScriptTest do
       |> visit("page_1.html")
       |> execute_script(@script, ["now you see me", "return value"])
       |> find(Query.css("#new-element"))
-      |> text == "now you see me"
+      |> Element.text == "now you see me"
   end
 
   test "executing scripts with arguments and callback returns session", %{session: session} do
@@ -26,7 +26,7 @@ defmodule Wallaby.Integration.Browser.ExecuteScriptTest do
       |> visit("page_1.html")
       |> execute_script(@script, ["now you see me", "return value"], fn(value) ->
            assert value == "return value"
-           send self, {:callback, value}
+           send self(), {:callback, value}
          end)
 
     assert result == session
@@ -35,6 +35,6 @@ defmodule Wallaby.Integration.Browser.ExecuteScriptTest do
 
     assert session
     |> find(Query.css("#new-element"))
-    |> text == "now you see me"
+    |> Element.text == "now you see me"
   end
 end
