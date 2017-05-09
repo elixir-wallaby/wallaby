@@ -1,6 +1,8 @@
 defmodule Wallaby.Integration.Browser.FileTest do
   use Wallaby.Integration.SessionCase, async: true
 
+  import Wallaby.Query, only: [css: 1]
+
   setup %{session: session} do
     page =
       session
@@ -14,21 +16,21 @@ defmodule Wallaby.Integration.Browser.FileTest do
       page
       |> attach_file("file_input", path: "integration_test/support/fixtures/file.txt")
 
-      assert find(page, "#file_field") |> has_value?("C:\\fakepath\\file.txt")
+      assert find(page, css("#file_field")) |> has_value?("C:\\fakepath\\file.txt")
     end
 
     test "by DOM ID", %{page: page} do
       page
       |> attach_file("file_field", path: "integration_test/support/fixtures/file.txt")
 
-      assert find(page, "#file_field") |> has_value?("C:\\fakepath\\file.txt")
+      assert find(page, css("#file_field")) |> has_value?("C:\\fakepath\\file.txt")
     end
 
     test "by label", %{page: page} do
       page
       |> attach_file("File", path: "integration_test/support/fixtures/file.txt")
 
-      assert find(page, "#file_field") |> has_value?("C:\\fakepath\\file.txt")
+      assert find(page, css("#file_field")) |> has_value?("C:\\fakepath\\file.txt")
     end
   end
 
@@ -36,7 +38,7 @@ defmodule Wallaby.Integration.Browser.FileTest do
     page
     |> attach_file("File", path: "integration_test/support/fixtures/fool.txt")
 
-    assert find(page, "#file_field") |> has_value?("")
+    assert find(page, css("#file_field")) |> has_value?("")
   end
 
   test "checks for labels without for attributes", %{page: page} do

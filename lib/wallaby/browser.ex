@@ -556,31 +556,10 @@ defmodule Wallaby.Browser do
   @spec find(parent, Query.t) :: Element.t | [Element.t]
   @spec find(parent, locator) :: Element.t | [Element.t]
 
-  def find(parent, css, opts) when is_binary(css) and is_list(opts) do
-    IO.warn """
-    find/3 with string locators has beeen deprecated. Please use: find(parent, Query.css("#{css}", #{inspect(opts)}))
-    """
-
-    find(parent, Query.css(css, opts))
-  end
   def find(parent, %Query{}=query, callback) when is_function(callback) do
     results = find(parent, query)
     callback.(results)
     parent
-  end
-  def find(parent, {:xpath, path}) when is_binary(path) do
-    IO.warn """
-    find/3 with {:xpath, locator} has beeen deprecated. Please use: find(parent, Query.xpath("#{path}"))
-    """
-
-    find(parent, Query.xpath(path))
-  end
-  def find(parent, css) when is_binary(css) do
-    IO.warn """
-    find/3 with string locators has beeen deprecated. Please use: find(parent, Query.css("#{css}"))
-    """
-
-    find(parent, Query.css(css))
   end
   def find(parent, %Query{}=query) do
     case execute_query(parent, query) do
