@@ -1,6 +1,8 @@
 defmodule Wallaby.Integration.Browser.ScreenshotTest do
   use Wallaby.Integration.SessionCase, async: false
 
+  import Wallaby.Query, only: [css: 1]
+
   setup %{session: session} do
     page =
       session
@@ -56,14 +58,14 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
 
   test "automatically taking screenshots on failure", %{page: page} do
     assert_raise Wallaby.QueryError, fn ->
-      find(page, ".some-selector")
+      find(page, css(".some-selector"))
     end
     refute File.exists?("#{File.cwd!}/screenshots")
 
     Application.put_env(:wallaby, :screenshot_on_failure, true)
 
     assert_raise Wallaby.QueryError, fn ->
-      find(page, ".some-selector")
+      find(page, css(".some-selector"))
     end
     assert File.exists?("#{File.cwd!}/screenshots")
     assert File.ls!("#{File.cwd!}/screenshots") |> Enum.count == 1

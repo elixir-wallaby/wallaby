@@ -2,7 +2,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   use Wallaby.Integration.SessionCase, async: true
 
   alias Wallaby.Integration.Pages.IndexPage
-  import Wallaby.Query, only: [button: 1, button: 2]
+  import Wallaby.Query, only: [button: 1, button: 2, css: 1]
 
   setup %{session: session} do
     page =
@@ -76,66 +76,66 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("Button button"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking button type[button] via name (resets input via JS)", %{page: page} do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("button-button"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking button type[button] via id (resets input via JS)", %{page: page} do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field"))  |> has_value?("Erlich Bachman")
 
     click(page, button("button-button-id"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking button type[reset] via button text resets form", %{page: page} do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("Reset button"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking button type[reset] via name resets form", %{page: page} do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("button-reset"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking button type[reset] via id resets form", %{page: page} do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("button-reset-id"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking input type[submit] via button text submits form", %{page: page} do
@@ -172,66 +172,66 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("Button input"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking input type[button] via name resets input via JS", %{page: page} do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("input-button"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking input type[button] via id resets input via JS", %{page: page} do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("input-button-id"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking input type[reset] via button text resets form", %{page: page} do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("Reset input"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking input type[reset] via name resets form", %{page: page} do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("input-reset"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking input type[reset] via id resets form", %{page: page} do
     page
     |> fill_in(Query.text_field("name_field"), with: "Erlich Bachman")
 
-    assert find(page, "#name_field") |> has_value?("Erlich Bachman")
+    assert find(page, css("#name_field")) |> has_value?("Erlich Bachman")
 
     click(page, button("input-reset-id"))
 
-    assert find(page, "#name_field") |> has_value?("")
+    assert find(page, css("#name_field")) |> has_value?("")
   end
 
   test "clicking input type[image] via name submits form", %{page: page} do

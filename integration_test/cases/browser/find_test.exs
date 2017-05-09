@@ -1,6 +1,8 @@
 defmodule Wallaby.Integration.Browser.FindTest do
   use Wallaby.Integration.SessionCase, async: true
 
+  import Wallaby.Query, only: [css: 1]
+
   setup %{session: session} do
     page =
       session
@@ -67,7 +69,7 @@ defmodule Wallaby.Integration.Browser.FindTest do
       |> visit("page_1.html")
 
       assert_raise Wallaby.QueryError, fn ->
-        find(session, "#invisible")
+        find(session, css("#invisible"))
       end
 
       assert find(session, Query.css("#visible", count: :any))
@@ -104,7 +106,7 @@ defmodule Wallaby.Integration.Browser.FindTest do
     session
     |> visit("wait.html")
 
-    assert find(session, ".main")
+    assert find(session, css(".main"))
   end
 
   test "waits for count elements to be visible", %{session: session} do
@@ -119,7 +121,7 @@ defmodule Wallaby.Integration.Browser.FindTest do
     |> visit("page_1.html")
 
     assert_raise Wallaby.QueryError, fn ->
-      find(session, ".not-there")
+      find(session, css(".not-there"))
     end
 
     assert find(session, Query.css("li", count: :any)) |> length == 4
