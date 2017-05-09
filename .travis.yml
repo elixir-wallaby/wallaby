@@ -11,6 +11,7 @@ cache:
   directories:
     - _build
     - deps
+
 before_script:
   - MIX_ENV=test mix compile --warnings-as-errors
   - "if [ -z ${WALLABY_DRIVER} ]; then travis_wait mix dialyzer --plt; fi"
@@ -18,8 +19,8 @@ before_script:
 
 script:
   - mix test
-  # skip dialyzer for elixir 1.4 and erlang 18 as it produces weird errors, see #69
-  - "if [ -z ${WALLABY_DRIVER} ] && ! ([[ "$TRAVIS_ELIXIR_VERSION" == "1.4"* ]] && [[ "$TRAVIS_OTP_RELEASE" == "18"* ]]); then mix dialyzer --halt-exit-status; fi"
+  - # skip dialyzer for elixir 1.4 and erlang 18 as it produces weird errors, see #69
+  - if [ -z ${WALLABY_DRIVER} ] && ! ([[ "$TRAVIS_ELIXIR_VERSION" == "1.4"* ]] && [[ "$TRAVIS_OTP_RELEASE" == "18"* ]]); then mix dialyzer --halt-exit-status; fi
 
 env:
   - ""
