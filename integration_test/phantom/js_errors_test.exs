@@ -2,12 +2,13 @@ defmodule Wallaby.Integration.Phantom.JSErrorsTest do
   use Wallaby.Integration.SessionCase, async: true
 
   import ExUnit.CaptureIO
+  import Wallaby.Query, only: [button: 1]
 
   test "it captures javascript errors", %{session: session} do
     assert_raise Wallaby.JSError, fn ->
       session
       |> visit("/errors.html")
-      |> click_button("Throw an Error")
+      |> click(button("Throw an Error"))
     end
   end
 
@@ -28,7 +29,7 @@ defmodule Wallaby.Integration.Phantom.JSErrorsTest do
     fun = fn ->
       session
       |> visit("/logs.html")
-      |> click_button("Print Log")
+      |> click(button("Print Log"))
     end
 
     assert capture_io(fun) == output

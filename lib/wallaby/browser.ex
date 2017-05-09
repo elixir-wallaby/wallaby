@@ -205,62 +205,6 @@ defmodule Wallaby.Browser do
     end)
   end
 
-  @doc """
-  Clicks the matching link. Links can be found based on id, name, or link text.
-  """
-  @spec click_link(parent, Query.t) :: parent
-  @spec click_link(parent, locator, opts) :: parent
-
-  def click_link(parent, locator, opts) when is_binary(locator) do
-    IO.warn """
-    click_link/3 has been deprecated. Please use: click(parent, Query.link("#{locator}", #{inspect(opts)}))
-    """
-
-    parent
-    |> click(Query.link(locator, opts))
-  end
-  def click_link(parent, locator) when is_binary(locator) do
-    IO.warn """
-    click_link/2 has been deprecated. Please use: click(parent, Query.link("#{locator}"))
-    """
-
-    parent
-    |> click(Query.link(locator, []))
-  end
-  def click_link(parent, query) do
-    IO.warn "click_link/2 has been deprecated. Please use click/2"
-
-    click(parent, query)
-  end
-
-  @doc """
-  Clicks the matching button. Buttons can be found based on id, name, or button text.
-  """
-  @spec click_button(parent, Query.t) :: parent
-  @spec click_button(parent, locator, opts) :: parent
-
-  def click_button(parent, locator, opts) when is_binary(locator) do
-    IO.warn """
-    click_button/3 has been deprecated. Please use: click(parent, Query.button("#{locator}", #{inspect(opts)}))
-    """
-
-    parent
-    |> click(Query.button(locator, opts))
-  end
-  def click_button(parent, locator) when is_binary(locator) do
-    IO.warn """
-    click_button/2 has been deprecated. Please use: click(parent, Query.button("#{locator}"))
-    """
-
-    parent
-    |> click(Query.button(locator, []))
-  end
-  def click_button(parent, query) do
-    IO.warn "click_button/2 has been deprecated. Please use click/2"
-
-    click(parent, query)
-  end
-
   # @doc """
   # Clears an input field. Input elements are looked up by id, label text, or name.
   # The element can also be passed in directly.
