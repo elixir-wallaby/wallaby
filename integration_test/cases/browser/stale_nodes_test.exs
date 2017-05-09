@@ -17,7 +17,8 @@ defmodule Wallaby.Integration.Browser.StaleElementsTest do
         |> visit("stale_nodes.html")
         |> find(Query.css("#removed-node"))
 
-      Process.sleep(400) # let the node disappear via javascript
+      session
+      |> assert_has(Query.css("#removed-node", count: 0))
 
       assert_raise Wallaby.StaleReferenceException, fn ->
         Element.value(element)
