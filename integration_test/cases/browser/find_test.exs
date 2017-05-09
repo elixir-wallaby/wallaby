@@ -35,7 +35,7 @@ defmodule Wallaby.Integration.Browser.FindTest do
         |> all(".user")
 
       assert Enum.count(users) == 3
-      assert List.first(users) |> text == "Chris"
+      assert List.first(users) |> Element.text == "Chris"
     end
 
     test "throws a not found error if the element could not be found", %{page: page} do

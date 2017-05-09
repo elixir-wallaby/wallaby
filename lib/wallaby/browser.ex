@@ -475,11 +475,6 @@ defmodule Wallaby.Browser do
     |> find(Query.css("body"))
     |> Element.text()
   end
-  def text(%Element{}=element) do
-    IO.warn "text/1 has been deprecated. Please use Element.text/1"
-
-    Element.text(element)
-  end
 
   @doc """
   Gets the value of the elements attribute.
