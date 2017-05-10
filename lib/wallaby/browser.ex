@@ -480,12 +480,7 @@ defmodule Wallaby.Browser do
   Gets the value of the elements attribute.
   """
   @spec attr(parent, Query.t, String.t) :: String.t | nil
-  @spec attr(Element.t, String.t) :: String.t | nil
 
-  def attr(element, name) do
-    IO.warn "attr/2 has been deprecated. Please use Element.attr/2"
-    Element.attr(element, name)
-  end
   def attr(parent, query, name) do
     parent
     |> find(query)
