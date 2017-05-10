@@ -209,25 +209,11 @@ defmodule Wallaby.Browser do
   # Clears an input field. Input elements are looked up by id, label text, or name.
   # The element can also be passed in directly.
   # """
-  @spec clear(parent, locator, opts) :: parent
   @spec clear(parent, Query.t) :: parent
-  @spec clear(Element.t) :: Element.t
 
-  def clear(parent, locator, opts) when is_binary(locator) do
-    IO.warn """
-    clear/3 has been deprecated. Please use: clear(parent, Query.css("#{locator}", #{inspect(opts)}))
-    """
-
-    clear(parent, Query.fillable_field(locator, opts))
-  end
   def clear(parent, query) do
     parent
     |> find(query, &Element.clear/1)
-  end
-  def clear(element) do
-    IO.warn "clear/1 has been deprecated. Please use Element.clear/1"
-
-    Element.clear(element)
   end
 
   @doc """

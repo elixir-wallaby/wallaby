@@ -10,7 +10,7 @@ defmodule Wallaby.Integration.Browser.ClearTest do
     Element.fill_in(element, with: "Chris")
     assert has_value?(element, "Chris")
 
-    clear(element)
+    Element.clear(element)
     refute has_value?(element, "Chris")
     assert has_value?(element, "")
   end
