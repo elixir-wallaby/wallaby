@@ -220,19 +220,8 @@ defmodule Wallaby.Browser do
   Attaches a file to a file input. Input elements are looked up by id, label text,
   or name.
   """
-  @spec attach_file(parent, locator, opts) :: parent
-  @spec attach_file(parent, queryable, path: String.t) :: parent
+  @spec attach_file(parent, Query.t, path: String.t) :: parent
 
-  def attach_file(parent, locator, [{:path, value} | _]=opts) when is_binary(locator) do
-    IO.warn """
-    attach_file/3 with string locators has been deprecated. Please use:
-
-    attach_file(parent, Query.file_field("#{locator}"))
-    """
-
-    parent
-    |> fill_in(Query.file_field(locator, opts), with: :filename.absname(value))
-  end
   def attach_file(parent, query, path: path) do
     parent
     |> fill_in(query, with: :filename.absname(path))
