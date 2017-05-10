@@ -1,16 +1,17 @@
 language: elixir
-elixir:
+elixir: 
   - 1.4.2
   - 1.3.4
 otp_release:
- - 19.2
- - 18.2.1
+  - 19.3
+  - 18.3
 # Run in bigger container so we don't run out of memory generating the plt
 sudo: required
 cache:
   directories:
     - _build
     - deps
+
 before_script:
   - MIX_ENV=test mix compile --warnings-as-errors
   - "if [ -z ${WALLABY_DRIVER} ]; then travis_wait mix dialyzer --plt; fi"
@@ -18,14 +19,8 @@ before_script:
 
 script:
   - mix test
-  - "if [ -z ${WALLABY_DRIVER} ]; then mix dialyzer --halt-exit-status; fi"
-
-matrix:
-  exclude:
-    - elixir: 1.4.2
-      otp_release: 18.2.1
-    - elixir: 1.3.4
-      otp_release: 19.2
+  - # skip dialyzer for elixir 1.4 and erlang 18 as it produces weird errors, see #69
+  - if [ -z ${WALLABY_DRIVER} ] && ! ([[ "$TRAVIS_ELIXIR_VERSION" == "1.4"* ]] && [[ "$TRAVIS_OTP_RELEASE" == "18"* ]]); then mix dialyzer --halt-exit-status; fi
 
 env:
   - ""
