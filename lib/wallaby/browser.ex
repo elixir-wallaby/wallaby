@@ -592,26 +592,11 @@ defmodule Wallaby.Browser do
 
   @doc """
   Finds all of the DOM elements that match the css selector. If no elements are
-  found then an empty list is immediately returned.
+  found then an empty list is immediately returned. This is equivalent to calling
+  `find(session, css("element", count: nil, minimum: 0))`.
   """
-  @spec all(parent, locator, opts) :: [Element.t]
-  @spec all(parent, locator) :: [Element.t]
   @spec all(parent, Query.t) :: [Element.t]
 
-  def all(parent, locator, opts) when is_binary(locator) do
-    IO.warn """
-    all/3 with string locators has been deprecated. Please use: all(parent, Query.css("#{locator}", #{inspect(opts)}))
-    """
-
-    find(parent, Query.css(locator, Keyword.merge(opts, [count: nil, minimum: 0])))
-  end
-  def all(parent, css) when is_binary(css) do
-    IO.warn """
-    all/2 with string locators has been deprecated. Please use: all(parent, Query.css("#{css}"))
-    """
-
-    find(parent, Query.css(css, minimum: 0))
-  end
   def all(parent, %Query{}=query) do
     find(
       parent,

@@ -32,9 +32,9 @@ defmodule Wallaby.Integration.Browser.FindTest do
       users =
         session
         |> visit("nesting.html")
-        |> find(Query.css(".dashboard"))
-        |> find(Query.css(".users"))
-        |> all(".user")
+        |> find(css(".dashboard"))
+        |> find(css(".users"))
+        |> all(css(".user"))
 
       assert Enum.count(users) == 3
       assert List.first(users) |> Element.text == "Chris"
