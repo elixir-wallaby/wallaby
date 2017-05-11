@@ -64,23 +64,19 @@ defmodule Wallaby.Phantom.Driver do
   # @spec find_elements(Locator.t, query) :: t
 
   def find_elements(parent, locator) do
-    check_logs! parent, fn ->
-      with {:ok, resp} <- request(:post, parent.url <> "/elements", to_params(locator)),
-           {:ok, elements} <- Map.fetch(resp, "value"),
-           elements <- Enum.map(elements, &(cast_as_element(parent, &1))),
-        do: {:ok, elements}
-    end
+    with {:ok, resp} <- request(:post, parent.url <> "/elements", to_params(locator)),
+         {:ok, elements} <- Map.fetch(resp, "value"),
+         elements <- Enum.map(elements, &(cast_as_element(parent, &1))),
+      do: {:ok, elements}
   end
 
   @doc """
   Sets the value of an element.
   """
   def set_value(%Element{url: url}=element, value) do
-     check_logs! element, fn ->
-      with  {:ok, resp} <- request(:post, "#{url}/value", %{value: [value]}),
-            {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
-    end
+     with {:ok, resp} <- request(:post, "#{url}/value", %{value: [value]}),
+          {:ok, value} <- Map.fetch(resp, "value"),
+       do: {:ok, value}
   end
 
   @doc """
@@ -88,55 +84,45 @@ defmodule Wallaby.Phantom.Driver do
   """
   # @spec clear(Locator.t, query) :: t
   def clear(%Element{url: url}=element) do
-    check_logs! element, fn ->
-      with {:ok, resp} <- request(:post, "#{url}/clear"),
-           {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
-    end
+     with {:ok, resp} <- request(:post, "#{url}/clear"),
+          {:ok, value} <- Map.fetch(resp, "value"),
+       do: {:ok, value}
   end
 
   @doc """
   Clicks an element
   """
   def click(%Element{url: url}=element) do
-    check_logs! element, fn ->
-      with  {:ok, resp} <- request(:post, "#{url}/click"),
-            {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:post, "#{url}/click"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @doc """
   Gets the text for an element
   """
   def text(element) do
-    check_logs! element, fn ->
-      with  {:ok, resp} <- request(:get, "#{element.url}/text"),
-            {:ok, value} <- Map.fetch(resp, "value"),
-      	do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:get, "#{element.url}/text"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @doc """
   Gets the title of the current page.
   """
   def page_title(session) do
-    check_logs! session, fn ->
-      with  {:ok, resp} <- request(:get, "#{session.url}/title"),
-      			{:ok, value} <- Map.fetch(resp, "value"),
-  			do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:get, "#{session.url}/title"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @doc """
   Gets the value of an elements attribute
   """
   def attribute(element, name) do
-    check_logs! element, fn ->
-      with {:ok, resp}  <- request(:get, "#{element.url}/attribute/#{name}"),
-           {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
-    end
+    with {:ok, resp}  <- request(:get, "#{element.url}/attribute/#{name}"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @doc """
@@ -144,37 +130,29 @@ defmodule Wallaby.Phantom.Driver do
   """
   @spec visit(Session.t, String.t) :: :ok
   def visit(session, path) do
-    check_logs! session, fn ->
       with {:ok, _} <- request(:post, "#{session.url}/url", %{url: path}),
-      do: :ok
-    end
+        do: :ok
   end
 
   @doc """
   Gets the current url.
   """
   def current_url(session) do
-    check_logs! session, fn ->
-      with  {:ok, resp} <- request(:get, "#{session.url}/url"),
-            {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:get, "#{session.url}/url"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   def current_url!(session) do
-    check_logs! session, fn ->
-      request!(:get, "#{session.url}/url")
-      |> Map.get("value")
-    end
+    request!(:get, "#{session.url}/url")
+    |> Map.get("value")
   end
 
   def current_path!(session) do
-    check_logs! session, fn ->
-      session
-      |> current_url!
-      |> URI.parse
-      |> Map.get(:path)
-    end
+    session
+    |> current_url!
+    |> URI.parse
+    |> Map.get(:path)
   end
 
   @doc """
@@ -184,11 +162,9 @@ defmodule Wallaby.Phantom.Driver do
   For options selects it returns the selected option
   """
   def selected(element) do
-    check_logs! element, fn ->
-      with {:ok, resp} <- request(:get, "#{element.url}/selected"),
-           {:ok, value} <- Map.fetch(resp, "value"),
-       do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:get, "#{element.url}/selected"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @doc """
@@ -198,22 +174,19 @@ defmodule Wallaby.Phantom.Driver do
   specification.
   """
   def displayed(element) do
-    check_logs!(element, fn ->
-      with {:ok, resp} <- request(:get, "#{element.url}/displayed"),
-      		 {:ok, value} <- Map.fetch(resp, "value"),
-				do: {:ok, value}
-    end)
+    with {:ok, resp} <- request(:get, "#{element.url}/displayed"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  #  end)
   end
 
   def displayed!(element) do
-    check_logs! element, fn ->
-      case displayed(element) do
-        {:ok, value} ->
-          value
+    case displayed(element) do
+      {:ok, value} ->
+        value
 
-        {:error, :stale_reference_error} ->
-          raise Wallaby.StaleReferenceException
-      end
+      {:error, :stale_reference_error} ->
+        raise Wallaby.StaleReferenceException
     end
   end
 
@@ -223,11 +196,9 @@ defmodule Wallaby.Phantom.Driver do
   This is non-standard and only works in Phantom.
   """
   def size(element) do
-    check_logs! element, fn ->
-      with {:ok, resp} <- request(:get, "#{element.url}/size"),
-      		 {:ok, value} <- Map.fetch(resp, "value"),
-				do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:get, "#{element.url}/size"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @doc """
@@ -236,39 +207,31 @@ defmodule Wallaby.Phantom.Driver do
   This is based on the standard but currently is un-supported by Phantom.
   """
   def rect(element) do
-    check_logs! element, fn ->
-      with {:ok, resp} <- request(:get, "#{element.url}/rect"),
-           {:ok, value} <- Map.fetch(resp, "value"),
-       do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:get, "#{element.url}/rect"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @doc """
   Takes a screenshot.
   """
   def take_screenshot(session) do
-    check_logs! session, fn ->
-      with {:ok, resp}   <- request(:get, "#{session.url}/screenshot"),
-           {:ok, value}  <- Map.fetch(resp, "value"),
-           decoded_value <- :base64.decode(value),
-        do: decoded_value
-    end
+    with {:ok, resp}   <- request(:get, "#{session.url}/screenshot"),
+         {:ok, value}  <- Map.fetch(resp, "value"),
+         decoded_value <- :base64.decode(value),
+      do: decoded_value
   end
 
   def cookies(session) do
-    check_logs! session, fn ->
-      with {:ok, resp}  <- request(:get, "#{session.url}/cookie"),
-           {:ok, value} <- Map.fetch(resp, "value"),
-       do: {:ok, value}
-    end
+    with {:ok, resp}  <- request(:get, "#{session.url}/cookie"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   def set_cookies(session, key, value) do
-    check_logs! session, fn ->
-      with {:ok, resp}  <- request(:post, "#{session.url}/cookie", %{cookie: %{name: key, value: value}}),
-           {:ok, value} <- Map.fetch(resp, "value"),
-       do: {:ok, value}
-    end
+    with {:ok, resp}  <- request(:post, "#{session.url}/cookie", %{cookie: %{name: key, value: value}}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
 
@@ -276,63 +239,49 @@ defmodule Wallaby.Phantom.Driver do
   Sets the size of the window.
   """
   def set_window_size(session, width, height) do
-    check_logs! session, fn ->
-      with {:ok, resp} <- request(:post, "#{session.url}/window/#{window_handle(session)}/size", %{width: width, height: height}),
-           {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:post, "#{session.url}/window/#{window_handle(session)}/size", %{width: width, height: height}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @doc """
   Gets the size of the window
   """
   def get_window_size(session) do
-    check_logs! session, fn ->
-      with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle(session)}/size"),
-           {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle(session)}/size"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
-  @type execute_script_opts :: {:check_logs, boolean}
 
   @doc """
   Executes javascript synchoronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
-  @spec execute_script(Session.t, String.t, [any], [execute_script_opts]) ::
+  @spec execute_script(Session.t, String.t, [any], []) ::
     {:ok, any} | {:error, Driver.reason}
   def execute_script(session, script, arguments \\ [], opts \\ []) do
-    check_logs = Keyword.get(opts, :check_logs, true)
     request_fn = fn ->
       with {:ok, resp} <- request(:post, "#{session.session_url}/execute", %{script: script, args: arguments}),
            {:ok, value} <- Map.fetch(resp, "value"),
         do: {:ok, value}
     end
 
-    if check_logs do
-      check_logs! session, request_fn
-    else
-      request_fn.()
-    end
+    request_fn.()
   end
 
   @doc """
   Sends a list of key strokes to active element
   """
   def send_keys(%Session{}=session, keys) when is_list(keys) do
-    check_logs! session, fn ->
-      with {:ok, resp} <- request(:post, "#{session.session_url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
-           {:ok, value} <- Map.fetch(resp, "value"),
+    with {:ok, resp} <- request(:post, "#{session.session_url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
+         {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
-    end
   end
   def send_keys(parent, keys) when is_list(keys) do
-    check_logs! parent, fn ->
-      with {:ok, resp} <- request(:post, "#{parent.url}/value", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
-           {:ok, value} <- Map.fetch(resp, "value"),
+    with {:ok, resp} <- request(:post, "#{parent.url}/value", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
+         {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
-    end
   end
 
   @doc """
@@ -348,11 +297,9 @@ defmodule Wallaby.Phantom.Driver do
   Retrives the current page source from session
   """
   def page_source(session) do
-    check_logs! session, fn ->
-      with  {:ok, resp} <- request(:get, "#{session.url}/source"),
-            {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:get, "#{session.url}/source"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @doc """
@@ -485,11 +432,9 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   defp window_handle(session) do
-    check_logs! session, fn ->
-      with  {:ok, resp} <- request(:get, "#{session.url}/window_handle"),
-            {:ok, value} <- Map.fetch(resp, "value"),
-        do: value
-    end
+    with {:ok, resp} <- request(:get, "#{session.url}/window_handle"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: value
   end
 
   defp to_params({:xpath, xpath}) do
@@ -497,18 +442,6 @@ defmodule Wallaby.Phantom.Driver do
   end
   defp to_params({:css, css}) do
     %{using: "css selector", value: css}
-  end
-
-  def check_logs!(session, fun) do
-    return_value = fun.()
-
-    {:ok, logs} = log(session)
-
-    session.session_url
-    |> LogStore.append_logs(logs)
-    |> Logger.log
-
-    return_value
   end
 
   defp request(method, url, params \\ %{}, opts \\ [])
@@ -587,10 +520,8 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   defp execute_phantom_script(session, script, arguments \\ []) do
-    check_logs! session, fn ->
-      with {:ok, resp} <- request(:post, "#{session.session_url}/phantom/execute", %{script: script, args: arguments}),
-           {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
-    end
+    with {:ok, resp} <- request(:post, "#{session.session_url}/phantom/execute", %{script: script, args: arguments}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 end
