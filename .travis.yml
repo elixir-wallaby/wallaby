@@ -18,7 +18,7 @@ before_script:
   - bash $TRAVIS_BUILD_DIR/test/tools/start_webdriver.sh
 
 script:
-  - mix test
+  - mix coveralls.travis
   - # skip dialyzer for elixir 1.4 and erlang 18 as it produces weird errors, see #69
   - if [ -z ${WALLABY_DRIVER} ] && ! ([[ "$TRAVIS_ELIXIR_VERSION" == "1.4"* ]] && [[ "$TRAVIS_OTP_RELEASE" == "18"* ]]); then mix dialyzer --halt-exit-status; fi
 
