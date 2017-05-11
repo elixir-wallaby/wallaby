@@ -4,6 +4,11 @@ defmodule Wallaby.Mixfile do
   @version "0.16.1"
   @drivers ~w(phantom selenium)
   @selected_driver System.get_env("WALLABY_DRIVER")
+  @maintainers [
+    "Chris Keathley",
+    "Tobias Pfeiffer",
+    "Aaron Renner",
+  ]
 
   def project do
     [app: :wallaby,
@@ -61,7 +66,7 @@ defmodule Wallaby.Mixfile do
   defp package do
     [
       files: ["lib", "mix.exs", "README.md", "LICENSE.md", "priv"],
-      maintainers: ["Chris Keathley", "Tommy Fisher", "Alex Daniel"],
+      maintainers: @maintainers,
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/keathley/wallaby"}
     ]
