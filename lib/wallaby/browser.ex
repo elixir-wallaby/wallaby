@@ -404,34 +404,10 @@ defmodule Wallaby.Browser do
   Clicks a element.
   """
   @spec click(parent, Query.t) :: parent
-  @spec click(Element.t) :: Element.t
 
-  def click(parent, locator) when is_binary(locator) do
-    IO.warn """
-    click/2 with string locator has been deprecated. Please use:
-
-    click(parent, Query.button("#{locator}"))
-    """
-
-    parent
-    |> find(Query.button(locator), &Element.click/1)
-  end
   def click(parent, query) do
     parent
     |> find(query, &Element.click/1)
-  end
-  def click(element) do
-    IO.warn "click/1 has been deprecated. Please use Element.click/1"
-
-    Element.click(element)
-  end
-
-  def click_on(parent, query) do
-    IO.warn """
-    click_on/2 has been deprecated. Please use Browser.click/2.
-    """
-
-    click(parent, query)
   end
 
   @doc """
