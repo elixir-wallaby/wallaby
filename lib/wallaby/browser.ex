@@ -368,17 +368,6 @@ defmodule Wallaby.Browser do
     parent
   end
 
-  def send_text(parent, query, keys) do
-    IO.warn "send_text/3 has been deprecated. Please use send_keys/3"
-    send_keys(parent, query, keys)
-  end
-
-  def send_text(parent, keys) do
-    IO.warn "send_text/2 has been deprecated. Please use send_keys/2"
-    send_keys(parent, keys)
-  end
-
-
   @doc """
   Retrieves the source of the current page.
   """
