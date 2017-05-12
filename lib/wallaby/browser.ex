@@ -899,7 +899,7 @@ defmodule Wallaby.Browser do
     buttons = all(parent, Query.css("button", [text: query.selector]))
 
     cond do
-      Enum.any?(buttons) ->
+      Enum.count(buttons) == 1 && Enum.any?(buttons) ->
         {:error, :button_with_bad_type}
       true ->
         {:ok, query}

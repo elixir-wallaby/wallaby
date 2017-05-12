@@ -279,4 +279,12 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "escapes quotes", %{page: page} do
     assert click(page, button("I'm a button"))
   end
+
+  test "with duplicate buttons", %{page: page} do
+    assert_raise Wallaby.QueryError, ~r/Expected (.*) 1/, fn ->
+      page
+      |> find(css(".duplicate-buttons"))
+      |> click(button("Duplicate Button"))
+    end
+  end
 end
