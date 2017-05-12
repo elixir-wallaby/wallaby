@@ -15,7 +15,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking button with no type via button text (submits form)", %{page: page} do
     current_url =
       page
-      |> click(button("Submit button"))
+      |> click(button("button with no type"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 
@@ -278,5 +278,19 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
 
   test "escapes quotes", %{page: page} do
     assert click(page, button("I'm a button"))
+  end
+
+  test "with duplicate buttons", %{page: page} do
+    assert_raise Wallaby.QueryError, ~r/Expected (.*) 1/, fn ->
+      page
+      |> find(css(".duplicate-buttons"))
+      |> click(button("Duplicate Button"))
+    end
+  end
+  
+  test "works with elements", %{page: page} do
+    assert page
+    |> find(button("I'm a button"))
+    |> Element.click()
   end
 end

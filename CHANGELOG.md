@@ -16,6 +16,7 @@
 
 * Fix spawning of phantomjs when project path contains spaces - thanks @schnittchen
 * Fixed a couple of dialyzer warnings - thanks @aaronrenner
+* Fixed incorrect malformed label warning when it was rreally a mismatch between expected elements found
 
 ### Chores
 

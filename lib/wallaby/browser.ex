@@ -171,40 +171,6 @@ defmodule Wallaby.Browser do
     |> find(query, &(Element.fill_in(&1, with: value)))
   end
 
-  @doc """
-  Selects an option from a select box. The select box can be found by id, label
-  text, or name. The option can be found by its text.
-  """
-  @spec select(Element.t) :: Element.t
-  @spec select(parent, Query.t) :: parent
-  @spec select(parent, Query.t, from: Query.t) :: parent
-  @spec select(parent, locator, opts) :: parent
-
-  def select(element) do
-    IO.warn "select/1 has been deprecated. Please use Element.click/1"
-
-    Element.click(element)
-  end
-  def select(parent, query) do
-    IO.warn "select/2 has been deprecated. Please use click/2"
-
-    parent
-    |> find(query, &Element.click/1)
-  end
-  def select(parent, locator, [option: option_text]=opts) do
-    IO.warn """
-    select/3 has been deprecated. Please use:
-
-    click(parent, Query.option("#{option_text}"))
-    """
-
-    find(parent, Query.select(locator, opts), fn(select_field) ->
-      find(select_field, Query.option(option_text, []), fn(option) ->
-        Element.click(option)
-      end)
-    end)
-  end
-
   # @doc """
   # Clears an input field. Input elements are looked up by id, label text, or name.
   # The element can also be passed in directly.
@@ -265,12 +231,6 @@ defmodule Wallaby.Browser do
     session
   end
 
-  def set_window_size(parent, x, y) do
-    IO.warn "set_window_size/3 has been deprecated. Please use resize_window/3"
-
-    resize_window(parent, x, y)
-  end
-
   @doc """
   Gets the current url of the session
   """
@@ -278,12 +238,6 @@ defmodule Wallaby.Browser do
 
   def current_url(%Session{driver: driver} = session) do
     driver.current_url!(session)
-  end
-
-  def get_current_url(parent) do
-    IO.warn "get_current_url/1 has been deprecated. Please use current_url/1"
-
-    current_url(parent)
   end
 
   @doc """
@@ -368,17 +322,6 @@ defmodule Wallaby.Browser do
     parent
   end
 
-  def send_text(parent, query, keys) do
-    IO.warn "send_text/3 has been deprecated. Please use send_keys/3"
-    send_keys(parent, query, keys)
-  end
-
-  def send_text(parent, keys) do
-    IO.warn "send_text/2 has been deprecated. Please use send_keys/2"
-    send_keys(parent, keys)
-  end
-
-
   @doc """
   Retrieves the source of the current page.
   """
@@ -390,48 +333,47 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Sets the value of an element.
+  Sets the value of an element. The allowed type for the value depends on the
+  type of the element. The value may be:
+  * a string of characters for a text element
+  * :selected for a radio button, checkbox or select list option
+  * :unselected for a checkbox
   """
-  @spec set_value(element, any()) :: element
+  @spec set_value(parent, Query.t, Element.value) :: parent
 
-  def set_value(element, value) do
-    IO.warn "set_value/2 has been deprecated. Please use Element.set_value/2"
+  def set_value(parent, query, :selected) do
+    find(parent, query, fn(element) ->
+      case Element.selected?(element) do
+        true    ->  :ok
+        false   ->  Element.click(element)
+      end
+    end)
+  end
 
-    Element.set_value(element, value)
+  def set_value(parent, query, :unselected) do
+    find(parent, query, fn(element) ->
+      case Element.selected?(element) do
+        false   ->  :ok
+        true    ->  Element.click(element)
+      end
+    end)
+  end
+
+  def set_value(parent, query, value) do
+    find(parent, query, fn(element) ->
+      element
+      |> Element.set_value(value)
+    end)
   end
 
   @doc """
   Clicks a element.
   """
   @spec click(parent, Query.t) :: parent
-  @spec click(Element.t) :: Element.t
 
-  def click(parent, locator) when is_binary(locator) do
-    IO.warn """
-    click/2 with string locator has been deprecated. Please use:
-
-    click(parent, Query.button("#{locator}"))
-    """
-
-    parent
-    |> find(Query.button(locator), &Element.click/1)
-  end
   def click(parent, query) do
     parent
     |> find(query, &Element.click/1)
-  end
-  def click(element) do
-    IO.warn "click/1 has been deprecated. Please use Element.click/1"
-
-    Element.click(element)
-  end
-
-  def click_on(parent, query) do
-    IO.warn """
-    click_on/2 has been deprecated. Please use Browser.click/2.
-    """
-
-    click(parent, query)
   end
 
   @doc """
@@ -463,48 +405,21 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Checks if the element has been selected.
-  """
-  @spec checked?(parent, Query.t) :: boolean()
-  @spec checked?(Element.t) :: boolean()
-
-  def checked?(parent, query) do
-    IO.warn "checked?/2 has been deprecated. Please use selected?/2"
-    selected?(parent, query)
-  end
-  def checked?(%Element{}=element) do
-    IO.warn "checked?/1 has been deprecated. Please use Element.selected?/1"
-    Element.selected?(element)
-  end
-
-  @doc """
   Checks if the element has been selected. Alias for checked?(element)
   """
   @spec selected?(parent, Query.t) :: boolean()
-  @spec selected?(Element.t) :: boolean()
 
   def selected?(parent, query) do
     parent
     |> find(query)
     |> Element.selected?
   end
-  def selected?(%Element{}=element) do
-    IO.warn "selected?/1 has been deprecated. Please use Element.selected?/1"
-
-    Element.selected?(element)
-  end
 
   @doc """
   Checks if the element is visible on the page
   """
   @spec visible?(parent, Query.t) :: boolean()
-  @spec visible?(Element.t) :: boolean()
 
-  def visible?(%Element{}=element) do
-    IO.warn "visible?/1 has been deprecated. Please use Element.visible?/1"
-
-    Element.visible?(element)
-  end
   def visible?(parent, query) do
     parent
     |> has?(query)
@@ -899,7 +814,7 @@ defmodule Wallaby.Browser do
     buttons = all(parent, Query.css("button", [text: query.selector]))
 
     cond do
-      Enum.any?(buttons) ->
+      Enum.count(buttons) == 1 && Enum.any?(buttons) ->
         {:error, :button_with_bad_type}
       true ->
         {:ok, query}
@@ -910,10 +825,13 @@ defmodule Wallaby.Browser do
     labels = all(parent, label_query)
 
     cond do
-      Enum.any?(labels, &(missing_for?(&1))) ->
-        {:error, :label_with_no_for}
-      label=List.first(labels) ->
-        {:error, {:label_does_not_find_field, Element.attr(label, "for")}}
+      Enum.count(labels) == 1 ->
+        cond do
+          Enum.any?(labels, &(missing_for?(&1))) ->
+            {:error, :label_with_no_for}
+          label=List.first(labels) ->
+            {:error, {:label_does_not_find_field, Element.attr(label, "for")}}
+        end
       true ->
         {:ok, query}
     end
