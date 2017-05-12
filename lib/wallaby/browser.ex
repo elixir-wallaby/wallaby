@@ -463,21 +463,6 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Checks if the element has been selected.
-  """
-  @spec checked?(parent, Query.t) :: boolean()
-  @spec checked?(Element.t) :: boolean()
-
-  def checked?(parent, query) do
-    IO.warn "checked?/2 has been deprecated. Please use selected?/2"
-    selected?(parent, query)
-  end
-  def checked?(%Element{}=element) do
-    IO.warn "checked?/1 has been deprecated. Please use Element.selected?/1"
-    Element.selected?(element)
-  end
-
-  @doc """
   Checks if the element has been selected. Alias for checked?(element)
   """
   @spec selected?(parent, Query.t) :: boolean()
