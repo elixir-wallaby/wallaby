@@ -15,7 +15,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "clicking button with no type via button text (submits form)", %{page: page} do
     current_url =
       page
-      |> click(button("Submit button"))
+      |> click(button("button with no type"))
       |> IndexPage.ensure_page_loaded
       |> current_url
 

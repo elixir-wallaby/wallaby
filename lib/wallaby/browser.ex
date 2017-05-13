@@ -209,44 +209,19 @@ defmodule Wallaby.Browser do
   # Clears an input field. Input elements are looked up by id, label text, or name.
   # The element can also be passed in directly.
   # """
-  @spec clear(parent, locator, opts) :: parent
   @spec clear(parent, Query.t) :: parent
-  @spec clear(Element.t) :: Element.t
 
-  def clear(parent, locator, opts) when is_binary(locator) do
-    IO.warn """
-    clear/3 has been deprecated. Please use: clear(parent, Query.css("#{locator}", #{inspect(opts)}))
-    """
-
-    clear(parent, Query.fillable_field(locator, opts))
-  end
   def clear(parent, query) do
     parent
     |> find(query, &Element.clear/1)
-  end
-  def clear(element) do
-    IO.warn "clear/1 has been deprecated. Please use Element.clear/1"
-
-    Element.clear(element)
   end
 
   @doc """
   Attaches a file to a file input. Input elements are looked up by id, label text,
   or name.
   """
-  @spec attach_file(parent, locator, opts) :: parent
-  @spec attach_file(parent, queryable, path: String.t) :: parent
+  @spec attach_file(parent, Query.t, path: String.t) :: parent
 
-  def attach_file(parent, locator, [{:path, value} | _]=opts) when is_binary(locator) do
-    IO.warn """
-    attach_file/3 with string locators has been deprecated. Please use:
-
-    attach_file(parent, Query.file_field("#{locator}"))
-    """
-
-    parent
-    |> fill_in(Query.file_field(locator, opts), with: :filename.absname(value))
-  end
   def attach_file(parent, query, path: path) do
     parent
     |> fill_in(query, with: :filename.absname(path))
@@ -587,26 +562,11 @@ defmodule Wallaby.Browser do
 
   @doc """
   Finds all of the DOM elements that match the css selector. If no elements are
-  found then an empty list is immediately returned.
+  found then an empty list is immediately returned. This is equivalent to calling
+  `find(session, css("element", count: nil, minimum: 0))`.
   """
-  @spec all(parent, locator, opts) :: [Element.t]
-  @spec all(parent, locator) :: [Element.t]
   @spec all(parent, Query.t) :: [Element.t]
 
-  def all(parent, locator, opts) when is_binary(locator) do
-    IO.warn """
-    all/3 with string locators has been deprecated. Please use: all(parent, Query.css("#{locator}", #{inspect(opts)}))
-    """
-
-    find(parent, Query.css(locator, Keyword.merge(opts, [count: nil, minimum: 0])))
-  end
-  def all(parent, css) when is_binary(css) do
-    IO.warn """
-    all/2 with string locators has been deprecated. Please use: all(parent, Query.css("#{css}"))
-    """
-
-    find(parent, Query.css(css, minimum: 0))
-  end
   def all(parent, %Query{}=query) do
     find(
       parent,

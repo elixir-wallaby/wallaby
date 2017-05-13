@@ -123,12 +123,5 @@ defmodule Wallaby.Integration.QueryTest do
       |> Browser.all(Query.css(".not_there"))
 
     assert Enum.count(elements) == 0
-
-    elements =
-      session
-      |> Browser.visit("/page_1.html")
-      |> Browser.all(".not_there")
-
-    assert Enum.count(elements) == 0
   end
 end
