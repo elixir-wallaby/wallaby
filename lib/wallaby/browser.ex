@@ -933,10 +933,13 @@ defmodule Wallaby.Browser do
     labels = all(parent, label_query)
 
     cond do
-      Enum.any?(labels, &(missing_for?(&1))) ->
-        {:error, :label_with_no_for}
-      label=List.first(labels) ->
-        {:error, {:label_does_not_find_field, Element.attr(label, "for")}}
+      Enum.count(labels) == 1 ->
+        cond do
+          Enum.any?(labels, &(missing_for?(&1))) ->
+            {:error, :label_with_no_for}
+          label=List.first(labels) ->
+            {:error, {:label_does_not_find_field, Element.attr(label, "for")}}
+        end
       true ->
         {:ok, query}
     end
