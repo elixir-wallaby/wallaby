@@ -33,6 +33,7 @@ Other goodies include improved test helpers, a cookies API and handling for JS-d
 * Ability to handle JavaScript dialogs via `accept_dialogs/1`, `dismiss_dialogs/1`, plus methods for alerts, confirms and prompts - thanks @padde
 * Ability to pass options for driver interaction down to the underlying hackney library through `config :wallaby, hackney_options: [your: "option"]` - thanks @aaronrenner
 * Added `check_log` option to `execute_script` - thanks @aaronrenner
+* Experimental support for selnium 2 and selenium 3 web drivers has been added, use at your own risk ;)
 
 ### Bugfixes
 
