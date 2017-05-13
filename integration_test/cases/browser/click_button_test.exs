@@ -279,4 +279,10 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "escapes quotes", %{page: page} do
     assert click(page, button("I'm a button"))
   end
+
+  test "works with elements", %{page: page} do
+    assert page
+    |> find(button("I'm a button"))
+    |> Element.click()
+  end
 end
