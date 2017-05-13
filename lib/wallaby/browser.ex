@@ -498,13 +498,7 @@ defmodule Wallaby.Browser do
   Checks if the element is visible on the page
   """
   @spec visible?(parent, Query.t) :: boolean()
-  @spec visible?(Element.t) :: boolean()
 
-  def visible?(%Element{}=element) do
-    IO.warn "visible?/1 has been deprecated. Please use Element.visible?/1"
-
-    Element.visible?(element)
-  end
   def visible?(parent, query) do
     parent
     |> has?(query)
