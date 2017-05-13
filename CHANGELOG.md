@@ -1,16 +1,34 @@
 ## 0.17.0 (unreleased)
 
+### Breaking Changes
+
+* Removed deprecated version of `fill_in`
+* Removed deprecated `check`
+* Removed deprecated `set_window_size`
+* Removed deprecated `send_text`
+* Removed deprecated versions of `click`
+* Removed deprecated `checked?`
+* Removed deprecated `get_current_url`
+* Removed deprecated versions of `visible?`
+* Removed deprecated versions of `all`
+* Removed deprecated versions of `attach_file`
+* Removed deprecated versions of `clear`
+* Removed deprecated `attr`
+* Removed deprecated versions of `find`
+* Removed deprecated versions of `text`
+* Removed deprecated `click_link`
+* Removed deprecated `click_button`
+* Removed depreacted `choose`
+
 ### Features
 
 * New cookie API with `cookies/1` and `set_cookie/3`
 * New assert macros `assert_has/2` and `refute_has/2`
 * execute_script now returns the session again and is pipable, there is an optional callback if you need access to the return value - thanks @krankin
-* Removed deprecated version of fill_in
 * Phantom server is now compatible with escripts - thanks @aaronrenner
 * Ability to handle JavaScript dialogs via `accept_dialogs/1`, `dismiss_dialogs/1`, plus methods for alerts, confirms and prompts - thanks @padde
 * Ability to pass options for driver interaction down to the underlying hackney library through `config :wallaby, hackney_options: [your: "option"]` - thanks @aaronrenner
 * Added `check_log` option to `execute_script` - thanks @aaronrenner
-* Removed `check`
 
 ### Bugfixes
 
