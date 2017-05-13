@@ -29,6 +29,7 @@ defmodule Wallaby.Query do
     * `:count` - The number of elements that should be found (default: 1).
     * `:visible` - Determines if the query should return only visible elements (default: true).
     * `:text` - Text that should be found inside the element (default: nil).
+    * `:get` - The number of the element to return if multimple elements satisfy the selection criteria.
 
   ## Re-using queries
 
@@ -235,13 +236,17 @@ defmodule Wallaby.Query do
     Keyword.get(conditions, :count)
   end
 
+  def getNumber(%Query{conditions: conditions}) do
+    Keyword.get(conditions, :get)
+  end
+
   def inner_text(%Query{conditions: conditions}) do
     Keyword.get(conditions, :text)
   end
 
   def result(query) do
     cond do
-      count(query) == 1 ->
+      count(query) == 1 || getNumber(query) != nil ->
         [element] = query.result
         element
       true ->
@@ -268,6 +273,7 @@ defmodule Wallaby.Query do
     |> add_visibility
     |> add_text
     |> add_count
+    |> add_get
   end
 
   defp add_visibility(opts) do
@@ -288,5 +294,9 @@ defmodule Wallaby.Query do
         |> Keyword.put_new(:minimum, opts[:minimum])
         |> Keyword.put_new(:maximum, opts[:maximum])
     end
+  end
+
+  defp add_get(opts) do
+    Keyword.put_new(opts, :get, nil)
   end
 end
