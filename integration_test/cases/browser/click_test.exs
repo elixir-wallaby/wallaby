@@ -60,6 +60,12 @@ defmodule Wallaby.Integration.Browser.ClickTest do
       end
     end
 
+    test "throw an error if the query matches multiple labels", %{page: page} do
+      assert_raise Wallaby.QueryError, ~r/Expected (.*) 1/, fn ->
+        click(page, Query.radio_button("Duplicate Radiobutton"))
+      end
+    end
+
     test "waits until the radio button appears", %{page: page} do
       assert click(page, Query.radio_button("Hidden Radio Button"))
     end
