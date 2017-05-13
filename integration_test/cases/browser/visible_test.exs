@@ -21,13 +21,6 @@ defmodule Wallaby.Integration.Browser.VisibleTest do
 
       assert Element.visible?(element) == false
     end
-
-    @tag skip: "Unsuported in phantom"
-    test "handles obscured elements", %{page: page} do
-      element = find(page, Query.css("#obscured", visible: false))
-
-      assert Element.visible?(element) == false
-    end
   end
 
   describe "visible?/2" do
