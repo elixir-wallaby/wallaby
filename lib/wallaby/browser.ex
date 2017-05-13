@@ -265,12 +265,6 @@ defmodule Wallaby.Browser do
     session
   end
 
-  def set_window_size(parent, x, y) do
-    IO.warn "set_window_size/3 has been deprecated. Please use resize_window/3"
-
-    resize_window(parent, x, y)
-  end
-
   @doc """
   Gets the current url of the session
   """
