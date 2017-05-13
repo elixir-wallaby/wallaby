@@ -3,6 +3,7 @@
 /deps
 erl_crash.dump
 *.ez
+mix.lock
 
 /screenshots
 /doc
