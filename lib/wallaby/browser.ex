@@ -280,12 +280,6 @@ defmodule Wallaby.Browser do
     driver.current_url!(session)
   end
 
-  def get_current_url(parent) do
-    IO.warn "get_current_url/1 has been deprecated. Please use current_url/1"
-
-    current_url(parent)
-  end
-
   @doc """
   Gets the current path of the session
   """
