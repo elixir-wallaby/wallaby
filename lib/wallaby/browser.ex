@@ -171,40 +171,6 @@ defmodule Wallaby.Browser do
     |> find(query, &(Element.fill_in(&1, with: value)))
   end
 
-  @doc """
-  Selects an option from a select box. The select box can be found by id, label
-  text, or name. The option can be found by its text.
-  """
-  @spec select(Element.t) :: Element.t
-  @spec select(parent, Query.t) :: parent
-  @spec select(parent, Query.t, from: Query.t) :: parent
-  @spec select(parent, locator, opts) :: parent
-
-  def select(element) do
-    IO.warn "select/1 has been deprecated. Please use Element.click/1"
-
-    Element.click(element)
-  end
-  def select(parent, query) do
-    IO.warn "select/2 has been deprecated. Please use click/2"
-
-    parent
-    |> find(query, &Element.click/1)
-  end
-  def select(parent, locator, [option: option_text]=opts) do
-    IO.warn """
-    select/3 has been deprecated. Please use:
-
-    click(parent, Query.option("#{option_text}"))
-    """
-
-    find(parent, Query.select(locator, opts), fn(select_field) ->
-      find(select_field, Query.option(option_text, []), fn(option) ->
-        Element.click(option)
-      end)
-    end)
-  end
-
   # @doc """
   # Clears an input field. Input elements are looked up by id, label text, or name.
   # The element can also be passed in directly.
@@ -419,17 +385,11 @@ defmodule Wallaby.Browser do
   Checks if the element has been selected. Alias for checked?(element)
   """
   @spec selected?(parent, Query.t) :: boolean()
-  @spec selected?(Element.t) :: boolean()
 
   def selected?(parent, query) do
     parent
     |> find(query)
     |> Element.selected?
-  end
-  def selected?(%Element{}=element) do
-    IO.warn "selected?/1 has been deprecated. Please use Element.selected?/1"
-
-    Element.selected?(element)
   end
 
   @doc """
