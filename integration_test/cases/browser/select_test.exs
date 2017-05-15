@@ -17,8 +17,14 @@ defmodule Wallaby.Integration.Browser.SelectTest do
 
   describe "selected?/2" do
     test "returns a boolean if the option is selected", %{page: page} do
-      assert page
-      |> find(select("My Select"))
+      select =
+        page
+        |> find(select("My Select"))
+
+      assert select
+      |> selected?(option("Option 2")) == false
+
+      assert select
       |> click(option("Option 2"))
       |> selected?(option("Option 2")) == true
     end
@@ -26,11 +32,11 @@ defmodule Wallaby.Integration.Browser.SelectTest do
 
   describe "selected?/1" do
     test "returns a boolean if the option is selected", %{page: page} do
-      assert page
+      page
       |> find(select("My Select"))
+      |> find(option("Option 2"), & refute Element.selected?(&1))
       |> click(option("Option 2"))
-      |> find(option("Option 2"))
-      |> Element.selected? == true
+      |> find(option("Option 2"), & assert Element.selected?(&1))
     end
   end
 end
