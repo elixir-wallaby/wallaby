@@ -34,18 +34,14 @@ Other goodies include improved test helpers, a cookies API and handling for JS-d
 * Ability to pass options for driver interaction down to the underlying hackney library through `config :wallaby, hackney_options: [your: "option"]` - thanks @aaronrenner
 * Added `check_log` option to `execute_script` - thanks @aaronrenner
 * Experimental support for selnium 2 and selenium 3 web drivers has been added, use at your own risk ;)
+* Updated hackney and httpoison dependencies - thanks @aaronrenner
+* Removed documentation for modules that aren't intended for external use - thanks @aaronrenner
 
 ### Bugfixes
 
 * Fix spawning of phantomjs when project path contains spaces - thanks @schnittchen
 * Fixed a couple of dialyzer warnings - thanks @aaronrenner
-* Fixed incorrect malformed label warning when it was rreally a mismatch between expected elements found
-
-### Chores
-
-* Updated hackney and httpoison dependencies - thanks @aaronrenner
-* Removed documentation for modules that aren't intended for external use - thanks @aaronrenner
-* Fixed leaking sessions in wallaby's test suite - thanks @aaronrenner
+* Fixed incorrect malformed label warning when it was really a mismatch between expected elements found
 
 ## <= 0.16.1
 
