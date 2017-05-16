@@ -6,7 +6,7 @@
 
 Wallaby helps you test your web applications by simulating realistic user
 interactions. By default it runs each test case concurrently and manages
-browsers for you. Here's what it looks like:
+browsers for you. Here's an example test for a simple Todo application:
 
 ```elixir
 defmodule MyApp.Features.TodoTest do
@@ -14,25 +14,21 @@ defmodule MyApp.Features.TodoTest do
 
   import Wallaby.Query, only: [css: 2, text_field: 1, button: 1]
 
-  @todo_page "/todos"
-  @todo_field text_field("New Todo")
-  @add_todo button("Save")
-
   def alert(text), do: css(".alert", text: text)
   def todo(text), do: css(".todo-list > .todo", text: text)
 
   test "users can create todos", %{session: session} do
     session
-    |> visit(@todo_page)
-    |> fill_in(@todo_field, with: "Write my first Wallaby test")
-    |> click(@add_todo)
-    |> assert_has(alert("You created a todo"))
-    |> assert_has(todo("Write my first Wallaby test"))
+    |> visit("/todos")
+    |> fill_in(text_field("New Todo"), with: "Write my first Wallaby test")
+    |> click(button("Save"))
+    |> assert_has(css(".alert", text: "You created a todo"))
+    |> assert_has(css(".todo-list > .todo, text: "Write my first Wallaby test"))
   end
 end
 ```
 
-Because Wallaby manages multiple browsers for you its possible to test several
+Because Wallaby manages multiple browsers for you, its possible to test several
 users interacting with a page simultaneously.
 
 ```elixir
@@ -69,7 +65,7 @@ defmodule MyApp.Features.MultipleUsersTest do
 end
 ```
 
-Read on to see what else Wallaby can do or check out of the [Official Documentation](https://hexdocs.pm/wallaby).
+Read on to see what else Wallaby can do or check out the [Official Documentation](https://hexdocs.pm/wallaby).
 
 ## Setup
 
@@ -89,8 +85,10 @@ Then ensure that Wallaby is started in your `test_helper.exs`:
 
 ### Phoenix
 
-If you're testing a Phoenix application with Ecto 2.0 then you can enable
-concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` to your `Endpoint`. It's important that this is at the top of `endpoint.ex`, before any other plugs.
+If you're testing a Phoenix application with Ecto 2.0 and a database that
+supports sandbox mode then you can enable concurrent testing by adding the
+`Phoenix.Ecto.SQL.Sandbox` plug to your `Endpoint`. It's important that
+this is at the top of `endpoint.ex` before any other plugs.
 
 ```elixir
 # lib/endpoint.ex
@@ -195,16 +193,19 @@ defmodule YourApp.UserListTest do
 end
 ```
 
-## DSL
+## API
 
 The full documentation for the DSL is in the [official documentation](https://hexdocs.pm/wallaby).
 
 ### Queries and Actions
 
-Wallaby's DSL is broken into 2 concepts: Queries and Actions.
+Wallaby's API is broken into 2 concepts: Queries and Actions.
 
-Queries allow you to declaritively describe the elements that you would like to
-interact with. Lets say that our html looks like this:
+Queries allow us to declaritively describe the elements that we would like to
+interact with and Actions allow us to use those queries to interact with the
+DOM.
+
+Lets say that our html looks like this:
 
 ```html
 <ul class=".users">
@@ -220,29 +221,28 @@ interact with. Lets say that our html looks like this:
 </ul>
 ```
 
-If we wanted to get all of the users then we could write a query like so
+If we wanted to interact with all of the users then we could write a query like so
 `css(".user", count: 3)`.
-If we wanted to only interact with a specific user we could instead write a query like this `css(".user-name",
-count: 1, text: "Ada")`.
-
-There are several queries for common html elements defined in
-the [Query module](https://hexdocs.pm/wallaby/Wallaby.Query.html#content).
-
-Actions provide a way to use these queries to interact with the DOM.
+If we only wanted to interact with a specific user then we could write a query like this `css(".user-name",
+count: 1, text: "Ada")`. Now we can use those queries with some actions:
 
 ```elixir
 session
-|> find(css(".users"))
-|> assert_has(css(".user", count: 1, text: "Ada"))
+|> find(css(".user", count: 3))
+|> List.first
+|> assert_has(css(".user-name", count: 1, text: "Ada"))
 ```
 
-All actions will block until a query is either satisfied or the action times
+There are several queries for common html elements defined in
+the [Query module](https://hexdocs.pm/wallaby/Wallaby.Query.html#content). All
+actions accept a query. This makes it easy to use queries we've already
+defined. Actions will block until the query is either satisfied or the action times
 out. Blocking reduces race conditions when elements are added or removed
 dynamically.
 
 ### Navigation
 
-You can navigate directly to pages with `visit`:
+We can navigate directly to pages with `visit`:
 
 ```elixir
 visit(session, "/page.html")
@@ -255,9 +255,9 @@ It's also possible to click links directly:
 click(session, link("Page 1"))
 ```
 
-### Querying & Finding
+### Finding
 
-You can find a specific element or list of elements with `find`:
+We can find a specific element or list of elements with `find`:
 
 ```elixir
 @user_form   css(".user-form")
@@ -273,9 +273,8 @@ find(page, @user_form, fn(form) ->
 end)
 ```
 
-If a callback is passed to `find` then the `find` will return the parent and the
-callback can be used to interact with the element. Returning the parent makes it
-easier to chain find operations together:
+Passing a callback to `find` will return the parent which makes it easy to chain
+`find` with other actions:
 
 ```elixir
 page
@@ -306,7 +305,7 @@ click(session, radio_button("My Fancy Radio Button"))
 click(session, button("Some Button"))
 ```
 
-If you need to send a specific set of keys to an element you can do that with
+If you need to send specific keys to an element, you can do that with
 `send_keys`:
 
 ```elixir
@@ -315,7 +314,7 @@ send_keys(session, ["Example", "Text", :enter])
 
 ### Assertions
 
-Wallaby provides a set of functions for making assertions about a page:
+Wallaby provides custom assertions to make writing tests easier:
 
 ```elixir
 assert_has(session, css(".signup-form"))
@@ -323,11 +322,9 @@ refute_has(session, css(".alert"))
 has?(session, css(".user-edit-modal", visible: false))
 ```
 
-Each of these helpers accept a queries to make it easier to re-use any queries
-that you've already defined. `assert_has` and `refute_has` both return the
-parent that was passed as the first argument so that they can be chained with
-other actions:
-
+`assert_has` and `refute_has` both take a parent element as their first
+argument. They return that parent, making it easy to chain them together with
+other actions.
 
 ```elixir
 session
@@ -376,12 +373,13 @@ Application.put_env(:wallaby, :screenshot_on_failure, true)
 
 ### Asynchronous code
 
-It can be difficult to test asynchronous JavaScript code. You may try to
-interact with an element that isn't present on the page or an element may go
-stale in the middle of an interaction. Wallaby's separation of queries and
-actions attempt to help solve this by blocking. If you need to add a wait
-until an asynchronous action has finished then you can specify the desired state
-of the DOM and then use `assert_has` to force the test to block until the DOM reaches that state.
+Testing asynchronous JavaScript code can expose timing issues and race
+conditions. We might try to interact with an element that hasn't yet appeared on
+the page. Elements can become stale while we're trying to interact with them.
+
+Wallaby helps solve this by blocking. Instead of manually setting timeouts we
+can use `assert_has` and some declarative queries to block until the DOM is in a
+good state.
 
 ```elixir
 session
