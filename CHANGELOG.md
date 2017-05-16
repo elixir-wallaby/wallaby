@@ -36,6 +36,8 @@ Other goodies include improved test helpers, a cookies API and handling for JS-d
 * Experimental support for selnium 2 and selenium 3 web drivers has been added, use at your own risk ;)
 * Updated hackney and httpoison dependencies - thanks @aaronrenner
 * Removed documentation for modules that aren't intended for external use - thanks @aaronrenner
+* set_value now works with text fields, checkboxes, radio buttons, and
+  options. - thanks @graeme-defty
 
 ### Bugfixes
 
