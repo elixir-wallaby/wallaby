@@ -333,14 +333,37 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Sets the value of an element.
+  Sets the value of an element. The allowed type for the value depends on the
+  type of the element. The value may be:
+  * a string of characters for a text element
+  * :selected for a radio button, checkbox or select list option
+  * :unselected for a checkbox
   """
-  @spec set_value(element, any()) :: element
+  @spec set_value(parent, Query.t, Element.value) :: parent
 
-  def set_value(element, value) do
-    IO.warn "set_value/2 has been deprecated. Please use Element.set_value/2"
+  def set_value(parent, query, :selected) do
+    find(parent, query, fn(element) ->
+      case Element.selected?(element) do
+        true    ->  :ok
+        false   ->  Element.click(element)
+      end
+    end)
+  end
 
-    Element.set_value(element, value)
+  def set_value(parent, query, :unselected) do
+    find(parent, query, fn(element) ->
+      case Element.selected?(element) do
+        false   ->  :ok
+        true    ->  Element.click(element)
+      end
+    end)
+  end
+
+  def set_value(parent, query, value) do
+    find(parent, query, fn(element) ->
+      element
+      |> Element.set_value(value)
+    end)
   end
 
   @doc """
