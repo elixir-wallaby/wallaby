@@ -18,7 +18,7 @@ defmodule Wallaby.Integration.Browser.SetValueTest do
       assert page
              |> set_value(Query.checkbox("checkbox1"), :selected)
              |> find(Query.checkbox("checkbox1"))
-             |> selected?()
+             |> Element.selected?()
     end
 
     test "allows checkbox to be unchecked", %{page: page} do
@@ -26,33 +26,33 @@ defmodule Wallaby.Integration.Browser.SetValueTest do
              |> set_value(Query.checkbox("checkbox1"), :selected)
              |> set_value(Query.checkbox("checkbox1"), :unselected)
              |> find(Query.checkbox("checkbox1"))
-             |> selected?()
+             |> Element.selected?()
     end
 
     test "allows radio buttons to be selected", %{page: page} do
       assert page
              |> set_value(Query.radio_button("option1"), :selected)
              |> find(Query.radio_button("option1"))
-             |> selected?()
+             |> Element.selected?()
 
       refute page
              |> set_value(Query.radio_button("option1"), :selected)
              |> set_value(Query.radio_button("option2"), :selected)
              |> find(Query.radio_button("option1"))
-             |> selected?()
+             |> Element.selected?()
     end
 
     test "allows options to be selected", %{page: page} do
       assert page
              |> set_value(Query.option("Select Option 1"), :selected)
              |> find(Query.option("Select Option 1"))
-             |> selected?()
+             |> Element.selected?()
 
       refute page
              |> set_value(Query.option("Select Option 1"), :selected)
              |> set_value(Query.option("Select Option 2"), :selected)
              |> find(Query.option("Select Option 1"))
-             |> selected?()
+             |> Element.selected?()
     end
   end
 end
