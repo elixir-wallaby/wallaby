@@ -55,7 +55,7 @@ defmodule Wallaby.Integration.QueryTest do
     end
   end
 
-  test "queries can check the ammount of elements", %{session: session} do
+  test "queries can check the number of elements", %{session: session} do
     assert_raise Wallaby.QueryError, fn ->
       session
       |> Browser.visit("/page_1.html")
@@ -68,6 +68,31 @@ defmodule Wallaby.Integration.QueryTest do
       |> Browser.find(Query.css(".user", count: 5))
 
     assert Enum.count(elements) == 5
+  end
+
+  test "queries can select one element from a list", %{session: session} do
+    element =
+      session
+      |> Browser.visit("/page_1.html")
+      |> Browser.find(Query.css(".user", count: 5, get: 2))
+
+    assert Element.text(element) == "Grace H."
+  end
+
+  test "queries can not select an element off the start of the list", %{session: session} do
+    assert_raise Wallaby.QueryError, fn ->
+      session
+      |> Browser.visit("/page_1.html")
+      |> Browser.find(Query.css(".user", count: 5, get: 0))
+    end
+  end
+
+  test "queries can not select an element off the end of the list", %{session: session} do
+    assert_raise Wallaby.QueryError, fn ->
+      session
+      |> Browser.visit("/page_1.html")
+      |> Browser.find(Query.css(".user", count: 5, get: 6))
+    end
   end
 
   test "queries can specify element text", %{session: session} do
