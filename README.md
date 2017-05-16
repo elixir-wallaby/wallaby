@@ -105,7 +105,7 @@ defmodule YourApp.FeatureCase do
       import Ecto.Changeset
       import Ecto.Query
 
-      import YourApp.Router.Helpers
+      import YourApp.Web.Router.Helpers
     end
   end
 
