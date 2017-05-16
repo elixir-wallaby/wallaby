@@ -4,15 +4,72 @@
 [![Hex pm](https://img.shields.io/hexpm/v/wallaby.svg?style=flat)](https://hex.pm/packages/wallaby)
 [![Coverage Status](https://coveralls.io/repos/github/keathley/wallaby/badge.svg?branch=master)](https://coveralls.io/github/keathley/wallaby?branch=master)
 
-Wallaby helps you test your web applications by simulating user interactions. By default it runs each test case concurrently and manages browsers for you.
+Wallaby helps you test your web applications by simulating realistic user
+interactions. By default it runs each test case concurrently and manages
+browsers for you. Here's what it looks like:
 
-[Official Documentation](https://hexdocs.pm/wallaby)
+```elixir
+defmodule MyApp.Features.TodoTest do
+  use MyApp.FeatureCase, async: true
 
-## Features
+  import Wallaby.Query, only: [css: 2, text_field: 1, button: 1]
 
-* Intuitive DSL for interacting with pages.
-* Manages multiple browser processes.
-* Works with Ecto's test Sandbox.
+  @todo_page "/todos"
+  @todo_field text_field("New Todo")
+  @add_todo button("Save")
+
+  def alert(text), do: css(".alert", text: text)
+  def todo(text), do: css(".todo-list > .todo", text: text)
+
+  test "users can create todos", %{session: session} do
+    session
+    |> visit(@todo_page)
+    |> fill_in(@todo_field, with: "Write my first Wallaby test")
+    |> click(@add_todo)
+    |> assert_has(alert("You created a todo"))
+    |> assert_has(todo("Write my first Wallaby test"))
+  end
+end
+```
+
+Because Wallaby manages multiple browsers for you its possible to test several
+users interacting with a page simultaneously.
+
+```elixir
+defmodule MyApp.Features.MultipleUsersTest do
+  use MyApp.FeatureCase, async: true
+
+  import Wallaby.Query, only: [text_field: 1, button: 1, css: 2]
+
+  @page message_path(Endpoint, :index)
+  @message_field text_field("Share Message")
+  @share_button button("Share")
+
+  def message(msg), do: css(".messages > .message", text: msg)
+
+  test "That users can send messages to each other" do
+    {:ok, user1} = Wallaby.start_session
+    user1
+    |> visit(@page)
+    |> fill_in(@message_field, with: "Hello there!")
+    |> click(@share_button)
+
+    {:ok, user2} = Wallaby.start_session
+    user2
+    |> visit(@page)
+    |> fill_in(@message_field, with: "Hello yourself")
+    |> click(@share_button)
+
+    user1
+    |> assert_has(message("Hello yourself"))
+
+    user2
+    |> assert_has(message("Hello there!"))
+  end
+end
+```
+
+Read on to see what else Wallaby can do or check out of the [Official Documentation](https://hexdocs.pm/wallaby).
 
 ## Setup
 
@@ -32,11 +89,8 @@ Then ensure that Wallaby is started in your `test_helper.exs`:
 
 ### Phoenix
 
-If you're testing a Phoenix application with Ecto then you can enable concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` to your `Endpoint`.
-
-**Note:** This requires Ecto v2.0.0-rc.0 or newer.
-
-**Note 2:** It's important that this is at the top of `endpoint.ex`, before any other plugs.
+If you're testing a Phoenix application with Ecto 2.0 then you can enable
+concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` to your `Endpoint`. It's important that this is at the top of `endpoint.ex`, before any other plugs.
 
 ```elixir
 # lib/endpoint.ex
@@ -129,17 +183,14 @@ Then you can write tests like so:
 defmodule YourApp.UserListTest do
   use YourApp.FeatureCase, async: true
 
-  test "users have names", %{session: session} do
-    first_employee =
-      session
-      |> visit("/users")
-      |> find(Query.css(".dashboard"))
-      |> all(Query.css(".user"))
-      |> List.first
-      |> find(Query.css(".user-name"))
-      |> Element.text
+  import Wallaby.Query, only: [css: 2]
 
-    assert first_employee == "Chris"
+  test "users have names", %{session: session} do
+    session
+    |> visit("/users")
+    |> find(css(".user", count: 3))
+    |> List.first()
+    |> assert_has(css(".user-name", text: "Chris"))
   end
 end
 ```
@@ -147,6 +198,47 @@ end
 ## DSL
 
 The full documentation for the DSL is in the [official documentation](https://hexdocs.pm/wallaby).
+
+### Queries and Actions
+
+Wallaby's DSL is broken into 2 concepts: Queries and Actions.
+
+Queries allow you to declaritively describe the elements that you would like to
+interact with. Lets say that our html looks like this:
+
+```html
+<ul class=".users">
+  <li class="user">
+    <span class="user-name">Ada</span>
+  </li>
+  <li class="user">
+    <span class="user-name">Grace</span>
+  </li>
+  <li class="user">
+    <span class="user-name">Alan</span>
+  </li>
+</ul>
+```
+
+If we wanted to get all of the users then we could write a query like so
+`css(".user", count: 3)`.
+If we wanted to only interact with a specific user we could instead write a query like this `css(".user-name",
+count: 1, text: "Ada")`.
+
+There are several queries for common html elements defined in
+the [Query module](https://hexdocs.pm/wallaby/Wallaby.Query.html#content).
+
+Actions provide a way to use these queries to interact with the DOM.
+
+```elixir
+session
+|> find(css(".users"))
+|> assert_has(css(".user", count: 1, text: "Ada"))
+```
+
+All actions will block until a query is either satisfied or the action times
+out. Blocking reduces race conditions when elements are added or removed
+dynamically.
 
 ### Navigation
 
@@ -160,26 +252,18 @@ visit(session, user_path(Endpoint, :index, 17))
 It's also possible to click links directly:
 
 ```elixir
-click(session, Query.link("Page 1"))
+click(session, link("Page 1"))
 ```
 
 ### Querying & Finding
 
-Queries are used to find and interact with elements through a browser (see `Wallaby.Browser`). You can create queries like so:
+You can find a specific element or list of elements with `find`:
 
 ```elixir
-Query.css(".some-css")
-Query.xpath(".//input")
-Query.button("Some Button")
-```
-
-These queries can then be used to find or interact with an element
-
-```elixir
-@user_form   Query.css(".user-form")
-@name_field  Query.text_field("Name")
-@email_field Query.text_field("Email")
-@save_button Query.button("Save")
+@user_form   css(".user-form")
+@name_field  text_field("Name")
+@email_field text_field("Email")
+@save_button button("Save")
 
 find(page, @user_form, fn(form) ->
   form
@@ -189,20 +273,25 @@ find(page, @user_form, fn(form) ->
 end)
 ```
 
-If a callback is passed to `find` then the `find` will return the parent and the callback can be used to interact with the element.
-
-By default, Wallaby will block until it can find the matching element. This is used to keep asynchronous tests in sync (as discussed below).
-
-Nodes can also be found by their inner text:
+If a callback is passed to `find` then the `find` will return the parent and the
+callback can be used to interact with the element. Returning the parent makes it
+easier to chain find operations together:
 
 ```elixir
-# <div class="user">
-#   <span class="name">
-#     Chris K
-#   </span>
-# </div>
+page
+|> find(css(".users"), & assert has?(&1, css(".user", count: 3)))
+|> click(link("Next Page"))
+```
 
-find(page, Query.css(".user", text: "Chris K"))
+Without the callback `find` returns the element. This provides a way to scope
+all future actions within an element.
+
+```elixir
+page
+|> find(css(".user-form"))
+|> fill_in(text_field("Name"), with: "Chris")
+|> fill_in(text_field("Email"), with: "c@keathley.io")
+|> click(button("Save"))
 ```
 
 ### Interacting with forms
@@ -210,10 +299,43 @@ find(page, Query.css(".user", text: "Chris K"))
 There are a few ways to interact with form elements on a page:
 
 ```elixir
-fill_in(session, Query.text_field("First Name"), with: "Chris")
-clear(session, Query.text_field("last_name"))
-click(session, Query.option("Some option"))
-click(session, Query.button("Some Button"))
+fill_in(session, text_field("First Name"), with: "Chris")
+clear(session, text_field("last_name"))
+click(session, option("Some option"))
+click(session, radio_button("My Fancy Radio Button"))
+click(session, button("Some Button"))
+```
+
+If you need to send a specific set of keys to an element you can do that with
+`send_keys`:
+
+```elixir
+send_keys(session, ["Example", "Text", :enter])
+```
+
+### Assertions
+
+Wallaby provides a set of functions for making assertions about a page:
+
+```elixir
+assert_has(session, css(".signup-form"))
+refute_has(session, css(".alert"))
+has?(session, css(".user-edit-modal", visible: false))
+```
+
+Each of these helpers accept a queries to make it easier to re-use any queries
+that you've already defined. `assert_has` and `refute_has` both return the
+parent that was passed as the first argument so that they can be chained with
+other actions:
+
+
+```elixir
+session
+|> assert_has(css(".signup-form"))
+|> fill_in(text_field("Email", with: "c@keathley.io"))
+|> click(button("Sign up"))
+|> refute_has(css(".error"))
+|> assert_has(css(".alert", text: "Welcome!"))
 ```
 
 ### Windows and Screenshots
@@ -254,12 +376,18 @@ Application.put_env(:wallaby, :screenshot_on_failure, true)
 
 ### Asynchronous code
 
-It can be difficult to test asynchronous JavaScript code. You may try to interact with an element that isn't visible on the page. Wallaby's finders try to help mitigate this problem by blocking until the element becomes visible. You can use this strategy by writing tests in this way:
+It can be difficult to test asynchronous JavaScript code. You may try to
+interact with an element that isn't present on the page or an element may go
+stale in the middle of an interaction. Wallaby's separation of queries and
+actions attempt to help solve this by blocking. If you need to add a wait
+until an asynchronous action has finished then you can specify the desired state
+of the DOM and then use `assert_has` to force the test to block until the DOM reaches that state.
 
 ```elixir
 session
-|> click(Query.button("Some Async Button"))
-|> find(Query.css(".async-result"))
+|> click(button("Some Async Button"))
+|> assert_has(css(".async-result"))
+|> click(button("Next Action"))
 ```
 
 ### Interacting with dialogs
@@ -276,7 +404,7 @@ All of these take a function as last parameter, which must include the necessary
 
 ```elixir
 alert_message = accept_alert session, fn(session) ->
-  click(session, Query.link("Trigger alert"))
+  click(session, link("Trigger alert"))
 end
 ```
 
@@ -284,7 +412,7 @@ To emulate user input for a prompt, `accept_prompt` takes an optional parameter:
 
 ```elixir
 prompt_message = accept_prompt session, [with: "User input"], fn(session) ->
-  click(session, Query.link("Trigger prompt"))
+  click(session, link("Trigger prompt"))
 end
 ```
 
