@@ -14,9 +14,6 @@ defmodule MyApp.Features.TodoTest do
 
   import Wallaby.Query, only: [css: 2, text_field: 1, button: 1]
 
-  def alert(text), do: css(".alert", text: text)
-  def todo(text), do: css(".todo-list > .todo", text: text)
-
   test "users can create todos", %{session: session} do
     session
     |> visit("/todos")
