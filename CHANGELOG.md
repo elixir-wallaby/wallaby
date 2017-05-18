@@ -1,4 +1,4 @@
-## 0.17.0
+## 0.17.0 (2017-05-17)
 
 This release removes all methods declared as _deprecated_ in the 0.16 release, experimental Selenium support and much more! If you are looking to upgrade from an earlier release, it is recommended to first go to 0.16.x.
 Other goodies include improved test helpers, a cookies API and handling for JS-dialogues.
