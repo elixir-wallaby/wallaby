@@ -59,6 +59,7 @@ defmodule Wallaby.Mixfile do
       {:benchee_html, "~> 0.1", only: :dev},
       {:bypass, "~> 0.6", only: :test},
       {:quixir, "~> 0.9.0", only: [:dev, :test]},
+      {:inch_ex, "~> 0.5", only: [:docs]},
       {:excoveralls, "~> 0.6.2",  only: :test},
     ]
   end
