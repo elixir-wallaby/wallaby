@@ -183,7 +183,8 @@ config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
 
 ### Writing tests
 
-It's easiest to add Wallaby to your test suite by creating a new case template:
+It's easiest to add Wallaby to your test suite by creating a new case template
+(in case of an umbrella app, take care to adjust `YourApp` appropriately):
 
 ```elixir
 defmodule YourApp.FeatureCase do
