@@ -159,6 +159,20 @@ resolve relative paths.
 Application.put_env(:wallaby, :base_url, MyWebApp.Endpoint.url)
 ```
 
+You will also want to add `phoenix_ecto` as a dependency to `MyWebApp`:
+
+```elixir
+# my_web_app/mix.exs
+
+def deps do
+  [
+    {:wallaby, "~> 0.17.0", only: :test},
+    {:phoenix_ecto, "~> 3.0", only: :test}
+  ]
+end
+```
+
+
 
 
 ### PhantomJS
