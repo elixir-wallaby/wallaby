@@ -206,7 +206,7 @@ DOM.
 Lets say that our html looks like this:
 
 ```html
-<ul class=".users">
+<ul class="users">
   <li class="user">
     <span class="user-name">Ada</span>
   </li>
