@@ -99,7 +99,8 @@ defmodule YourApp.Endpoint do
   end
 ```
 
-Make sure Phoenix is set up to serve endpoints and that the SQL sandbox is enabled:
+Make sure Phoenix is set up to serve endpoints in tests and that the SQL
+sandbox is enabled:
 
 ```elixir
 # config/test.exs
@@ -117,6 +118,48 @@ Then in your `test_helper.exs` you can provide some configuration to Wallaby. At
 
 Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
 ```
+
+#### Umbrella Apps
+
+If you're testing an umbrella application containing a Phoenix application for
+the web interface (`MyWebApp`) and a separate persistence application
+(`MyPersistenceApp`) using Ecto 2.0 with a database that supports
+sandbox mode, then you can use the same setup as above, with a few tweaks.
+
+```elixir
+# my_web_app/lib/endpoint.ex
+
+defmodule YourApp.Endpoint do
+  use Phoenix.Endpoint, otp_app: :my_web_app
+
+  if Application.get_env(:my_persistence_app, :sql_sandbox) do
+    plug Phoenix.Ecto.SQL.Sandbox
+  end
+```
+
+Make sure `MyWebApp` is set up to serve endpoints in tests and that the SQL
+sandbox is enabled:
+
+```elixir
+# my_web_app/config/test.exs
+
+config :my_web_app, MyWebApp.Endpoint,
+  server: true
+
+config :my_persistence_app, :sql_sandbox, true
+```
+
+Then in `MyWebApp`'s `test_helper.exs` you can provide some configuration to
+Wallaby. At minimum, you need to specify a `:base_url`, so Wallaby knows how to
+resolve relative paths.
+
+```elixir
+# my_web_app/test/test_helper.exs
+
+Application.put_env(:wallaby, :base_url, MyWebApp.Endpoint.url)
+```
+
+
 
 ### PhantomJS
 
