@@ -35,8 +35,10 @@ defmodule Wallaby.Query do
   It is often convenient to re-use queries. The easiest way is to use module
   attributes:
 
+  ```
   @name_field Query.text_field("User Name")
   @submit_button Query.button("Save")
+  ```
 
   If the queries need to be dynamic then you should create a module that
   encapsulates the queries as functions:
