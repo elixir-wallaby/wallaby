@@ -388,7 +388,7 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      assert {:error, :stale_reference_error} = Driver.displayed(element)
+      assert {:error, :stale_reference} = Driver.displayed(element)
     end
   end
 
