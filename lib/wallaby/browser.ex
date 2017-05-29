@@ -858,12 +858,13 @@ defmodule Wallaby.Browser do
   end
 
   defp do_get(query, elements) do
-    getNumber = query.conditions[:get]
-    case {getNumber, length(elements)} do
-        {nil,_}     -> {:ok, elements}
-        {n, count} when n > 0 and n <= count
-                    -> {:ok, [Enum.at(elements, n-1)]}
-        {_, _}      -> {:error, {:get_number, length(elements)}}
+    case {Query.get_number(query), length(elements)} do
+      {nil,_} ->
+        {:ok, elements}
+      {n, count} when n > 0 and n <= count ->
+        {:ok, [Enum.at(elements, n-1)]}
+      {_, _} ->
+        {:error, {:get_number, length(elements)}}
     end
   end
 

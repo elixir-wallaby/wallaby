@@ -236,7 +236,7 @@ defmodule Wallaby.Query do
     Keyword.get(conditions, :count)
   end
 
-  def getNumber(%Query{conditions: conditions}) do
+  def get_number(%Query{conditions: conditions}) do
     Keyword.get(conditions, :get)
   end
 
@@ -246,12 +246,16 @@ defmodule Wallaby.Query do
 
   def result(query) do
     cond do
-      count(query) == 1 || getNumber(query) != nil ->
+      specific_element_requested(query) ->
         [element] = query.result
         element
       true ->
         query.result
     end
+  end
+
+  def specific_element_requested(query) do
+      count(query) == 1 || get_number(query) != nil
   end
 
   def matches_count?(%{conditions: conditions}, count) do
