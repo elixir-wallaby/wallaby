@@ -1,6 +1,7 @@
 defmodule Wallaby.Phantom.Server do
   @moduledoc false
   use GenServer
+  alias Wallaby.Phantom.Logger
 
   @external_resource "priv/run_phantom.sh"
   @run_phantom_script_contents File.read! "priv/run_phantom.sh"
@@ -54,7 +55,8 @@ defmodule Wallaby.Phantom.Server do
       "-s",
       phantomjs_path(),
       "--webdriver=#{port}",
-      "--local-storage-path=#{local_storage}"
+      "--local-storage-path=#{local_storage}",
+      "--webdriver-loglevel=DEBUG",
     ] ++ args()
   end
 
@@ -96,6 +98,12 @@ defmodule Wallaby.Phantom.Server do
     else
       {:noreply, state}
     end
+  end
+
+  def handle_info({_port, {:data, output}}, state) do
+    #IO.puts(output)
+    Logger.log(output)
+    {:noreply, state}
   end
 
   def handle_info({_port, {:exit_status, status}}, state) do
