@@ -47,9 +47,9 @@ defmodule Wallaby.Query.ErrorMessage do
     can't apply both filters correctly.
     """
   end
-  def message(_, {:get_number, size}) do
+  def message(_, {:item_number, size}) do
     """
-    The query is invalid. the number of the result to 'get' is not within the results list (1-#{size}).
+    The query is invalid. the item number requested is not within the results list (1-#{size}).
     """
   end
   def message(_, :min_max) do
