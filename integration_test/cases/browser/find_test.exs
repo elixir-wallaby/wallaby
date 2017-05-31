@@ -86,11 +86,6 @@ defmodule Wallaby.Integration.Browser.FindTest do
       assert user1 != user2
     end
 
-    test "can be scoped by inner text when there are multiple elements with text", %{page: page} do
-      element = find(page, Query.css(".inner-text", text: "Inner Text"))
-      assert element
-    end
-
     test "scoping with text escapes the text", %{page: page} do
       assert find(page, Query.css(".plus-one", text: "+ 1"))
     end

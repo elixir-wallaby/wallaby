@@ -870,7 +870,7 @@ defmodule Wallaby.Browser do
   defp matching_text?(%Element{driver: driver} = element, text) do
     case driver.text(element) do
       {:ok, element_text} ->
-        element_text =~ ~r/#{Regex.escape(text)}/
+        element_text =~ ~r/^\s*#{Regex.escape(text)}\s*$/
       {:error, _} ->
         false
     end
