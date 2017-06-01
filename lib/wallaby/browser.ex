@@ -857,6 +857,17 @@ defmodule Wallaby.Browser do
     end
   end
 
+  defp do_at(query, elements) do
+    case {Query.at_number(query), length(elements)} do
+      {:all,_} ->
+        {:ok, elements}
+      {n, count} when n > 0 and n <= count ->
+        {:ok, [Enum.at(elements, n-1)]}
+      {_, _} ->
+        {:error, {:at_number, query}}
+    end
+  end
+
   defp validate_text(query, elements) do
     text = Query.inner_text(query)
 
@@ -885,6 +896,7 @@ defmodule Wallaby.Browser do
              {:ok, elements} <- validate_visibility(query, elements),
              {:ok, elements} <- validate_text(query, elements),
              {:ok, elements} <- validate_count(query, elements),
+             {:ok, elements} <- do_at(query, elements),
          do: {:ok, %Query{query | result: elements}}
       rescue
         Wallaby.StaleReferenceException ->
