@@ -1,6 +1,6 @@
 defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @moduledoc false
-  alias Wallaby.{Element, Query, Session}
+  alias Wallaby.{Driver, Element, Query, Session}
 
   @type http_method :: :post | :get | :delete
   @type url :: String.t
@@ -38,21 +38,23 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Sets the value of an element.
   """
-  @spec set_value(Element.t, String.t) :: {:ok, nil}
+  @spec set_value(Element.t, String.t) :: {:ok, nil} | {:error, Driver.reason}
   def set_value(%Element{url: url}, value) do
-    with  {:ok, resp} <- request(:post, "#{url}/value", %{value: [value]}),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+    case request(:post, "#{url}/value", %{value: [value]}) do
+      {:ok, resp} -> {:ok, Map.get(resp, "value")}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   @doc """
   Clears the value in an element
   """
-  @spec clear(Element.t) :: {:ok, nil}
+  @spec clear(Element.t) :: {:ok, nil} | {:error, Driver.reason}
   def clear(%Element{url: url}) do
-    with {:ok, resp} <- request(:post, "#{url}/clear"),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+    case request(:post, "#{url}/clear") do
+      {:ok, resp} -> {:ok, Map.get(resp, "value")}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   @doc """

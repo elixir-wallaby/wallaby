@@ -226,6 +226,51 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
 
       assert {:ok, nil} = Client.set_value(element, value)
     end
+
+    test "when the server doesn't send a value property", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+      value = "hello world"
+
+      handle_request bypass, fn conn ->
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0
+        }>)
+      end
+
+      assert {:ok, nil} = Client.set_value(element, value)
+    end
+
+    test "correctly handles a 204 response", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+      value = "hello world"
+
+      handle_request bypass, fn conn ->
+        send_resp(conn, 204, "")
+      end
+
+      assert {:ok, nil} = Client.set_value(element, value)
+    end
+
+    test "when the server sends back a StaleElementReferenceException", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+      value = "hello world"
+
+      handle_request bypass, fn conn ->
+        send_resp(conn, 500, ~s<{
+          "sessionId": "#{session.id}",
+          "status": null,
+          "value": {
+            "class": "org.openqa.selenium.StaleElementReferenceException"
+          }
+        }>)
+      end
+
+      assert {:error, :stale_reference_error} = Client.set_value(element, value)
+    end
   end
 
   describe "clear/1" do
@@ -247,6 +292,23 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       assert {:ok, nil} = Client.clear(element)
     end
 
+    test "when the server doesn't send a value property", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/clear"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0
+        }>)
+      end
+
+      assert {:ok, nil} = Client.clear(element)
+    end
+
     test "correctly handles a 204 response", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
@@ -259,6 +321,26 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       end
 
       assert {:ok, nil} = Client.clear(element)
+    end
+
+    test "when the server sends back a StaleElementReferenceException", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/clear"
+
+        send_resp(conn, 500, ~s<{
+          "sessionId": "#{session.id}",
+          "status": null,
+          "value": {
+            "class": "org.openqa.selenium.StaleElementReferenceException"
+          }
+        }>)
+      end
+
+      assert {:error, :stale_reference_error} = Client.clear(element)
     end
   end
 
