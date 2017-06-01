@@ -74,7 +74,7 @@ defmodule Wallaby.Integration.QueryTest do
     element =
       session
       |> Browser.visit("/page_1.html")
-      |> Browser.find(Query.css(".user", count: 5, item: 2))
+      |> Browser.find(Query.css(".user", count: 5, at: 2))
 
     assert Element.text(element) == "Grace H."
   end
@@ -83,7 +83,7 @@ defmodule Wallaby.Integration.QueryTest do
     assert_raise Wallaby.QueryError, fn ->
       session
       |> Browser.visit("/page_1.html")
-      |> Browser.find(Query.css(".user", count: 5, item: 0))
+      |> Browser.find(Query.css(".user", count: 5, at: 0))
     end
   end
 
@@ -91,7 +91,7 @@ defmodule Wallaby.Integration.QueryTest do
     assert_raise Wallaby.QueryError, fn ->
       session
       |> Browser.visit("/page_1.html")
-      |> Browser.find(Query.css(".user", count: 5, item: 6))
+      |> Browser.find(Query.css(".user", count: 5, at: 6))
     end
   end
 

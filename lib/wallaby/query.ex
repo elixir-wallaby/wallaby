@@ -29,7 +29,7 @@ defmodule Wallaby.Query do
     * `:count` - The number of elements that should be found (default: 1).
     * `:visible` - Determines if the query should return only visible elements (default: true).
     * `:text` - Text that should be found inside the element (default: nil).
-    * `:item` - The position number of the item to return if multiple elements satisfy the selection criteria.
+    * `:at` - The position number of the element to select if multiple elements satisfy the selection criteria. (:all for all elements)
 
   ## Re-using queries
 
@@ -83,6 +83,7 @@ defmodule Wallaby.Query do
     text: String.t,
     visible: boolean(),
     minimum: non_neg_integer,
+    at: pos_integer
   ]
   @type result :: list(Element.t)
   @type opts :: nonempty_list()
@@ -236,8 +237,8 @@ defmodule Wallaby.Query do
     Keyword.get(conditions, :count)
   end
 
-  def item_number(%Query{conditions: conditions}) do
-    Keyword.get(conditions, :item)
+  def at_number(%Query{conditions: conditions}) do
+    Keyword.get(conditions, :at)
   end
 
   def inner_text(%Query{conditions: conditions}) do
@@ -255,7 +256,7 @@ defmodule Wallaby.Query do
   end
 
   def specific_element_requested(query) do
-      count(query) == 1 || item_number(query) != nil
+      count(query) == 1 || at_number(query) != :all
   end
 
   def matches_count?(%{conditions: conditions}, count) do
@@ -277,7 +278,7 @@ defmodule Wallaby.Query do
     |> add_visibility
     |> add_text
     |> add_count
-    |> add_item
+    |> add_at
   end
 
   defp add_visibility(opts) do
@@ -300,7 +301,7 @@ defmodule Wallaby.Query do
     end
   end
 
-  defp add_item(opts) do
-    Keyword.put_new(opts, :item, nil)
+  defp add_at(opts) do
+    Keyword.put_new(opts, :at, :all)
   end
 end
