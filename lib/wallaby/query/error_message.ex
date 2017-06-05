@@ -52,6 +52,11 @@ defmodule Wallaby.Query.ErrorMessage do
     The query is invalid. Cannot set the minimum greater than the maximum.
     """
   end
+  def message(%{method: method, selector: selector}, :invalid_selector) do
+    """
+    The #{method} '#{selector}' is not a valid query.
+    """
+  end
 
   def help(elements) do
     """

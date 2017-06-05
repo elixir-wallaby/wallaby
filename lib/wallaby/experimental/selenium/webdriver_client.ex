@@ -143,7 +143,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   For Checkboxes and Radio buttons it returns the selected option.
   For options selects it returns the selected option
   """
-  @spec selected(Element.t) :: {:ok, boolean} | {:error, :stale_reference_error}
+  @spec selected(Element.t) :: {:ok, boolean} | {:error, :stale_reference}
   def selected(element) do
     with {:ok, resp} <- request(:get, "#{element.url}/selected"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -156,7 +156,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   This is based on what is available in phantom and doesn't match the current
   specification.
   """
-  @spec displayed(Element.t) :: {:ok, boolean} | {:error, :stale_reference_error}
+  @spec displayed(Element.t) :: {:ok, boolean} | {:error, :stale_reference}
   def displayed(element) do
     with {:ok, resp} <- request(:get, "#{element.url}/displayed"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -301,7 +301,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   response.
   """
   @spec request(http_method, url, map | String.t, [request_opts]) ::
-    {:ok, any} | {:error, :stale_reference_error | :invalid_selector}
+    {:ok, any} | {:error, :stale_reference | :invalid_selector}
   def request(method, url, params \\ %{}, opts \\ [])
   def request(method, url, params, _opts) when map_size(params) == 0 do
     make_request(method, url, "")
@@ -332,7 +332,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       {:ok, resp} ->
         resp
 
-      {:error, :stale_reference_error} ->
+      {:error, :stale_reference} ->
         raise Wallaby.StaleReferenceException
 
       {:error, :invalid_selector} ->
@@ -366,7 +366,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   defp check_for_response_errors(response) do
     case Map.get(response, "value") do
       %{"class" => "org.openqa.selenium.StaleElementReferenceException"} ->
-        {:error, :stale_reference_error}
+        {:error, :stale_reference}
       %{"class" => "org.openqa.selenium.InvalidSelectorException"} ->
         {:error, :invalid_selector}
       _ ->

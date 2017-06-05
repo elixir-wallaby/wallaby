@@ -13,7 +13,7 @@ defmodule Wallaby.Phantom.Driver do
 
   @type response_errors ::
     {:error, :invalid_selector} |
-    {:error, :stale_reference_error}
+    {:error, :stale_reference}
 
   @spec create(pid, Keyword.t) :: {:ok, Session.t}
   def create(server, opts) do
@@ -211,7 +211,7 @@ defmodule Wallaby.Phantom.Driver do
         {:ok, value} ->
           value
 
-        {:error, :stale_reference_error} ->
+        {:error, :stale_reference} ->
           raise Wallaby.StaleReferenceException
       end
     end
@@ -544,7 +544,7 @@ defmodule Wallaby.Phantom.Driver do
       {:ok, resp} ->
         resp
 
-      {:error, :stale_reference_error} ->
+      {:error, :stale_reference} ->
         raise Wallaby.StaleReferenceException
 
       {:error, :invalid_selector} ->
@@ -559,8 +559,10 @@ defmodule Wallaby.Phantom.Driver do
   def check_for_response_errors(response) do
     case Map.get(response, "value") do
       %{"class" => "org.openqa.selenium.StaleElementReferenceException"} ->
-        {:error, :stale_reference_error}
+        {:error, :stale_reference}
       %{"class" => "org.openqa.selenium.InvalidSelectorException"} ->
+        {:error, :invalid_selector}
+      %{"class" => "org.openqa.selenium.InvalidElementStateException"} ->
         {:error, :invalid_selector}
       _ ->
         {:ok, response}
