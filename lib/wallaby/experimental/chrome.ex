@@ -46,8 +46,8 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   def set_window_size(session, width, height) do
-    handles = WebdriverClient.window_handles(session)
-    IO.inspect(handles, label: "Window handles")
+    # handles = WebdriverClient.window_handles(session)
+    # IO.inspect(handles, label: "Window handles")
     handle = WebdriverClient.window_handle(session)
     WebdriverClient.set_window_size(session, handle, width, height)
     # WebdriverClient.set_window_size(session, width, height)

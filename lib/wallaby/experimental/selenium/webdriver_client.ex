@@ -387,6 +387,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
     case Map.get(response, "value") do
       %{"class" => "org.openqa.selenium.StaleElementReferenceException"} ->
         {:error, :stale_reference}
+      %{"message" => "stale element reference" <> _} ->
+        {:error, :stale_reference}
       %{"class" => "org.openqa.selenium.InvalidSelectorException"} ->
         {:error, :invalid_selector}
       _ ->

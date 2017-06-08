@@ -706,10 +706,6 @@ defmodule Wallaby.Browser do
 
   defp blank_page?(%Session{driver: driver}=session) do
     driver.blank_page?(session)
-    # session
-    # |> current_url()
-    # |> IO.inspect(label: "Current url")
-    # current_url(session) == "about:blank"
   end
 
   @doc """
