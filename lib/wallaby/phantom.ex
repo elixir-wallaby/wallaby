@@ -116,7 +116,7 @@ defmodule Wallaby.Phantom do
   @doc false
   defdelegate page_source(session),                               to: Driver
   @doc false
-  defdelegate set_cookies(session, key, value),                   to: Driver
+  defdelegate set_cookie(session, key, value),                    to: Driver
   @doc false
   defdelegate set_window_size(session, width, height),            to: Driver
   @doc false

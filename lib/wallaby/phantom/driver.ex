@@ -263,7 +263,7 @@ defmodule Wallaby.Phantom.Driver do
     end
   end
 
-  def set_cookies(session, key, value) do
+  def set_cookie(session, key, value) do
     check_logs! session, fn ->
       with {:ok, resp}  <- request(:post, "#{session.url}/cookie", %{cookie: %{name: key, value: value}}),
            {:ok, value} <- Map.fetch(resp, "value"),

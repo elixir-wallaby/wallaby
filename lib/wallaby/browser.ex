@@ -696,7 +696,7 @@ defmodule Wallaby.Browser do
       raise Wallaby.CookieException
     end
 
-    case driver.set_cookies(session, key, value) do
+    case driver.set_cookie(session, key, value) do
       {:ok, _list} ->
         session
       {:error, :invalid_cookie_domain} ->
@@ -704,8 +704,12 @@ defmodule Wallaby.Browser do
     end
   end
 
-  defp blank_page?(session) do
-    current_url(session) == "about:blank"
+  defp blank_page?(%Session{driver: driver}=session) do
+    driver.blank_page?(session)
+    # session
+    # |> current_url()
+    # |> IO.inspect(label: "Current url")
+    # current_url(session) == "about:blank"
   end
 
   @doc """

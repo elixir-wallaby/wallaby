@@ -90,7 +90,7 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.page_title(session)
   end
 
-  def set_cookies(%Session{} = session, key, value) do
+  def set_cookie(%Session{} = session, key, value) do
     WebdriverClient.set_cookie(session, key, value)
   end
 

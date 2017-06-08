@@ -35,6 +35,7 @@ defmodule Wallaby.Integration.QueryTest do
       assert Enum.count(elements) == 3
     end
 
+    @tag :focus
     test "doesn't error if the count is 'any' and some elements are visible", %{session: session} do
       element =
         session
@@ -69,6 +70,7 @@ defmodule Wallaby.Integration.QueryTest do
     assert Enum.count(elements) == 5
   end
 
+  @tag :focus
   test "queries can specify element text", %{session: session} do
     assert_raise Wallaby.QueryError, fn ->
       session

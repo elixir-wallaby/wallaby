@@ -221,7 +221,14 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Sets the size of the window.
   """
+  @spec set_window_size(Session.t, non_neg_integer, non_neg_integer) :: {:ok, map}
   @spec set_window_size(Session.t, String.t, non_neg_integer, non_neg_integer) :: {:ok, map}
+
+  def set_window_size(session, width, height) do
+    with {:ok, resp} <- request(:post, "#{session.url}/window/rect", %{width: width, height: height}),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
   def set_window_size(session, window_handle, width, height) do
     with {:ok, resp} <- request(:post, "#{session.url}/window/#{window_handle}/size", %{width: width, height: height}),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -231,7 +238,14 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Gets the size of the window
   """
+  @spec get_window_size(Session.t) :: {:ok, map}
   @spec get_window_size(Session.t, String.t) :: {:ok, map}
+
+  def get_window_size(session) do
+    with {:ok, resp} <- request(:get, "#{session.url}/window/rect"),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
   def get_window_size(session, window_handle) do
     with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle}/size"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -281,6 +295,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   def page_source(session) do
     with  {:ok, resp} <- request(:get, "#{session.url}/source"),
           {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
+  def window_handles(session) do
+    with {:ok, resp} <- request(:get, "#{session.url}/window_handles"),
+         {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
 

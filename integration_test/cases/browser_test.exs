@@ -9,6 +9,7 @@ defmodule Wallaby.Integration.BrowserTest do
       |> assert
     end
 
+    @tag :focus
     test "allows text queries", %{session: session} do
       session
       |> visit("/page_1.html")
