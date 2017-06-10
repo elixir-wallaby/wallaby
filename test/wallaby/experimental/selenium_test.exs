@@ -38,7 +38,7 @@ defmodule Wallaby.Experimental.SeleniumTest do
   end
 
   describe "end_session/1" do
-    test "sends the end sesssion" do
+    test "sends the end session" do
       session = build_session()
       test_pid = self()
       end_session_fn = fn session ->
