@@ -16,7 +16,7 @@ defmodule Wallaby.Driver do
   @callback start_session(Keyword.t) :: on_start_session
 
   @doc """
-  Invoked to stop a browser sesssion.
+  Invoked to stop a browser session.
   """
   @callback end_session(Session.t) :: :ok | {:error, reason}
 
