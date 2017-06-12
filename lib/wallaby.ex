@@ -24,7 +24,8 @@ defmodule Wallaby do
     import Supervisor.Spec, warn: false
 
     children = [
-      supervisor(Wallaby.Phantom, [[name: Driver.Supervisor]])
+      supervisor(Wallaby.Phantom, [[name: Driver.Supervisor]]),
+      Wallaby.Experimental.Chrome.child_spec()
     ]
 
     opts = [strategy: :one_for_one, name: Wallaby.Supervisor]

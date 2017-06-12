@@ -1,14 +1,23 @@
 defmodule Wallaby.Experimental.Chrome do
   @behaviour Wallaby.Driver
 
+  @pool_name Wallaby.ChromedriverPool
+
   alias Wallaby.Session
   alias Wallaby.Experimental.Chrome.Webdriver
   # alias Wallaby.Phantom.Driver
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
+  def child_spec(), do: :poolboy.child_spec(@pool_name, poolboy_config(), [])
+
 
   def start_session(opts \\ []) do
-    base_url = Keyword.get(opts, :remote_url, "http://localhost:9515/")
+    chromedriver = :poolboy.checkout(@pool_name, true, :infinity)
+    start_session(chromedriver, opts)
+  end
+
+  def start_session(chromedriver, opts) do
+    {:ok, base_url} = Wallaby.Experimental.Chrome.Chromedriver.base_url(chromedriver)
     capabilities = Keyword.get(opts, :capabilities, %{})
     create_session_fn = Keyword.get(opts, :create_session_fn,
                                     &Webdriver.create_session/2)
@@ -22,14 +31,16 @@ defmodule Wallaby.Experimental.Chrome do
         session_url: base_url <> "session/#{id}",
         url: base_url <> "session/#{id}",
         id: id,
-        driver: __MODULE__
+        driver: __MODULE__,
+        server: chromedriver,
       }
 
       {:ok, session}
     end
   end
 
-  def end_session(session, opts\\[]) do
+  def end_session(%Wallaby.Session{server: server}=session, opts \\ []) do
+    :poolboy.checkin(@pool_name, server)
     end_session_fn = Keyword.get(opts, :end_session_fn, &WebdriverClient.delete_session/1)
     end_session_fn.(session)
     :ok
@@ -129,7 +140,7 @@ defmodule Wallaby.Experimental.Chrome do
             "--no-sandbox",
             # "start-fullscreen",
             "window-size=1280,800",
-            # "--headless",
+            "--headless",
             "--disable-gpu"
           ]
         }
@@ -137,5 +148,14 @@ defmodule Wallaby.Experimental.Chrome do
     }
   end
 
+  defp poolboy_config(), do: [
+    name: {:local, @pool_name},
+    worker_module: Wallaby.Experimental.Chrome.Chromedriver,
+    size: pool_size(),
+    max_overflow: 0
+  ]
 
+  defp pool_size, do: Application.get_env(:wallaby, :pool_size) || default_pool_size()
+
+  defp default_pool_size, do: :erlang.system_info(:schedulers_online)
 end
