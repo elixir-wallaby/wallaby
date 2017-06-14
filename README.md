@@ -21,7 +21,7 @@ defmodule MyApp.Features.TodoTest do
     |> fill_in(text_field("New Todo"), with: "Write my first Wallaby test")
     |> click(button("Save"))
     |> assert_has(css(".alert", text: "You created a todo"))
-    |> assert_has(css(".todo-list > .todo, text: "Write my first Wallaby test"))
+    |> assert_has(css(".todo-list > .todo", text: "Write my first Wallaby test"))
   end
 end
 ```
