@@ -1,15 +1,14 @@
 defmodule Wallaby.Experimental.Chrome do
   @behaviour Wallaby.Driver
+  import Supervisor.Spec
 
   @pool_name Wallaby.ChromedriverPool
 
   alias Wallaby.Session
-  alias Wallaby.Experimental.Chrome.Webdriver
-  # alias Wallaby.Phantom.Driver
+  alias Wallaby.Experimental.Chrome.{Webdriver, Chromedriver, Sessions}
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   def child_spec(), do: :poolboy.child_spec(@pool_name, poolboy_config(), [])
-
 
   def start_session(opts \\ []) do
     chromedriver = :poolboy.checkout(@pool_name, true, :infinity)
@@ -17,7 +16,7 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   def start_session(chromedriver, opts) do
-    {:ok, base_url} = Wallaby.Experimental.Chrome.Chromedriver.base_url(chromedriver)
+    {:ok, base_url} = Chromedriver.base_url(chromedriver)
     capabilities = Keyword.get(opts, :capabilities, %{})
     create_session_fn = Keyword.get(opts, :create_session_fn,
                                     &Webdriver.create_session/2)
@@ -34,6 +33,7 @@ defmodule Wallaby.Experimental.Chrome do
         driver: __MODULE__,
         server: chromedriver,
       }
+      :ok = Sessions.monitor(session)
 
       {:ok, session}
     end

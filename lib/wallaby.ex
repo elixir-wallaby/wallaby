@@ -25,7 +25,8 @@ defmodule Wallaby do
 
     children = [
       supervisor(Wallaby.Phantom, [[name: Driver.Supervisor]]),
-      Wallaby.Experimental.Chrome.child_spec()
+      Wallaby.Experimental.Chrome.child_spec(),
+      worker(Wallaby.Experimental.Chrome.Sessions, [])
     ]
 
     opts = [strategy: :one_for_one, name: Wallaby.Supervisor]

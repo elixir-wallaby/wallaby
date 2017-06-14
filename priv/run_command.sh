@@ -4,4 +4,5 @@ pid=$!
 while read line ; do
   :
 done
-kill -TERM $pid
+pgid=$(ps xao pid,pgid | grep $pid | awk '{print $2}')
+kill -9 -$pgid

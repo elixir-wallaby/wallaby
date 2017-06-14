@@ -42,7 +42,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     case System.find_executable("chromedriver") do
       chromedriver when not is_nil(chromedriver) ->
         Port.open({:spawn_executable, Path.absname("priv/run_command.sh", Application.app_dir(:wallaby))},
-          [args: args(chromedriver, tcp_port)])
+          [:binary, :stream, :use_stdio, :exit_status, args: args(chromedriver, tcp_port)])
       _ ->
         raise Wallaby.DependencyException, """
         Wallaby can't find chromedriver. Make sure you have chromedriver installed
