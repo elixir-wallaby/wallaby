@@ -33,16 +33,17 @@ defmodule Wallaby.Experimental.Chrome do
         driver: __MODULE__,
         server: chromedriver,
       }
-      :ok = Sessions.monitor(session)
+      # :ok = Sessions.monitor(session)
 
       {:ok, session}
     end
   end
 
   def end_session(%Wallaby.Session{server: server}=session, opts \\ []) do
-    :poolboy.checkin(@pool_name, server)
+    IO.inspect(session, label: "Session ending")
     end_session_fn = Keyword.get(opts, :end_session_fn, &WebdriverClient.delete_session/1)
     end_session_fn.(session)
+    :poolboy.checkin(@pool_name, server)
     :ok
   end
 
@@ -157,5 +158,6 @@ defmodule Wallaby.Experimental.Chrome do
 
   defp pool_size, do: Application.get_env(:wallaby, :pool_size) || default_pool_size()
 
-  defp default_pool_size, do: :erlang.system_info(:schedulers_online)
+  # defp default_pool_size, do: :erlang.system_info(:schedulers_online)
+  defp default_pool_size, do: 1
 end

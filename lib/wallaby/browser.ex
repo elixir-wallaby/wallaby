@@ -584,6 +584,8 @@ defmodule Wallaby.Browser do
   """
 
   defmacro assert_has(parent, query) do
+    IO.inspect(parent, label: "Assert has with this parent")
+    IO.inspect(query, label: "Assert has with this query")
     quote do
       parent = unquote(parent)
       query  = unquote(query)
@@ -592,12 +594,18 @@ defmodule Wallaby.Browser do
         {:ok, _query_result} ->
           parent
         {:error, {:not_found, results}} ->
+          take_screenshot(parent)
           query = %Query{query | result: results}
           raise Wallaby.ExpectationNotMet,
                 Query.ErrorMessage.message(query, :not_found)
         {:error, :invalid_selector} ->
+          take_screenshot(parent)
           raise Wallaby.QueryError,
             Query.ErrorMessage.message(query, :invalid_selector)
+        e ->
+          take_screenshot(parent)
+          raise Wallaby.ExpectationNotMet,
+            "We got some crazy errror: #{inspect e} with session: #{inspect parent}"
       end
     end
   end

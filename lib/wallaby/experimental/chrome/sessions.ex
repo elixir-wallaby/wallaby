@@ -20,14 +20,16 @@ defmodule Wallaby.Experimental.Chrome.Sessions do
   end
 
   def handle_info({:DOWN, ref, :process, _pid, _reason}, %{refs: refs}=state) do
+    IO.puts("Killing session")
     {session, ref} = Map.pop(refs, ref)
+    IO.inspect(session, label: "Session to kill")
     WebdriverClient.delete_session(session)
     {:noreply, %{state | refs: refs}}
   end
 
   def terminate(_reason, %{refs: refs}) do
     IO.puts("Terminating")
-    Enum.each(refs, fn({_ref, session}) -> close_session(session) end)
+    # Enum.each(refs, fn({_ref, session}) -> close_session(session) end)
   end
 
   defp close_session(session) do

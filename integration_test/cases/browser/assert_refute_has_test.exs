@@ -25,6 +25,7 @@ defmodule Wallaby.Integration.Browser.AssertRefuteHasTest do
       assert_raise Wallaby.ExpectationNotMet, ~r/Expected.+ 5.*css.*\.user.*6/i, fn ->
         session
         |> visit("nesting.html")
+        |> IO.inspect()
         |> assert_has(@wrong_exact_found_query)
       end
     end

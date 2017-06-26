@@ -283,11 +283,13 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
   test "with duplicate buttons", %{page: page} do
     assert_raise Wallaby.QueryError, ~r/Expected (.*) 1/, fn ->
       page
+      |> IO.inspect(label: "Session with duplicate buttons")
       |> find(css(".duplicate-buttons"))
+      |> IO.inspect(label: "Duplicate button")
       |> click(button("Duplicate Button"))
     end
   end
-  
+
   test "works with elements", %{page: page} do
     assert page
     |> find(button("I'm a button"))
