@@ -1,5 +1,5 @@
 language: elixir
-elixir: 
+elixir:
   - 1.4.2
   - 1.3.4
 otp_release:
@@ -11,6 +11,10 @@ cache:
   directories:
     - _build
     - deps
+addons:
+  apt:
+    packages:
+      - google-chrome-stable
 
 before_script:
   - MIX_ENV=test mix compile --warnings-as-errors
@@ -29,6 +33,7 @@ after_script:
 env:
   - ""
   - WALLABY_DRIVER=phantom
+  - WALLABY_DRIVER=chrome
   - WALLABY_DRIVER=selenium WALLABY_SELENIUM_VERSION=3
   - WALLABY_DRIVER=selenium WALLABY_SELENIUM_VERSION=2
 
