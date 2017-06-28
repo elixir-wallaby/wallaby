@@ -13,9 +13,7 @@ cache:
     - deps
 
 addons:
-  apt:
-    packages:
-      - google-chrome-stable
+  chrome: stable
 
 before_script:
   - export CHROMEDRIVER_VERSION=`curl -s http://chromedriver.storage.googleapis.com/LATEST_RELEASE`
