@@ -3,14 +3,6 @@
 # Lovingly borrowed from
 # https://github.com/HashNuke/hound/
 
-if [ "$WALLABY_DRIVER" = "chrome" ]; then
-  export CHROMEDRIVER_VERSION=`curl -s http://chromedriver.storage.googleapis.com/LATEST_RELEASE`
-  curl -L -O "http://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
-  unzip chromedriver_linux64.zip
-  sudo chmod +x chromedriver
-  sudo mv chromedriver /usr/local/bin
-fi
-
 if [ "$WALLABY_DRIVER" = "selenium" ]; then
   export DISPLAY=:99.0
   /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16

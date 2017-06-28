@@ -11,14 +11,19 @@ cache:
   directories:
     - _build
     - deps
+
 addons:
   apt:
     packages:
       - google-chrome-stable
 
 before_script:
+  - export CHROMEDRIVER_VERSION=`curl -s http://chromedriver.storage.googleapis.com/LATEST_RELEASE`
+  - curl -L -O "http://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
+  - unzip chromedriver_linux64.zip
+  - sudo chmod +x chromedriver
+  - sudo mv chromedriver /usr/local/bin
   - MIX_ENV=test mix compile --warnings-as-errors
-  - "if [ -z ${WALLABY_DRIVER} ]; then travis_wait mix dialyzer --plt; fi"
   - bash $TRAVIS_BUILD_DIR/test/tools/start_webdriver.sh
 
 script:
