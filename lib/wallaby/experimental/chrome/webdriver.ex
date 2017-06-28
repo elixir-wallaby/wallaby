@@ -20,22 +20,6 @@ defmodule Wallaby.Experimental.Chrome.Webdriver do
     |> handle_response
   end
 
-  defp make_request!(method, url, body) do
-    case make_request(method, url, body) do
-      {:ok, resp} ->
-        resp
-
-      {:error, :stale_reference} ->
-        raise Wallaby.StaleReferenceException
-
-      {:error, :invalid_selector} ->
-        raise Wallaby.InvalidSelector, Poison.decode!(body)
-
-      {:error, e} ->
-        raise "There was an error calling: #{url} -> #{e.reason}"
-    end
-  end
-
   defp request_opts do
     Application.get_env(:wallaby, :hackney_options, [])
   end

@@ -1,11 +1,10 @@
 defmodule Wallaby.Experimental.Chrome do
   @behaviour Wallaby.Driver
-  import Supervisor.Spec
 
   @pool_name Wallaby.ChromedriverPool
 
   alias Wallaby.Session
-  alias Wallaby.Experimental.Chrome.{Webdriver, Chromedriver, Sessions}
+  alias Wallaby.Experimental.Chrome.{Webdriver, Chromedriver}
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   def child_spec(), do: :poolboy.child_spec(@pool_name, poolboy_config(), [])
@@ -65,26 +64,20 @@ defmodule Wallaby.Experimental.Chrome do
     # WebdriverClient.set_window_size(session, width, height)
   end
 
-  @doc false
-  defdelegate accept_dialogs(session),                            to: WebdriverClient
-  @doc false
-  defdelegate accept_alert(session, open_dialog_fn),              to: WebdriverClient
-  @doc false
-  defdelegate accept_confirm(session, open_dialog_fn),            to: WebdriverClient
-  @doc false
-  defdelegate accept_prompt(session, input_va, open_dialog_fn),   to: WebdriverClient
+  def accept_dialogs(_session), do: {:error, :not_implemented}
+  def dismiss_dialogs(_session), do: {:error, :not_implemented}
+  def accept_alert(_session, _fun), do: {:error, :not_implemented}
+  def dismiss_alert(_session, _fun), do: {:error, :not_implemented}
+  def accept_confirm(_session, _fun), do: {:error, :not_implemented}
+  def dismiss_confirm(_session, _fun), do: {:error, :not_implemented}
+  def accept_prompt(_session, _input, _fun), do: {:error, :not_implemented}
+  def dismiss_prompt(_session, _fun), do: {:error, :not_implemented}
   @doc false
   defdelegate cookies(session),                                   to: WebdriverClient
   @doc false
   defdelegate current_path!(session),                             to: WebdriverClient
   @doc false
   defdelegate current_url!(session),                              to: WebdriverClient
-  @doc false
-  defdelegate dismiss_dialogs(session),                           to: WebdriverClient
-  @doc false
-  defdelegate dismiss_confirm(session, open_dialog_fn),           to: WebdriverClient
-  @doc false
-  defdelegate dismiss_prompt(session, open_dialog_fn),            to: WebdriverClient
   @doc false
   defdelegate page_title(session),                                to: WebdriverClient
   @doc false

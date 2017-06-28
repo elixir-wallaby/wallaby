@@ -1,8 +1,8 @@
 defmodule Wallaby.Experimental.Chrome.Chromedriver do
   use GenServer
 
-  @external_resource "priv/run_phantom.sh"
-  @script_contents File.read! "priv/run_phantom.sh"
+  # @external_resource "priv/run_phantom.sh"
+  # @script_contents File.read! "priv/run_phantom.sh"
 
   def start_link(_args) do
     GenServer.start_link(__MODULE__, [])
@@ -27,7 +27,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     {:reply, {:ok, base_url}, state}
   end
 
-  def terminate(reason, state) do
+  def terminate(_reason, _state) do
     IO.puts("terminating")
   end
 
