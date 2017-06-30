@@ -22,7 +22,6 @@ defmodule Wallaby.Experimental.Chrome.Sessions do
   def handle_info({:DOWN, ref, :process, _pid, _reason}, %{refs: refs}=state) do
     IO.puts("Killing session")
     {session, _ref} = Map.pop(refs, ref)
-    IO.inspect(session, label: "Session to kill")
     WebdriverClient.delete_session(session)
     {:noreply, %{state | refs: refs}}
   end

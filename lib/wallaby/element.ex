@@ -91,7 +91,6 @@ defmodule Wallaby.Element do
   @spec text(t) :: String.t
 
   def text(%__MODULE__{driver: driver} = element) do
-    IO.inspect(element, label: "Element")
     case driver.text(element) do
       {:ok, text} ->
         text

@@ -89,6 +89,10 @@ defmodule Wallaby.Phantom do
     :poolboy.checkin(Wallaby.ServerPool, server)
   end
 
+  def blank_page?(session) do
+    current_url!(session) == "about:blank"
+  end
+
   @doc false
   defdelegate accept_dialogs(session),                            to: Driver
   @doc false

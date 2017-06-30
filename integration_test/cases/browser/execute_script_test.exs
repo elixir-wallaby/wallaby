@@ -19,8 +19,6 @@ defmodule Wallaby.Integration.Browser.ExecuteScriptTest do
   end
 
   test "executing scripts with arguments and callback returns session", %{session: session} do
-
-
     result =
       session
       |> visit("page_1.html")

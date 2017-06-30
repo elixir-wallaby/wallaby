@@ -27,6 +27,11 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     {:reply, {:ok, base_url}, state}
   end
 
+  def handle_info(msg, state) do
+    IO.inspect(msg, label: "Chromedriver message")
+    {:noreply, state}
+  end
+
   def terminate(_reason, _state) do
     IO.puts("terminating")
   end
@@ -54,5 +59,6 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
   defp args(chromedriver, port), do: [
       chromedriver,
       "--port=#{port}",
+      "--verbose",
     ]
 end

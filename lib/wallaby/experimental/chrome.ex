@@ -4,7 +4,7 @@ defmodule Wallaby.Experimental.Chrome do
   @pool_name Wallaby.ChromedriverPool
 
   alias Wallaby.Session
-  alias Wallaby.Experimental.Chrome.{Webdriver, Chromedriver}
+  alias Wallaby.Experimental.Chrome.{Webdriver, Chromedriver, Sessions}
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   def child_spec(), do: :poolboy.child_spec(@pool_name, poolboy_config(), [])
@@ -32,14 +32,13 @@ defmodule Wallaby.Experimental.Chrome do
         driver: __MODULE__,
         server: chromedriver,
       }
-      # :ok = Sessions.monitor(session)
+      :ok = Sessions.monitor(session)
 
       {:ok, session}
     end
   end
 
   def end_session(%Wallaby.Session{server: server}=session, opts \\ []) do
-    IO.inspect(session, label: "Session ending")
     end_session_fn = Keyword.get(opts, :end_session_fn, &WebdriverClient.delete_session/1)
     end_session_fn.(session)
     :poolboy.checkin(@pool_name, server)
@@ -57,8 +56,6 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   def set_window_size(session, width, height) do
-    # handles = WebdriverClient.window_handles(session)
-    # IO.inspect(handles, label: "Window handles")
     handle = WebdriverClient.window_handle(session)
     WebdriverClient.set_window_size(session, handle, width, height)
     # WebdriverClient.set_window_size(session, width, height)
