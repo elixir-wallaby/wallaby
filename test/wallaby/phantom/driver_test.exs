@@ -511,7 +511,7 @@ defmodule Wallaby.Phantom.DriverTest do
     end
   end
 
-  describe "set_cookies/3" do
+  describe "set_cookie/3" do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
       key = "tester"
@@ -529,7 +529,7 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      assert {:ok, []} = Driver.set_cookies(session, key, value)
+      assert {:ok, []} = Driver.set_cookie(session, key, value)
     end
   end
 
