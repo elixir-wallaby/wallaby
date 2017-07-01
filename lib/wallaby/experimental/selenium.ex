@@ -49,6 +49,10 @@ defmodule Wallaby.Experimental.Selenium do
     :ok
   end
 
+  def blank_page?(session) do
+    current_url!(session) == "about:blank"
+  end
+
   # Dialog handling not supported yet
   def accept_dialogs(_session), do: {:error, :not_implemented}
   def dismiss_dialogs(_session), do: {:error, :not_implemented}

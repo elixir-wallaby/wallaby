@@ -379,9 +379,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   defp handle_response({:error, %HTTPoison.Error{}}) do
-    # IO.inspect(error, label: "Communication error")
     {:error, :httpoison}
-    # raise "There was an internal error communicating with webdriver: #{error.reason}"
   end
   defp handle_response({:ok, %HTTPoison.Response{status_code: 204}}) do
     {:ok, %{"value" => nil}}
