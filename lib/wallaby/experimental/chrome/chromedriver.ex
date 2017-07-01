@@ -59,6 +59,6 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
   defp args(chromedriver, port), do: [
       chromedriver,
       "--port=#{port}",
-      "--verbose",
+      # "--verbose",
     ]
 end

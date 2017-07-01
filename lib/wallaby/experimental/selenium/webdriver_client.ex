@@ -345,6 +345,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   defp make_request(method, url, body) do
     HTTPoison.request(method, url, body, headers(), request_opts())
     |> handle_response
+    |> case do
+         {:error, :httpoison} ->
+           make_request(method, url, body)
+         result ->
+           result
+    end
   end
 
   defp make_request!(method, url, body) do
@@ -372,6 +378,11 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       {"Content-Type", "application/json"}]
   end
 
+  defp handle_response({:error, %HTTPoison.Error{}=error}) do
+    # IO.inspect(error, label: "Communication error")
+    {:error, :httpoison}
+    # raise "There was an internal error communicating with webdriver: #{error.reason}"
+  end
   defp handle_response({:ok, %HTTPoison.Response{status_code: 204}}) do
     {:ok, %{"value" => nil}}
   end
