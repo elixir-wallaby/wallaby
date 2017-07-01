@@ -378,7 +378,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       {"Content-Type", "application/json"}]
   end
 
-  defp handle_response({:error, %HTTPoison.Error{}=error}) do
+  defp handle_response({:error, %HTTPoison.Error{}}) do
     # IO.inspect(error, label: "Communication error")
     {:error, :httpoison}
     # raise "There was an internal error communicating with webdriver: #{error.reason}"
