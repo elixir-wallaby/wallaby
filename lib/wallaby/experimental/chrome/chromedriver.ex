@@ -27,8 +27,8 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     {:reply, {:ok, base_url}, state}
   end
 
-  def handle_info(msg, state) do
-    IO.inspect(msg, label: "Chromedriver message")
+  def handle_info(_msg, state) do
+    # IO.inspect(msg, label: "Chromedriver message")
     {:noreply, state}
   end
 
@@ -43,10 +43,11 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     port
   end
 
+  @dialyzer {:nowarn_function, start_chromedriver: 1}
   defp start_chromedriver(tcp_port) do
     case System.find_executable("chromedriver") do
       chromedriver when not is_nil(chromedriver) ->
-        Port.open({:spawn_executable, Path.absname("priv/run_command.sh", Application.app_dir(:wallaby))},
+        Port.open({:spawn_executable, wrapper_script()},
           [:binary, :stream, :use_stdio, :exit_status, args: args(chromedriver, tcp_port)])
       _ ->
         raise Wallaby.DependencyException, """
@@ -56,9 +57,14 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     end
   end
 
+  defp wrapper_script() do
+    Path.absname("priv/run_command.sh", Application.app_dir(:wallaby))
+  end
+
+
   defp args(chromedriver, port), do: [
       chromedriver,
       "--port=#{port}",
-      # "--verbose",
+      "--verbose",
     ]
 end
