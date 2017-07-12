@@ -1,6 +1,5 @@
 defmodule Wallaby.Integration.QueryTest do
   use Wallaby.Integration.SessionCase, async: true
-  use Quixir
 
   test "the driver can execute queries", %{session: session} do
     elements =
