@@ -1,8 +1,10 @@
 language: elixir
 elixir:
+  - 1.4.5
   - 1.4.2
   - 1.3.4
 otp_release:
+  - 20.0
   - 19.3
   - 18.3
 # Run in bigger container so we don't run out of memory generating the plt
@@ -13,6 +15,9 @@ cache:
     - deps
 
 addons:
+  apt:
+    sources:
+      - google-chrome
   chrome: stable
 
 before_script:
