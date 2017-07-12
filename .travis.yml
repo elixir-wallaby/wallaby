@@ -18,6 +18,8 @@ addons:
   apt:
     sources:
       - google-chrome
+    packages:
+      - google-chrome-stable
   chrome: stable
 
 before_script:
@@ -26,6 +28,9 @@ before_script:
   - unzip chromedriver_linux64.zip
   - sudo chmod +x chromedriver
   - sudo mv chromedriver /usr/local/bin
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test --yes
+  - sudo apt-get update
+  - sudo apt-get install libstdc++6-4.7-dev
   - MIX_ENV=test mix compile --warnings-as-errors
   - bash $TRAVIS_BUILD_DIR/test/tools/start_webdriver.sh
 
