@@ -90,7 +90,10 @@ defmodule Wallaby.Phantom do
   end
 
   def blank_page?(session) do
-    current_url!(session) == "about:blank"
+    case current_url(session) do
+      {:ok, url} -> url == "about:blank"
+      _ -> false
+    end
   end
 
   @doc false
@@ -104,9 +107,9 @@ defmodule Wallaby.Phantom do
   @doc false
   defdelegate cookies(session),                                   to: Driver
   @doc false
-  defdelegate current_path!(session),                             to: Driver
+  defdelegate current_path(session),                             to: Driver
   @doc false
-  defdelegate current_url!(session),                              to: Driver
+  defdelegate current_url(session),                              to: Driver
   @doc false
   defdelegate dismiss_dialogs(session),                           to: Driver
   @doc false

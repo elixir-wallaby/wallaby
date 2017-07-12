@@ -46,7 +46,9 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   def blank_page?(session) do
-    current_url!(session) == "data:,"
+    with {:ok, url} <- current_url(session) do
+      url == "data:,"
+    end
   end
 
   def get_window_size(%Session{} = session) do
@@ -72,9 +74,9 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   defdelegate cookies(session),                                   to: WebdriverClient
   @doc false
-  defdelegate current_path!(session),                             to: WebdriverClient
+  defdelegate current_path(session),                             to: WebdriverClient
   @doc false
-  defdelegate current_url!(session),                              to: WebdriverClient
+  defdelegate current_url(session),                              to: WebdriverClient
   @doc false
   defdelegate page_title(session),                                to: WebdriverClient
   @doc false

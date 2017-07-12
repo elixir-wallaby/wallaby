@@ -48,12 +48,12 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to get the current path of the browser's session.
   """
-  @callback current_path!(Session.t) :: String.t | nil | no_return
+  @callback current_path(Session.t) :: {:ok, String.t} | {:error, reason}
 
   @doc """
   Invoked to get the current url of the browser's session.
   """
-  @callback current_url!(Session.t) :: String.t | nil | no_return
+  @callback current_url(Session.t) :: {:ok, String.t} | {:error, reason}
 
   @doc """
   Invoked to dismiss all open dialogs.

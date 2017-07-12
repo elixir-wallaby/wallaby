@@ -5,6 +5,8 @@ defmodule Wallaby.Phantom.Driver do
   alias Wallaby.Phantom.Logger
   alias Wallaby.Phantom.LogStore
 
+  import Wallaby.HTTPClient
+
   @type method :: :post | :get | :delete
   @type url :: String.t
   @type query :: String.t
@@ -161,19 +163,12 @@ defmodule Wallaby.Phantom.Driver do
     end
   end
 
-  def current_url!(session) do
+  def current_path(session) do
     check_logs! session, fn ->
-      request!(:get, "#{session.url}/url")
-      |> Map.get("value")
-    end
-  end
-
-  def current_path!(session) do
-    check_logs! session, fn ->
-      session
-      |> current_url!
-      |> URI.parse
-      |> Map.get(:path)
+      with {:ok, url} <- current_url(session),
+           uri <- URI.parse(url),
+           {:ok, path} <- Map.fetch(uri, :path),
+        do: {:ok, path}
     end
   end
 
@@ -492,13 +487,6 @@ defmodule Wallaby.Phantom.Driver do
     end
   end
 
-  defp to_params({:xpath, xpath}) do
-    %{using: "xpath", value: xpath}
-  end
-  defp to_params({:css, css}) do
-    %{using: "css selector", value: css}
-  end
-
   def check_logs!(session, fun) do
     return_value = fun.()
 
@@ -509,73 +497,6 @@ defmodule Wallaby.Phantom.Driver do
     |> Logger.log
 
     return_value
-  end
-
-  defp request(method, url, params \\ %{}, opts \\ [])
-  defp request(method, url, params, _opts) when map_size(params) == 0 do
-    make_request(method, url, "")
-  end
-  defp request(method, url, params, [{:encode_json, false} | _]) do
-    make_request(method, url, params)
-  end
-  defp request(method, url, params, _opts) do
-    make_request(method, url, Poison.encode!(params))
-  end
-
-  defp request!(method, url) do
-    make_request!(method, url, "")
-  end
-
-  defp make_request(method, url, body) do
-    HTTPoison.request(method, url, body, headers(), request_opts())
-    |> handle_response
-  end
-
-  defp handle_response({:error, %HTTPoison.Error{}} = response), do: response
-  defp handle_response({:ok, %HTTPoison.Response{status_code: 204}}), do: {:ok, %{"value" => %{}}}
-  defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
-    with {:ok, decoded} <- Poison.decode(body),
-         {:ok, validated} <- check_for_response_errors(decoded),
-      do: {:ok, validated}
-  end
-
-  defp make_request!(method, url, body) do
-    case make_request(method, url, body) do
-      {:ok, resp} ->
-        resp
-
-      {:error, :stale_reference} ->
-        raise Wallaby.StaleReferenceException
-
-      {:error, :invalid_selector} ->
-        raise Wallaby.InvalidSelector, Poison.decode!(body)
-
-      {:error, e} ->
-        raise "There was an error calling: #{url} -> #{e.reason}"
-    end
-  end
-
-  @spec check_for_response_errors(map) :: {:ok, map} | response_errors
-  def check_for_response_errors(response) do
-    case Map.get(response, "value") do
-      %{"class" => "org.openqa.selenium.StaleElementReferenceException"} ->
-        {:error, :stale_reference}
-      %{"class" => "org.openqa.selenium.InvalidSelectorException"} ->
-        {:error, :invalid_selector}
-      %{"class" => "org.openqa.selenium.InvalidElementStateException"} ->
-        {:error, :invalid_selector}
-      _ ->
-        {:ok, response}
-    end
-  end
-
-  def request_opts do
-    Application.get_env(:wallaby, :hackney_options, [])
-  end
-
-  def headers do
-    [{"Accept", "application/json"},
-      {"Content-Type", "application/json"}]
   end
 
   defp cast_as_element(parent, %{"ELEMENT" => id}) do

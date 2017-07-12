@@ -50,7 +50,12 @@ defmodule Wallaby.Experimental.Selenium do
   end
 
   def blank_page?(session) do
-    current_url!(session) == "about:blank"
+    case current_url(session) do
+      {:ok, url} ->
+        url == "about:blank"
+      _ ->
+        false
+    end
   end
 
   # Dialog handling not supported yet
@@ -70,15 +75,15 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.cookies(session)
   end
 
-  def current_path!(%Session{} = session) do
-    session
-    |> WebdriverClient.current_url!
-    |> URI.parse
-    |> Map.get(:path)
+  def current_path(%Session{} = session) do
+    with  {:ok, url} <- WebdriverClient.current_url(session),
+          uri <- URI.parse(url),
+          {:ok, path} <- Map.fetch(uri, :path),
+      do: {:ok, path}
   end
 
-  def current_url!(%Session{} = session) do
-    WebdriverClient.current_url!(session)
+  def current_url(%Session{} = session) do
+    WebdriverClient.current_url(session)
   end
 
   def get_window_size(%Session{} = session) do

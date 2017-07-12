@@ -239,16 +239,18 @@ defmodule Wallaby.Browser do
   @spec current_url(parent) :: String.t
 
   def current_url(%Session{driver: driver} = session) do
-    driver.current_url!(session)
+    {:ok, url} = driver.current_url(session)
+    url
   end
 
   @doc """
   Gets the current path of the session
   """
-  @spec current_path(parent) :: String.t
+  @spec current_path(parent) :: {:ok, String.t} | {:error, any()}
 
   def current_path(%Session{driver: driver} = session) do
-    driver.current_path!(session)
+    {:ok, path} = driver.current_path(session)
+    path
   end
 
   @doc """

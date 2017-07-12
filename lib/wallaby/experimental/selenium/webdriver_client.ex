@@ -111,18 +111,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Gets the current url.
   """
-  @spec current_url(Session.t) :: {:ok, String.t}
+  @spec current_url(Session.t) :: {:ok, String.t} | {:error, any()}
   def current_url(session) do
-    with  {:ok, resp} <- request(:get, "#{session.url}/url"),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
-  end
-
-  @doc """
-  Gets the current url or nil.
-  """
-  @spec current_url!(Session.t) :: String.t | nil
-  def current_url!(session) do
     with  {:ok, resp} <- request(:get, "#{session.url}/url"),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
@@ -131,11 +121,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Gets the current path or nil.
   """
-  @spec current_path!(Session.t) :: String.t | nil
-  def current_path!(session) do
+  @spec current_path(Session.t) :: {:ok, String.t} | {:error, any()}
+  def current_path(session) do
     with {:ok, url} <- current_url(session),
-    |> URI.parse
-    |> Map.get(:path)
+         uri <- URI.parse(url),
+         {:ok, path} <- Map.fetch(uri, :path),
+      do: {:ok, path}
   end
 
   @doc """

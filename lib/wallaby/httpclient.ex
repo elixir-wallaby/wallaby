@@ -43,9 +43,9 @@ defmodule Wallaby.HTTPClient do
         {:ok, %{"value" => nil}}
 
       {:ok, %HTTPoison.Response{body: body}} ->
-        body
-        |> Poison.decode!
-        |> check_for_response_errors
+        with {:ok, decoded} <- Poison.decode(body),
+             {:ok, validated} <- check_for_response_errors(decoded),
+          do: {:ok, validated}
 
       {:ok, _} ->
         raise "Received unexpected HTTPoison response."
@@ -75,6 +75,8 @@ defmodule Wallaby.HTTPClient do
       %{"message" => "stale element reference" <> _} ->
         {:error, :stale_reference}
       %{"class" => "org.openqa.selenium.InvalidSelectorException"} ->
+        {:error, :invalid_selector}
+      %{"class" => "org.openqa.selenium.InvalidElementStateException"} ->
         {:error, :invalid_selector}
       _ ->
         {:ok, response}
