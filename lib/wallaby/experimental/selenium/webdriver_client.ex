@@ -1,6 +1,7 @@
 defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @moduledoc false
   alias Wallaby.{Driver, Element, Query, Session}
+  import Wallaby.HTTPClient
 
   @type http_method :: :post | :get | :delete
   @type url :: String.t
@@ -122,8 +123,9 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   """
   @spec current_url!(Session.t) :: String.t | nil
   def current_url!(session) do
-    request!(:get, "#{session.url}/url")
-    |> Map.get("value")
+    with  {:ok, resp} <- request(:get, "#{session.url}/url"),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @doc """
@@ -131,8 +133,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   """
   @spec current_path!(Session.t) :: String.t | nil
   def current_path!(session) do
-    session
-    |> current_url!
+    with {:ok, url} <- current_url(session),
     |> URI.parse
     |> Map.get(:path)
   end

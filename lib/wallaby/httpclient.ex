@@ -11,6 +11,7 @@ defmodule Wallaby.HTTPClient do
   @spec request(method, url, params, [request_opts]) :: {:ok, any}
                                                       | {:error, :invalid_selector}
                                                       | {:error, :stale_reference}
+
   def request(method, url, params \\ %{}, opts \\ [])
   def request(method, url, params, _opts) when map_size(params) == 0 do
     make_request(method, url, "")
@@ -89,10 +90,10 @@ defmodule Wallaby.HTTPClient do
       {"Content-Type", "application/json"}]
   end
 
-  defp to_params({:xpath, xpath}) do
+  def to_params({:xpath, xpath}) do
     %{using: "xpath", value: xpath}
   end
-  defp to_params({:css, css}) do
+  def to_params({:css, css}) do
     %{using: "css selector", value: css}
   end
 end
