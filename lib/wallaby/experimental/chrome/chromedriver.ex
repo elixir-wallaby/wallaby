@@ -16,6 +16,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     GenServer.call(server, :base_url)
   end
 
+  @dialyzer {:nowarn_function, init: 1}
   def init(_) do
     tcp_port = find_available_port()
     port = start_chromedriver(tcp_port)
