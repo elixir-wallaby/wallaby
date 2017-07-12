@@ -126,18 +126,14 @@ defmodule Wallaby.Experimental.Chrome do
       browserName: "phantomjs",
       nativeEvents: false,
       platform: "ANY",
-      # chrome: %{
-        chromeOptions: %{
-          binary: "/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary",
-          args: [
-            "--no-sandbox",
-            # "start-fullscreen",
-            "window-size=1280,800",
-            "--headless",
-            "--disable-gpu"
-          ]
-        }
-      # }
+      chromeOptions: %{
+        args: [
+          "--no-sandbox",
+          "window-size=1280,800",
+          "--headless",
+          "--disable-gpu"
+        ]
+      }
     }
   end
 
