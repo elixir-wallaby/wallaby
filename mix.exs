@@ -49,18 +49,17 @@ defmodule Wallaby.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 0.11.0"},
+      {:httpoison, "~> 0.12.0"},
       {:poison, ">= 1.4.0"},
       {:poolboy, "~> 1.5"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
-      {:earmark, "~> 1.1.1", only: :dev},
-      {:ex_doc, "~> 0.15.0", only: :dev},
-      {:benchee, "~> 0.6", only: :dev},
-      {:benchee_html, "~> 0.1", only: :dev},
-      {:bypass, "~> 0.6", only: :test},
-      {:quixir, "~> 0.9.0", only: [:dev, :test]},
+      {:earmark, "~> 1.2", only: :dev},
+      {:ex_doc, "~> 0.16", only: :dev},
+      {:benchee, "~> 0.9", only: :dev},
+      {:benchee_html, "~> 0.3", only: :dev},
+      {:bypass, "~> 0.7", only: :test},
       {:inch_ex, "~> 0.5", only: [:docs]},
-      {:excoveralls, "~> 0.6.2",  only: :test},
+      {:excoveralls, "~> 0.7",  only: :test},
     ]
   end
 
