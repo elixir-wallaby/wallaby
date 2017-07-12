@@ -4,99 +4,6 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
   alias Wallaby.Experimental.Selenium.WebdriverClient, as: Client
   alias Wallaby.{Element, Query, Session}
 
-  describe "request/4" do
-    test "sends the request with the correct params and headers", %{bypass: bypass} do
-      Bypass.expect bypass, fn conn ->
-        conn = parse_body(conn)
-        assert conn.method == "POST"
-        assert conn.request_path == "/my_url"
-        assert conn.body_params == %{"hello" => "world"}
-        assert get_req_header(conn, "accept") == ["application/json"]
-        assert get_req_header(conn, "content-type") == ["application/json"]
-
-        send_resp(conn, 200, ~s<{
-          "sessionId": "abc123",
-          "status": 0,
-          "value": null
-        }>)
-      end
-
-      assert {:ok, _} = Client.request(:post, bypass_url(bypass, "/my_url"), %{hello: "world"})
-    end
-
-    test "with a 200 status response", %{bypass: bypass} do
-      Bypass.expect bypass, fn conn ->
-        send_resp(conn, 200, ~s<{
-          "sessionId": "abc123",
-          "status": 0,
-          "value": null
-        }>)
-      end
-
-      {:ok, response} = Client.request(:post, bypass_url(bypass, "/my_url"))
-      assert response == %{
-        "sessionId" => "abc123",
-        "status" => 0,
-        "value" => nil
-      }
-    end
-
-    test "with a 500 response and StaleElementReferenceException", %{bypass: bypass} do
-      Bypass.expect bypass, fn conn ->
-        send_resp(conn, 500, ~s<{
-          "sessionId": "abc123",
-          "status": 10,
-          "value": {
-            "class": "org.openqa.selenium.StaleElementReferenceException"
-          }
-        }>)
-      end
-
-      assert {:error, :stale_reference} =
-        Client.request(:post, bypass_url(bypass, "/my_url"))
-    end
-  end
-
-  describe "request!/2" do
-    test "with a 200 status response", %{bypass: bypass} do
-      Bypass.expect bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/my_url"
-        assert get_req_header(conn, "accept") == ["application/json"]
-        assert get_req_header(conn, "content-type") == ["application/json"]
-
-        send_resp(conn, 200, ~s<{
-          "sessionId": "abc123",
-          "status": 0,
-          "value": null
-        }>)
-      end
-
-      response = Client.request!(:post, bypass_url(bypass, "/my_url"))
-      assert response == %{
-        "sessionId" => "abc123",
-        "status" => 0,
-        "value" => nil
-      }
-    end
-
-    test "with a 500 response and StaleElementReferenceException", %{bypass: bypass} do
-      Bypass.expect bypass, fn conn ->
-        send_resp(conn, 500, ~s<{
-          "sessionId": "abc123",
-          "status": 10,
-          "value": {
-            "class": "org.openqa.selenium.StaleElementReferenceException"
-          }
-        }>)
-      end
-
-      assert_raise Wallaby.StaleReferenceException, fn ->
-        Client.request!(:post, bypass_url(bypass, "/my_url"))
-      end
-    end
-  end
-
   describe "create_session/2" do
     test "sends the correct request to the webdriver backend", %{bypass: bypass} do
       base_url = bypass_url(bypass) <> "/"
@@ -466,27 +373,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     end
   end
 
-  describe "current_url!/1" do
-    test "sends the correct request to the server", %{bypass: bypass} do
-      session = build_session_for_bypass(bypass)
-      url = "http://www.google.com"
-
-      handle_request bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/url"
-
-        send_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "#{url}"
-        }>)
-      end
-
-      assert ^url = Client.current_url!(session)
-    end
-  end
-
-  describe "current_path!/1" do
+  describe "current_path/1" do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
       url = "http://www.google.com/search"
@@ -502,7 +389,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert "/search" = Client.current_path!(session)
+      assert {:ok, "/search"} = Client.current_path(session)
     end
   end
 
