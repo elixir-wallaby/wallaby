@@ -14,8 +14,9 @@ cache:
     - _build
     - deps
 
+dist: trusty
 addons:
-  chrome: stable
+  chrome: beta
 
 before_script:
   - export CHROMEDRIVER_VERSION=`curl -s http://chromedriver.storage.googleapis.com/LATEST_RELEASE`
