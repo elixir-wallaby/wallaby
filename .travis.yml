@@ -15,8 +15,6 @@ cache:
     - deps
 
 dist: trusty
-addons:
-  chrome: beta
 
 before_script:
   - export CHROMEDRIVER_VERSION=`curl -s http://chromedriver.storage.googleapis.com/LATEST_RELEASE`
@@ -26,6 +24,7 @@ before_script:
   - sudo mv chromedriver /usr/local/bin
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test --yes
   - sudo apt-get update
+  - sudo apt-get install google-chrome-beta
   - sudo apt-get install libstdc++6-4.7-dev
   - MIX_ENV=test mix compile --warnings-as-errors
   - bash $TRAVIS_BUILD_DIR/test/tools/start_webdriver.sh
