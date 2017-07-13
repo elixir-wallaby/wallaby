@@ -145,13 +145,12 @@ defmodule Wallaby.Experimental.Chrome do
 
   defp default_capabilities do
     %{
-      javascriptEnabled: true,
+      javascriptEnabled: false,
       loadImages: false,
       version: "",
       rotatable: false,
       takesScreenshot: true,
       cssSelectorsEnabled: true,
-      browserName: "phantomjs",
       nativeEvents: false,
       platform: "ANY",
       chromeOptions: %{

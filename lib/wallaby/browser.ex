@@ -517,7 +517,21 @@ defmodule Wallaby.Browser do
     |> has_value?(value)
   end
   def has_value?(%Element{}=element, value) do
-    Element.value(element) == value
+    result = retry fn ->
+      cond do
+        Element.value(element) == value ->
+          {:ok, true}
+        true ->
+          {:error, false}
+      end
+    end
+
+    case result do
+      {:ok, true} ->
+        true
+      {:error, false} ->
+        false
+    end
   end
 
   @doc """

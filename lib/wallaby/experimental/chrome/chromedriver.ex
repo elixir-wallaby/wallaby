@@ -29,7 +29,6 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
   end
 
   def handle_info(_msg, state) do
-    # IO.inspect(msg, label: "Chromedriver message")
     {:noreply, state}
   end
 
