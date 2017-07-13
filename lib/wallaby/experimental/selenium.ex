@@ -11,6 +11,10 @@ defmodule Wallaby.Experimental.Selenium do
     {:capabilities, map} |
     {:create_session_fn, ((String.t, map) -> {:ok, %{}})}
 
+  def validate() do
+    :ok
+  end
+
   @spec start_session([start_session_opts]) :: {:ok, Session.t}
   def start_session(opts \\ []) do
     base_url = Keyword.get(opts, :remote_url, "http://localhost:4444/wd/hub/")

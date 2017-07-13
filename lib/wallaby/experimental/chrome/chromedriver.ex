@@ -51,10 +51,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
         Port.open({:spawn_executable, wrapper_script()},
           [:binary, :stream, :use_stdio, :exit_status, args: args(chromedriver, tcp_port)])
       _ ->
-        raise Wallaby.DependencyException, """
-        Wallaby can't find chromedriver. Make sure you have chromedriver installed
-        and included in your path.
-        """
+        {:error, :no_chromedriver}
     end
   end
 

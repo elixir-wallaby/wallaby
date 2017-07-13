@@ -2,12 +2,40 @@ defmodule Wallaby.Experimental.Chrome do
   @behaviour Wallaby.Driver
 
   @pool_name Wallaby.ChromedriverPool
+  @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+).(\d+) \(.*\)/
 
   alias Wallaby.Session
   alias Wallaby.Experimental.Chrome.{Webdriver, Chromedriver, Sessions}
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   def child_spec(), do: :poolboy.child_spec(@pool_name, poolboy_config(), [])
+
+  def validate() do
+    case System.find_executable("chromedriver") do
+      chromedriver when not is_nil(chromedriver) ->
+        {version, 0} = System.cmd("chromedriver", ["--version"])
+        version =
+          Regex.run(@chromedriver_version_regex, version)
+          |> Enum.at(1)
+          |> String.to_integer
+
+        if version >= 30 do
+          :ok
+        else
+          exception = Wallaby.DependencyException.exception """
+          Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
+          chromedriver 2.30 to run correctly.
+          """
+          {:error, exception}
+        end
+      _ ->
+        exception = Wallaby.DependencyException.exception """
+        Wallaby can't find chromedriver. Make sure you have chromedriver installed
+        and included in your path.
+        """
+        {:error, exception}
+    end
+  end
 
   def start_session(opts \\ []) do
     chromedriver = :poolboy.checkout(@pool_name, true, :infinity)

@@ -23,6 +23,11 @@ defmodule Wallaby do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
+    case driver().validate() do
+      :ok -> :ok
+      {:error, exception} -> raise exception
+    end
+
     children = [
       supervisor(Wallaby.Phantom, [[name: Driver.Supervisor]]),
       Wallaby.Experimental.Chrome.child_spec(),
@@ -105,5 +110,18 @@ defmodule Wallaby do
 
   defp default_driver do
     Application.get_env(:wallaby, :driver, Wallaby.Phantom)
+  end
+
+  def driver do
+    case System.get_env("WALLABY_DRIVER") do
+      "chrome" ->
+        Wallaby.Experimental.Chrome
+      "selenium" ->
+        Wallaby.Experimental.Selenium
+      "phantom" ->
+        Wallaby.Phantom
+      _ ->
+        Application.get_env(:wallaby, :driver, Wallaby.Phantom)
+    end
   end
 end

@@ -44,6 +44,19 @@ defmodule Wallaby.Phantom do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
+  def validate() do
+    case System.find_executable("phantomjs") do
+      phantom when not is_nil(phantom) ->
+        :ok
+      _ ->
+        exception = Wallaby.DependencyException.exception """
+        Wallaby can't find phantomjs. Make sure you have phantomjs installed
+        and included in your path.
+        """
+        {:error, exception}
+    end
+  end
+
   def init(:ok) do
     children = [
       :poolboy.child_spec(@pool_name, poolboy_config(), []),
