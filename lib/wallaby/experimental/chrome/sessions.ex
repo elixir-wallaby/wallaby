@@ -25,12 +25,11 @@ defmodule Wallaby.Experimental.Chrome.Sessions do
     {:noreply, %{state | refs: refs}}
   end
 
-  def terminate(_reason, %{refs: _refs}) do
-    IO.puts("Terminating")
-    # Enum.each(refs, fn({_ref, session}) -> close_session(session) end)
+  def terminate(_reason, %{refs: refs}) do
+    Enum.each(refs, fn({_ref, session}) -> close_session(session) end)
   end
 
-  # defp close_session(session) do
-  #   WebdriverClient.delete_session(session)
-  # end
+  defp close_session(session) do
+    WebdriverClient.delete_session(session)
+  end
 end

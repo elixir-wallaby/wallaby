@@ -52,22 +52,6 @@ defmodule Wallaby.HTTPClient do
     end
   end
 
-  # defp make_request!(method, url, body) do
-  #   case make_request(method, url, body) do
-  #     {:ok, resp} ->
-  #       resp
-
-  #     {:error, :stale_reference} ->
-  #       raise Wallaby.StaleReferenceException
-
-  #     {:error, :invalid_selector} ->
-  #       raise Wallaby.InvalidSelector, Poison.decode!(body)
-
-  #     {:error, %HTTPoison.Error{}=e} ->
-  #       raise "There was an error calling: #{url} -> #{e.reason}"
-  #   end
-  # end
-
   defp check_for_response_errors(response) do
     case Map.get(response, "value") do
       %{"class" => "org.openqa.selenium.StaleElementReferenceException"} ->

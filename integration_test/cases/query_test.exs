@@ -35,7 +35,6 @@ defmodule Wallaby.Integration.QueryTest do
       assert Enum.count(elements) == 3
     end
 
-    @tag :focus
     test "doesn't error if the count is 'any' and some elements are visible", %{session: session} do
       element =
         session
@@ -44,14 +43,6 @@ defmodule Wallaby.Integration.QueryTest do
         |> Browser.find(Query.css("span", text: "Visible", count: :any))
 
       assert Enum.count(element) == 2
-    end
-
-    # TODO: Probs should totes remove this.
-    @tag :pending
-    test "informs the user that there are potential matches", %{session: session} do
-      session
-      |> Browser.visit("/page_1.html")
-      |> Browser.find(Query.css("#invisible"))
     end
   end
 
@@ -70,7 +61,6 @@ defmodule Wallaby.Integration.QueryTest do
     assert Enum.count(elements) == 5
   end
 
-  @tag :focus
   test "queries can specify element text", %{session: session} do
     assert_raise Wallaby.QueryError, fn ->
       session

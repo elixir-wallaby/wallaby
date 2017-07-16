@@ -82,13 +82,11 @@ defmodule Wallaby.Experimental.Chrome do
   def get_window_size(%Session{} = session) do
     handle = WebdriverClient.window_handle(session)
     WebdriverClient.get_window_size(session, handle)
-    # WebdriverClient.get_window_size(session)
   end
 
   def set_window_size(session, width, height) do
     handle = WebdriverClient.window_handle(session)
     WebdriverClient.set_window_size(session, handle, width, height)
-    # WebdriverClient.set_window_size(session, width, height)
   end
 
   def accept_dialogs(_session), do: {:error, :not_implemented}
@@ -102,15 +100,15 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   defdelegate cookies(session),                                   to: WebdriverClient
   @doc false
-  defdelegate current_path(session),                             to: WebdriverClient
+  defdelegate current_path(session),                              to: WebdriverClient
   @doc false
-  defdelegate current_url(session),                              to: WebdriverClient
+  defdelegate current_url(session),                               to: WebdriverClient
   @doc false
   defdelegate page_title(session),                                to: WebdriverClient
   @doc false
   defdelegate page_source(session),                               to: WebdriverClient
   @doc false
-  defdelegate set_cookie(session, key, value),                   to: WebdriverClient
+  defdelegate set_cookie(session, key, value),                    to: WebdriverClient
   @doc false
   defdelegate visit(session, url),                                to: WebdriverClient
 
@@ -173,6 +171,5 @@ defmodule Wallaby.Experimental.Chrome do
 
   defp pool_size, do: Application.get_env(:wallaby, :pool_size) || default_pool_size()
 
-  # defp default_pool_size, do: :erlang.system_info(:schedulers_online)
-  defp default_pool_size, do: 1
+  defp default_pool_size, do: :erlang.system_info(:schedulers_online)/2
 end

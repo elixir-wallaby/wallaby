@@ -246,7 +246,7 @@ defmodule Wallaby.Browser do
   @doc """
   Gets the current path of the session
   """
-  @spec current_path(parent) :: {:ok, String.t} | {:error, any()}
+  @spec current_path(parent) :: String.t
 
   def current_path(%Session{driver: driver} = session) do
     {:ok, path} = driver.current_path(session)
@@ -621,7 +621,7 @@ defmodule Wallaby.Browser do
                 Query.ErrorMessage.message(query, :invalid_selector)
             _ ->
               raise Wallaby.ExpectationNotMet,
-                "We got some crazy errror: #{inspect error} with session: #{inspect parent}"
+                "Wallaby has encountered an internal error: #{inspect error} with session: #{inspect parent}"
           end
       end
     end

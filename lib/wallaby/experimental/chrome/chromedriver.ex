@@ -1,9 +1,6 @@
 defmodule Wallaby.Experimental.Chrome.Chromedriver do
   use GenServer
 
-  # @external_resource "priv/run_phantom.sh"
-  # @script_contents File.read! "priv/run_phantom.sh"
-
   def start_link(_args) do
     GenServer.start_link(__MODULE__, [])
   end
@@ -62,6 +59,5 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
   defp args(chromedriver, port), do: [
       chromedriver,
       "--port=#{port}",
-      # "--verbose",
     ]
 end
