@@ -1,4 +1,5 @@
 defmodule Wallaby.Experimental.Chrome do
+  use Supervisor
   @behaviour Wallaby.Driver
 
   @pool_name Wallaby.ChromedriverPool
@@ -8,7 +9,19 @@ defmodule Wallaby.Experimental.Chrome do
   alias Wallaby.Experimental.Chrome.{Webdriver, Chromedriver, Sessions}
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
-  def child_spec(), do: :poolboy.child_spec(@pool_name, poolboy_config(), [])
+  @doc false
+  def start_link(opts\\[]) do
+    Supervisor.start_link(__MODULE__, :ok, opts)
+  end
+
+  def init(:ok) do
+    children = [
+      :poolboy.child_spec(@pool_name, poolboy_config(), []),
+      worker(Wallaby.Experimental.Chrome.Sessions, [])
+    ]
+
+    supervise(children, strategy: :one_for_one)
+  end
 
   def validate() do
     case System.find_executable("chromedriver") do
@@ -166,7 +179,7 @@ defmodule Wallaby.Experimental.Chrome do
     name: {:local, @pool_name},
     worker_module: Wallaby.Experimental.Chrome.Chromedriver,
     size: pool_size(),
-    max_overflow: 0
+    max_overflow: 0,
   ]
 
   defp pool_size, do: Application.get_env(:wallaby, :pool_size) || default_pool_size()

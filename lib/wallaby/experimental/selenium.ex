@@ -1,5 +1,6 @@
 defmodule Wallaby.Experimental.Selenium do
   @moduledoc false
+  use Supervisor
 
   @behaviour Wallaby.Driver
 
@@ -10,6 +11,17 @@ defmodule Wallaby.Experimental.Selenium do
     {:remote_url, String.t} |
     {:capabilities, map} |
     {:create_session_fn, ((String.t, map) -> {:ok, %{}})}
+
+  def start_link(opts\\[]) do
+    Supervisor.start_link(__MODULE__, :ok, opts)
+  end
+
+  def init(:ok) do
+    children = [
+    ]
+
+    supervise(children, strategy: :one_for_one)
+  end
 
   def validate() do
     :ok
