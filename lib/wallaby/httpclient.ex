@@ -25,7 +25,7 @@ defmodule Wallaby.HTTPClient do
   end
 
   defp make_request(method, url, body, retry_count\\0)
-  defp make_request(_, _, _, 3), do: raise "Wallaby had an internal issue with HTTPoison"
+  defp make_request(_, _, _, 5), do: raise "Wallaby had an internal issue with HTTPoison"
   defp make_request(method, url, body, retry_count) do
     HTTPoison.request(method, url, body, headers(), request_opts())
     |> handle_response
@@ -47,11 +47,19 @@ defmodule Wallaby.HTTPClient do
 
       {:ok, %HTTPoison.Response{body: body}} ->
         with {:ok, decoded} <- Poison.decode(body),
-             {:ok, validated} <- check_for_response_errors(decoded),
+             {:ok, response} <- check_status(decoded),
+             {:ok, validated} <- check_for_response_errors(response),
           do: {:ok, validated}
 
       {:ok, _} ->
         raise "Received unexpected HTTPoison response."
+    end
+  end
+
+  defp check_status(response) do
+    case Map.get(response, "status") do
+      13 -> {:error, :obscured}
+      _  -> {:ok, response}
     end
   end
 

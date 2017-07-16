@@ -32,7 +32,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   def find_elements(parent, locator) do
     with {:ok, resp} <- request(:post, parent.url <> "/elements", to_params(locator)),
           {:ok, elements} <- Map.fetch(resp, "value"),
-          elements <- Enum.map(elements, &(cast_as_element(parent, &1))),
+          elements <- Enum.map(elements||[], &(cast_as_element(parent, &1))),
       do: {:ok, elements}
   end
 

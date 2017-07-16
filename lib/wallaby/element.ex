@@ -82,6 +82,10 @@ defmodule Wallaby.Element do
         element
       {:error, :stale_reference} ->
         raise Wallaby.StaleReferenceException
+      {:error, :obscured} ->
+        raise Wallaby.ExpectationNotMet, """
+        The element you tried to click is obscured by another element.
+        """
     end
   end
 

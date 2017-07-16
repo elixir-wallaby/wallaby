@@ -499,6 +499,49 @@ config :wallaby,
   hackney_options: [timeout: 5_000]
 ```
 
+### Drivers
+
+Wallaby works with phantomjs out of the box. There is also experimental support for
+both headless chrome and selenium. The driver can be specified by setting the `driver` option in
+the wallaby config like so:
+
+```elixir
+config :wallaby,
+  driver: Wallaby.Experimental.Chrome
+```
+
+See below for more information on the experimental drivers.
+
+## Experimental Driver Support
+
+Currently Wallaby provides experimental support for both headless chrome and selenium.
+Both of these drivers are still "experimental" because they don't support the full
+api yet and because the implementation is changing rapidly. But, if you would like
+to use them in your project here's what you'll need to do.
+
+### Headless Chrome
+
+In order to run headless chrome you'll need to have chromedriver 2.30 and chrome 60.
+Previous versions of both of these tools _may_ work, but several features will be
+buggy. If you want to setup chrome in a CI environment then you'll still
+need to install and run xvfb. This is due to a bug in chromedriver 2.30 that inhibits
+chromedriver from handling input text correctly. The bug should be fixed in chromedriver 2.31.
+
+If you would like to disable headless mode in chrome you can pass `headless: false` in your config like so:
+
+```elixir
+config :wallaby,
+  chrome: [
+    headless: false
+  ]
+```
+
+### Selenium
+
+To run selenium you'll need to install selenium-server-standalone and geckodriver.
+Once you have these tools installed you'll need to manually start selenium-server separately
+from your test run.
+
 ## Contributing
 
 Wallaby is a community project. PRs and Issues are greatly welcome.

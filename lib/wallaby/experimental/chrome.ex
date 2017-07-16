@@ -164,15 +164,40 @@ defmodule Wallaby.Experimental.Chrome do
       cssSelectorsEnabled: true,
       nativeEvents: false,
       platform: "ANY",
-      chromeOptions: %{
-        args: [
-          "--no-sandbox",
-          "window-size=1280,800",
-          "--headless",
-          "--disable-gpu"
-        ]
-      }
+      unhandledPromptBehavior: "accept",
+      chromeOptions: chrome_options(),
     }
+  end
+
+  defp chrome_options, do: %{
+      args: args()
+    }
+
+  defp args() do
+    default_args()
+    |> Enum.concat(headless_args())
+  end
+
+  defp headless? do
+    :wallaby
+    |> Application.get_env(:chrome, [])
+    |> Keyword.get(:headless, true)
+  end
+
+  def default_args() do
+    [
+      "--no-sandbox",
+      "window-size=1280,800",
+      "--disable-gpu",
+    ]
+  end
+
+  defp headless_args() do
+    if headless?() do
+      ["--fullscreen", "--headless"]
+    else
+      []
+    end
   end
 
   defp poolboy_config(), do: [
