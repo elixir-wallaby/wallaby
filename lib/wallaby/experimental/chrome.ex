@@ -6,7 +6,7 @@ defmodule Wallaby.Experimental.Chrome do
   @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+).(\d+) \(.*\)/
 
   alias Wallaby.Session
-  alias Wallaby.Experimental.Chrome.{Webdriver, Chromedriver, Sessions}
+  alias Wallaby.Experimental.Chrome.{Chromedriver, Sessions}
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   @doc false
@@ -59,7 +59,7 @@ defmodule Wallaby.Experimental.Chrome do
     {:ok, base_url} = Chromedriver.base_url(chromedriver)
     capabilities = Keyword.get(opts, :capabilities, %{})
     create_session_fn = Keyword.get(opts, :create_session_fn,
-                                    &Webdriver.create_session/2)
+                                    &WebdriverClient.create_session/2)
 
     capabilities = Map.merge(default_capabilities(), capabilities)
 
