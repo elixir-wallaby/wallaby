@@ -74,8 +74,6 @@ defmodule Wallaby do
   """
   @spec start_session([start_session_opts]) :: {:ok, Session.t} | {:error, reason}
   def start_session(opts \\ []) do
-    # driver = Keyword.get_lazy(opts, :driver, &driver/0)
-    # driver.start_session(opts)
     driver().start_session(opts)
   end
 
