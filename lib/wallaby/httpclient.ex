@@ -1,8 +1,11 @@
 defmodule Wallaby.HTTPClient do
+
   @type method :: :post | :get | :delete
   @type url :: String.t
   @type params :: map | String.t
   @type request_opts :: {:encode_json, boolean}
+  
+  @status_obscured 13
 
   @doc """
   Sends a request to the webdriver API and parses the
@@ -58,8 +61,10 @@ defmodule Wallaby.HTTPClient do
 
   defp check_status(response) do
     case Map.get(response, "status") do
-      13 -> {:error, :obscured}
-      _  -> {:ok, response}
+      @status_obscured ->
+        {:error, :obscured}
+      _  ->
+        {:ok, response}
     end
   end
 
