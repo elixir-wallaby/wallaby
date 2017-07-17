@@ -506,8 +506,13 @@ both headless chrome and selenium. The driver can be specified by setting the `d
 the wallaby config like so:
 
 ```elixir
+# Chrome
 config :wallaby,
   driver: Wallaby.Experimental.Chrome
+
+# Selenium
+config :wallaby,
+  driver: Wallaby.Experimental.Selenium
 ```
 
 See below for more information on the experimental drivers.
