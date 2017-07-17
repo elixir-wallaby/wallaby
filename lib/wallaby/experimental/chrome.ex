@@ -87,8 +87,11 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   def blank_page?(session) do
-    with {:ok, url} <- current_url(session) do
-      url == "data:,"
+    case current_url(session) do
+      {:ok, url} ->
+        url == "data:,"
+      _ ->
+        false
     end
   end
 
