@@ -1,6 +1,7 @@
 defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @moduledoc false
   alias Wallaby.{Driver, Element, Query, Session}
+  import Wallaby.HTTPClient
 
   @type http_method :: :post | :get | :delete
   @type url :: String.t
@@ -31,7 +32,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   def find_elements(parent, locator) do
     with {:ok, resp} <- request(:post, parent.url <> "/elements", to_params(locator)),
           {:ok, elements} <- Map.fetch(resp, "value"),
-          elements <- Enum.map(elements, &(cast_as_element(parent, &1))),
+          elements <- Enum.map(elements||[], &(cast_as_element(parent, &1))),
       do: {:ok, elements}
   end
 
@@ -110,7 +111,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Gets the current url.
   """
-  @spec current_url(Session.t) :: {:ok, String.t}
+  @spec current_url(Session.t) :: {:ok, String.t} | {:error, any()}
   def current_url(session) do
     with  {:ok, resp} <- request(:get, "#{session.url}/url"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -118,23 +119,14 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Gets the current url or nil.
-  """
-  @spec current_url!(Session.t) :: String.t | nil
-  def current_url!(session) do
-    request!(:get, "#{session.url}/url")
-    |> Map.get("value")
-  end
-
-  @doc """
   Gets the current path or nil.
   """
-  @spec current_path!(Session.t) :: String.t | nil
-  def current_path!(session) do
-    session
-    |> current_url!
-    |> URI.parse
-    |> Map.get(:path)
+  @spec current_path(Session.t) :: {:ok, String.t} | {:error, any()}
+  def current_path(session) do
+    with {:ok, url} <- current_url(session),
+         uri <- URI.parse(url),
+         {:ok, path} <- Map.fetch(uri, :path),
+      do: {:ok, path}
   end
 
   @doc """
@@ -221,7 +213,14 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Sets the size of the window.
   """
+  @spec set_window_size(Session.t, non_neg_integer, non_neg_integer) :: {:ok, map}
   @spec set_window_size(Session.t, String.t, non_neg_integer, non_neg_integer) :: {:ok, map}
+
+  def set_window_size(session, width, height) do
+    with {:ok, resp} <- request(:post, "#{session.url}/window/rect", %{width: width, height: height}),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
   def set_window_size(session, window_handle, width, height) do
     with {:ok, resp} <- request(:post, "#{session.url}/window/#{window_handle}/size", %{width: width, height: height}),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -231,7 +230,14 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Gets the size of the window
   """
+  @spec get_window_size(Session.t) :: {:ok, map}
   @spec get_window_size(Session.t, String.t) :: {:ok, map}
+
+  def get_window_size(session) do
+    with {:ok, resp} <- request(:get, "#{session.url}/window/rect"),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
   def get_window_size(session, window_handle) do
     with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle}/size"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -284,6 +290,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       do: {:ok, value}
   end
 
+  def window_handles(session) do
+    with {:ok, resp} <- request(:get, "#{session.url}/window_handles"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
   @doc """
   Retrieves the window handle for from session
   """
@@ -292,93 +304,6 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
     with  {:ok, resp} <- request(:get, "#{session.url}/window_handle"),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: value
-  end
-
-  @type request_opts :: {:encode_json, boolean}
-
-  @doc """
-  Low-level function that sends a request to the webdriver API and parses the
-  response.
-  """
-  @spec request(http_method, url, map | String.t, [request_opts]) ::
-    {:ok, any} | {:error, :stale_reference | :invalid_selector}
-  def request(method, url, params \\ %{}, opts \\ [])
-  def request(method, url, params, _opts) when map_size(params) == 0 do
-    make_request(method, url, "")
-  end
-  def request(method, url, params, [{:encode_json, false} | _]) do
-    make_request(method, url, params)
-  end
-  def request(method, url, params, _opts) do
-    make_request(method, url, Poison.encode!(params))
-  end
-
-  @doc """
-  Low-level function that sends a request to the webdriver API and
-  raises an exception if an error occurs.
-  """
-  @spec request!(http_method, url) :: any
-  def request!(method, url) do
-    make_request!(method, url, "")
-  end
-
-  defp make_request(method, url, body) do
-    HTTPoison.request(method, url, body, headers(), request_opts())
-    |> handle_response
-  end
-
-  defp make_request!(method, url, body) do
-    case make_request(method, url, body) do
-      {:ok, resp} ->
-        resp
-
-      {:error, :stale_reference} ->
-        raise Wallaby.StaleReferenceException
-
-      {:error, :invalid_selector} ->
-        raise Wallaby.InvalidSelector, Poison.decode!(body)
-
-      {:error, e} ->
-        raise "There was an error calling: #{url} -> #{e.reason}"
-    end
-  end
-
-  defp request_opts do
-    Application.get_env(:wallaby, :hackney_options, [])
-  end
-
-  defp headers do
-    [{"Accept", "application/json"},
-      {"Content-Type", "application/json"}]
-  end
-
-  defp handle_response({:ok, %HTTPoison.Response{status_code: 204}}) do
-    {:ok, %{"value" => nil}}
-  end
-  defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
-    with {:ok, decoded} <- Poison.decode(body),
-          {:ok, validated} <- check_for_response_errors(decoded),
-          do: {:ok, validated}
-  end
-  defp handle_response({:error, reason}), do: {:error, reason}
-
-
-  defp check_for_response_errors(response) do
-    case Map.get(response, "value") do
-      %{"class" => "org.openqa.selenium.StaleElementReferenceException"} ->
-        {:error, :stale_reference}
-      %{"class" => "org.openqa.selenium.InvalidSelectorException"} ->
-        {:error, :invalid_selector}
-      _ ->
-        {:ok, response}
-    end
-  end
-
-  defp to_params({:xpath, xpath}) do
-    %{using: "xpath", value: xpath}
-  end
-  defp to_params({:css, css}) do
-    %{using: "css selector", value: css}
   end
 
   @spec cast_as_element(Session.t | Element.t, map) :: Element.t

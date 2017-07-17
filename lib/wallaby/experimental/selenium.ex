@@ -1,5 +1,6 @@
 defmodule Wallaby.Experimental.Selenium do
   @moduledoc false
+  use Supervisor
 
   @behaviour Wallaby.Driver
 
@@ -10,6 +11,21 @@ defmodule Wallaby.Experimental.Selenium do
     {:remote_url, String.t} |
     {:capabilities, map} |
     {:create_session_fn, ((String.t, map) -> {:ok, %{}})}
+
+  def start_link(opts\\[]) do
+    Supervisor.start_link(__MODULE__, :ok, opts)
+  end
+
+  def init(:ok) do
+    children = [
+    ]
+
+    supervise(children, strategy: :one_for_one)
+  end
+
+  def validate() do
+    :ok
+  end
 
   @spec start_session([start_session_opts]) :: {:ok, Session.t}
   def start_session(opts \\ []) do
@@ -49,6 +65,15 @@ defmodule Wallaby.Experimental.Selenium do
     :ok
   end
 
+  def blank_page?(session) do
+    case current_url(session) do
+      {:ok, url} ->
+        url == "about:blank"
+      _ ->
+        false
+    end
+  end
+
   # Dialog handling not supported yet
   def accept_dialogs(_session), do: {:error, :not_implemented}
   def dismiss_dialogs(_session), do: {:error, :not_implemented}
@@ -66,15 +91,15 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.cookies(session)
   end
 
-  def current_path!(%Session{} = session) do
-    session
-    |> WebdriverClient.current_url!
-    |> URI.parse
-    |> Map.get(:path)
+  def current_path(%Session{} = session) do
+    with  {:ok, url} <- WebdriverClient.current_url(session),
+          uri <- URI.parse(url),
+          {:ok, path} <- Map.fetch(uri, :path),
+      do: {:ok, path}
   end
 
-  def current_url!(%Session{} = session) do
-    WebdriverClient.current_url!(session)
+  def current_url(%Session{} = session) do
+    WebdriverClient.current_url(session)
   end
 
   def get_window_size(%Session{} = session) do
@@ -90,7 +115,7 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.page_title(session)
   end
 
-  def set_cookies(%Session{} = session, key, value) do
+  def set_cookie(%Session{} = session, key, value) do
     WebdriverClient.set_cookie(session, key, value)
   end
 

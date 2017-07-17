@@ -86,3 +86,11 @@ defmodule Wallaby.CookieException do
     %__MODULE__{message: msg}
   end
 end
+
+defmodule Wallaby.DependencyException do
+  defexception [:message]
+
+  def exception(msg) do
+    %__MODULE__{message: msg}
+  end
+end

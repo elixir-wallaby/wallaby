@@ -239,7 +239,8 @@ defmodule Wallaby.Browser do
   @spec current_url(parent) :: String.t
 
   def current_url(%Session{driver: driver} = session) do
-    driver.current_url!(session)
+    {:ok, url} = driver.current_url(session)
+    url
   end
 
   @doc """
@@ -248,7 +249,8 @@ defmodule Wallaby.Browser do
   @spec current_path(parent) :: String.t
 
   def current_path(%Session{driver: driver} = session) do
-    driver.current_path!(session)
+    {:ok, path} = driver.current_path(session)
+    path
   end
 
   @doc """
@@ -515,7 +517,21 @@ defmodule Wallaby.Browser do
     |> has_value?(value)
   end
   def has_value?(%Element{}=element, value) do
-    Element.value(element) == value
+    result = retry fn ->
+      cond do
+        Element.value(element) == value ->
+          {:ok, true}
+        true ->
+          {:error, false}
+      end
+    end
+
+    case result do
+      {:ok, true} ->
+        true
+      {:error, false} ->
+        false
+    end
   end
 
   @doc """
@@ -588,16 +604,25 @@ defmodule Wallaby.Browser do
       parent = unquote(parent)
       query  = unquote(query)
 
-      case execute_query(parent, query) do
-        {:ok, _query_result} ->
-          parent
-        {:error, {:not_found, results}} ->
-          query = %Query{query | result: results}
-          raise Wallaby.ExpectationNotMet,
-                Query.ErrorMessage.message(query, :not_found)
-        {:error, :invalid_selector} ->
-          raise Wallaby.QueryError,
-            Query.ErrorMessage.message(query, :invalid_selector)
+      with {:ok, _query_result} <- execute_query(parent, query) do
+        parent
+      else
+        error ->
+          if Wallaby.screenshot_on_failure? do
+            take_screenshot(parent)
+          end
+          case error do
+            {:error, {:not_found, results}} ->
+              query = %Query{query | result: results}
+              raise Wallaby.ExpectationNotMet,
+                    Query.ErrorMessage.message(query, :not_found)
+            {:error, :invalid_selector} ->
+              raise Wallaby.QueryError,
+                Query.ErrorMessage.message(query, :invalid_selector)
+            _ ->
+              raise Wallaby.ExpectationNotMet,
+                "Wallaby has encountered an internal error: #{inspect error} with session: #{inspect parent}"
+          end
       end
     end
   end
@@ -696,7 +721,7 @@ defmodule Wallaby.Browser do
       raise Wallaby.CookieException
     end
 
-    case driver.set_cookies(session, key, value) do
+    case driver.set_cookie(session, key, value) do
       {:ok, _list} ->
         session
       {:error, :invalid_cookie_domain} ->
@@ -704,8 +729,8 @@ defmodule Wallaby.Browser do
     end
   end
 
-  defp blank_page?(session) do
-    current_url(session) == "about:blank"
+  defp blank_page?(%Session{driver: driver}=session) do
+    driver.blank_page?(session)
   end
 
   @doc """

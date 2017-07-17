@@ -3,7 +3,7 @@
 use Mix.Config
 
 config :wallaby,
-  max_wait_time: 2000,
+  max_wait_time: 5000,
   pool_size: 3,
   js_logger: :stdio,
   screenshot_on_failure: false,

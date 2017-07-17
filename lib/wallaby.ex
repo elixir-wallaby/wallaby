@@ -23,8 +23,13 @@ defmodule Wallaby do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
+    case driver().validate() do
+      :ok -> :ok
+      {:error, exception} -> raise exception
+    end
+
     children = [
-      supervisor(Wallaby.Phantom, [[name: Driver.Supervisor]])
+      supervisor(driver(), [[name: Wallaby.Driver.Supervisor]])
     ]
 
     opts = [strategy: :one_for_one, name: Wallaby.Supervisor]
@@ -69,8 +74,7 @@ defmodule Wallaby do
   """
   @spec start_session([start_session_opts]) :: {:ok, Session.t} | {:error, reason}
   def start_session(opts \\ []) do
-    driver = Keyword.get_lazy(opts, :driver, &default_driver/0)
-    driver.start_session(opts)
+    driver().start_session(opts)
   end
 
   @doc """
@@ -101,7 +105,16 @@ defmodule Wallaby do
     Application.get_env(:wallaby, :phantomjs, "phantomjs")
   end
 
-  defp default_driver do
-    Application.get_env(:wallaby, :driver, Wallaby.Phantom)
+  def driver do
+    case System.get_env("WALLABY_DRIVER") do
+      "chrome" ->
+        Wallaby.Experimental.Chrome
+      "selenium" ->
+        Wallaby.Experimental.Selenium
+      "phantom" ->
+        Wallaby.Phantom
+      _ ->
+        Application.get_env(:wallaby, :driver, Wallaby.Phantom)
+    end
   end
 end

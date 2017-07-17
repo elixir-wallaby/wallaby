@@ -48,12 +48,12 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to get the current path of the browser's session.
   """
-  @callback current_path!(Session.t) :: String.t | nil | no_return
+  @callback current_path(Session.t) :: {:ok, String.t} | {:error, reason}
 
   @doc """
   Invoked to get the current url of the browser's session.
   """
-  @callback current_url!(Session.t) :: String.t | nil | no_return
+  @callback current_url(Session.t) :: {:ok, String.t} | {:error, reason}
 
   @doc """
   Invoked to dismiss all open dialogs.
@@ -88,7 +88,7 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to set a cookie on a session
   """
-  @callback set_cookies(Session.t, String.t, String.t) :: {:ok, any} | {:error, reason}
+  @callback set_cookie(Session.t, String.t, String.t) :: {:ok, any} | {:error, reason}
 
   @doc """
   Invoked to set the size of the window.

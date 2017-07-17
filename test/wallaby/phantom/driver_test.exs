@@ -294,26 +294,7 @@ defmodule Wallaby.Phantom.DriverTest do
     end
   end
 
-  describe "current_url!/1" do
-    test "sends the correct request to the server", %{bypass: bypass} do
-      session = build_session_for_bypass(bypass)
-      url = "http://www.google.com"
-
-      stub_backend bypass, session, fn conn ->
-        if conn.method == "GET" && conn.request_path == "/session/#{session.id}/url" do
-          send_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": "#{url}"
-          }>)
-        end
-      end
-
-      assert ^url = Driver.current_url!(session)
-    end
-  end
-
-  describe "current_path!/1" do
+  describe "current_path/1" do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
       url = "http://www.google.com/search"
@@ -328,7 +309,7 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      assert "/search" = Driver.current_path!(session)
+      assert {:ok, "/search"} = Driver.current_path(session)
     end
   end
 
@@ -511,7 +492,7 @@ defmodule Wallaby.Phantom.DriverTest do
     end
   end
 
-  describe "set_cookies/3" do
+  describe "set_cookie/3" do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
       key = "tester"
@@ -529,7 +510,7 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      assert {:ok, []} = Driver.set_cookies(session, key, value)
+      assert {:ok, []} = Driver.set_cookie(session, key, value)
     end
   end
 

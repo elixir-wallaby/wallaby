@@ -1,7 +1,7 @@
 defmodule Wallaby.Integration.Browser.InvalidSelectorsTest do
   use Wallaby.Integration.SessionCase, async: true
 
-  import Wallaby.Query, only: [css: 1, file_field: 1]
+  import Wallaby.Query, only: [css: 1]
 
   describe "with an invalid selector state" do
     test "find returns an exception", %{session: session} do

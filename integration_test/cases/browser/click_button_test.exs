@@ -287,7 +287,7 @@ defmodule Wallaby.Integration.Browser.Actions.ClickButtonTest do
       |> click(button("Duplicate Button"))
     end
   end
-  
+
   test "works with elements", %{page: page} do
     assert page
     |> find(button("I'm a button"))

@@ -44,14 +44,6 @@ defmodule Wallaby.Integration.QueryTest do
 
       assert Enum.count(element) == 2
     end
-
-    # TODO: Probs should totes remove this.
-    @tag :pending
-    test "informs the user that there are potential matches", %{session: session} do
-      session
-      |> Browser.visit("/page_1.html")
-      |> Browser.find(Query.css("#invisible"))
-    end
   end
 
   test "queries can check the ammount of elements", %{session: session} do

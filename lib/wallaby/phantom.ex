@@ -44,6 +44,19 @@ defmodule Wallaby.Phantom do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
+  def validate() do
+    case System.find_executable("phantomjs") do
+      phantom when not is_nil(phantom) ->
+        :ok
+      _ ->
+        exception = Wallaby.DependencyException.exception """
+        Wallaby can't find phantomjs. Make sure you have phantomjs installed
+        and included in your path.
+        """
+        {:error, exception}
+    end
+  end
+
   def init(:ok) do
     children = [
       :poolboy.child_spec(@pool_name, poolboy_config(), []),
@@ -89,6 +102,13 @@ defmodule Wallaby.Phantom do
     :poolboy.checkin(Wallaby.ServerPool, server)
   end
 
+  def blank_page?(session) do
+    case current_url(session) do
+      {:ok, url} -> url == "about:blank"
+      _ -> false
+    end
+  end
+
   @doc false
   defdelegate accept_dialogs(session),                            to: Driver
   @doc false
@@ -100,9 +120,9 @@ defmodule Wallaby.Phantom do
   @doc false
   defdelegate cookies(session),                                   to: Driver
   @doc false
-  defdelegate current_path!(session),                             to: Driver
+  defdelegate current_path(session),                             to: Driver
   @doc false
-  defdelegate current_url!(session),                              to: Driver
+  defdelegate current_url(session),                              to: Driver
   @doc false
   defdelegate dismiss_dialogs(session),                           to: Driver
   @doc false
@@ -116,7 +136,7 @@ defmodule Wallaby.Phantom do
   @doc false
   defdelegate page_source(session),                               to: Driver
   @doc false
-  defdelegate set_cookies(session, key, value),                   to: Driver
+  defdelegate set_cookie(session, key, value),                    to: Driver
   @doc false
   defdelegate set_window_size(session, width, height),            to: Driver
   @doc false
