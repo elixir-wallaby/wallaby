@@ -76,16 +76,20 @@ defmodule Wallaby.Element do
   """
   @spec click(t) :: t
 
-  def click(%__MODULE__{driver: driver} = element) do
+  def click(%__MODULE__{driver: driver} = element, retry_count\\0) do
     case driver.click(element) do
       {:ok, _} ->
         element
       {:error, :stale_reference} ->
         raise Wallaby.StaleReferenceException
       {:error, :obscured} ->
-        raise Wallaby.ExpectationNotMet, """
-        The element you tried to click is obscured by another element.
-        """
+        if retry_count > 4 do
+          raise Wallaby.ExpectationNotMet, """
+          The element you tried to click is obscured by another element.
+          """
+        else
+          click(element, retry_count+1)
+        end
     end
   end
 
