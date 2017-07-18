@@ -1,12 +1,14 @@
-defmodule Wallaby.Experimental.Chrome.Sessions do
+defmodule Wallaby.SessionStore do
+  @moduledoc false
   use GenServer
 
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
-
   def start_link(), do: GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
 
   def monitor(session), do: GenServer.call(__MODULE__, {:monitor, session})
+
+  def demonitor(session), do: GenServer.call(__MODULE__, {:demonitor, session})
 
   def init(:ok) do
     Process.flag(:trap_exit, true)
@@ -19,8 +21,19 @@ defmodule Wallaby.Experimental.Chrome.Sessions do
     {:reply, :ok, %{state | refs: refs}}
   end
 
+  def handle_call({:demonitor, session}, _from, %{refs: refs}=state) do
+    case Enum.find(refs, fn({_, value}) -> value.id == session.id end) do
+      {ref, _} ->
+        {_, refs} = Map.pop(refs, ref)
+        true = Process.demonitor(ref)
+        {:reply, :ok, %{state | refs: refs}}
+      nil ->
+        {:reply, :ok, state}
+    end
+  end
+
   def handle_info({:DOWN, ref, :process, _pid, _reason}, %{refs: refs}=state) do
-    {session, _ref} = Map.pop(refs, ref)
+    {session, refs} = Map.pop(refs, ref)
     WebdriverClient.delete_session(session)
     {:noreply, %{state | refs: refs}}
   end

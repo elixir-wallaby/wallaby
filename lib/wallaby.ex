@@ -18,6 +18,7 @@ defmodule Wallaby do
   use Application
 
   alias Wallaby.Session
+  alias Wallaby.SessionStore
 
   @doc false
   def start(_type, _args) do
@@ -29,7 +30,8 @@ defmodule Wallaby do
     end
 
     children = [
-      supervisor(driver(), [[name: Wallaby.Driver.Supervisor]])
+      supervisor(driver(), [[name: Wallaby.Driver.Supervisor]]),
+      worker(Wallaby.SessionStore, []),
     ]
 
     opts = [strategy: :one_for_one, name: Wallaby.Supervisor]
@@ -74,15 +76,19 @@ defmodule Wallaby do
   """
   @spec start_session([start_session_opts]) :: {:ok, Session.t} | {:error, reason}
   def start_session(opts \\ []) do
-    driver().start_session(opts)
+    with {:ok, session} <- driver().start_session(opts),
+         :ok <- SessionStore.monitor(session),
+      do: {:ok, session}
   end
 
   @doc """
   Ends a browser session.
   """
-  @spec end_session(Session.t) :: {:ok, Session.t} | {:error, reason}
+  @spec end_session(Session.t) :: :ok | {:error, reason}
   def end_session(%Session{driver: driver} = session) do
-    driver.end_session(session)
+    with :ok <- SessionStore.demonitor(session),
+         :ok <- driver.end_session(session),
+      do: :ok
   end
 
   @doc false

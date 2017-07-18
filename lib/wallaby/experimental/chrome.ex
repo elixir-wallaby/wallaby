@@ -6,7 +6,7 @@ defmodule Wallaby.Experimental.Chrome do
   @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+).(\d+) \(.*\)/
 
   alias Wallaby.Session
-  alias Wallaby.Experimental.Chrome.{Chromedriver, Sessions}
+  alias Wallaby.Experimental.Chrome.{Chromedriver}
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   @doc false
@@ -17,7 +17,6 @@ defmodule Wallaby.Experimental.Chrome do
   def init(:ok) do
     children = [
       :poolboy.child_spec(@pool_name, poolboy_config(), []),
-      worker(Wallaby.Experimental.Chrome.Sessions, [])
     ]
 
     supervise(children, strategy: :one_for_one)
@@ -73,7 +72,6 @@ defmodule Wallaby.Experimental.Chrome do
         driver: __MODULE__,
         server: chromedriver,
       }
-      :ok = Sessions.monitor(session)
 
       {:ok, session}
     end
