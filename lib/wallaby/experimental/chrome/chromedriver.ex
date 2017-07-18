@@ -1,16 +1,16 @@
 defmodule Wallaby.Experimental.Chrome.Chromedriver do
   use GenServer
 
-  def start_link(_args) do
-    GenServer.start_link(__MODULE__, [])
+  def start_link() do
+    GenServer.start_link(__MODULE__, :ok, [name: __MODULE__])
   end
 
-  def stop(server) do
-    GenServer.stop(server)
+  def stop() do
+    GenServer.stop(__MODULE__)
   end
 
-  def base_url(server) do
-    GenServer.call(server, :base_url)
+  def base_url() do
+    GenServer.call(__MODULE__, :base_url)
   end
 
   @dialyzer {:nowarn_function, init: 1}
