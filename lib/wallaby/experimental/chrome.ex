@@ -50,11 +50,11 @@ defmodule Wallaby.Experimental.Chrome do
 
   def start_session(opts) do
     {:ok, base_url} = Chromedriver.base_url()
-    capabilities = Keyword.get(opts, :capabilities, %{})
     create_session_fn = Keyword.get(opts, :create_session_fn,
                                     &WebdriverClient.create_session/2)
-
-    capabilities = Map.merge(default_capabilities(), capabilities)
+    user_agent = user_agent()
+                 |> Wallaby.Metadata.append(opts[:metadata])
+    capabilities = capabilities(user_agent: user_agent)
 
     with {:ok, response} <- create_session_fn.(base_url, capabilities) do
       id = response["sessionId"]
@@ -148,6 +148,11 @@ defmodule Wallaby.Experimental.Chrome do
     "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
   end
 
+  defp capabilities(opts) do
+    default_capabilities()
+    |> Map.put(:chromeOptions, chrome_options(opts))
+  end
+
   defp default_capabilities do
     %{
       javascriptEnabled: false,
@@ -159,18 +164,21 @@ defmodule Wallaby.Experimental.Chrome do
       nativeEvents: false,
       platform: "ANY",
       unhandledPromptBehavior: "accept",
-      chromeOptions: chrome_options(),
     }
   end
 
-  defp chrome_options, do: %{
-      args: args()
+  defp chrome_options(opts), do: %{
+      args: chrome_args(opts)
     }
 
-  defp args() do
-    default_args()
+  defp chrome_args(opts) do
+    default_chrome_args()
     |> Enum.concat(headless_args())
+    |> Enum.concat(user_agent_arg(opts[:user_agent]))
   end
+
+  defp user_agent_arg(nil), do: []
+  defp user_agent_arg(ua), do: ["--user-agent=#{ua}"]
 
   defp headless? do
     :wallaby
@@ -178,7 +186,7 @@ defmodule Wallaby.Experimental.Chrome do
     |> Keyword.get(:headless, true)
   end
 
-  def default_args() do
+  def default_chrome_args() do
     [
       "--no-sandbox",
       "window-size=1280,800",
