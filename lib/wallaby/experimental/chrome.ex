@@ -2,11 +2,10 @@ defmodule Wallaby.Experimental.Chrome do
   use Supervisor
   @behaviour Wallaby.Driver
 
-  @pool_name Wallaby.ChromedriverPool
   @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+).(\d+) \(.*\)/
 
   alias Wallaby.Session
-  alias Wallaby.Experimental.Chrome.{Chromedriver, Sessions}
+  alias Wallaby.Experimental.Chrome.{Chromedriver}
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   @doc false
@@ -16,8 +15,7 @@ defmodule Wallaby.Experimental.Chrome do
 
   def init(:ok) do
     children = [
-      :poolboy.child_spec(@pool_name, poolboy_config(), []),
-      worker(Wallaby.Experimental.Chrome.Sessions, [])
+      worker(Wallaby.Experimental.Chrome.Chromedriver, [])
     ]
 
     supervise(children, strategy: :one_for_one)
@@ -50,13 +48,8 @@ defmodule Wallaby.Experimental.Chrome do
     end
   end
 
-  def start_session(opts \\ []) do
-    chromedriver = :poolboy.checkout(@pool_name, true, :infinity)
-    start_session(chromedriver, opts)
-  end
-
-  def start_session(chromedriver, opts) do
-    {:ok, base_url} = Chromedriver.base_url(chromedriver)
+  def start_session(opts) do
+    {:ok, base_url} = Chromedriver.base_url()
     capabilities = Keyword.get(opts, :capabilities, %{})
     create_session_fn = Keyword.get(opts, :create_session_fn,
                                     &WebdriverClient.create_session/2)
@@ -71,18 +64,16 @@ defmodule Wallaby.Experimental.Chrome do
         url: base_url <> "session/#{id}",
         id: id,
         driver: __MODULE__,
-        server: chromedriver,
+        server: Chromedriver,
       }
-      :ok = Sessions.monitor(session)
 
       {:ok, session}
     end
   end
 
-  def end_session(%Wallaby.Session{server: server}=session, opts \\ []) do
+  def end_session(%Wallaby.Session{}=session, opts \\ []) do
     end_session_fn = Keyword.get(opts, :end_session_fn, &WebdriverClient.delete_session/1)
     end_session_fn.(session)
-    :poolboy.checkin(@pool_name, server)
     :ok
   end
 
@@ -202,15 +193,4 @@ defmodule Wallaby.Experimental.Chrome do
       []
     end
   end
-
-  defp poolboy_config(), do: [
-    name: {:local, @pool_name},
-    worker_module: Wallaby.Experimental.Chrome.Chromedriver,
-    size: pool_size(),
-    max_overflow: 0,
-  ]
-
-  defp pool_size, do: Application.get_env(:wallaby, :pool_size) || default_pool_size()
-
-  defp default_pool_size, do: :erlang.system_info(:schedulers_online)/2
 end

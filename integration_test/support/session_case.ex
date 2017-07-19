@@ -20,8 +20,7 @@ defmodule Wallaby.Integration.SessionCase do
       |> Keyword.merge(opts)
 
     with {:ok, session} <- retry(2, fn -> Wallaby.start_session(session_opts) end),
-        :ok <- on_exit(fn -> Wallaby.end_session(session) end),
-        do: {:ok, session}
+      do: {:ok, session}
   end
 
   @doc """
