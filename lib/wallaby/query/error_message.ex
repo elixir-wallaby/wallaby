@@ -113,6 +113,8 @@ defmodule Wallaby.Query.ErrorMessage do
   def method(:file_field, true), do: "file fields"
   def method(:file_field, false), do: "file field"
 
+  def method(:text, true), do: "elements with the text"
+  def method(:text, false), do: "element with the text"
 
   def short_method(:css, count) when count > 1,  do: "elements"
   def short_method(:css, count) when count == 0, do: "elements"
