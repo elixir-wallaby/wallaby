@@ -91,6 +91,24 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message =~ ~r/query is invalid/
     end
+
+    test "with text queries" do
+      message =
+        Query.text("test")
+        |> ErrorMessage.message(:not_found)
+        |> format
+      assert message == format """
+      Expected to find 1, visible element with the text 'test' but 0, visible elements with the text were found.
+      """
+
+      message =
+        Query.text("test", count: 2)
+        |> ErrorMessage.message(:not_found)
+        |> format
+      assert message == format """
+      Expected to find 2, visible elements with the text 'test' but 0, visible elements with the text were found.
+      """
+    end
   end
 
   describe "visibility/1" do
