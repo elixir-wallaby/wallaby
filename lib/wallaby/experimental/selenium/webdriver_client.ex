@@ -59,6 +59,54 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
+  Invoked to accept one alert triggered within `open_dialog_fn` and return the alert message.
+  """
+  def accept_alert(session, fun) do
+    fun.(session)
+    with  {:ok, value} <- alert_text(session),
+          {:ok, _r} <- request(:post, "#{session.url}/accept_alert"),
+      do: value
+  end
+
+  @doc """
+  Invoked to accept one alert triggered within `open_dialog_fn` and return the alert message.
+  """
+  def dismiss_alert(session, fun) do
+    accept_alert(session, fun)
+  end
+
+  def accept_confirm(session, fun) do
+    accept_alert(session, fun)
+  end
+
+  def dismiss_confirm(session, fun) do
+    fun.(session)
+    with  {:ok, value} <- alert_text(session),
+          {:ok, _r} <- request(:post, "#{session.url}/dismiss_alert"),
+      do: value
+  end
+
+  def accept_prompt(session, input, fun) when is_nil(input) do
+    fun.(session)
+    with  {:ok, value} <- alert_text(session),          
+          {:ok, _r} <- request(:post, "#{session.url}/accept_alert"),
+      do: value
+  end
+
+  def accept_prompt(session, input, fun) do
+    fun.(session)
+    with  {:ok, _r} <- request(:post, "#{session.url}/alert_text", %{text: input}),
+          {:ok, value} <- alert_text(session),          
+          {:ok, _r} <- request(:post, "#{session.url}/accept_alert"),
+      do: value
+  end
+
+  def dismiss_prompt(session, _fun) do
+    with  {:ok, resp} <- request(:post, "#{session.url}/dismiss_alert"),
+      do: resp
+  end
+
+  @doc """
   Clicks an element
   """
   @spec click(Element.t) :: {:ok, map}
@@ -316,4 +364,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       driver: Wallaby.Experimental.Selenium,
     }
   end
+
+  @doc """
+  Retrieves the text from an alert, prompt or confirm.
+  """
+  @spec alert_text(Session.t) :: {:ok, String.t}
+  defp alert_text(session) do
+    with  {:ok, resp} <- request(:get, "#{session.url}/alert_text"),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
 end
