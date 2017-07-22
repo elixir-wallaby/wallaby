@@ -27,6 +27,11 @@ defmodule Wallaby.Integration.SessionCase do
   Injects a test session into the test context
   """
   def inject_test_session(%{skip_test_session: true}), do: :ok
+  def inject_test_session(%{test_name_in_path: true} = context) do
+    {:ok, session} = start_test_session(context: Map.take(context, [:case, :describe, :test]))
+
+    {:ok, %{session: session}}
+  end
   def inject_test_session(_context) do
     {:ok, session} = start_test_session()
 

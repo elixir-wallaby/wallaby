@@ -944,12 +944,15 @@ defmodule Wallaby.Browser do
     Application.get_env(:wallaby, :base_url) || ""
   end
 
-  def path_for_screenshot(screenshotable) do
+  defp path_for_screenshot(%Element{parent: session}), do: path_from_session(session)
+  defp path_for_screenshot(screenshotable), do: path_from_session(screenshotable)
+
+  defp path_from_session(session) do
     File.mkdir_p!(screenshot_dir())
-    "#{screenshot_dir()}/#{basename_for_screenshot(screenshotable)}#{:erlang.system_time}.png"
+    "#{screenshot_dir()}/#{basename_for_screenshot(session)}#{:erlang.system_time}.png"
   end
 
-  defp basename_for_screenshot(%Session{context: context}) do
+  defp basename_for_screenshot(%Session{context: context}) when is_map(context) do
     basename =
       context
       |> Map.values()
