@@ -365,9 +365,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
     }
   end
 
-  @doc """
-  Retrieves the text from an alert, prompt or confirm.
-  """
+  # Retrieves the text from an alert, prompt or confirm.
   @spec alert_text(Session.t) :: {:ok, String.t}
   defp alert_text(session) do
     with  {:ok, resp} <- request(:get, "#{session.url}/alert_text"),
