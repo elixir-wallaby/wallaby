@@ -1,10 +1,15 @@
 language: elixir
 elixir:
-  - 1.4.2
+  - 1.4.5
   - 1.3.4
 otp_release:
   - 19.3
   - 18.3
+  - 20.0
+matrix:
+  exclude:
+    - elixir: 1.3.4
+      otp_release: 20.0
 # Run in bigger container so we don't run out of memory generating the plt
 sudo: required
 cache:
