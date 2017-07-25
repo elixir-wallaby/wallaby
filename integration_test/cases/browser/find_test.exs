@@ -100,6 +100,22 @@ defmodule Wallaby.Integration.Browser.FindTest do
       assert find(page, Query.css(".user", text: "Visible User", visible: true))
       assert find(page, Query.css(".invisible-elements", visible: false, count: 3))
     end
+
+    test "returns the element as the argument to the callback", %{page: page} do
+      page
+      |> find(Query.css("h1"), & assert has_text?(&1, "Page 1") )
+    end
+
+    test "returns the parent", %{page: page} do
+      assert page
+      |> find(Query.css("h1"), fn(_) -> nil end) == page
+    end
+
+    test "returns all the elements found with the query", %{page: page} do
+      assert find page, Query.css(".user", count: 5), fn(elements) ->
+         assert Enum.count(elements) == 5
+      end
+    end
   end
 
   test "waits for an element to be visible", %{session: session} do
@@ -125,29 +141,5 @@ defmodule Wallaby.Integration.Browser.FindTest do
     end
 
     assert find(session, Query.css("li", count: :any)) |> length == 4
-  end
-
-  describe "find/3" do
-    setup %{session: session} do
-      page = visit(session, "page_1.html")
-
-      {:ok, %{page: page}}
-    end
-
-    test "returns the element as the argument to the callback", %{page: page} do
-      page
-      |> find(Query.css("h1"), & assert has_text?(&1, "Page 1") )
-    end
-
-    test "returns the parent", %{page: page} do
-      assert page
-      |> find(Query.css("h1"), fn(_) -> nil end) == page
-    end
-
-    test "returns all the elements found with the query", %{page: page} do
-      assert find page, Query.css(".user", count: 5), fn(elements) ->
-         assert Enum.count(elements) == 5
-      end
-    end
   end
 end
