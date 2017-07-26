@@ -54,7 +54,7 @@ before_script:
 
 script:
   - mix coveralls.travis
-  - if [ -z ${WALLABY_DRIVER} ]; mix dialyzer --halt-exit-status; fi # only run dialyzer for the env without drivers
+  - if [ -z ${WALLABY_DRIVER} ]; then mix dialyzer --halt-exit-status; fi # only run dialyzer for the env without drivers
 
 after_script:
   - mix deps.get --only docs
