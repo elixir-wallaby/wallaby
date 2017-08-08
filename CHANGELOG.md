@@ -1,3 +1,30 @@
+## 0.19.0 (not released)
+
+### Features
+
+* Handle alerts in chromedriver - thanks @florinpatrascu
+
+### Bugfixes
+
+* Return the correct error message for text queries.
+
+## 0.18.1 (2017-07-19)
+
+### Bugfixes
+
+* Pass correct BEAM Metadata to chromedriver to support db_connection
+* Close all sessions when their parent process dies.
+
+## 0.18.0 (2017-07-17)
+
+### Features
+
+* Support for chromedriver
+
+### Bugfixes
+
+* Capture invalid state errors
+
 ## 0.17.0 (2017-05-17)
 
 This release removes all methods declared as _deprecated_ in the 0.16 release, experimental Selenium support and much more! If you are looking to upgrade from an earlier release, it is recommended to first go to 0.16.x.
