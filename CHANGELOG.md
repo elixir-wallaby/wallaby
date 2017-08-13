@@ -1,3 +1,9 @@
+## 0.19.1 ()
+
+### Bugfixes
+
+* Publish new release with an updated version of hex to fix file permissions.
+
 ## 0.19.0 (2017-08-08)
 
 ### Features

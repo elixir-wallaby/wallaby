@@ -71,7 +71,7 @@ Add Wallaby to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:wallaby, "~> 0.19.0"}]
+  [{:wallaby, "~> 0.19.1"}]
 end
 ```
 
