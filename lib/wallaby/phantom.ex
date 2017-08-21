@@ -45,13 +45,18 @@ defmodule Wallaby.Phantom do
   end
 
   def validate() do
-    case System.find_executable("phantomjs") do
-      phantom when not is_nil(phantom) ->
+    cond do
+      Application.get_env(:wallaby, :phantomjs, "phantomjs")
+      |> Path.expand
+      |> System.find_executable ->
         :ok
-      _ ->
+      System.find_executable("phantomjs") ->
+        :ok
+      true ->
         exception = Wallaby.DependencyException.exception """
         Wallaby can't find phantomjs. Make sure you have phantomjs installed
-        and included in your path.
+        and included in your path, or that your `config :wallaby, :phantomjs`
+        setting points to a valid phantomjs executable.
         """
         {:error, exception}
     end
