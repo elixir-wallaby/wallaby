@@ -1,4 +1,10 @@
-## 0.19.1 ()
+## unreleased
+
+### Bugfixes
+
+* relax httpoison dependency for easier upgrading and not locking you down
+
+## 0.19.1 (2017-08-13)
 
 ### Bugfixes
 
