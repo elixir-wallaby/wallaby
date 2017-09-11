@@ -1,7 +1,7 @@
 defmodule Wallaby.Phantom.DriverTest do
   use Wallaby.HttpClientCase, async: true
 
-  alias Wallaby.{Element, Query, Session, StaleReferenceException}
+  alias Wallaby.{Element, Phantom, Query, Session, StaleReferenceException}
   alias Wallaby.Phantom.Driver
 
   @window_handle_id "bdc333b0-1989-11e7-a2c3-d1d2d92b0e58"
@@ -79,6 +79,7 @@ defmodule Wallaby.Phantom.DriverTest do
 
       assert {:ok, [element]} = Driver.find_elements(session, query)
       assert element == %Element{
+        driver: Phantom,
         id: element_id,
         parent: session,
         session_url: session.url,
@@ -107,6 +108,7 @@ defmodule Wallaby.Phantom.DriverTest do
 
       assert {:ok, [element]} = Driver.find_elements(parent_element, query)
       assert element == %Element{
+        driver: Phantom,
         id: element_id,
         parent: parent_element,
         session_url: session.url,
@@ -668,11 +670,12 @@ defmodule Wallaby.Phantom.DriverTest do
   defp build_session_for_bypass(bypass, session_id \\ "my-sample-session") do
     session_url = bypass_url(bypass, "/session/#{session_id}")
 
-    %Session{id: session_id, session_url: session_url, url: session_url}
+    %Session{driver: Phantom, id: session_id, session_url: session_url, url: session_url}
   end
 
   defp build_element_for_session(session, element_id \\ ":wdc:abc123") do
     %Element{
+      driver: Phantom,
       id: element_id,
       parent: session,
       session_url: session.url,

@@ -1,4 +1,4 @@
-defmodule Wallaby.Phantom.LogStore do
+defmodule Wallaby.Driver.LogStore do
   @moduledoc false
 
   def start_link do

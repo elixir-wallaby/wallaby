@@ -26,6 +26,7 @@ Code.require_file "../cases/browser/stale_nodes_test.exs", __DIR__
 Code.require_file "../cases/browser/text_test.exs", __DIR__
 Code.require_file "../cases/browser/title_test.exs", __DIR__
 Code.require_file "../cases/browser/visible_test.exs", __DIR__
+Code.require_file "../cases/browser/js_errors_test.exs", __DIR__
 Code.require_file "../cases/element/send_keys_test.exs", __DIR__
 Code.require_file "../cases/query_test.exs", __DIR__
 Code.require_file "../cases/wallaby_test.exs", __DIR__

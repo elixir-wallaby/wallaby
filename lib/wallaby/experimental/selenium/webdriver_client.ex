@@ -361,7 +361,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       session_url: parent.session_url,
       url: parent.session_url <> "/element/#{id}",
       parent: parent,
-      driver: Wallaby.Experimental.Selenium,
+      driver: parent.driver,
     }
   end
 

@@ -4,7 +4,7 @@ defmodule Wallaby.HTTPClient do
   @type url :: String.t
   @type params :: map | String.t
   @type request_opts :: {:encode_json, boolean}
-  
+
   @status_obscured 13
 
   @doc """

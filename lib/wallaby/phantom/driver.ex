@@ -2,8 +2,7 @@ defmodule Wallaby.Phantom.Driver do
   @moduledoc false
 
   alias Wallaby.{Driver, Element, Session}
-  alias Wallaby.Phantom.Logger
-  alias Wallaby.Phantom.LogStore
+  import Wallaby.Driver.LogChecker
 
   import Wallaby.HTTPClient
 
@@ -220,8 +219,8 @@ defmodule Wallaby.Phantom.Driver do
   def size(element) do
     check_logs! element, fn ->
       with {:ok, resp} <- request(:get, "#{element.url}/size"),
-      		 {:ok, value} <- Map.fetch(resp, "value"),
-				do: {:ok, value}
+           {:ok, value} <- Map.fetch(resp, "value"),
+       do: {:ok, value}
     end
   end
 
@@ -485,18 +484,6 @@ defmodule Wallaby.Phantom.Driver do
             {:ok, value} <- Map.fetch(resp, "value"),
         do: value
     end
-  end
-
-  def check_logs!(session, fun) do
-    return_value = fun.()
-
-    {:ok, logs} = log(session)
-
-    session.session_url
-    |> LogStore.append_logs(logs)
-    |> Logger.log
-
-    return_value
   end
 
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
