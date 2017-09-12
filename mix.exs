@@ -60,6 +60,7 @@ defmodule Wallaby.Mixfile do
       {:bypass, "~> 0.7", only: :test},
       {:inch_ex, "~> 0.5", only: [:docs]},
       {:excoveralls, "~> 0.7",  only: :test},
+      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
     ]
   end
 
