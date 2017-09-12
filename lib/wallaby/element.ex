@@ -76,7 +76,7 @@ defmodule Wallaby.Element do
   """
   @spec click(t) :: t
 
-  def click(%__MODULE__{driver: driver} = element, retry_count\\0) do
+  def click(%__MODULE__{driver: driver} = element, retry_count \\ 0) do
     case driver.click(element) do
       {:ok, _} ->
         element
@@ -88,7 +88,7 @@ defmodule Wallaby.Element do
           The element you tried to click is obscured by another element.
           """
         else
-          click(element, retry_count+1)
+          click(element, retry_count + 1)
         end
     end
   end

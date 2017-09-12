@@ -32,7 +32,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   def find_elements(parent, locator) do
     with {:ok, resp} <- request(:post, parent.url <> "/elements", to_params(locator)),
           {:ok, elements} <- Map.fetch(resp, "value"),
-          elements <- Enum.map(elements||[], &(cast_as_element(parent, &1))),
+          elements <- Enum.map(elements || [], &(cast_as_element(parent, &1))),
       do: {:ok, elements}
   end
 
@@ -88,7 +88,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   def accept_prompt(session, input, fun) when is_nil(input) do
     fun.(session)
-    with  {:ok, value} <- alert_text(session),          
+    with  {:ok, value} <- alert_text(session),
           {:ok, _r} <- request(:post, "#{session.url}/accept_alert"),
       do: value
   end
@@ -96,7 +96,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   def accept_prompt(session, input, fun) do
     fun.(session)
     with  {:ok, _r} <- request(:post, "#{session.url}/alert_text", %{text: input}),
-          {:ok, value} <- alert_text(session),          
+          {:ok, value} <- alert_text(session),
           {:ok, _r} <- request(:post, "#{session.url}/accept_alert"),
       do: value
   end
@@ -307,7 +307,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   Sends a list of key strokes to active element
   """
   @spec send_keys(Session.t, [String.t | atom]) :: {:ok, nil}
-  def send_keys(%Session{}=session, keys) when is_list(keys) do
+  def send_keys(%Session{} = session, keys) when is_list(keys) do
     with {:ok, resp} <- request(:post, "#{session.session_url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
           {:ok, value} <- Map.fetch(resp, "value"),
     do: {:ok, value}

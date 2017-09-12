@@ -21,7 +21,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     {:ok, %{running: false, port: port, base_url: "http://localhost:#{tcp_port}/"}}
   end
 
-  def handle_call(:base_url, _from, %{base_url: base_url}=state) do
+  def handle_call(:base_url, _from, %{base_url: base_url} = state) do
     {:reply, {:ok, base_url}, state}
   end
 

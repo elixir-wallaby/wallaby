@@ -12,7 +12,7 @@ defmodule Wallaby.Experimental.Selenium do
     {:capabilities, map} |
     {:create_session_fn, ((String.t, map) -> {:ok, %{}})}
 
-  def start_link(opts\\[]) do
+  def start_link(opts \\ []) do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 

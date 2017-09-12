@@ -314,7 +314,7 @@ defmodule Wallaby.Browser do
       |> Element.send_keys(list)
     end)
   end
-  def send_keys(%Element{}=element, keys) do
+  def send_keys(%Element{} = element, keys) do
     Element.send_keys(element, keys)
   end
 
@@ -391,7 +391,7 @@ defmodule Wallaby.Browser do
     |> find(query)
     |> Element.text
   end
-  def text(%Session{}=session) do
+  def text(%Session{} = session) do
     session
     |> find(Query.css("body"))
     |> Element.text()
@@ -445,12 +445,12 @@ defmodule Wallaby.Browser do
   @spec find(parent, Query.t) :: Element.t | [Element.t]
   @spec find(parent, locator) :: Element.t | [Element.t]
 
-  def find(parent, %Query{}=query, callback) when is_function(callback) do
+  def find(parent, %Query{} = query, callback) when is_function(callback) do
     results = find(parent, query)
     callback.(results)
     parent
   end
-  def find(parent, %Query{}=query) do
+  def find(parent, %Query{} = query) do
     case execute_query(parent, query) do
       {:ok, query} ->
         query
@@ -486,7 +486,7 @@ defmodule Wallaby.Browser do
   """
   @spec all(parent, Query.t) :: [Element.t]
 
-  def all(parent, %Query{}=query) do
+  def all(parent, %Query{} = query) do
     find(
       parent,
       %Query{query | conditions: Keyword.merge(query.conditions, [count: nil, minimum: 0])})
@@ -516,7 +516,7 @@ defmodule Wallaby.Browser do
     |> find(query)
     |> has_value?(value)
   end
-  def has_value?(%Element{}=element, value) do
+  def has_value?(%Element{} = element, value) do
     result = retry fn ->
       cond do
         Element.value(element) == value ->
@@ -545,7 +545,7 @@ defmodule Wallaby.Browser do
     |> find(query)
     |> has_text?(text)
   end
-  def has_text?(%Session{}=session, text) when is_binary(text) do
+  def has_text?(%Session{} = session, text) when is_binary(text) do
     session
     |> find(Query.css("body"))
     |> has_text?(text)
@@ -729,7 +729,7 @@ defmodule Wallaby.Browser do
     end
   end
 
-  defp blank_page?(%Session{driver: driver}=session) do
+  defp blank_page?(%Session{driver: driver} = session) do
     driver.blank_page?(session)
   end
 
@@ -839,7 +839,7 @@ defmodule Wallaby.Browser do
     driver.dismiss_prompt(session, fun)
   end
 
-  defp validate_html(parent, %{html_validation: :button_type}=query) do
+  defp validate_html(parent, %{html_validation: :button_type} = query) do
     buttons = all(parent, Query.css("button", [text: query.selector]))
 
     cond do
@@ -849,7 +849,7 @@ defmodule Wallaby.Browser do
         {:ok, query}
     end
   end
-  defp validate_html(parent, %{html_validation: :bad_label}=query) do
+  defp validate_html(parent, %{html_validation: :bad_label} = query) do
     label_query = Query.css("label", text: query.selector)
     labels = all(parent, label_query)
 
@@ -858,7 +858,7 @@ defmodule Wallaby.Browser do
         cond do
           Enum.any?(labels, &(missing_for?(&1))) ->
             {:error, :label_with_no_for}
-          label=List.first(labels) ->
+          label = List.first(labels) ->
             {:error, {:label_does_not_find_field, Element.attr(label, "for")}}
         end
       true ->

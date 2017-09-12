@@ -10,7 +10,7 @@ defmodule Wallaby.Experimental.Chrome do
   import Wallaby.Driver.LogChecker
 
   @doc false
-  def start_link(opts\\[]) do
+  def start_link(opts \\ []) do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
@@ -73,7 +73,7 @@ defmodule Wallaby.Experimental.Chrome do
     end
   end
 
-  def end_session(%Wallaby.Session{}=session, opts \\ []) do
+  def end_session(%Wallaby.Session{} = session, opts \\ []) do
     end_session_fn = Keyword.get(opts, :end_session_fn, &WebdriverClient.delete_session/1)
     end_session_fn.(session)
     :ok
@@ -114,7 +114,6 @@ defmodule Wallaby.Experimental.Chrome do
   defdelegate accept_prompt(session, input, fun), to: WebdriverClient
   defdelegate dismiss_prompt(session, fun),       to: WebdriverClient
   defdelegate parse_log(log),                     to: Wallaby.Experimental.Chrome.Logger
-
 
   @doc false
   def cookies(session), do: delegate(:cookies, session)

@@ -40,7 +40,7 @@ defmodule Wallaby.Phantom do
   @pool_name Wallaby.ServerPool
 
   @doc false
-  def start_link(opts\\[]) do
+  def start_link(opts \\ []) do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
@@ -100,7 +100,7 @@ defmodule Wallaby.Phantom do
   end
 
   @doc false
-  def end_session(%Wallaby.Session{server: server}=session) do
+  def end_session(%Wallaby.Session{server: server} = session) do
     Driver.execute_script(session, "localStorage.clear()", [],
                           check_logs: false)
     Driver.delete(session)
