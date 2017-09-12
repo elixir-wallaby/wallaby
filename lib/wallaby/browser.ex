@@ -937,7 +937,10 @@ defmodule Wallaby.Browser do
   end
 
   defp request_url(path) do
-    base_url() <> path
+    base_url = String.trim_trailing(base_url(), "/")
+    path = String.trim_leading(path, "/")
+
+    "#{base_url}/#{path}"
   end
 
   defp base_url do
