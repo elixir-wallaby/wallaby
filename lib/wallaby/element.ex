@@ -177,7 +177,7 @@ defmodule Wallaby.Element do
   def send_keys(element, text) when is_binary(text) do
     send_keys(element, [text])
   end
-  def send_keys(%__MODULE{driver: driver} = element, keys) when is_list(keys) do
+  def send_keys(%__MODULE__{driver: driver} = element, keys) when is_list(keys) do
     case driver.send_keys(element, keys) do
       {:ok, _} ->
         element
