@@ -56,7 +56,6 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     Path.absname("priv/run_command.sh", Application.app_dir(:wallaby))
   end
 
-
   defp args(chromedriver, port), do: [
       chromedriver,
       "--port=#{port}",

@@ -265,7 +265,6 @@ defmodule Wallaby.Phantom.Driver do
     end
   end
 
-
   @doc """
   Sets the size of the window.
   """

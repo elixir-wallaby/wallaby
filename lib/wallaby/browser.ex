@@ -273,7 +273,6 @@ defmodule Wallaby.Browser do
   @spec execute_script(parent, String.t, ((binary()) -> any())) :: parent
   @spec execute_script(parent, String.t, list, ((binary()) -> any())) :: parent
 
-
   def execute_script(session, script) do
     execute_script(session, script, [])
   end

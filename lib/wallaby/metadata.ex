@@ -5,7 +5,6 @@ defmodule Wallaby.Metadata do
   # information is then stored in a User Agent string. The information from the
   # test can then be extracted in the application.
 
-
   @prefix "BeamMetadata"
   @regex ~r{#{@prefix} \((.*?)\)}
 

@@ -110,10 +110,10 @@ defmodule Wallaby.Query do
 
   @type compiled :: {:xpath | :css, String.t}
 
-
   @doc """
   Literally queries for the css selector you provide.
   """
+
   def css(selector, opts \\ []) do
     %Query{
       method: :css,
