@@ -1,4 +1,5 @@
 defmodule Wallaby.Experimental.Chrome.Chromedriver do
+  @moduledoc false
   use GenServer
 
   def start_link() do

@@ -1,5 +1,7 @@
 defmodule Wallaby.Experimental.Chrome do
+  @moduledoc false
   use Supervisor
+
   @behaviour Wallaby.Driver
 
   @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+).(\d+) \(.*\)/

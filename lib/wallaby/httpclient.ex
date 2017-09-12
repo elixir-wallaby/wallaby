@@ -1,4 +1,5 @@
 defmodule Wallaby.HTTPClient do
+  @moduledoc false
 
   @type method :: :post | :get | :delete
   @type url :: String.t
