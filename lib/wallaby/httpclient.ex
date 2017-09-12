@@ -31,7 +31,8 @@ defmodule Wallaby.HTTPClient do
   defp make_request(method, url, body, retry_count \\ 0)
   defp make_request(_, _, _, 5), do: raise "Wallaby had an internal issue with HTTPoison"
   defp make_request(method, url, body, retry_count) do
-    HTTPoison.request(method, url, body, headers(), request_opts())
+    method
+    |> HTTPoison.request(url, body, headers(), request_opts())
     |> handle_response
     |> case do
          {:error, :httpoison} ->

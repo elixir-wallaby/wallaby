@@ -30,7 +30,8 @@ defmodule Wallaby.Experimental.Chrome do
       chromedriver when not is_nil(chromedriver) ->
         {version, 0} = System.cmd("chromedriver", ["--version"])
         version =
-          Regex.run(@chromedriver_version_regex, version)
+          @chromedriver_version_regex
+          |> Regex.run(version)
           |> Enum.at(1)
           |> String.to_integer
 

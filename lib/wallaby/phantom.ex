@@ -46,7 +46,7 @@ defmodule Wallaby.Phantom do
 
   def validate do
     cond do
-      Application.get_env(:wallaby, :phantomjs, "phantomjs")
+      configured_phantom_js()
       |> Path.expand
       |> System.find_executable ->
         :ok
@@ -206,5 +206,9 @@ defmodule Wallaby.Phantom do
 
   defp default_pool_size do
     :erlang.system_info(:schedulers_online)
+  end
+
+  defp configured_phantom_js do
+    Application.get_env(:wallaby, :phantomjs, "phantomjs")
   end
 end

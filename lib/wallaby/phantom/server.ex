@@ -55,7 +55,7 @@ defmodule Wallaby.Phantom.Server do
       phantomjs_path(),
       "--webdriver=#{port}",
       "--local-storage-path=#{local_storage}"
-    ] ++ args()
+    ] ++ args(Application.get_env(:wallaby, :phantomjs_args, ""))
   end
 
   defp find_available_port do
@@ -66,7 +66,7 @@ defmodule Wallaby.Phantom.Server do
   end
 
   defp tmp_local_storage do
-    dirname = Integer.to_string(:rand.uniform(0x100000000), 36) |> String.downcase
+    dirname = 0x100000000 |> :rand.uniform |> Integer.to_string(36) |> String.downcase
 
     local_storage = Path.join(System.tmp_dir!, dirname)
 
@@ -79,14 +79,12 @@ defmodule Wallaby.Phantom.Server do
     Wallaby.phantomjs_path
   end
 
-  defp args do
-    Application.get_env(:wallaby, :phantomjs_args, "")
-    |> case do
-      string when is_binary(string) ->
-        String.split(string)
-      list when is_list(list) ->
-        list
-    end
+  defp args(phantomjs_args) when is_binary(phantomjs_args) do
+    String.split(phantomjs_args)
+  end
+
+  defp args(phantomjs_args) when is_list(phantomjs_args) do
+    phantomjs_args
   end
 
   def handle_info({_port, {:data, output}}, %{running: false} = state) do
