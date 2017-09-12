@@ -194,8 +194,8 @@ defmodule Wallaby.Phantom.Driver do
   def displayed(element) do
     check_logs!(element, fn ->
       with {:ok, resp} <- request(:get, "#{element.url}/displayed"),
-      		 {:ok, value} <- Map.fetch(resp, "value"),
-				do: {:ok, value}
+           {:ok, value} <- Map.fetch(resp, "value"),
+        do: {:ok, value}
     end)
   end
 
@@ -220,7 +220,7 @@ defmodule Wallaby.Phantom.Driver do
     check_logs! element, fn ->
       with {:ok, resp} <- request(:get, "#{element.url}/size"),
            {:ok, value} <- Map.fetch(resp, "value"),
-       do: {:ok, value}
+        do: {:ok, value}
     end
   end
 
