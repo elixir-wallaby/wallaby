@@ -44,7 +44,7 @@ defmodule Wallaby.Phantom do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
-  def validate() do
+  def validate do
     cond do
       Application.get_env(:wallaby, :phantomjs, "phantomjs")
       |> Path.expand

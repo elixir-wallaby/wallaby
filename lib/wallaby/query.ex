@@ -45,7 +45,7 @@ defmodule Wallaby.Query do
 
   ```
   defmodule TodoListPage do
-    def todo_list() do
+    def todo_list do
       Query.css(".todo-list")
     end
 

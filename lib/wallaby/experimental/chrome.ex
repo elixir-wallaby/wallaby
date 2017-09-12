@@ -25,7 +25,7 @@ defmodule Wallaby.Experimental.Chrome do
     supervise(children, strategy: :one_for_one)
   end
 
-  def validate() do
+  def validate do
     case System.find_executable("chromedriver") do
       chromedriver when not is_nil(chromedriver) ->
         {version, 0} = System.cmd("chromedriver", ["--version"])
@@ -216,7 +216,7 @@ defmodule Wallaby.Experimental.Chrome do
     |> Keyword.get(:headless, true)
   end
 
-  def default_chrome_args() do
+  def default_chrome_args do
     [
       "--no-sandbox",
       "window-size=1280,800",
@@ -224,7 +224,7 @@ defmodule Wallaby.Experimental.Chrome do
     ]
   end
 
-  defp headless_args() do
+  defp headless_args do
     if headless?() do
       ["--fullscreen", "--headless"]
     else

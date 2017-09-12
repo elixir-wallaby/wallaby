@@ -23,7 +23,7 @@ defmodule Wallaby.Experimental.Selenium do
     supervise(children, strategy: :one_for_one)
   end
 
-  def validate() do
+  def validate do
     :ok
   end
 
