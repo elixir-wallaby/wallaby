@@ -298,7 +298,12 @@ defmodule Wallaby.Phantom.Driver do
   def execute_script(session, script, arguments \\ [], opts \\ []) do
     check_logs = Keyword.get(opts, :check_logs, true)
     request_fn = fn ->
-      with {:ok, resp} <- request(:post, "#{session.session_url}/execute", %{script: script, args: arguments}),
+      with {:ok, resp} <-
+             request(
+               :post,
+               "#{session.session_url}/execute",
+               %{script: script, args: arguments}
+             ),
            {:ok, value} <- Map.fetch(resp, "value"),
         do: {:ok, value}
     end
@@ -315,16 +320,28 @@ defmodule Wallaby.Phantom.Driver do
   """
   def send_keys(%Session{} = session, keys) when is_list(keys) do
     check_logs! session, fn ->
-      with {:ok, resp} <- request(:post, "#{session.session_url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
+      with {:ok, resp} <-
+             request(
+               :post,
+               "#{session.session_url}/keys",
+               Wallaby.Helpers.KeyCodes.json(keys),
+               encode_json: false
+             ),
            {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+        do: {:ok, value}
     end
   end
   def send_keys(parent, keys) when is_list(keys) do
     check_logs! parent, fn ->
-      with {:ok, resp} <- request(:post, "#{parent.url}/value", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
+      with {:ok, resp} <-
+             request(
+               :post,
+               "#{parent.url}/value",
+               Wallaby.Helpers.KeyCodes.json(keys),
+               encode_json: false
+             ),
            {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+        do: {:ok, value}
     end
   end
 

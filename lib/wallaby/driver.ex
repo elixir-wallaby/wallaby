@@ -38,7 +38,8 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to accept one prompt triggered within `open_dialog_fn` and return the prompt message.
   """
-  @callback accept_prompt(Session.t, String.t | nil, open_dialog_fn) :: {:ok, [String.t]} | {:error, reason}
+  @callback accept_prompt(Session.t, String.t | nil, open_dialog_fn) ::
+    {:ok, [String.t]} | {:error, reason}
 
   @doc """
   Invoked to retrieve cookies for the given session.
@@ -151,7 +152,8 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to send keys to the browser.
   """
-  @callback send_keys(Session.t | Element.t, String.t | [String.t | atom]) :: {:ok, any} | {:error, reason}
+  @callback send_keys(Session.t | Element.t, String.t | [String.t | atom]) ::
+    {:ok, any} | {:error, reason}
 
   @doc """
   Invoked to take a screenshot of the session/element.

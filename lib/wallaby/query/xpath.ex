@@ -1,5 +1,6 @@
 defmodule Wallaby.Query.XPath do
   @moduledoc false
+  # credo:disable-for-this-file Credo.Check.Readability.MaxLineLength
 
   @type query :: String.t
   @type xpath :: String.t
