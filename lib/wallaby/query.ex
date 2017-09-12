@@ -309,12 +309,11 @@ defmodule Wallaby.Query do
   end
 
   def result(query) do
-    cond do
-      count(query) == 1 ->
-        [element] = query.result
-        element
-      true ->
-        query.result
+    if count(query) == 1 do
+      [element] = query.result
+      element
+    else
+      query.result
     end
   end
 
@@ -348,14 +347,13 @@ defmodule Wallaby.Query do
   end
 
   defp add_count(opts) do
-    cond do
-      opts[:count] == nil && opts[:minimum] == nil && opts[:maximum] == nil ->
-        Keyword.put(opts, :count, 1)
-      true ->
-        opts
-        |> Keyword.put_new(:count, opts[:count])
-        |> Keyword.put_new(:minimum, opts[:minimum])
-        |> Keyword.put_new(:maximum, opts[:maximum])
+    if opts[:count] == nil && opts[:minimum] == nil && opts[:maximum] == nil do
+      Keyword.put(opts, :count, 1)
+    else
+      opts
+      |> Keyword.put_new(:count, opts[:count])
+      |> Keyword.put_new(:minimum, opts[:minimum])
+      |> Keyword.put_new(:maximum, opts[:maximum])
     end
   end
 end

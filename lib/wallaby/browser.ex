@@ -517,11 +517,10 @@ defmodule Wallaby.Browser do
   end
   def has_value?(%Element{} = element, value) do
     result = retry fn ->
-      cond do
-        Element.value(element) == value ->
-          {:ok, true}
-        true ->
-          {:error, false}
+      if Element.value(element) == value do
+        {:ok, true}
+      else
+        {:error, false}
       end
     end
 
@@ -551,11 +550,10 @@ defmodule Wallaby.Browser do
   end
   def has_text?(parent, text) when is_binary(text) do
     result = retry fn ->
-      cond do
-        Element.text(parent) =~ text ->
-          {:ok, true}
-        true ->
-          {:error, false}
+      if Element.text(parent) =~ text do
+        {:ok, true}
+      else
+        {:error, false}
       end
     end
 
@@ -579,10 +577,7 @@ defmodule Wallaby.Browser do
     |> assert_text(text)
   end
   def assert_text(parent, text) when is_binary(text) do
-    cond do
-      has_text?(parent, text) -> true
-      true -> raise Wallaby.ExpectationNotMet, "Text '#{text}' was not found."
-    end
+    has_text?(parent, text) || raise Wallaby.ExpectationNotMet, "Text '#{text}' was not found."
   end
 
   @doc """
@@ -841,27 +836,25 @@ defmodule Wallaby.Browser do
   defp validate_html(parent, %{html_validation: :button_type} = query) do
     buttons = all(parent, Query.css("button", [text: query.selector]))
 
-    cond do
-      Enum.count(buttons) == 1 && Enum.any?(buttons) ->
-        {:error, :button_with_bad_type}
-      true ->
-        {:ok, query}
+    if Enum.count(buttons) == 1 && Enum.any?(buttons) do
+      {:error, :button_with_bad_type}
+    else
+      {:ok, query}
     end
   end
   defp validate_html(parent, %{html_validation: :bad_label} = query) do
     label_query = Query.css("label", text: query.selector)
     labels = all(parent, label_query)
 
-    cond do
-      Enum.count(labels) == 1 ->
-        cond do
-          Enum.any?(labels, &(missing_for?(&1))) ->
-            {:error, :label_with_no_for}
-          label = List.first(labels) ->
-            {:error, {:label_does_not_find_field, Element.attr(label, "for")}}
-        end
-      true ->
-        {:ok, query}
+    if Enum.count(labels) == 1 do
+      if Enum.any?(labels, &(missing_for?(&1))) do
+        {:error, :label_with_no_for}
+      else
+        label = List.first(labels)
+        {:error, {:label_does_not_find_field, Element.attr(label, "for")}}
+      end
+    else
+      {:ok, query}
     end
   end
   defp validate_html(_, query), do: {:ok, query}
@@ -877,11 +870,10 @@ defmodule Wallaby.Browser do
   end
 
   defp validate_count(query, elements) do
-    cond do
-      Query.matches_count?(query, Enum.count(elements)) ->
-        {:ok, elements}
-      true ->
-        {:error, {:not_found, elements}}
+    if Query.matches_count?(query, Enum.count(elements)) do
+      {:ok, elements}
+    else
+      {:error, {:not_found, elements}}
     end
   end
 
