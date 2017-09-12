@@ -188,7 +188,7 @@ defmodule Wallaby.Phantom do
   def custom_headers_capability(nil), do: %{}
   def custom_headers_capability(ch) do
     Enum.reduce(ch, %{}, fn ({k, v}, acc) ->
-      Map.merge(acc, %{ "phantomjs.page.customHeaders.#{k}" => v })
+      Map.merge(acc, %{"phantomjs.page.customHeaders.#{k}" => v})
     end)
   end
 

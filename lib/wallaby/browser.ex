@@ -279,7 +279,7 @@ defmodule Wallaby.Browser do
   end
 
   def execute_script(session, script, arguments) when is_list(arguments) do
-    execute_script(session, script, arguments, fn(_) -> nil end )
+    execute_script(session, script, arguments, fn(_) -> nil end)
   end
   def execute_script(session, script, callback) when is_function(callback) do
     execute_script(session, script, [], callback)
