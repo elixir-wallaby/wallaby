@@ -3,6 +3,7 @@
 /deps
 erl_crash.dump
 *.ez
+/.tool-versions-e
 
 /screenshots
 /doc
