@@ -48,7 +48,7 @@
       #     {Credo.Check.Design.DuplicatedCode, false}
       #
       checks: [
-        {Credo.Check.Consistency.ExceptionNames},
+        {Credo.Check.Consistency.ExceptionNames, false},
         {Credo.Check.Consistency.LineEndings},
         {Credo.Check.Consistency.ParameterPatternMatching},
         {Credo.Check.Consistency.SpaceAroundOperators},
