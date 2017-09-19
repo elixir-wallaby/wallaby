@@ -1,5 +1,6 @@
 defmodule Wallaby.QueryTest do
   use ExUnit.Case, async: true
+  doctest Wallaby.Query
 
   alias Wallaby.Query
 
