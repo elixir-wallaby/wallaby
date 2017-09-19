@@ -23,18 +23,22 @@ defmodule Wallaby.HTTPClient do
   def request(method, url, params, [{:encode_json, false} | _]) do
     make_request(method, url, params)
   end
+  def request(method, url, params, [{:max_try, max} | _]) do
+    make_request(method, url, params, {0, max})
+  end
   def request(method, url, params, _opts) do
     make_request(method, url, Poison.encode!(params))
   end
 
-  defp make_request(method, url, body, retry_count\\0)
-  defp make_request(_, _, _, 5), do: raise "Wallaby had an internal issue with HTTPoison"
-  defp make_request(method, url, body, retry_count) do
+  defp make_request(method, url, body, _ \\ {0, 5})
+  defp make_request(_, _, _, {m, m}), do: raise "Wallaby had an internal issue with HTTPoison; all #{m} tries failed."
+  defp make_request(method, url, body, {retry_count, max}) do
     HTTPoison.request(method, url, body, headers(), request_opts())
     |> handle_response
     |> case do
          {:error, :httpoison} ->
-           make_request(method, url, body, retry_count+1)
+           :timer.sleep(500 * (retry_count + 1))
+           make_request(method, url, body, {retry_count + 1, max})
          result ->
            result
     end
