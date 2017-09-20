@@ -57,14 +57,12 @@ defmodule Wallaby.Query do
 
   ## What does my query do?
 
-  Wanna check out what exactly your query will do? Nothing easier than that with
-  `Wallaby.Query.compile/1` - it takes a query and returns you the css or xpath
-  query it will use:
+  Wanna check out what exactly your query will do? Look no further than
+  `Wallaby.Query.compile/1` - it takes a query and returns the css or xpath
+  query that will be sent to the driver:
 
-  ```
-  iex> Wallaby.Query.compile Wallaby.Query.text("my text")
-  {:xpath, ".//*[contains(normalize-space(text()), 'my text')]"}
-  ```
+      iex> Wallaby.Query.compile Wallaby.Query.text("my text")
+      {:xpath, ".//*[contains(normalize-space(text()), 'my text')]"}
 
   So, whenever you're not sure whatever a specific query will do just compile
   it to get all the details!
@@ -214,7 +212,7 @@ defmodule Wallaby.Query do
   end
 
   @doc """
-  Looks for an option with the given text appears.
+  Looks for an option that contains the given text.
   """
   def option(selector, opts \\ []) do
     %Query{
@@ -240,8 +238,8 @@ defmodule Wallaby.Query do
   end
 
   @doc """
-  Looks a link where the selector is the id, link text, title of the link itself
-  or the alt of an image child node.
+  Looks for a link where the selector is the id, link text, title of the link
+  itself or the alt of an image child node.
   """
   def link(selector, opts \\ []) do
     %Query{
@@ -253,7 +251,7 @@ defmodule Wallaby.Query do
   end
 
   @doc """
-  Looke for a file input where the selector is the id or name of the file input
+  Looks for a file input where the selector is the id or name of the file input
   itself or the id or text of the label.
   """
   def file_field(selector, opts \\ []) do
@@ -279,16 +277,12 @@ defmodule Wallaby.Query do
 
   @spec compile(t) :: compiled
   @doc """
-  Takes a query and compiles it into either css or xpath, which are the queries
-  that will finally be issued to the driver.
+  Compiles a query into css or xpath so its ready to be sent to the driver
 
-  ```
-  iex> Wallaby.Query.compile Wallaby.Query.text("my text")
-  {:xpath, ".//*[contains(normalize-space(text()), 'my text')]"}
-  iex> Wallaby.Query.compile Wallaby.Query.css("#some-id")
-  {:css, "#some-id"}
-
-  ```
+      iex> Wallaby.Query.compile Wallaby.Query.text("my text")
+      {:xpath, ".//*[contains(normalize-space(text()), 'my text')]"}
+      iex> Wallaby.Query.compile Wallaby.Query.css("#some-id")
+      {:css, "#some-id"}
   """
   def compile(%{method: :css, selector: selector}), do: {:css, selector}
   def compile(%{method: :xpath, selector: selector}), do: {:xpath, selector}
