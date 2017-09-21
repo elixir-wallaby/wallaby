@@ -54,6 +54,18 @@ defmodule Wallaby.Query do
     end
   end
   ```
+
+  ## What does my query do?
+
+  Wanna check out what exactly your query will do? Look no further than
+  `Wallaby.Query.compile/1` - it takes a query and returns the css or xpath
+  query that will be sent to the driver:
+
+      iex> Wallaby.Query.compile Wallaby.Query.text("my text")
+      {:xpath, ".//*[contains(normalize-space(text()), 'my text')]"}
+
+  So, whenever you're not sure whatever a specific query will do just compile
+  it to get all the details!
   """
   alias __MODULE__
   alias Wallaby.Query.XPath
@@ -99,6 +111,9 @@ defmodule Wallaby.Query do
   @type compiled :: {:xpath | :css, String.t}
 
 
+  @doc """
+  Literally queries for the css selector you provide.
+  """
   def css(selector, opts \\ []) do
     %Query{
       method: :css,
@@ -107,6 +122,9 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Literally queries for the xpath selector you provide.
+  """
   def xpath(selector, opts \\ []) do
     %Query{
       method: :xpath,
@@ -115,6 +133,9 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Checks if the provided text is contained anywhere.
+  """
   def text(selector, opts \\ []) do
     %Query{
       method: :text,
@@ -123,6 +144,9 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  See `Wallaby.Query.fillable_field/2`.
+  """
   def text_field(selector, opts \\ []) do
     %Query{
       method: :fillable_field,
@@ -132,6 +156,11 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Looks for a text input field where the provided selector is the id, name or
+  placeholder of the text field itself or alternatively the id or the text of
+  the label.
+  """
   def fillable_field(selector, opts \\ []) do
     %Query{
       method: :fillable_field,
@@ -141,6 +170,11 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Looks for a radio button where the provided selector is the id, name or
+  placeholder of the radio button itself or alternatively the id or the text of
+  the label.
+  """
   def radio_button(selector, opts \\ []) do
     %Query{
       method: :radio_button,
@@ -150,6 +184,11 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Looks for a checkbox where the provided selector is the id, name or
+  placeholder of the checkbox itself or alternatively the id or the text of
+  the label.
+  """
   def checkbox(selector, opts \\ []) do
     %Query{
       method: :checkbox,
@@ -159,6 +198,10 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Looks for a select box where the provided selector is the id or name of the
+  select box itself or alternatively the id or the text of the label.
+  """
   def select(selector, opts \\ []) do
     %Query{
       method: :select,
@@ -168,6 +211,9 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Looks for an option that contains the given text.
+  """
   def option(selector, opts \\ []) do
     %Query{
       method: :option,
@@ -177,6 +223,11 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Looks for a button (literal button or input type button, submit, image or
+  reset) where the provided selector is the id, name, value, alt or title of the
+  button.
+  """
   def button(selector, opts \\ []) do
     %Query{
       method: :button,
@@ -186,6 +237,10 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Looks for a link where the selector is the id, link text, title of the link
+  itself or the alt of an image child node.
+  """
   def link(selector, opts \\ []) do
     %Query{
       method: :link,
@@ -195,6 +250,10 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Looks for a file input where the selector is the id or name of the file input
+  itself or the id or text of the label.
+  """
   def file_field(selector, opts \\ []) do
     %Query{
       method: :file_field,
@@ -217,6 +276,14 @@ defmodule Wallaby.Query do
   end
 
   @spec compile(t) :: compiled
+  @doc """
+  Compiles a query into css or xpath so its ready to be sent to the driver
+
+      iex> Wallaby.Query.compile Wallaby.Query.text("my text")
+      {:xpath, ".//*[contains(normalize-space(text()), 'my text')]"}
+      iex> Wallaby.Query.compile Wallaby.Query.css("#some-id")
+      {:css, "#some-id"}
+  """
   def compile(%{method: :css, selector: selector}), do: {:css, selector}
   def compile(%{method: :xpath, selector: selector}), do: {:xpath, selector}
   def compile(%{method: :link, selector: selector}), do: {:xpath, XPath.link(selector)}
