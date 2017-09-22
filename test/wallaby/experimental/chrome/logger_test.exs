@@ -7,7 +7,7 @@ defmodule Wallaby.Experimental.Chrome.LoggerTest do
   describe "parse_log/1" do
     test "removes line numbers from the end of INFO logs" do
       fun = fn ->
-        build_log(~s(http://localhost:52615//logs.html 13:14 "test"))
+        build_log(~s(http://localhost:52615/logs.html 13:14 "test"))
         |> Logger.parse_log
       end
 
@@ -16,14 +16,14 @@ defmodule Wallaby.Experimental.Chrome.LoggerTest do
 
     test "prints non-string data types" do
       fun = fn ->
-        build_log(~s(http://localhost:52615//logs.html 13:14 1))
+        build_log(~s(http://localhost:52615/logs.html 13:14 1))
         |> Logger.parse_log
       end
 
       assert capture_io(fun) == "1\n"
 
       fun = fn ->
-        build_log(~s[http://localhost:52615//logs.html 13:14 Array(2)])
+        build_log(~s[http://localhost:52615/logs.html 13:14 Array(2)])
         |> Logger.parse_log
       end
 
@@ -31,7 +31,7 @@ defmodule Wallaby.Experimental.Chrome.LoggerTest do
     end
 
     test "pretty prints json" do
-      message = ~s(http://localhost:54579//logs.html 13:14 "{\"href\":\"http://localhost:54579//logs.html\",\"ancestorOrigins\":{}}")
+      message = ~s(http://localhost:54579/logs.html 13:14 "{\"href\":\"http://localhost:54579/logs.html\",\"ancestorOrigins\":{}}")
 
       fun = fn ->
         message
@@ -39,7 +39,7 @@ defmodule Wallaby.Experimental.Chrome.LoggerTest do
         |> Logger.parse_log
       end
 
-      assert capture_io(fun) == "\n{\n  \"href\": \"http://localhost:54579//logs.html\",\n  \"ancestorOrigins\": {}\n}\n"
+      assert capture_io(fun) == "\n{\n  \"href\": \"http://localhost:54579/logs.html\",\n  \"ancestorOrigins\": {}\n}\n"
     end
 
     test "can be disabled" do
