@@ -3,6 +3,7 @@ defmodule Wallaby.Experimental.Chrome.LoggerTest do
 
   alias Wallaby.Experimental.Chrome.Logger
   import ExUnit.CaptureIO
+  alias Wallaby.SettingsTestHelpers
 
   describe "parse_log/1" do
     test "removes line numbers from the end of INFO logs" do
@@ -43,6 +44,7 @@ defmodule Wallaby.Experimental.Chrome.LoggerTest do
     end
 
     test "can be disabled" do
+      SettingsTestHelpers.ensure_setting_is_reset(:wallaby, :js_logger)
       Application.put_env(:wallaby, :js_logger, nil)
 
       fun = fn ->
@@ -52,8 +54,6 @@ defmodule Wallaby.Experimental.Chrome.LoggerTest do
       end
 
       assert capture_io(fun) == ""
-
-      Application.put_env(:wallaby, :js_logger, :stdio)
     end
   end
 
