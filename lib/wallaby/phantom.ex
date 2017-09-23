@@ -65,7 +65,7 @@ defmodule Wallaby.Phantom do
   def init(:ok) do
     children = [
       :poolboy.child_spec(@pool_name, poolboy_config(), []),
-      worker(Wallaby.Phantom.LogStore, []),
+      worker(Wallaby.Driver.LogStore, []),
     ]
 
     supervise(children, strategy: :one_for_one)
@@ -170,6 +170,8 @@ defmodule Wallaby.Phantom do
   defdelegate send_keys(session_or_element, keys),                to: Driver
   @doc false
   defdelegate take_screenshot(session_or_element),                to: Driver
+  defdelegate log(session_or_element),                            to: Driver
+  defdelegate parse_log(log),                                     to: Wallaby.Phantom.Logger
 
   @doc false
   def user_agent do

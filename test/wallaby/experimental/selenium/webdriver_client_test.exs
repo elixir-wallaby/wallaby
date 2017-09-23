@@ -731,11 +731,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
   defp build_session_for_bypass(bypass, session_id \\ "my-sample-session") do
     session_url = bypass_url(bypass, "/session/#{session_id}")
 
-    %Session{id: session_id, session_url: session_url, url: session_url}
+    %Session{driver: Wallaby.Experimental.Selenium, id: session_id, session_url: session_url, url: session_url}
   end
 
   defp build_element_for_session(session, element_id \\ ":wdc:abc123") do
     %Element{
+      driver: Wallaby.Experimental.Selenium,
       id: element_id,
       parent: session,
       session_url: session.url,

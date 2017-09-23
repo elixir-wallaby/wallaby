@@ -2,11 +2,6 @@ defmodule Wallaby.Phantom.Logger do
   @moduledoc false
   @line_number_regex ~r/\s\((undefined)?:(undefined)?\)$/
 
-  def log(logs) when is_list(logs) do
-    logs
-    |> Enum.each(&parse_log/1)
-  end
-
   def parse_log(%{"level" => "WARNING", "message" => msg}) do
     if Wallaby.js_errors? do
       raise Wallaby.JSError, msg

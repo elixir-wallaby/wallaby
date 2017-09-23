@@ -7,6 +7,7 @@ defmodule Wallaby.Experimental.Chrome do
   alias Wallaby.Session
   alias Wallaby.Experimental.Chrome.{Chromedriver}
   alias Wallaby.Experimental.Selenium.WebdriverClient
+  import Wallaby.Driver.LogChecker
 
   @doc false
   def start_link(opts\\[]) do
@@ -15,7 +16,8 @@ defmodule Wallaby.Experimental.Chrome do
 
   def init(:ok) do
     children = [
-      worker(Wallaby.Experimental.Chrome.Chromedriver, [])
+      worker(Wallaby.Experimental.Chrome.Chromedriver, []),
+      worker(Wallaby.Driver.LogStore, [])
     ]
 
     supervise(children, strategy: :one_for_one)
@@ -87,64 +89,85 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   def get_window_size(%Session{} = session) do
-    handle = WebdriverClient.window_handle(session)
-    WebdriverClient.get_window_size(session, handle)
+    handle = delegate(:window_handle, session)
+    delegate(:get_window_size, session, [handle])
   end
 
   def set_window_size(session, width, height) do
-    handle = WebdriverClient.window_handle(session)
-    WebdriverClient.set_window_size(session, handle, width, height)
+    handle = delegate(:window_handle, session)
+    delegate(:set_window_size, session, [handle, width, height])
   end
 
   def accept_dialogs(_session), do: {:error, :not_implemented}
   def dismiss_dialogs(_session), do: {:error, :not_implemented}
-  
-  defdelegate accept_alert(session, fun),                        to: WebdriverClient
-  defdelegate dismiss_alert(session, fun),                       to: WebdriverClient
-  defdelegate accept_confirm(session, fun),                      to: WebdriverClient  
-  defdelegate dismiss_confirm(session, fun),                     to: WebdriverClient
-  defdelegate accept_prompt(session, input, fun),                to: WebdriverClient
-  defdelegate dismiss_prompt(session, fun),                      to: WebdriverClient
+
+  defp delegate(fun, element_or_session, args \\ []) do
+    check_logs!(element_or_session, fn ->
+      apply(WebdriverClient, fun, [element_or_session | args])
+    end)
+  end
+
+  defdelegate accept_alert(session, fun),         to: WebdriverClient
+  defdelegate dismiss_alert(session, fun),        to: WebdriverClient
+  defdelegate accept_confirm(session, fun),       to: WebdriverClient
+  defdelegate dismiss_confirm(session, fun),      to: WebdriverClient
+  defdelegate accept_prompt(session, input, fun), to: WebdriverClient
+  defdelegate dismiss_prompt(session, fun),       to: WebdriverClient
+  defdelegate parse_log(log),                     to: Wallaby.Experimental.Chrome.Logger
 
 
   @doc false
-  defdelegate cookies(session),                                   to: WebdriverClient
+  def cookies(session), do: delegate(:cookies, session)
   @doc false
-  defdelegate current_path(session),                              to: WebdriverClient
+  def current_path(session), do: delegate(:current_path, session)
   @doc false
-  defdelegate current_url(session),                               to: WebdriverClient
+  def current_url(session), do: delegate(:current_url, session)
   @doc false
-  defdelegate page_title(session),                                to: WebdriverClient
+  def page_title(session), do: delegate(:page_title, session)
   @doc false
-  defdelegate page_source(session),                               to: WebdriverClient
+  def page_source(session), do: delegate(:page_source, session)
   @doc false
-  defdelegate set_cookie(session, key, value),                    to: WebdriverClient
+  def set_cookie(session, key, value), do: delegate(:set_cookie, session, [key, value])
   @doc false
-  defdelegate visit(session, url),                                to: WebdriverClient
+  def visit(session, url), do: delegate(:visit, session, [url])
+  @doc false
+  def attribute(element, name), do: delegate(:attribute, element, [name])
+  @doc false
+  def click(element), do: delegate(:click, element)
+  @doc false
+  def clear(element), do: delegate(:clear, element)
+  @doc false
+  def displayed(element), do: delegate(:displayed, element)
+  @doc false
+  def selected(element), do: delegate(:selected, element)
+  @doc false
+  def set_value(element, value), do: delegate(:set_value, element, [value])
+  @doc false
+  def text(element), do: delegate(:text, element)
 
   @doc false
-  defdelegate attribute(element, name),                           to: WebdriverClient
-  @doc false
-  defdelegate click(element),                                     to: WebdriverClient
-  @doc false
-  defdelegate clear(element),                                     to: WebdriverClient
-  @doc false
-  defdelegate displayed(element),                                 to: WebdriverClient
-  @doc false
-  defdelegate selected(element),                                  to: WebdriverClient
-  @doc false
-  defdelegate set_value(element, value),                          to: WebdriverClient
-  @doc false
-  defdelegate text(element),                                      to: WebdriverClient
+  def execute_script(session_or_element, script, args \\ [], opts \\ []) do
+    check_logs = Keyword.get(opts, :check_logs, true)
+
+    request_fn = fn ->
+      WebdriverClient.execute_script(session_or_element, script, args)
+    end
+
+    if check_logs do
+      check_logs! session_or_element, request_fn
+    else
+      request_fn.()
+    end
+  end
 
   @doc false
-  defdelegate execute_script(session_or_element, script, args),   to: WebdriverClient
+  def find_elements(session_or_element, compiled_query),  do: delegate(:find_elements, session_or_element, [compiled_query])
   @doc false
-  defdelegate find_elements(session_or_element, compiled_query),  to: WebdriverClient
+  def send_keys(session_or_element, keys), do: delegate(:send_keys, session_or_element, [keys])
   @doc false
-  defdelegate send_keys(session_or_element, keys),                to: WebdriverClient
+  def take_screenshot(session_or_element), do: delegate(:take_screenshot, session_or_element)
   @doc false
-  defdelegate take_screenshot(session_or_element),                to: WebdriverClient
+  defdelegate log(session_or_element),                            to: WebdriverClient
 
   @doc false
   def user_agent do
@@ -167,6 +190,9 @@ defmodule Wallaby.Experimental.Chrome do
       nativeEvents: false,
       platform: "ANY",
       unhandledPromptBehavior: "accept",
+      loggingPrefs: %{
+        browser: "DEBUG"
+      }
     }
   end
 
@@ -204,5 +230,4 @@ defmodule Wallaby.Experimental.Chrome do
       []
     end
   end
-
 end
