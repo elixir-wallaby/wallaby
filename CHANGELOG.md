@@ -1,8 +1,12 @@
 ## unreleased
 
+### Features
+* Capture JavaScript logs in chrome
+
 ### Bugfixes
 
 * relax httpoison dependency for easier upgrading and not locking you down
+* Prevent failing if phantom jsn't installed globally
 
 ## 0.19.1 (2017-08-13)
 
