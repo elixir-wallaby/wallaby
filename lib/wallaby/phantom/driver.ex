@@ -1,7 +1,9 @@
 defmodule Wallaby.Phantom.Driver do
   @moduledoc false
 
-  alias Wallaby.{Driver, Element, Session}
+  alias Wallaby.{Driver, Element, Session, Phantom, Metadata}
+  alias Wallaby.Helpers.KeyCodes
+  alias Wallaby.Phantom.Server
   import Wallaby.Driver.LogChecker
 
   import Wallaby.HTTPClient
@@ -18,12 +20,12 @@ defmodule Wallaby.Phantom.Driver do
 
   @spec create(pid, Keyword.t) :: {:ok, Session.t}
   def create(server, opts) do
-    base_url = Wallaby.Phantom.Server.get_base_url(server)
+    base_url = Server.get_base_url(server)
     user_agent =
-      Wallaby.Phantom.user_agent
-      |> Wallaby.Metadata.append(opts[:metadata])
+      Phantom.user_agent
+      |> Metadata.append(opts[:metadata])
 
-    capabilities = Wallaby.Phantom.capabilities(
+    capabilities = Phantom.capabilities(
       user_agent: user_agent,
       custom_headers: opts[:custom_headers]
     )
@@ -36,7 +38,7 @@ defmodule Wallaby.Phantom.Driver do
       url: base_url <> "session/#{id}",
       id: id,
       server: server,
-      driver: Wallaby.Phantom
+      driver: Phantom
     }
 
     {:ok, session}
@@ -324,7 +326,7 @@ defmodule Wallaby.Phantom.Driver do
              request(
                :post,
                "#{session.session_url}/keys",
-               Wallaby.Helpers.KeyCodes.json(keys),
+               KeyCodes.json(keys),
                encode_json: false
              ),
            {:ok, value} <- Map.fetch(resp, "value"),
@@ -337,7 +339,7 @@ defmodule Wallaby.Phantom.Driver do
              request(
                :post,
                "#{parent.url}/value",
-               Wallaby.Helpers.KeyCodes.json(keys),
+               KeyCodes.json(keys),
                encode_json: false
              ),
            {:ok, value} <- Map.fetch(resp, "value"),

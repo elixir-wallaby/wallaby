@@ -662,7 +662,7 @@ defmodule Wallaby.Browser do
   end
   def has_css?(parent, css) when is_binary(css) do
     parent
-    |> find(Wallaby.Query.css(css, count: :any))
+    |> find(Query.css(css, count: :any))
     |> Enum.any?
   end
 

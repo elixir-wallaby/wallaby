@@ -1,6 +1,7 @@
 defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @moduledoc false
   alias Wallaby.{Driver, Element, Query, Session}
+  alias Wallaby.Helpers.KeyCodes
   import Wallaby.HTTPClient
 
   @type http_method :: :post | :get | :delete
@@ -308,12 +309,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   """
   @spec send_keys(Session.t, [String.t | atom]) :: {:ok, nil}
   def send_keys(%Session{} = session, keys) when is_list(keys) do
-    with {:ok, resp} <- request(:post, "#{session.session_url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
+    with {:ok, resp} <- request(:post, "#{session.session_url}/keys", KeyCodes.json(keys), encode_json: false),
           {:ok, value} <- Map.fetch(resp, "value"),
     do: {:ok, value}
   end
   def send_keys(parent, keys) when is_list(keys) do
-    with {:ok, resp} <- request(:post, "#{parent.url}/value", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
+    with {:ok, resp} <- request(:post, "#{parent.url}/value", KeyCodes.json(keys), encode_json: false),
           {:ok, value} <- Map.fetch(resp, "value"),
     do: {:ok, value}
   end
