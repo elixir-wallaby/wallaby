@@ -8,10 +8,10 @@ defmodule Wallaby.Query.ErrorMessage do
   """
   @spec message(Query.t, any()) :: String.t
 
-  def message(%Query{}=query, :not_found) do
+  def message(%Query{} = query, :not_found) do
     "Expected to find #{found_error_message(query)}"
   end
-  def message(%Query{}=query, :found) do
+  def message(%Query{} = query, :found) do
     "Expected not to find #{found_error_message(query)}"
   end
   def message(%{method: method, selector: selector}, :label_with_no_for) do
@@ -78,7 +78,7 @@ defmodule Wallaby.Query.ErrorMessage do
   @spec method(Query.t) :: String.t
   @spec method({atom(), boolean()}) :: String.t
 
-  def method(%Query{conditions: conditions}=query) do
+  def method(%Query{conditions: conditions} = query) do
     method(query.method, conditions[:count] > 1)
   end
   def method(_), do: "element"

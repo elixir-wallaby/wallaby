@@ -4,7 +4,7 @@ defmodule Wallaby.SessionStore do
 
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
-  def start_link(), do: GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
+  def start_link, do: GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
 
   def monitor(session), do: GenServer.call(__MODULE__, {:monitor, session})
 
@@ -15,13 +15,13 @@ defmodule Wallaby.SessionStore do
     {:ok, %{refs: %{}}}
   end
 
-  def handle_call({:monitor, session}, {pid, _ref}, %{refs: refs}=state) do
+  def handle_call({:monitor, session}, {pid, _ref}, %{refs: refs} = state) do
     ref = Process.monitor(pid)
     refs = Map.put(refs, ref, session)
     {:reply, :ok, %{state | refs: refs}}
   end
 
-  def handle_call({:demonitor, session}, _from, %{refs: refs}=state) do
+  def handle_call({:demonitor, session}, _from, %{refs: refs} = state) do
     case Enum.find(refs, fn({_, value}) -> value.id == session.id end) do
       {ref, _} ->
         {_, refs} = Map.pop(refs, ref)
@@ -32,7 +32,7 @@ defmodule Wallaby.SessionStore do
     end
   end
 
-  def handle_info({:DOWN, ref, :process, _pid, _reason}, %{refs: refs}=state) do
+  def handle_info({:DOWN, ref, :process, _pid, _reason}, %{refs: refs} = state) do
     {session, refs} = Map.pop(refs, ref)
     WebdriverClient.delete_session(session)
     {:noreply, %{state | refs: refs}}

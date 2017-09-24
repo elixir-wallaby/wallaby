@@ -76,7 +76,7 @@ defmodule Wallaby.Element do
   """
   @spec click(t) :: t
 
-  def click(%__MODULE__{driver: driver} = element, retry_count\\0) do
+  def click(%__MODULE__{driver: driver} = element, retry_count \\ 0) do
     case driver.click(element) do
       {:ok, _} ->
         element
@@ -88,7 +88,7 @@ defmodule Wallaby.Element do
           The element you tried to click is obscured by another element.
           """
         else
-          click(element, retry_count+1)
+          click(element, retry_count + 1)
         end
     end
   end
@@ -177,7 +177,7 @@ defmodule Wallaby.Element do
   def send_keys(element, text) when is_binary(text) do
     send_keys(element, [text])
   end
-  def send_keys(%__MODULE{driver: driver} = element, keys) when is_list(keys) do
+  def send_keys(%__MODULE__{driver: driver} = element, keys) when is_list(keys) do
     case driver.send_keys(element, keys) do
       {:ok, _} ->
         element

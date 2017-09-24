@@ -1,7 +1,9 @@
 defmodule Wallaby.Phantom.Driver do
   @moduledoc false
 
-  alias Wallaby.{Driver, Element, Session}
+  alias Wallaby.{Driver, Element, Session, Phantom, Metadata}
+  alias Wallaby.Helpers.KeyCodes
+  alias Wallaby.Phantom.Server
   import Wallaby.Driver.LogChecker
 
   import Wallaby.HTTPClient
@@ -18,12 +20,12 @@ defmodule Wallaby.Phantom.Driver do
 
   @spec create(pid, Keyword.t) :: {:ok, Session.t}
   def create(server, opts) do
-    base_url = Wallaby.Phantom.Server.get_base_url(server)
+    base_url = Server.get_base_url(server)
     user_agent =
-      Wallaby.Phantom.user_agent
-      |> Wallaby.Metadata.append(opts[:metadata])
+      Phantom.user_agent
+      |> Metadata.append(opts[:metadata])
 
-    capabilities = Wallaby.Phantom.capabilities(
+    capabilities = Phantom.capabilities(
       user_agent: user_agent,
       custom_headers: opts[:custom_headers]
     )
@@ -36,7 +38,7 @@ defmodule Wallaby.Phantom.Driver do
       url: base_url <> "session/#{id}",
       id: id,
       server: server,
-      driver: Wallaby.Phantom
+      driver: Phantom
     }
 
     {:ok, session}
@@ -76,7 +78,7 @@ defmodule Wallaby.Phantom.Driver do
   @doc """
   Sets the value of an element.
   """
-  def set_value(%Element{url: url}=element, value) do
+  def set_value(%Element{url: url} = element, value) do
      check_logs! element, fn ->
       with  {:ok, resp} <- request(:post, "#{url}/value", %{value: [value]}),
             {:ok, value} <- Map.fetch(resp, "value"),
@@ -88,7 +90,7 @@ defmodule Wallaby.Phantom.Driver do
   Clears the value in an element
   """
   # @spec clear(Locator.t, query) :: t
-  def clear(%Element{url: url}=element) do
+  def clear(%Element{url: url} = element) do
     check_logs! element, fn ->
       with {:ok, resp} <- request(:post, "#{url}/clear"),
            {:ok, value} <- Map.fetch(resp, "value"),
@@ -99,7 +101,7 @@ defmodule Wallaby.Phantom.Driver do
   @doc """
   Clicks an element
   """
-  def click(%Element{url: url}=element) do
+  def click(%Element{url: url} = element) do
     check_logs! element, fn ->
       with  {:ok, resp} <- request(:post, "#{url}/click"),
             {:ok, value} <- Map.fetch(resp, "value"),
@@ -194,8 +196,8 @@ defmodule Wallaby.Phantom.Driver do
   def displayed(element) do
     check_logs!(element, fn ->
       with {:ok, resp} <- request(:get, "#{element.url}/displayed"),
-      		 {:ok, value} <- Map.fetch(resp, "value"),
-				do: {:ok, value}
+           {:ok, value} <- Map.fetch(resp, "value"),
+        do: {:ok, value}
     end)
   end
 
@@ -220,7 +222,7 @@ defmodule Wallaby.Phantom.Driver do
     check_logs! element, fn ->
       with {:ok, resp} <- request(:get, "#{element.url}/size"),
            {:ok, value} <- Map.fetch(resp, "value"),
-       do: {:ok, value}
+        do: {:ok, value}
     end
   end
 
@@ -265,7 +267,6 @@ defmodule Wallaby.Phantom.Driver do
     end
   end
 
-
   @doc """
   Sets the size of the window.
   """
@@ -299,7 +300,12 @@ defmodule Wallaby.Phantom.Driver do
   def execute_script(session, script, arguments \\ [], opts \\ []) do
     check_logs = Keyword.get(opts, :check_logs, true)
     request_fn = fn ->
-      with {:ok, resp} <- request(:post, "#{session.session_url}/execute", %{script: script, args: arguments}),
+      with {:ok, resp} <-
+             request(
+               :post,
+               "#{session.session_url}/execute",
+               %{script: script, args: arguments}
+             ),
            {:ok, value} <- Map.fetch(resp, "value"),
         do: {:ok, value}
     end
@@ -314,18 +320,30 @@ defmodule Wallaby.Phantom.Driver do
   @doc """
   Sends a list of key strokes to active element
   """
-  def send_keys(%Session{}=session, keys) when is_list(keys) do
+  def send_keys(%Session{} = session, keys) when is_list(keys) do
     check_logs! session, fn ->
-      with {:ok, resp} <- request(:post, "#{session.session_url}/keys", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
+      with {:ok, resp} <-
+             request(
+               :post,
+               "#{session.session_url}/keys",
+               KeyCodes.json(keys),
+               encode_json: false
+             ),
            {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+        do: {:ok, value}
     end
   end
   def send_keys(parent, keys) when is_list(keys) do
     check_logs! parent, fn ->
-      with {:ok, resp} <- request(:post, "#{parent.url}/value", Wallaby.Helpers.KeyCodes.json(keys), encode_json: false),
+      with {:ok, resp} <-
+             request(
+               :post,
+               "#{parent.url}/value",
+               KeyCodes.json(keys),
+               encode_json: false
+             ),
            {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+        do: {:ok, value}
     end
   end
 
@@ -380,7 +398,7 @@ defmodule Wallaby.Phantom.Driver do
   @doc """
   Accept one alert triggered within `fun` and return the alert message.
   """
-  def accept_alert(%Session{}=session, fun) do
+  def accept_alert(%Session{} = session, fun) do
     script = """
     var page = this;
     page.__onAlertDefault = page.onAlert;
@@ -404,18 +422,18 @@ defmodule Wallaby.Phantom.Driver do
   @doc """
   Accept one confirm triggered within `fun` and return the confirm message.
   """
-  def accept_confirm(%Session{}=session, fun) do
+  def accept_confirm(%Session{} = session, fun) do
     handle_confirm(session, fun, true)
   end
 
   @doc """
   Dismiss one confirm triggered within `fun` and return the confirm message.
   """
-  def dismiss_confirm(%Session{}=session, fun) do
+  def dismiss_confirm(%Session{} = session, fun) do
     handle_confirm(session, fun, false)
   end
 
-  defp handle_confirm(%Session{}=session, fun, return_value) do
+  defp handle_confirm(%Session{} = session, fun, return_value) do
     script = """
     var page = this, returnVal = arguments[0];
     page.__onConfirmDefault = page.onConfirm;
@@ -441,18 +459,18 @@ defmodule Wallaby.Phantom.Driver do
   Accept one prompt triggered within `fun` with the specified `input_value`
   and return the confirm message.
   """
-  def accept_prompt(%Session{}=session, input_value, fun) do
+  def accept_prompt(%Session{} = session, input_value, fun) do
     handle_prompt(session, fun, input_value, true)
   end
 
   @doc """
   Dismiss one prompt triggered within `fun` and return the confirm message.
   """
-  def dismiss_prompt(%Session{}=session, fun) do
+  def dismiss_prompt(%Session{} = session, fun) do
     handle_prompt(session, fun, nil, false)
   end
 
-  defp handle_prompt(%Session{}=session, fun, return_value, use_default) do
+  defp handle_prompt(%Session{} = session, fun, return_value, use_default) do
     script = """
     var page = this, returnVal = arguments[0], useDefault = arguments[1];
     page.__onPromptDefault = page.onPrompt;

@@ -34,26 +34,27 @@ defmodule Wallaby.Phantom do
   use Supervisor
 
   alias Wallaby.Phantom.Driver
+  alias Wallaby.DependencyException
 
   @behaviour Wallaby.Driver
 
   @pool_name Wallaby.ServerPool
 
   @doc false
-  def start_link(opts\\[]) do
+  def start_link(opts \\ []) do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
-  def validate() do
+  def validate do
     cond do
-      Application.get_env(:wallaby, :phantomjs, "phantomjs")
+      configured_phantom_js()
       |> Path.expand
       |> System.find_executable ->
         :ok
       System.find_executable("phantomjs") ->
         :ok
       true ->
-        exception = Wallaby.DependencyException.exception """
+        exception = DependencyException.exception """
         Wallaby can't find phantomjs. Make sure you have phantomjs installed
         and included in your path, or that your `config :wallaby, :phantomjs`
         setting points to a valid phantomjs executable.
@@ -100,7 +101,7 @@ defmodule Wallaby.Phantom do
   end
 
   @doc false
-  def end_session(%Wallaby.Session{server: server}=session) do
+  def end_session(%Wallaby.Session{server: server} = session) do
     Driver.execute_script(session, "localStorage.clear()", [],
                           check_logs: false)
     Driver.delete(session)
@@ -188,7 +189,7 @@ defmodule Wallaby.Phantom do
   def custom_headers_capability(nil), do: %{}
   def custom_headers_capability(ch) do
     Enum.reduce(ch, %{}, fn ({k, v}, acc) ->
-      Map.merge(acc, %{ "phantomjs.page.customHeaders.#{k}" => v })
+      Map.merge(acc, %{"phantomjs.page.customHeaders.#{k}" => v})
     end)
   end
 
@@ -206,5 +207,9 @@ defmodule Wallaby.Phantom do
 
   defp default_pool_size do
     :erlang.system_info(:schedulers_online)
+  end
+
+  defp configured_phantom_js do
+    Application.get_env(:wallaby, :phantomjs, "phantomjs")
   end
 end

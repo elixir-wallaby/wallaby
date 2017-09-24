@@ -1,16 +1,18 @@
 defmodule Wallaby.Experimental.Chrome do
+  @moduledoc false
   use Supervisor
+
   @behaviour Wallaby.Driver
 
   @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+).(\d+) \(.*\)/
 
-  alias Wallaby.Session
+  alias Wallaby.{Session, DependencyException, Metadata}
   alias Wallaby.Experimental.Chrome.{Chromedriver}
   alias Wallaby.Experimental.Selenium.WebdriverClient
   import Wallaby.Driver.LogChecker
 
   @doc false
-  def start_link(opts\\[]) do
+  def start_link(opts \\ []) do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
@@ -23,26 +25,27 @@ defmodule Wallaby.Experimental.Chrome do
     supervise(children, strategy: :one_for_one)
   end
 
-  def validate() do
+  def validate do
     case System.find_executable("chromedriver") do
       chromedriver when not is_nil(chromedriver) ->
         {version, 0} = System.cmd("chromedriver", ["--version"])
         version =
-          Regex.run(@chromedriver_version_regex, version)
+          @chromedriver_version_regex
+          |> Regex.run(version)
           |> Enum.at(1)
           |> String.to_integer
 
         if version >= 30 do
           :ok
         else
-          exception = Wallaby.DependencyException.exception """
+          exception = DependencyException.exception """
           Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
           chromedriver 2.30 to run correctly.
           """
           {:error, exception}
         end
       _ ->
-        exception = Wallaby.DependencyException.exception """
+        exception = DependencyException.exception """
         Wallaby can't find chromedriver. Make sure you have chromedriver installed
         and included in your path.
         """
@@ -55,7 +58,7 @@ defmodule Wallaby.Experimental.Chrome do
     create_session_fn = Keyword.get(opts, :create_session_fn,
                                     &WebdriverClient.create_session/2)
     user_agent = user_agent()
-                 |> Wallaby.Metadata.append(opts[:metadata])
+                 |> Metadata.append(opts[:metadata])
     capabilities = capabilities(user_agent: user_agent)
 
     with {:ok, response} <- create_session_fn.(base_url, capabilities) do
@@ -73,7 +76,7 @@ defmodule Wallaby.Experimental.Chrome do
     end
   end
 
-  def end_session(%Wallaby.Session{}=session, opts \\ []) do
+  def end_session(%Wallaby.Session{} = session, opts \\ []) do
     end_session_fn = Keyword.get(opts, :end_session_fn, &WebdriverClient.delete_session/1)
     end_session_fn.(session)
     :ok
@@ -114,7 +117,6 @@ defmodule Wallaby.Experimental.Chrome do
   defdelegate accept_prompt(session, input, fun), to: WebdriverClient
   defdelegate dismiss_prompt(session, fun),       to: WebdriverClient
   defdelegate parse_log(log),                     to: Wallaby.Experimental.Chrome.Logger
-
 
   @doc false
   def cookies(session), do: delegate(:cookies, session)
@@ -215,7 +217,7 @@ defmodule Wallaby.Experimental.Chrome do
     |> Keyword.get(:headless, true)
   end
 
-  def default_chrome_args() do
+  def default_chrome_args do
     [
       "--no-sandbox",
       "window-size=1280,800",
@@ -223,7 +225,7 @@ defmodule Wallaby.Experimental.Chrome do
     ]
   end
 
-  defp headless_args() do
+  defp headless_args do
     if headless?() do
       ["--fullscreen", "--headless"]
     else
