@@ -254,7 +254,7 @@ The full documentation for the DSL is in the [official documentation](https://he
 
 Wallaby's API is broken into 2 concepts: Queries and Actions.
 
-Queries allow us to declaritively describe the elements that we would like to
+Queries allow us to declaratively describe the elements that we would like to
 interact with and Actions allow us to use those queries to interact with the
 DOM.
 
