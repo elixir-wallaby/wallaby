@@ -1,59 +1,43 @@
-defmodule Wallaby.Phantom.ConfigrationTest do
+defmodule Wallaby.Phantom.ConfigureTest do
   use ExUnit.Case, async: false
+
+  import Wallaby.SettingsTestHelpers
 
   describe "changing phantom path" do
     setup do
-      old_env = Application.get_env(:wallaby, :phantomjs)
-      Application.put_env(:wallaby, :phantomjs, "test/path/phantomjs")
-
-      on_exit fn ->
-        restore_env(:phantomjs, old_env)
-      end
+      ensure_setting_is_reset(:wallaby, :phantomjs)
     end
 
     test "the phantomjs path changes" do
+      Application.put_env(:wallaby, :phantomjs, "test/path/phantomjs")
       assert Wallaby.phantomjs_path == "test/path/phantomjs"
     end
 
     test "updates the phantomjs command" do
+      Application.put_env(:wallaby, :phantomjs, "test/path/phantomjs")
       assert "test/path/phantomjs" in Wallaby.Phantom.Server.script_args(1234, '/tmp/dir')
     end
   end
 
   describe "adding phantom args" do
     setup do
-      old_env = Application.get_env(:wallaby, :phantomjs_args)
-      context = %{old_env: old_env}
-
-      on_exit fn ->
-        reset_env(context)
-      end
-
-      {:ok, context}
+      ensure_setting_is_reset(:wallaby, :phantomjs_args)
     end
 
-    defp reset_env(%{old_env: old_env}) do
-      restore_env(:phantomjs_args, old_env)
+    test "when args are an array" do
+      options = [opt1, opt2] = ["--some-opt=value", "--other-opt"]
+
+      Application.put_env(:wallaby, :phantomjs_args, options)
+      assert opt1 in Wallaby.Phantom.Server.script_args(1234, '/tmp/dir')
+      assert opt2 in Wallaby.Phantom.Server.script_args(1234, '/tmp/dir')
     end
 
-    test "updates the phantomjs command", context do
+    test "when args are in a single string separated by spaces" do
       options = [opt1, opt2] = ["--some-opt=value", "--other-opt"]
 
       Application.put_env(:wallaby, :phantomjs_args, Enum.join(options, " "))
       assert opt1 in Wallaby.Phantom.Server.script_args(1234, '/tmp/dir')
       assert opt2 in Wallaby.Phantom.Server.script_args(1234, '/tmp/dir')
-
-      reset_env(context)
-      Application.put_env(:wallaby, :phantomjs_args, options)
-      assert opt1 in Wallaby.Phantom.Server.script_args(1234, '/tmp/dir')
-      assert opt2 in Wallaby.Phantom.Server.script_args(1234, '/tmp/dir')
     end
-  end
-
-  def restore_env(key, nil) do
-    Application.delete_env(:wallaby, key)
-  end
-  def restore_env(key, value) do
-    Application.put_env(:wallaby, key, value)
   end
 end
