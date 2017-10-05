@@ -56,6 +56,20 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
     File.rm_rf! "#{File.cwd!}/shots"
   end
 
+  test "users can specify the screenshot name", %{page: page} do
+    Application.put_env(:wallaby, :screenshot_dir, "shots")
+
+    [screenshot_path] =
+      page
+      |> take_screenshot(%{name: "some_page"})
+      |> Map.get(:screenshots)
+
+    assert screenshot_path == "shots/some_page.png"
+
+    Application.put_env(:wallaby, :screenshot_dir, nil)
+    File.rm_rf! "#{File.cwd!}/shots"
+  end
+
   test "automatically taking screenshots on failure", %{page: page} do
     assert_raise Wallaby.QueryError, fn ->
       find(page, css(".some-selector"))
