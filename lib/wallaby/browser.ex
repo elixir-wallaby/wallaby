@@ -199,15 +199,17 @@ defmodule Wallaby.Browser do
   Takes a screenshot of the current window.
   Screenshots are saved to a "screenshots" directory in the same directory the
   tests are run in.
+
+  Pass %{name: "some_name"} to specify the file name. Defaults to a timestamp.
   """
   @spec take_screenshot(parent) :: parent
 
-  def take_screenshot(%{driver: driver} = screenshotable) do
+  def take_screenshot(%{driver: driver} = screenshotable, opts \\ %{}) do
     image_data =
       screenshotable
       |> driver.take_screenshot
 
-    path = path_for_screenshot()
+    path = path_for_screenshot(%{name: opts[:name]})
     File.write! path, image_data
 
     Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
@@ -938,9 +940,13 @@ defmodule Wallaby.Browser do
     Application.get_env(:wallaby, :base_url) || ""
   end
 
-  defp path_for_screenshot do
+  defp path_for_screenshot(%{name: nil}) do
+    path_for_screenshot(%{name: "#{:erlang.system_time}"})
+  end
+
+  defp path_for_screenshot(%{name: name}) when is_binary(name) do
     File.mkdir_p!(screenshot_dir())
-    "#{screenshot_dir()}/#{:erlang.system_time}.png"
+    "#{screenshot_dir()}/#{name}.png"
   end
 
   defp screenshot_dir do
