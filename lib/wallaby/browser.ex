@@ -214,6 +214,10 @@ defmodule Wallaby.Browser do
     path = path_for_screenshot(name)
     File.write! path, image_data
 
+    if opts[:log_screenshot] do
+      IO.puts "Screenshot taken, find it at file:///#{path}"
+    end
+
     Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
   end
 
@@ -463,7 +467,7 @@ defmodule Wallaby.Browser do
         query = %Query{query | result: result}
 
         if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent)
+          take_screenshot(parent, log_screenshot: true)
         end
 
         case validate_html(parent, query) do
@@ -475,7 +479,7 @@ defmodule Wallaby.Browser do
 
       {:error, e} ->
         if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent)
+          take_screenshot(parent, log_screenshot: true)
         end
 
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
@@ -607,7 +611,7 @@ defmodule Wallaby.Browser do
       else
         error ->
           if Wallaby.screenshot_on_failure? do
-            take_screenshot(parent)
+            take_screenshot(parent, log_screenshot: true)
           end
           case error do
             {:error, {:not_found, results}} ->
