@@ -202,14 +202,16 @@ defmodule Wallaby.Browser do
 
   Pass `[{:name, "some_name"}]` to specify the file name. Defaults to a timestamp.
   """
-  @spec take_screenshot(parent) :: parent
+  @type take_screenshot_opt :: {:name, String.t}
+  @spec take_screenshot(parent, [take_screenshot_opt]) :: parent
 
   def take_screenshot(%{driver: driver} = screenshotable, opts \\ []) do
     image_data =
       screenshotable
       |> driver.take_screenshot
 
-    path = path_for_screenshot(name: opts[:name])
+    name = opts |> Keyword.get(:name, :erlang.system_time) |> to_string
+    path = path_for_screenshot(name)
     File.write! path, image_data
 
     Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
@@ -940,12 +942,7 @@ defmodule Wallaby.Browser do
     Application.get_env(:wallaby, :base_url) || ""
   end
 
-  defp path_for_screenshot(opts) do
-    name = if is_binary(opts[:name]) do
-      opts[:name]
-    else
-      :erlang.system_time
-    end
+  defp path_for_screenshot(name) do
     File.mkdir_p!(screenshot_dir())
     "#{screenshot_dir()}/#{name}.png"
   end
