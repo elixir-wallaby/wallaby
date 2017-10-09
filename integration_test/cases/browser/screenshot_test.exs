@@ -61,7 +61,7 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
 
     [screenshot_path] =
       page
-      |> take_screenshot(%{name: "some_page"})
+      |> take_screenshot(name: "some_page")
       |> Map.get(:screenshots)
 
     assert screenshot_path == "shots/some_page.png"
