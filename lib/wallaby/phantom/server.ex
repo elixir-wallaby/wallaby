@@ -3,6 +3,7 @@ defmodule Wallaby.Phantom.Server do
   use GenServer
 
   alias Wallaby.Driver.TemporaryPath
+  alias Wallaby.Driver.Utils
 
   @external_resource "priv/run_phantom.sh"
   @run_phantom_script_contents File.read! "priv/run_phantom.sh"
@@ -28,7 +29,7 @@ defmodule Wallaby.Phantom.Server do
   end
 
   def init(_) do
-    port = find_available_port()
+    port = Utils.find_available_port()
     local_storage = tmp_local_storage()
 
     start_phantom(port, local_storage)
@@ -58,13 +59,6 @@ defmodule Wallaby.Phantom.Server do
       "--webdriver=#{port}",
       "--local-storage-path=#{local_storage}"
     ] ++ args(Application.get_env(:wallaby, :phantomjs_args, ""))
-  end
-
-  defp find_available_port do
-    {:ok, listen} = :gen_tcp.listen(0, [])
-    {:ok, port} = :inet.port(listen)
-    :gen_tcp.close(listen)
-    port
   end
 
   defp tmp_local_storage do
