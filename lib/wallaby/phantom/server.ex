@@ -2,6 +2,8 @@ defmodule Wallaby.Phantom.Server do
   @moduledoc false
   use GenServer
 
+  alias Wallaby.Driver.TemporaryPath
+
   @external_resource "priv/run_phantom.sh"
   @run_phantom_script_contents File.read! "priv/run_phantom.sh"
 
@@ -66,9 +68,7 @@ defmodule Wallaby.Phantom.Server do
   end
 
   defp tmp_local_storage do
-    dirname = 0x100000000 |> :rand.uniform |> Integer.to_string(36) |> String.downcase
-
-    local_storage = Path.join(System.tmp_dir!, dirname)
+    local_storage = TemporaryPath.generate()
 
     File.mkdir_p(local_storage)
 
