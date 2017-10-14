@@ -2,6 +2,7 @@
 
 ### Features
 * Capture JavaScript logs in chrome
+* Queries now take an optional `at:` argument with which you can specify which one of multiple matches you want returned
 
 ### Bugfixes
 
