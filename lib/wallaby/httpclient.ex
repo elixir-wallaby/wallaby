@@ -55,9 +55,6 @@ defmodule Wallaby.HTTPClient do
              {:ok, response} <- check_status(decoded),
              {:ok, validated} <- check_for_response_errors(response),
           do: {:ok, validated}
-
-      {:ok, _} ->
-        raise "Received unexpected HTTPoison response."
     end
   end
 
