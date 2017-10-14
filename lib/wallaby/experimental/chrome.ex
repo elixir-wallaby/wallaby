@@ -4,7 +4,7 @@ defmodule Wallaby.Experimental.Chrome do
 
   @behaviour Wallaby.Driver
 
-  @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+).(\d+) \(.*\)/
+  @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+)/
 
   alias Wallaby.{Session, DependencyException, Metadata}
   alias Wallaby.Experimental.Chrome.{Chromedriver}
