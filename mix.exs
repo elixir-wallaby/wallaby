@@ -78,6 +78,7 @@ defmodule Wallaby.Mixfile do
       source_ref: "v#{@version}",
       source_url: "https://github.com/keathley/wallaby",
       main: "readme",
+      logo: "guides/images/icon.png",
     ]
   end
 
