@@ -885,8 +885,8 @@ defmodule Wallaby.Browser do
     case {Query.at_number(query), length(elements)} do
       {:all,_} ->
         {:ok, elements}
-      {n, count} when n > 0 and n <= count ->
-        {:ok, [Enum.at(elements, n-1)]}
+      {n, count} when n >= 0 and n < count ->
+        {:ok, [Enum.at(elements, n)]}
       {_, _} ->
         {:error, {:at_number, query}}
     end
