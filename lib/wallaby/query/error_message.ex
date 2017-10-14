@@ -47,6 +47,12 @@ defmodule Wallaby.Query.ErrorMessage do
     can't apply both filters correctly.
     """
   end
+  def message(_, {:at_number, query}) do
+#   The query is invalid. the 'at' number requested is not within the results list (1-#{size}).
+    """
+    The element at index #{Query.at_number(query)} is not available because #{result_count(query.result)} #{method(query)} #{result_expectation(query.result)}
+    """
+  end
   def message(_, :min_max) do
     """
     The query is invalid. Cannot set the minimum greater than the maximum.
