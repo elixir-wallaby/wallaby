@@ -883,7 +883,7 @@ defmodule Wallaby.Browser do
 
   defp do_at(query, elements) do
     case {Query.at_number(query), length(elements)} do
-      {:all,_} ->
+      {:all, _} ->
         {:ok, elements}
       {n, count} when n >= 0 and n < count ->
         {:ok, [Enum.at(elements, n)]}

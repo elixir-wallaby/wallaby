@@ -266,18 +266,16 @@ defmodule Wallaby.Query do
   end
 
   def validate(query) do
-    # TODO: This should be handled with xpath if we avoid throwing the error.
     cond do
-    query.conditions[:minimum] > query.conditions[:maximum] ->
-      {:error, :min_max}
-    !Query.visible?(query) && Query.inner_text(query) ->
-      {:error, :cannot_set_text_with_invisible_elements}
-    true ->
-      {:ok, query}
+      query.conditions[:minimum] > query.conditions[:maximum] ->
+        {:error, :min_max}
+      !Query.visible?(query) && Query.inner_text(query) ->
+        {:error, :cannot_set_text_with_invisible_elements}
+      true ->
+        {:ok, query}
     end
   end
 
-  @spec compile(t) :: compiled
   @doc """
   Compiles a query into css or xpath so its ready to be sent to the driver
 
@@ -286,6 +284,7 @@ defmodule Wallaby.Query do
       iex> Wallaby.Query.compile Wallaby.Query.css("#some-id")
       {:css, "#some-id"}
   """
+  @spec compile(t) :: compiled
   def compile(%{method: :css, selector: selector}), do: {:css, selector}
   def compile(%{method: :xpath, selector: selector}), do: {:xpath, selector}
   def compile(%{method: :link, selector: selector}), do: {:xpath, XPath.link(selector)}
@@ -315,12 +314,11 @@ defmodule Wallaby.Query do
   end
 
   def result(query) do
-    cond do
-      specific_element_requested(query) ->
-        [element] = query.result
-        element
-      true ->
-        query.result
+    if specific_element_requested(query) do
+      [element] = query.result
+      element
+    else
+      query.result
     end
   end
 
