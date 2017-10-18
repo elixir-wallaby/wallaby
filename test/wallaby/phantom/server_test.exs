@@ -5,12 +5,6 @@ defmodule Wallaby.Phantom.ServerTest do
 
   setup do
     {:ok, server} = Server.start_link([])
-
-    local_storage = Server.get_local_storage_dir(server)
-    on_exit fn ->
-      File.rm_rf(local_storage)
-    end
-
     {:ok, %{server: server}}
   end
 
@@ -20,6 +14,9 @@ defmodule Wallaby.Phantom.ServerTest do
 
   test "separate servers do not share local storage", %{server: server} do
     {:ok, other_server} = Server.start_link([])
+
+    # TODO: Need to wait until servers are started so we don't get zombie
+    # processes
 
     local_storage = Server.get_local_storage_dir(server)
     other_local_storage = Server.get_local_storage_dir(other_server)
@@ -38,11 +35,55 @@ defmodule Wallaby.Phantom.ServerTest do
     refute File.exists?(local_storage)
   end
 
-  test "it cleans up the local storage directory properly", %{server: server} do
+  #TODO figure out why this is leaving a stray phantom process around
+  test "it cleans up the local storage directory on stop", %{server: server} do
     local_storage = Server.get_local_storage_dir(server)
     assert File.exists?(local_storage)
 
     Server.stop(server)
+    Process.sleep(100)
     refute File.exists?(local_storage)
+  end
+
+  test "crashes when the wrapper script is killed", %{server: server} do
+    Process.flag(:trap_exit, true)
+    os_pid = Server.get_wrapper_os_pid(server)
+
+    kill_os_process(os_pid)
+
+    assert_receive {:EXIT, _, :normal}
+  end
+
+  test "crashes when phantom is killed", %{server: server} do
+    Process.flag(:trap_exit, true)
+    os_pid = Server.get_os_pid(server)
+
+    kill_os_process(os_pid)
+
+    assert_receive {:EXIT, _, :normal}
+  end
+
+  test "shuts down wrapper and phantom when server is stopped", %{server: server} do
+    wrapper_os_pid = Server.get_wrapper_os_pid(server)
+    os_pid = Server.get_os_pid(server)
+
+    Server.stop(server)
+
+    refute os_process_running?(wrapper_os_pid)
+    refute os_process_running?(os_pid)
+  end
+
+  defp kill_os_process(pid) do
+    {_, 0} = System.cmd("kill", [to_string(pid)])
+    :ok
+  end
+
+  defp os_process_running?(os_pid) do
+    case System.cmd("kill", ["-0", to_string(os_pid)], stderr_to_stdout: true) do
+      {_, 0} ->
+        true
+      _ ->
+        false
+    end
   end
 end
