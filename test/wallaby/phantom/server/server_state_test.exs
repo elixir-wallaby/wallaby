@@ -14,7 +14,6 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
     test "creates a new server state that's not running" do
       assert %ServerState{
         workspace_path: "/tmp",
-        running: false
       } = ServerState.new("/tmp")
     end
 
@@ -46,17 +45,11 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
     end
   end
 
-  describe "fetch_base_url/1" do
-    test "when the server is running" do
-      state = [port_number: 8080] |> build_server_state() |> struct(running: true)
+  describe "base_url/1" do
+    test "returns the proper url" do
+      state = [port_number: 8080] |> build_server_state()
 
-      assert {:ok, "http://localhost:8080/"} = ServerState.fetch_base_url(state)
-    end
-
-    test "when the server is not running" do
-      state = [port_number: 8080] |> build_server_state() |> struct(running: false)
-
-      assert {:error, :not_running} = ServerState.fetch_base_url(state)
+      assert "http://localhost:8080/" = ServerState.base_url(state)
     end
   end
 

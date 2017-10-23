@@ -3,20 +3,14 @@ defmodule Wallaby.Phantom.ServerTest do
 
   alias Wallaby.Phantom.Server
 
-  setup do
-    {:ok, server} = Server.start_link([])
-    {:ok, %{server: server}}
-  end
-
-  test "it can start a server", %{server: server}  do
+  test "it can start a server" do
+    {:ok, server} = Server.start_link()
     assert Server.get_base_url(server) =~ ~r"http://localhost:\d+/"
   end
 
-  test "separate servers do not share local storage", %{server: server} do
-    {:ok, other_server} = Server.start_link([])
-
-    # TODO: Need to wait until servers are started so we don't get zombie
-    # processes
+  test "separate servers do not share local storage" do
+    {:ok, server} = Server.start_link()
+    {:ok, other_server} = Server.start_link()
 
     local_storage = Server.get_local_storage_dir(server)
     other_local_storage = Server.get_local_storage_dir(other_server)
@@ -27,7 +21,8 @@ defmodule Wallaby.Phantom.ServerTest do
     assert local_storage != other_local_storage
   end
 
-  test "it clears local storage properly", %{server: server} do
+  test "it clears local storage properly" do
+    {:ok, server} = Server.start_link()
     local_storage = Server.get_local_storage_dir(server)
     assert File.exists?(local_storage)
 
@@ -35,8 +30,8 @@ defmodule Wallaby.Phantom.ServerTest do
     refute File.exists?(local_storage)
   end
 
-  #TODO figure out why this is leaving a stray phantom process around
-  test "it cleans up the local storage directory on stop", %{server: server} do
+  test "it cleans up the local storage directory on stop" do
+    {:ok, server} = Server.start_link()
     local_storage = Server.get_local_storage_dir(server)
     assert File.exists?(local_storage)
 
@@ -45,8 +40,16 @@ defmodule Wallaby.Phantom.ServerTest do
     refute File.exists?(local_storage)
   end
 
-  test "crashes when the wrapper script is killed", %{server: server} do
+  test "does not start when the unable to start phantom" do
     Process.flag(:trap_exit, true)
+
+    assert {:error, {:crashed, _}} =
+      Server.start_link(phantom_path: "doesnotexist")
+  end
+
+  test "crashes when the wrapper script is killed" do
+    Process.flag(:trap_exit, true)
+    {:ok, server} = Server.start_link()
     os_pid = Server.get_wrapper_os_pid(server)
 
     kill_os_process(os_pid)
@@ -54,8 +57,9 @@ defmodule Wallaby.Phantom.ServerTest do
     assert_receive {:EXIT, _, :normal}
   end
 
-  test "crashes when phantom is killed", %{server: server} do
+  test "crashes when phantom is killed" do
     Process.flag(:trap_exit, true)
+    {:ok, server} = Server.start_link()
     os_pid = Server.get_os_pid(server)
 
     kill_os_process(os_pid)
@@ -63,7 +67,8 @@ defmodule Wallaby.Phantom.ServerTest do
     assert_receive {:EXIT, _, :normal}
   end
 
-  test "shuts down wrapper and phantom when server is stopped", %{server: server} do
+  test "shuts down wrapper and phantom when server is stopped" do
+    {:ok, server} = Server.start_link()
     wrapper_os_pid = Server.get_wrapper_os_pid(server)
     os_pid = Server.get_os_pid(server)
 

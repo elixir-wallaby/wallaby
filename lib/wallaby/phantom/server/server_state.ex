@@ -11,10 +11,8 @@ defmodule Wallaby.Phantom.Server.ServerState do
   @type t :: %__MODULE__{
     workspace_path: String.t,
     port_number: port_number,
-    running: boolean,
     phantom_path: String.t,
     phantom_args: [String.t],
-    awaiting_url: [pid],
     wrapper_script_port: port | nil,
     wrapper_script_os_pid: os_pid | nil,
     phantom_os_pid: os_pid | nil,
@@ -27,10 +25,7 @@ defmodule Wallaby.Phantom.Server.ServerState do
     :phantom_args,
     :wrapper_script_port,
     :wrapper_script_os_pid,
-    :phantom_os_pid,
-    running: false,
-    awaiting_os_pid: [],
-    awaiting_url: []]
+    :phantom_os_pid]
 
   @type workspace_path :: String.t
 
@@ -53,10 +48,9 @@ defmodule Wallaby.Phantom.Server.ServerState do
     }
   end
 
-  @spec fetch_base_url(t) :: {:ok, String.t} | {:error, :not_running}
-  def fetch_base_url(%__MODULE__{running: false}), do: {:error, :not_running}
-  def fetch_base_url(%__MODULE__{port_number: port_number}) do
-    {:ok, "http://localhost:#{port_number}/"}
+  @spec base_url(t) :: String.t
+  def base_url(%__MODULE__{port_number: port_number}) do
+    "http://localhost:#{port_number}/"
   end
 
   @spec external_command(t) :: ExternalCommand.t
