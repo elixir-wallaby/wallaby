@@ -63,7 +63,7 @@ defmodule Wallaby.StaleReferenceError do
   end
 end
 
-defmodule Wallaby.InvalidSelector do
+defmodule Wallaby.InvalidSelectorError do
   defexception [:message]
 
   def exception(_) do

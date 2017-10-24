@@ -25,6 +25,7 @@ defmodule Wallaby.Element do
   Unlike `Browser` the actions in `Element` do not retry if the element becomes stale. Instead an exception will be raised.
   """
 
+  alias Wallaby.InvalidSelectorError
   alias Wallaby.StaleReferenceError
 
   defstruct [:url, :session_url, :parent, :id, :driver, screenshots: []]
@@ -55,7 +56,7 @@ defmodule Wallaby.Element do
       {:error, :stale_reference} ->
         raise StaleReferenceError
       {:error, :invalid_selector} ->
-        raise Wallaby.InvalidSelector
+        raise InvalidSelectorError
     end
   end
 
