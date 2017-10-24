@@ -84,7 +84,7 @@ defmodule Wallaby.Element do
         raise Wallaby.StaleReferenceException
       {:error, :obscured} ->
         if retry_count > 4 do
-          raise Wallaby.ExpectationNotMet, """
+          raise Wallaby.ExpectationNotMetError, """
           The element you tried to click is obscured by another element.
           """
         else

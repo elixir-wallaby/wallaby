@@ -6,7 +6,7 @@ defmodule Wallaby.QueryError do
   end
 end
 
-defmodule Wallaby.ExpectationNotMet do
+defmodule Wallaby.ExpectationNotMetError do
   defexception [:message]
 end
 

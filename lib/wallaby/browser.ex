@@ -107,6 +107,7 @@ defmodule Wallaby.Browser do
   alias Wallaby.Query
   alias Wallaby.Query.ErrorMessage
   alias Wallaby.Session
+  alias Wallaby.ExpectationNotMetError
 
   @type t :: any()
 
@@ -581,7 +582,7 @@ defmodule Wallaby.Browser do
     |> assert_text(text)
   end
   def assert_text(parent, text) when is_binary(text) do
-    has_text?(parent, text) || raise Wallaby.ExpectationNotMet, "Text '#{text}' was not found."
+    has_text?(parent, text) || raise ExpectationNotMetError, "Text '#{text}' was not found."
   end
 
   @doc """
@@ -612,13 +613,13 @@ defmodule Wallaby.Browser do
           case error do
             {:error, {:not_found, results}} ->
               query = %Query{query | result: results}
-              raise Wallaby.ExpectationNotMet,
+              raise ExpectationNotMetError,
                     Query.ErrorMessage.message(query, :not_found)
             {:error, :invalid_selector} ->
               raise Wallaby.QueryError,
                 Query.ErrorMessage.message(query, :invalid_selector)
             _ ->
-              raise Wallaby.ExpectationNotMet,
+              raise Wallaby.ExpectationNotMetError,
                 "Wallaby has encountered an internal error: #{inspect error} with session: #{inspect parent}"
           end
       end
@@ -647,7 +648,7 @@ defmodule Wallaby.Browser do
         {:error, _not_found} ->
           parent
         {:ok, query} ->
-          raise Wallaby.ExpectationNotMet,
+          raise Wallaby.ExpectationNotMetError,
                 Query.ErrorMessage.message(query, :found)
       end
     end
