@@ -4,6 +4,7 @@ defmodule Wallaby.BrowserTest do
   import Wallaby.SettingsTestHelpers
 
   alias Wallaby.Browser
+  alias Wallaby.NoBaseUrlError
   alias Wallaby.Session
 
   defmodule TestDriver do
@@ -91,7 +92,7 @@ defmodule Wallaby.BrowserTest do
     test "relative url when the base_url isn't configured" do
       Application.delete_env(:wallaby, :base_url)
 
-      assert_raise Wallaby.NoBaseUrl, fn ->
+      assert_raise NoBaseUrlError, fn ->
         session = session_for_driver(TestDriver)
         Browser.visit(session, "/form.html")
       end

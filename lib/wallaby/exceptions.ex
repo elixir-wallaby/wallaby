@@ -14,7 +14,7 @@ defmodule Wallaby.BadMetadataError do
   defexception [:message]
 end
 
-defmodule Wallaby.NoBaseUrl do
+defmodule Wallaby.NoBaseUrlError do
   defexception [:message]
 
   def exception(relative_path) do

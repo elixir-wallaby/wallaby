@@ -108,6 +108,7 @@ defmodule Wallaby.Browser do
   alias Wallaby.Query.ErrorMessage
   alias Wallaby.Session
   alias Wallaby.ExpectationNotMetError
+  alias Wallaby.NoBaseUrlError
 
   @type t :: any()
 
@@ -699,7 +700,7 @@ defmodule Wallaby.Browser do
 
     cond do
       uri.host == nil && String.length(base_url()) == 0 ->
-        raise Wallaby.NoBaseUrl, path
+        raise NoBaseUrlError, path
       uri.host ->
         driver.visit(session, path)
       true ->
