@@ -1,7 +1,7 @@
 defmodule Wallaby.Phantom.DriverTest do
   use Wallaby.HttpClientCase, async: true
 
-  alias Wallaby.{Element, Phantom, Query, Session, StaleReferenceException}
+  alias Wallaby.{Element, Phantom, Query, Session, StaleReferenceError}
   alias Wallaby.Phantom.Driver
 
   @window_handle_id "bdc333b0-1989-11e7-a2c3-d1d2d92b0e58"
@@ -411,7 +411,7 @@ defmodule Wallaby.Phantom.DriverTest do
         end
       end
 
-      assert_raise StaleReferenceException, fn ->
+      assert_raise StaleReferenceError, fn ->
         Driver.displayed!(element)
       end
     end

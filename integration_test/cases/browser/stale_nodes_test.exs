@@ -1,6 +1,8 @@
 defmodule Wallaby.Integration.Browser.StaleElementsTest do
   use Wallaby.Integration.SessionCase, async: true
 
+  alias Wallaby.StaleReferenceError
+
   describe "when a DOM element becomes stale" do
     test "the query is retried", %{session: session} do
       element =
@@ -20,7 +22,7 @@ defmodule Wallaby.Integration.Browser.StaleElementsTest do
       session
       |> assert_has(Query.css("#removed-node", count: 0))
 
-      assert_raise Wallaby.StaleReferenceException, fn ->
+      assert_raise StaleReferenceError, fn ->
         Element.value(element)
       end
     end

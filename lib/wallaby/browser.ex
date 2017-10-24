@@ -104,11 +104,12 @@ defmodule Wallaby.Browser do
   """
 
   alias Wallaby.Element
+  alias Wallaby.ExpectationNotMetError
   alias Wallaby.Query
   alias Wallaby.Query.ErrorMessage
-  alias Wallaby.Session
-  alias Wallaby.ExpectationNotMetError
   alias Wallaby.NoBaseUrlError
+  alias Wallaby.Session
+  alias Wallaby.StaleReferenceError
 
   @type t :: any()
 
@@ -927,7 +928,7 @@ defmodule Wallaby.Browser do
            {:ok, %Query{query | result: elements}}
         end
       rescue
-        Wallaby.StaleReferenceException ->
+        StaleReferenceError ->
           {:error, :stale_reference}
       end
     end

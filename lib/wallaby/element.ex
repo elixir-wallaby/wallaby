@@ -25,6 +25,8 @@ defmodule Wallaby.Element do
   Unlike `Browser` the actions in `Element` do not retry if the element becomes stale. Instead an exception will be raised.
   """
 
+  alias Wallaby.StaleReferenceError
+
   defstruct [:url, :session_url, :parent, :id, :driver, screenshots: []]
 
   @type value :: String.t
@@ -51,7 +53,7 @@ defmodule Wallaby.Element do
       {:ok, _} ->
         element
       {:error, :stale_reference} ->
-        raise Wallaby.StaleReferenceException
+        raise StaleReferenceError
       {:error, :invalid_selector} ->
         raise Wallaby.InvalidSelector
     end
@@ -81,7 +83,7 @@ defmodule Wallaby.Element do
       {:ok, _} ->
         element
       {:error, :stale_reference} ->
-        raise Wallaby.StaleReferenceException
+        raise StaleReferenceError
       {:error, :obscured} ->
         if retry_count > 4 do
           raise Wallaby.ExpectationNotMetError, """
@@ -103,7 +105,7 @@ defmodule Wallaby.Element do
       {:ok, text} ->
         text
       {:error, :stale_reference} ->
-        raise Wallaby.StaleReferenceException
+        raise StaleReferenceError
     end
   end
 
@@ -117,7 +119,7 @@ defmodule Wallaby.Element do
       {:ok, attribute} ->
         attribute
       {:error, :stale_reference} ->
-        raise Wallaby.StaleReferenceException
+        raise StaleReferenceError
     end
   end
 
@@ -164,7 +166,7 @@ defmodule Wallaby.Element do
       {:ok, _} ->
         element
       {:error, :stale_reference} ->
-        raise Wallaby.StaleReferenceException
+        raise StaleReferenceError
       error -> error
     end
   end
@@ -182,7 +184,7 @@ defmodule Wallaby.Element do
       {:ok, _} ->
         element
       {:error, :stale_reference} ->
-        raise Wallaby.StaleReferenceException
+        raise StaleReferenceError
       error -> error
     end
   end

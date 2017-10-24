@@ -47,7 +47,7 @@ defmodule Wallaby.JSError do
   end
 end
 
-defmodule Wallaby.StaleReferenceException do
+defmodule Wallaby.StaleReferenceError do
   defexception [:message]
 
   def exception(_) do
