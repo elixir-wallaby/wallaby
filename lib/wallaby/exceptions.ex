@@ -87,7 +87,7 @@ defmodule Wallaby.CookieError do
   end
 end
 
-defmodule Wallaby.DependencyException do
+defmodule Wallaby.DependencyError do
   defexception [:message]
 
   def exception(msg) do
