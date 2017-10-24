@@ -103,6 +103,7 @@ defmodule Wallaby.Browser do
   |> todo_was_created?
   """
 
+  alias Wallaby.CookieError
   alias Wallaby.Element
   alias Wallaby.ExpectationNotMetError
   alias Wallaby.Query
@@ -719,14 +720,14 @@ defmodule Wallaby.Browser do
 
   def set_cookie(%Session{driver: driver} = session, key, value) do
     if blank_page?(session) do
-      raise Wallaby.CookieException
+      raise CookieError
     end
 
     case driver.set_cookie(session, key, value) do
       {:ok, _list} ->
         session
       {:error, :invalid_cookie_domain} ->
-        raise Wallaby.CookieException
+        raise CookieError
     end
   end
 

@@ -71,7 +71,7 @@ defmodule Wallaby.InvalidSelectorError do
   end
 end
 
-defmodule Wallaby.CookieException do
+defmodule Wallaby.CookieError do
   defexception [:message]
 
   def exception(_) do
