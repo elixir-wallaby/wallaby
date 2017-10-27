@@ -2,14 +2,18 @@ defmodule Wallaby.Phantom.Server do
   @moduledoc false
   use GenServer
 
-  alias Wallaby.Driver.ExternalCommand
+  alias Wallaby.Driver.ProcessWorkspace
   alias Wallaby.Phantom.Server.ServerState
+  alias Wallaby.Phantom.Server.StartTask
 
-  @external_resource "priv/run_phantom.sh"
-  @run_phantom_script_contents File.read! "priv/run_phantom.sh"
+  @type os_pid :: non_neg_integer
 
-  def start_link(_args) do
-    GenServer.start_link(__MODULE__, [])
+  @type start_link_opt ::
+    {:phantom_path, String.t}
+
+  @spec start_link([start_link_opt]) :: GenServer.on_start
+  def start_link(args \\ []) do
+    GenServer.start_link(__MODULE__, args)
   end
 
   def stop(server) do
@@ -17,99 +21,97 @@ defmodule Wallaby.Phantom.Server do
   end
 
   def get_base_url(server) do
-    GenServer.call(server, :get_base_url, :infinity)
+    GenServer.call(server, :get_base_url)
+  end
+
+  @spec get_wrapper_os_pid(pid) :: os_pid
+  def get_wrapper_os_pid(server) do
+    GenServer.call(server, :get_wrapper_os_pid)
+  end
+
+  @spec get_os_pid(pid) :: os_pid
+  def get_os_pid(server) do
+    GenServer.call(server, :get_os_pid)
   end
 
   def get_local_storage_dir(server) do
-    GenServer.call(server, :get_local_storage_dir, :infinity)
+    GenServer.call(server, :get_local_storage_dir)
   end
 
   def clear_local_storage(server) do
-    GenServer.call(server, :clear_local_storage, :infinity)
+    GenServer.call(server, :clear_local_storage)
   end
 
-  def init(_) do
-    state =
-      ServerState.new()
-      |> create_local_storage_dir()
-      |> start_phantom()
+  @impl GenServer
+  def init(args) do
+    {:ok, workspace_path} = ProcessWorkspace.create(self())
 
-    {:ok, state}
-  end
-
-  defp start_phantom(%ServerState{} = state) do
-    phantom_port =
-      state
-      |> ServerState.external_command()
-      |> open_port_with_wrapper_script()
-
-    %ServerState{state | phantom_port: phantom_port}
-  end
-
-  @spec create_local_storage_dir(ServerState.t) :: ServerState.t
-  defp create_local_storage_dir(%ServerState{} = state) do
-    File.mkdir_p(state.local_storage_path)
-    state
-  end
-
-  def handle_info({_port, {:data, output}}, %ServerState{running: false} = state) do
-    if output =~ "running on port" do
-      state = %{state | running: true}
-      {:ok, base_url} = ServerState.fetch_base_url(state)
-      Enum.each state.awaiting_url, &GenServer.reply(&1, base_url)
-      {:noreply, %{state | awaiting_url: []}}
-    else
-      {:noreply, state}
+    case workspace_path |> ServerState.new(args) |> start_phantom() do
+      {:ok, server_state} ->
+        {:ok, server_state}
+      {:error, reason} ->
+        {:stop, reason}
     end
   end
 
-  def handle_info({_port, {:exit_status, status}}, state) do
-    {:stop, {:exit_status, status}, %{state | running: false}}
+  @impl GenServer
+  def handle_call(:get_base_url, _, state) do
+    {:reply, ServerState.base_url(state), state}
   end
 
-  def handle_info(_msg, state) do
-    {:noreply, state}
+  def handle_call(:get_wrapper_os_pid, _, %ServerState{wrapper_script_os_pid: wrapper_script_os_pid} = state) do
+    {:reply, wrapper_script_os_pid, state}
   end
 
-  def handle_call(:get_base_url, from, state) do
-    case ServerState.fetch_base_url(state) do
-      {:ok, url} ->
-        {:reply, url, state}
-      {:error, :not_running} ->
-        awaiting_url = [from | state.awaiting_url]
-        {:noreply, %{state | awaiting_url: awaiting_url}}
-    end
+  def handle_call(:get_os_pid, _, %ServerState{phantom_os_pid: phantom_os_pid} = state) do
+    {:reply, phantom_os_pid, state}
   end
 
   def handle_call(:get_local_storage_dir, _from, state) do
-    {:reply, state.local_storage_path, state}
+    {:reply, ServerState.local_storage_path(state), state}
   end
 
   def handle_call(:clear_local_storage, _from, state) do
-    result = File.rm_rf(state.local_storage_path)
+    result =
+      state |> ServerState.local_storage_path |> File.rm_rf
 
     {:reply, result, state}
   end
 
-  def terminate(_reason, state) do
-    File.rm_rf(state.local_storage_path)
+  @impl GenServer
+  def handle_info({port, {:data, _output}}, %ServerState{wrapper_script_port: port} = state) do
+    {:noreply, state}
+  end
+  def handle_info({port, {:exit_status, status}}, %ServerState{wrapper_script_port: port} = state) do
+    {:stop, {:exit_status, status}, state}
+  end
+  def handle_info(msg, state), do: super(msg, state)
+
+  @impl GenServer
+  def terminate(_reason, %ServerState{wrapper_script_port: wrapper_script_port, wrapper_script_os_pid: wrapper_script_os_pid}) do
+    Port.close(wrapper_script_port)
+    wait_for_stop(wrapper_script_os_pid)
   end
 
-  defp open_port_with_wrapper_script(%ExternalCommand{executable: executable, args: args}) do
-    # Starts phantomjs using the run_phantom.sh wrapper script so phantomjs will
-    # be shutdown when stdin closes and when the beam terminates unexpectedly.
-    # When running as an escript, priv/run_phantom.sh will not be present so we
-    # pipe the script contents into sh -s. Here is the basic command we are
-    # running below:
-    #
-    #   <wrapper_script_contents > | sh -s phantomjs --arg-1 --arg-2
-    #
+  @spec start_phantom(ServerState.t) ::
+    {:ok, ServerState.t} | {:error, StartTask.error_reason}
+  defp start_phantom(%ServerState{} = state) do
+    state |> StartTask.async() |> Task.await()
+  end
 
-    args = ["-s", executable] ++ args
+  @spec wait_for_stop(os_pid) :: nil
+  defp wait_for_stop(os_pid) do
+    if os_process_running?(os_pid) do
+      Process.sleep(100)
+      wait_for_stop(os_pid)
+    end
+  end
 
-    port = Port.open({:spawn_executable, System.find_executable("sh")},
-            [:binary, :stream, :use_stdio, :exit_status, args: args])
-    Port.command(port, @run_phantom_script_contents)
-    port
+  @spec os_process_running?(os_pid) :: boolean
+  def os_process_running?(os_pid) do
+    case System.cmd("kill", ["-0", to_string(os_pid)], stderr_to_stdout: true) do
+      {_, 0} -> true
+      _ -> false
+    end
   end
 end
