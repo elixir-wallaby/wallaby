@@ -8,6 +8,8 @@
 
 * relax httpoison dependency for easier upgrading and not locking you down
 * Prevent failing if phantom jsn't installed globally
+* Fix issue with zombie phantomjs processes (#224)
+* Fix issue where temporary folders for phantomjs processes aren't deleted
 
 ## 0.19.1 (2017-08-13)
 
