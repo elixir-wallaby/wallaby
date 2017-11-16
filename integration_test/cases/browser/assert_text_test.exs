@@ -1,6 +1,8 @@
 defmodule Wallaby.Integration.Browser.AssertTextTest do
   use Wallaby.Integration.SessionCase, async: true
 
+  alias Wallaby.ExpectationNotMetError
+
   test "has_text?/2 waits for presence of text and returns a bool", %{session: session} do
     element =
     session
@@ -26,7 +28,7 @@ defmodule Wallaby.Integration.Browser.AssertTextTest do
       |> visit("wait.html")
       |> find(Query.css("#container"))
 
-    assert_raise Wallaby.ExpectationNotMet, "Text 'rain' was not found.", fn ->
+    assert_raise ExpectationNotMetError, "Text 'rain' was not found.", fn ->
       assert_text(element, "rain")
     end
   end

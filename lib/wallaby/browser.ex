@@ -103,10 +103,14 @@ defmodule Wallaby.Browser do
   |> todo_was_created?
   """
 
+  alias Wallaby.CookieError
   alias Wallaby.Element
+  alias Wallaby.ExpectationNotMetError
   alias Wallaby.Query
   alias Wallaby.Query.ErrorMessage
+  alias Wallaby.NoBaseUrlError
   alias Wallaby.Session
+  alias Wallaby.StaleReferenceError
 
   @type t :: any()
 
@@ -581,7 +585,7 @@ defmodule Wallaby.Browser do
     |> assert_text(text)
   end
   def assert_text(parent, text) when is_binary(text) do
-    has_text?(parent, text) || raise Wallaby.ExpectationNotMet, "Text '#{text}' was not found."
+    has_text?(parent, text) || raise ExpectationNotMetError, "Text '#{text}' was not found."
   end
 
   @doc """
@@ -612,13 +616,13 @@ defmodule Wallaby.Browser do
           case error do
             {:error, {:not_found, results}} ->
               query = %Query{query | result: results}
-              raise Wallaby.ExpectationNotMet,
+              raise ExpectationNotMetError,
                     Query.ErrorMessage.message(query, :not_found)
             {:error, :invalid_selector} ->
               raise Wallaby.QueryError,
                 Query.ErrorMessage.message(query, :invalid_selector)
             _ ->
-              raise Wallaby.ExpectationNotMet,
+              raise Wallaby.ExpectationNotMetError,
                 "Wallaby has encountered an internal error: #{inspect error} with session: #{inspect parent}"
           end
       end
@@ -647,7 +651,7 @@ defmodule Wallaby.Browser do
         {:error, _not_found} ->
           parent
         {:ok, query} ->
-          raise Wallaby.ExpectationNotMet,
+          raise Wallaby.ExpectationNotMetError,
                 Query.ErrorMessage.message(query, :found)
       end
     end
@@ -698,7 +702,7 @@ defmodule Wallaby.Browser do
 
     cond do
       uri.host == nil && String.length(base_url()) == 0 ->
-        raise Wallaby.NoBaseUrl, path
+        raise NoBaseUrlError, path
       uri.host ->
         driver.visit(session, path)
       true ->
@@ -716,14 +720,14 @@ defmodule Wallaby.Browser do
 
   def set_cookie(%Session{driver: driver} = session, key, value) do
     if blank_page?(session) do
-      raise Wallaby.CookieException
+      raise CookieError
     end
 
     case driver.set_cookie(session, key, value) do
       {:ok, _list} ->
         session
       {:error, :invalid_cookie_domain} ->
-        raise Wallaby.CookieException
+        raise CookieError
     end
   end
 
@@ -925,7 +929,7 @@ defmodule Wallaby.Browser do
            {:ok, %Query{query | result: elements}}
         end
       rescue
-        Wallaby.StaleReferenceException ->
+        StaleReferenceError ->
           {:error, :stale_reference}
       end
     end

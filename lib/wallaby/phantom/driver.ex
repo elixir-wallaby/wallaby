@@ -1,12 +1,17 @@
 defmodule Wallaby.Phantom.Driver do
   @moduledoc false
 
-  alias Wallaby.{Driver, Element, Session, Phantom, Metadata}
-  alias Wallaby.Helpers.KeyCodes
-  alias Wallaby.Phantom.Server
+  import Wallaby.HTTPClient
   import Wallaby.Driver.LogChecker
 
-  import Wallaby.HTTPClient
+  alias Wallaby.Driver
+  alias Wallaby.Element
+  alias Wallaby.Helpers.KeyCodes
+  alias Wallaby.Phantom
+  alias Wallaby.Phantom.Server
+  alias Wallaby.Metadata
+  alias Wallaby.Session
+  alias Wallaby.StaleReferenceError
 
   @type method :: :post | :get | :delete
   @type url :: String.t
@@ -208,7 +213,7 @@ defmodule Wallaby.Phantom.Driver do
           value
 
         {:error, :stale_reference} ->
-          raise Wallaby.StaleReferenceException
+          raise StaleReferenceError
       end
     end
   end

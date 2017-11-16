@@ -6,7 +6,7 @@ defmodule Wallaby.Experimental.Chrome do
 
   @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+)/
 
-  alias Wallaby.{Session, DependencyException, Metadata}
+  alias Wallaby.{Session, DependencyError, Metadata}
   alias Wallaby.Experimental.Chrome.{Chromedriver}
   alias Wallaby.Experimental.Selenium.WebdriverClient
   import Wallaby.Driver.LogChecker
@@ -38,14 +38,14 @@ defmodule Wallaby.Experimental.Chrome do
         if version >= 30 do
           :ok
         else
-          exception = DependencyException.exception """
+          exception = DependencyError.exception """
           Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
           chromedriver 2.30 to run correctly.
           """
           {:error, exception}
         end
       _ ->
-        exception = DependencyException.exception """
+        exception = DependencyError.exception """
         Wallaby can't find chromedriver. Make sure you have chromedriver installed
         and included in your path.
         """

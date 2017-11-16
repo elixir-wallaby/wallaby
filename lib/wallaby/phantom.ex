@@ -34,7 +34,7 @@ defmodule Wallaby.Phantom do
   use Supervisor
 
   alias Wallaby.Phantom.Driver
-  alias Wallaby.DependencyException
+  alias Wallaby.DependencyError
 
   @behaviour Wallaby.Driver
 
@@ -54,7 +54,7 @@ defmodule Wallaby.Phantom do
       System.find_executable("phantomjs") ->
         :ok
       true ->
-        exception = DependencyException.exception """
+        exception = DependencyError.exception """
         Wallaby can't find phantomjs. Make sure you have phantomjs installed
         and included in your path, or that your `config :wallaby, :phantomjs`
         setting points to a valid phantomjs executable.
