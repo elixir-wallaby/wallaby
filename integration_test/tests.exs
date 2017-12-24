@@ -4,6 +4,7 @@ Code.require_file "cases/browser/all_test.exs", __DIR__
 Code.require_file "cases/browser/assert_css_test.exs", __DIR__
 Code.require_file "cases/browser/assert_refute_has_test.exs", __DIR__
 Code.require_file "cases/browser/assert_text_test.exs", __DIR__
+Code.require_file "cases/browser/refute_text_test.exs", __DIR__
 Code.require_file "cases/browser/attr_test.exs", __DIR__
 Code.require_file "cases/browser/clear_test.exs", __DIR__
 Code.require_file "cases/browser/click_button_test.exs", __DIR__

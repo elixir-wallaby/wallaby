@@ -589,6 +589,21 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
+  Matches the Element's content with the provided text and raises if the text is found
+  """
+  @spec refute_text(Element.t, String.t) :: boolean()
+  @spec refute_text(parent, Query.t, String.t) :: boolean()
+
+  def refute_text(parent, query, text) when is_binary(text) do
+    parent
+    |> find(query)
+    |> refute_text(text)
+  end
+  def refute_text(parent, text) when is_binary(text) do
+    !has_text?(parent, text) || raise ExpectationNotMetError, "Text '#{text}' was found."
+  end
+
+  @doc """
   Checks if `query` is present within `parent` and raises if not found.
 
   Returns the given `parent` if the assertion is correct so that it is easily
