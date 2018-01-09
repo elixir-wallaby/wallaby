@@ -119,6 +119,43 @@ Then in your `test_helper.exs` you can provide some configuration to Wallaby. At
 Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
 ```
 
+#### Assets
+
+Assets are not re-compiled when you run `mix test`. This can lead to confusion if 
+you've made changes in javascript or css but tests are still failing. There are two
+common ways to avoid this confusion.
+
+The first solution is to run `brunch watch` from the assets directory. This will ensure
+that assets get recompiled after any changes.
+
+The second solution is to add a new alias to your mix config that recompiles assets for you:
+
+```elixir
+  def project do
+    [
+      app: :my_app,
+      version: "1.0.0",
+      aliases: aliases()
+    ]
+  end
+
+  defp aliases, do: [
+    "test": [
+      "assets.compile --quiet",
+      "ecto.create --quiet",
+      "ecto.migrate",
+      "test",
+    ],
+    "assets.compile": &compile_assets/1
+  ]
+
+  defp compile_assets(_) do
+    Mix.shell.cmd("assets/node_modules/brunch/bin/brunch build assets/")
+  end
+```
+
+This method is less error prone but it will cause a delay when starting your test suite.
+
 #### Umbrella Apps
 
 If you're testing an umbrella application containing a Phoenix application for
