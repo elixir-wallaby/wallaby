@@ -1,8 +1,6 @@
 defmodule Wallaby.Session do
   @moduledoc false
 
-  alias Wallaby.Browser
-
   @type t :: %__MODULE__{
     id: String.t,
     session_url: String.t,
@@ -13,10 +11,4 @@ defmodule Wallaby.Session do
   }
 
   defstruct [:id, :url, :session_url, :driver, server: :none, screenshots: []]
-
-  def set_window_size(parent, x, y) do
-    IO.warn "set_window_size/3 has been deprecated. Please use Browser.resize_window/3"
-
-    Browser.resize_window(parent, x, y)
-  end
 end
