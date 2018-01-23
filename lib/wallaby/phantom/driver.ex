@@ -27,7 +27,7 @@ defmodule Wallaby.Phantom.Driver do
   def create(server, opts) do
     base_url = Server.get_base_url(server)
     user_agent =
-      Phantom.user_agent
+      Phantom.user_agent(opts[:user_agent])
       |> Metadata.append(opts[:metadata])
 
     capabilities = Phantom.capabilities(

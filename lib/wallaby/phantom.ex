@@ -174,7 +174,13 @@ defmodule Wallaby.Phantom do
   defdelegate log(session_or_element),                            to: Driver
   defdelegate parse_log(log),                                     to: Wallaby.Phantom.Logger
 
-  @doc false
+  @doc ~S"""
+  Use a user agent that is passed, otherwise default to the PhantomJS user agent.
+  """
+  def user_agent(ua), do: ua
+  def user_agent(nil) do
+    "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1"
+  end
   def user_agent do
     "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1"
   end
