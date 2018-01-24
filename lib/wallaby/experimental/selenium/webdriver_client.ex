@@ -233,7 +233,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   """
   @spec take_screenshot(Session.t) :: binary
   def take_screenshot(session) do
-    with {:ok, resp}   <- request(:get, "#{session.url}/screenshot"),
+    with {:ok, resp}   <- request(:get, "#{session.session_url}/screenshot"),
           {:ok, value}  <- Map.fetch(resp, "value"),
           decoded_value <- :base64.decode(value),
       do: decoded_value
