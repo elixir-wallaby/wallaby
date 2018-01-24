@@ -76,4 +76,14 @@ defmodule Wallaby.Integration.Browser.FillInTest do
   test "escapes quotes", %{page: page} do
     assert fill_in(page, Query.text_field("I'm a text field"), with: "Stuff")
   end
+
+  test "works with unicode", %{page: page} do
+    page
+    |> fill_in(Query.text_field("name"), with: "Chris 🎉")
+    |> find(Query.text_field("name"), fn field ->
+      field
+      |> take_screenshot()
+      assert has_value?(field, "Chris 🎉")
+    end)
+  end
 end
