@@ -578,6 +578,18 @@ config :wallaby,
   ]
 ```
 
+### Custom Chrome binary
+
+By default chromedriver will find chrome for you but if you want to test against a different version
+you may use this option to point to the other chrome binary.
+
+```elixir
+config :wallaby,
+  chrome: [
+    binary: "path/to/google/chrome"
+  ]
+```
+
 ### Selenium
 
 To run selenium you'll need to install selenium-server-standalone and geckodriver.

@@ -198,9 +198,10 @@ defmodule Wallaby.Experimental.Chrome do
     }
   end
 
-  defp chrome_options(opts), do: %{
-      args: chrome_args(opts)
-    }
+  defp chrome_options(opts) do
+    %{args: chrome_args(opts)}
+    |> put_unless_nil(:binary, chrome_binary_option())
+  end
 
   defp chrome_args(opts) do
     default_chrome_args()
@@ -217,6 +218,12 @@ defmodule Wallaby.Experimental.Chrome do
     |> Keyword.get(:headless, true)
   end
 
+  def chrome_binary_option() do
+    :wallaby
+    |> Application.get_env(:chrome, [])
+    |> Keyword.get(:binary)
+  end
+
   def default_chrome_args do
     [
       "--no-sandbox",
@@ -230,6 +237,14 @@ defmodule Wallaby.Experimental.Chrome do
       ["--fullscreen", "--headless"]
     else
       []
+    end
+  end
+
+  defp put_unless_nil(map, key, value) do
+    if value do
+      Map.put(map, key, value)
+    else
+      map
     end
   end
 end
