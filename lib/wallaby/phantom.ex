@@ -177,10 +177,10 @@ defmodule Wallaby.Phantom do
   @doc ~S"""
   Use a user agent that is passed, otherwise default to the PhantomJS user agent.
   """
-  def user_agent(ua), do: ua
   def user_agent(nil) do
     "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1"
   end
+  def user_agent(ua), do: ua
   def user_agent do
     "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1"
   end
