@@ -9,6 +9,8 @@
 
 set -e
 
+script_status="running"
+
 create_pipe(){
   local pipe=$(mktemp -u)
   mkfifo -m 600 "$pipe"
@@ -39,10 +41,13 @@ shutdown(){
   local my_pid=$1
   local program_pid=$2
 
-  children=$(ps xao pid,pgid | grep $my_pid | awk '{print $1}' | grep -v $my_pid)
-  kill $program_pid 2>/dev/null
+  if [ $script_status = "running" ]; then
+    script_status="shutting down"
 
-  wait_for_pids_to_exit $children
+    # Kill this script's process group
+    kill -TERM $(($my_pid * -1)) 2>/dev/null
+  fi
+
   exit 0
 }
 
