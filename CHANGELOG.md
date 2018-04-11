@@ -1,3 +1,14 @@
+## 0.20.0 (2018-04-11)
+
+### Breaking changes
+
+* Normalized all exception names
+* Removed `set_window_size/3`
+
+### Bugfixes
+
+* Fixed issues with zombie phantom processes (#338)
+
 ## 0.19.2 (2017-10-28)
 
 ### Features
