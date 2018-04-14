@@ -373,34 +373,6 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   @doc """
-  Accept all JavaScript dialogs
-  """
-  def accept_dialogs(session) do
-    script = """
-    var page = this;
-    page.onAlert = function(msg) {}
-    page.onConfirm = function(msg) { return true; }
-    page.onPrompt = function(msg, defaultVal) { return defaultVal; }
-    return "ok";
-    """
-    {:ok, "ok"} = execute_phantom_script(session, script)
-  end
-
-  @doc """
-  Dismiss all JavaScript dialogs
-  """
-  def dismiss_dialogs(session) do
-    script = """
-    var page = this;
-    page.onAlert = function(msg) {}
-    page.onConfirm = function(msg) { return false; }
-    page.onPrompt = function(msg, defaultVal) { return null; }
-    return "ok";
-    """
-    {:ok, "ok"} = execute_phantom_script(session, script)
-  end
-
-  @doc """
   Accept one alert triggered within `fun` and return the alert message.
   """
   def accept_alert(%Session{} = session, fun) do

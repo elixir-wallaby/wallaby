@@ -101,9 +101,6 @@ defmodule Wallaby.Experimental.Chrome do
     delegate(:set_window_size, session, [handle, width, height])
   end
 
-  def accept_dialogs(_session), do: {:error, :not_implemented}
-  def dismiss_dialogs(_session), do: {:error, :not_implemented}
-
   defp delegate(fun, element_or_session, args \\ []) do
     check_logs!(element_or_session, fn ->
       apply(WebdriverClient, fun, [element_or_session | args])
