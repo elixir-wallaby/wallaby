@@ -63,6 +63,11 @@ defmodule Wallaby.Query.ErrorMessage do
     The #{method} '#{selector}' is not a valid query.
     """
   end
+  def message(_, :unexpected_alert) do
+    """
+    There was an unexpected alert.
+    """
+  end
 
   def help(elements) do
     """
