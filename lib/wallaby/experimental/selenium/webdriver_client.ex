@@ -233,7 +233,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Takes a screenshot.
   """
-  @spec take_screenshot(Session.t) :: binary
+  @spec take_screenshot(Session.t | Element.t) :: binary
   def take_screenshot(session) do
     with {:ok, resp}   <- request(:get, "#{session.session_url}/screenshot"),
           {:ok, value}  <- Map.fetch(resp, "value"),
