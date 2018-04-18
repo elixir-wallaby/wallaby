@@ -46,7 +46,7 @@ before_script:
   - sudo mv chromedriver /usr/local/bin
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test --yes
   - sudo apt-get update
-  - sudo apt-get install google-chrome-beta
+  - sudo apt-get --only-upgrade install google-chrome-stable
   - sudo apt-get install libstdc++6-4.7-dev
   - MIX_ENV=test mix compile --warnings-as-errors
   - if [ -z ${WALLABY_DRIVER} ]; then travis_wait mix dialyzer --plt; fi # only run dialyzer for the env without drivers
