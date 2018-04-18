@@ -29,36 +29,44 @@ defmodule Wallaby.Experimental.Chrome do
     case System.find_executable("chromedriver") do
       chromedriver when not is_nil(chromedriver) ->
         {version, 0} = System.cmd("chromedriver", ["--version"])
+
         version =
           @chromedriver_version_regex
           |> Regex.run(version)
           |> Enum.at(1)
-          |> String.to_integer
+          |> String.to_integer()
 
         if version >= 30 do
           :ok
         else
-          exception = DependencyError.exception """
-          Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
-          chromedriver 2.30 to run correctly.
-          """
+          exception =
+            DependencyError.exception("""
+            Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
+            chromedriver 2.30 to run correctly.
+            """)
+
           {:error, exception}
         end
+
       _ ->
-        exception = DependencyError.exception """
-        Wallaby can't find chromedriver. Make sure you have chromedriver installed
-        and included in your path.
-        """
+        exception =
+          DependencyError.exception("""
+          Wallaby can't find chromedriver. Make sure you have chromedriver installed
+          and included in your path.
+          """)
+
         {:error, exception}
     end
   end
 
   def start_session(opts) do
     {:ok, base_url} = Chromedriver.base_url()
-    create_session_fn = Keyword.get(opts, :create_session_fn,
-                                    &WebdriverClient.create_session/2)
-    user_agent = user_agent()
-                 |> Metadata.append(opts[:metadata])
+    create_session_fn = Keyword.get(opts, :create_session_fn, &WebdriverClient.create_session/2)
+
+    user_agent =
+      user_agent()
+      |> Metadata.append(opts[:metadata])
+
     capabilities = capabilities(user_agent: user_agent)
 
     with {:ok, response} <- create_session_fn.(base_url, capabilities) do
@@ -69,7 +77,7 @@ defmodule Wallaby.Experimental.Chrome do
         url: base_url <> "session/#{id}",
         id: id,
         driver: __MODULE__,
-        server: Chromedriver,
+        server: Chromedriver
       }
 
       {:ok, session}
@@ -86,6 +94,7 @@ defmodule Wallaby.Experimental.Chrome do
     case current_url(session) do
       {:ok, url} ->
         url == "data:,"
+
       _ ->
         false
     end
@@ -107,13 +116,13 @@ defmodule Wallaby.Experimental.Chrome do
     end)
   end
 
-  defdelegate accept_alert(session, fun),         to: WebdriverClient
-  defdelegate dismiss_alert(session, fun),        to: WebdriverClient
-  defdelegate accept_confirm(session, fun),       to: WebdriverClient
-  defdelegate dismiss_confirm(session, fun),      to: WebdriverClient
+  defdelegate accept_alert(session, fun), to: WebdriverClient
+  defdelegate dismiss_alert(session, fun), to: WebdriverClient
+  defdelegate accept_confirm(session, fun), to: WebdriverClient
+  defdelegate dismiss_confirm(session, fun), to: WebdriverClient
   defdelegate accept_prompt(session, input, fun), to: WebdriverClient
-  defdelegate dismiss_prompt(session, fun),       to: WebdriverClient
-  defdelegate parse_log(log),                     to: Wallaby.Experimental.Chrome.Logger
+  defdelegate dismiss_prompt(session, fun), to: WebdriverClient
+  defdelegate parse_log(log), to: Wallaby.Experimental.Chrome.Logger
 
   @doc false
   def cookies(session), do: delegate(:cookies, session)
@@ -153,20 +162,22 @@ defmodule Wallaby.Experimental.Chrome do
     end
 
     if check_logs do
-      check_logs! session_or_element, request_fn
+      check_logs!(session_or_element, request_fn)
     else
       request_fn.()
     end
   end
 
   @doc false
-  def find_elements(session_or_element, compiled_query),  do: delegate(:find_elements, session_or_element, [compiled_query])
+  def find_elements(session_or_element, compiled_query),
+    do: delegate(:find_elements, session_or_element, [compiled_query])
+
   @doc false
   def send_keys(session_or_element, keys), do: delegate(:send_keys, session_or_element, [keys])
   @doc false
   def take_screenshot(session_or_element), do: delegate(:take_screenshot, session_or_element)
   @doc false
-  defdelegate log(session_or_element),                            to: WebdriverClient
+  defdelegate log(session_or_element), to: WebdriverClient
 
   @doc false
   def user_agent do
@@ -195,9 +206,10 @@ defmodule Wallaby.Experimental.Chrome do
     }
   end
 
-  defp chrome_options(opts), do: %{
-      args: chrome_args(opts)
-    }
+  defp chrome_options(opts) do
+    %{args: chrome_args(opts)}
+    |> put_unless_nil(:binary, chrome_binary_option())
+  end
 
   defp chrome_args(opts) do
     default_chrome_args()
@@ -214,11 +226,17 @@ defmodule Wallaby.Experimental.Chrome do
     |> Keyword.get(:headless, true)
   end
 
+  defp chrome_binary_option do
+    :wallaby
+    |> Application.get_env(:chrome, [])
+    |> Keyword.get(:binary)
+  end
+
   def default_chrome_args do
     [
       "--no-sandbox",
       "window-size=1280,800",
-      "--disable-gpu",
+      "--disable-gpu"
     ]
   end
 
@@ -229,4 +247,7 @@ defmodule Wallaby.Experimental.Chrome do
       []
     end
   end
+
+  defp put_unless_nil(map, _key, nil), do: map
+  defp put_unless_nil(map, key, value), do: Map.put(map, key, value)
 end
