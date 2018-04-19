@@ -75,8 +75,6 @@ defmodule Wallaby.Experimental.Selenium do
   end
 
   # Dialog handling not supported yet
-  def accept_dialogs(_session), do: {:error, :not_implemented}
-  def dismiss_dialogs(_session), do: {:error, :not_implemented}
   def accept_alert(_session, _fun), do: {:error, :not_implemented}
   def dismiss_alert(_session, _fun), do: {:error, :not_implemented}
   def accept_confirm(_session, _fun), do: {:error, :not_implemented}

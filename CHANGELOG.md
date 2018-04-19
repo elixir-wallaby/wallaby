@@ -1,3 +1,24 @@
+## 0.21.0 (pending)
+
+### Breaking changes
+
+* Removed `accept_dialogs` and `dismiss_dialogs`.
+
+## Bugfixes
+
+* Chrome takes screenshots correctly if elements are passed to `take_screenshot`.
+
+## 0.20.0 (2018-04-11)
+
+### Breaking changes
+
+* Normalized all exception names
+* Removed `set_window_size/3`
+
+### Bugfixes
+
+* Fixed issues with zombie phantom processes (#338)
+
 ## 0.19.2 (2017-10-28)
 
 ### Features

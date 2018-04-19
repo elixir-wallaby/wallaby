@@ -473,6 +473,7 @@ defmodule Wallaby.Browser do
         case validate_html(parent, query) do
           {:ok, _} ->
             raise Wallaby.QueryError, ErrorMessage.message(query, :not_found)
+
           {:error, html_error} ->
             raise Wallaby.QueryError, ErrorMessage.message(query, html_error)
         end
@@ -733,22 +734,6 @@ defmodule Wallaby.Browser do
 
   defp blank_page?(%Session{driver: driver} = session) do
     driver.blank_page?(session)
-  end
-
-  @doc """
-  Accepts all subsequent JavaScript dialogs in the given session.
-  """
-  def accept_dialogs(%Session{driver: driver} = session) do
-    driver.accept_dialogs(session)
-    session
-  end
-
-  @doc """
-  Dismisses all subsequent JavaScript dialogs in the given session.
-  """
-  def dismiss_dialogs(%Session{driver: driver} = session) do
-    driver.dismiss_dialogs(session)
-    session
   end
 
   @doc """
