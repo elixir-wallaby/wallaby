@@ -4,6 +4,10 @@
 
 * Removed `accept_dialogs` and `dismiss_dialogs`.
 
+### Improvements
+
+* Improved readability of `file_test` failures
+
 ## Bugfixes
 
 * Chrome takes screenshots correctly if elements are passed to `take_screenshot`.
