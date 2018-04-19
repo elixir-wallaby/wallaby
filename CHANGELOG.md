@@ -1,3 +1,13 @@
+## 0.21.0 (pending)
+
+### Breaking changes
+
+* Removed `accept_dialogs` and `dismiss_dialogs`.
+
+## Bugfixes
+
+* Chrome takes screenshots correctly if elements are passed to `take_screenshot`.
+
 ## 0.20.0 (2018-04-11)
 
 ### Breaking changes
