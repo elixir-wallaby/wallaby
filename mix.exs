@@ -1,7 +1,7 @@
 defmodule Wallaby.Mixfile do
   use Mix.Project
 
-  @version "0.19.2"
+  @version "0.20.0"
   @drivers ~w(phantom selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers [
@@ -60,7 +60,7 @@ defmodule Wallaby.Mixfile do
       {:bypass, "~> 0.8", only: :test},
       {:inch_ex, "~> 0.5", only: [:docs]},
       {:excoveralls, "~> 0.7",  only: :test},
-      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
+      {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
     ]
   end
 

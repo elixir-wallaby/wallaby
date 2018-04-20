@@ -116,8 +116,6 @@ defmodule Wallaby.Phantom do
   end
 
   @doc false
-  defdelegate accept_dialogs(session),                            to: Driver
-  @doc false
   defdelegate accept_alert(session, open_dialog_fn),              to: Driver
   @doc false
   defdelegate accept_confirm(session, open_dialog_fn),            to: Driver
@@ -129,8 +127,6 @@ defmodule Wallaby.Phantom do
   defdelegate current_path(session),                             to: Driver
   @doc false
   defdelegate current_url(session),                              to: Driver
-  @doc false
-  defdelegate dismiss_dialogs(session),                           to: Driver
   @doc false
   defdelegate dismiss_confirm(session, open_dialog_fn),           to: Driver
   @doc false

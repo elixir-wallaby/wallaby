@@ -16,21 +16,27 @@ defmodule Wallaby.Integration.Browser.FileTest do
       page
       |> attach_file(file_field("file_input"), path: "integration_test/support/fixtures/file.txt")
 
-      assert find(page, css("#file_field")) |> has_value?("C:\\fakepath\\file.txt")
+      find(page, css("#file_field"), fn (element) ->
+        assert Wallaby.Element.value(element) == "C:\\fakepath\\file.txt"
+      end)
     end
 
     test "by DOM ID", %{page: page} do
       page
       |> attach_file(file_field("file_field"), path: "integration_test/support/fixtures/file.txt")
 
-      assert find(page, css("#file_field")) |> has_value?("C:\\fakepath\\file.txt")
+      find(page, css("#file_field"), fn (element) ->
+        assert Wallaby.Element.value(element) == "C:\\fakepath\\file.txt"
+      end)
     end
 
     test "by label", %{page: page} do
       page
       |> attach_file(file_field("File"), path: "integration_test/support/fixtures/file.txt")
 
-      assert find(page, css("#file_field")) |> has_value?("C:\\fakepath\\file.txt")
+      find(page, css("#file_field"), fn (element) ->
+        assert Wallaby.Element.value(element) == "C:\\fakepath\\file.txt"
+      end)
     end
   end
 
@@ -38,7 +44,9 @@ defmodule Wallaby.Integration.Browser.FileTest do
     page
     |> attach_file(file_field("File"), path: "integration_test/support/fixtures/fool.txt")
 
-    assert find(page, css("#file_field")) |> has_value?("")
+    find(page, css("#file_field"), fn (element) ->
+      assert Wallaby.Element.value(element) == ""
+    end)
   end
 
   test "checks for labels without for attributes", %{page: page} do

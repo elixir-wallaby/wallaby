@@ -203,7 +203,7 @@ You will also want to add `phoenix_ecto` as a dependency to `MyWebApp`:
 
 def deps do
   [
-    {:wallaby, "~> 0.19.2", only: :test},
+    {:wallaby, "~> 0.20", only: :test},
     {:phoenix_ecto, "~> 3.0", only: :test}
   ]
 end
@@ -575,6 +575,17 @@ If you would like to disable headless mode in chrome you can pass `headless: fal
 config :wallaby,
   chrome: [
     headless: false
+  ]
+```
+
+### Custom Chrome binary
+
+By default chromedriver will find chrome for you but if you want to test against a different version you may use this option to point to the other chrome binary.
+
+```elixir
+config :wallaby,
+  chrome: [
+    binary: "path/to/google/chrome"
   ]
 ```
 

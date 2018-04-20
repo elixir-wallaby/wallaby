@@ -102,9 +102,11 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       do: value
   end
 
-  def dismiss_prompt(session, _fun) do
-    with  {:ok, resp} <- request(:post, "#{session.url}/dismiss_alert"),
-      do: resp
+  def dismiss_prompt(session, fun) do
+    fun.(session)
+    with  {:ok, value} <- alert_text(session),
+          {:ok, _resp} <- request(:post, "#{session.url}/alert/dismiss"),
+      do: value
   end
 
   @doc """
@@ -231,9 +233,9 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Takes a screenshot.
   """
-  @spec take_screenshot(Session.t) :: binary
+  @spec take_screenshot(Session.t | Element.t) :: binary
   def take_screenshot(session) do
-    with {:ok, resp}   <- request(:get, "#{session.url}/screenshot"),
+    with {:ok, resp}   <- request(:get, "#{session.session_url}/screenshot"),
           {:ok, value}  <- Map.fetch(resp, "value"),
           decoded_value <- :base64.decode(value),
       do: decoded_value

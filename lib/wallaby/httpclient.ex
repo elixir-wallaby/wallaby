@@ -73,10 +73,14 @@ defmodule Wallaby.HTTPClient do
         {:error, :stale_reference}
       %{"message" => "stale element reference" <> _} ->
         {:error, :stale_reference}
+      %{"message" => "invalid selector" <> _} ->
+        {:error, :invalid_selector}
       %{"class" => "org.openqa.selenium.InvalidSelectorException"} ->
         {:error, :invalid_selector}
       %{"class" => "org.openqa.selenium.InvalidElementStateException"} ->
         {:error, :invalid_selector}
+      %{"message" => "unexpected alert" <> _} ->
+        {:error, :unexpected_alert}
       _ ->
         {:ok, response}
     end
