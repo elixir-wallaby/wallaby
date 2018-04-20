@@ -7,6 +7,7 @@
 ### Improvements
 
 * Improved readability of `file_test` failures
+* Allow users to specify the path to the chrome binary
 
 ## Bugfixes
 
