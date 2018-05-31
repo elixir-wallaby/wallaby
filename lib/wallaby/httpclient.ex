@@ -28,7 +28,7 @@ defmodule Wallaby.HTTPClient do
     make_request(method, url, Poison.encode!(params))
   end
 
-  defp make_request(method, url, body, retry_count \\ 0, retry_reasons \\ [])
+  defp make_request(method, url, body), do: make_request(method, url, body, 0, [])
   defp make_request(_, _, _, 5, retry_reasons) do
     ["Wallaby had an internal issue with HTTPoison:" | retry_reasons]
     |> Enum.uniq()
