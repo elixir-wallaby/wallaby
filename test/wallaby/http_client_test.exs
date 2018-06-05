@@ -54,5 +54,16 @@ defmodule Wallaby.HTTPClientTest do
       assert {:error, :stale_reference} =
         Client.request(:post, bypass_url(bypass, "/my_url"))
     end
+
+    test "includes the original HTTPoison error when there is one", %{bypass: bypass} do
+      expected_message =
+        "Wallaby had an internal issue with HTTPoison:\n%HTTPoison.Error{id: nil, reason: :econnrefused}"
+
+      Bypass.down bypass
+
+      assert_raise RuntimeError, expected_message, fn ->
+        Client.request(:post, bypass_url(bypass, "/my_url"))
+      end
+    end
   end
 end
