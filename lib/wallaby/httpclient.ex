@@ -28,24 +28,30 @@ defmodule Wallaby.HTTPClient do
     make_request(method, url, Poison.encode!(params))
   end
 
-  defp make_request(method, url, body, retry_count \\ 0)
-  defp make_request(_, _, _, 5), do: raise "Wallaby had an internal issue with HTTPoison"
-  defp make_request(method, url, body, retry_count) do
+  defp make_request(method, url, body), do: make_request(method, url, body, 0, [])
+  defp make_request(_, _, _, 5, retry_reasons) do
+    ["Wallaby had an internal issue with HTTPoison:" | retry_reasons]
+    |> Enum.uniq()
+    |> Enum.join("\n")
+    |> raise
+  end
+  defp make_request(method, url, body, retry_count, retry_reasons) do
     method
     |> HTTPoison.request(url, body, headers(), request_opts())
     |> handle_response
     |> case do
-         {:error, :httpoison} ->
-           make_request(method, url, body, retry_count + 1)
-         result ->
-           result
+      {:error, :httpoison, error} ->
+        make_request(method, url, body, retry_count + 1, [inspect(error) | retry_reasons])
+
+      result ->
+        result
     end
   end
 
   defp handle_response(resp) do
     case resp do
-      {:error, %HTTPoison.Error{}} ->
-        {:error, :httpoison}
+      {:error, %HTTPoison.Error{} = error} ->
+        {:error, :httpoison, error}
 
       {:ok, %HTTPoison.Response{status_code: 204}} ->
         {:ok, %{"value" => nil}}
