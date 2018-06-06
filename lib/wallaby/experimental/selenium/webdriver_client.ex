@@ -296,7 +296,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Executes javascript synchoronously, taking as arguments the script to execute,
+  Executes javascript synchronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
   @spec execute_script(Session.t | Element.t, String.t, Keyword.t) :: {:ok, any}
@@ -307,7 +307,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Executes javascript asynchoronously, taking as arguments the script to execute,
+  Executes javascript asynchronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
   @spec execute_script_async(Session.t | Element.t, String.t, Keyword.t) :: {:ok, any}
@@ -316,7 +316,6 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
-
 
   @doc """
   Sends a list of key strokes to active element

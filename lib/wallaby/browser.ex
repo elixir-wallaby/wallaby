@@ -272,7 +272,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Executes javascript synchoronously, taking as arguments the script to execute,
+  Executes javascript synchronously, taking as arguments the script to execute,
   an optional list of arguments available in the script via `arguments`, and an
   optional callback function with the result of script execution as a parameter.
   """
@@ -325,7 +325,6 @@ defmodule Wallaby.Browser do
     callback.(value)
     parent
   end
-
 
   @doc """
   Sends a list of key strokes to active element. If strings are included

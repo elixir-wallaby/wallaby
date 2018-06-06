@@ -143,7 +143,6 @@ defmodule Wallaby.Phantom do
   defdelegate set_window_size(session, width, height),            to: Driver
   @doc false
   defdelegate visit(session, url),                                to: Driver
-
   @doc false
   defdelegate attribute(element, name),                           to: Driver
   @doc false
@@ -158,9 +157,10 @@ defmodule Wallaby.Phantom do
   defdelegate set_value(element, value),                          to: Driver
   @doc false
   defdelegate text(element),                                      to: Driver
-
   @doc false
   defdelegate execute_script(session_or_element, script, args),   to: Driver
+  @doc false
+  defdelegate execute_script_async(session_or_element, script, args), to: Driver
   @doc false
   defdelegate find_elements(session_or_element, compiled_query),  to: Driver
   @doc false
