@@ -35,4 +35,32 @@ defmodule Wallaby.Integration.Browser.ExecuteScriptTest do
     |> find(Query.css("#new-element"))
     |> Element.text == "now you see me"
   end
+
+  test "executing scripts asynchronously with arguments and returning", %{session: session} do
+    assert session
+      |> visit("page_1.html")
+      |> execute_script_async(@script, ["now you see me", "return value"])
+      |> find(Query.css("#new-element"))
+      |> Element.text == "now you see me"
+  end
+
+  test "executing scripts asynchronously with arguments and callback returns session", %{session: session} do
+    result =
+      session
+      |> visit("page_1.html")
+      |> execute_script_async(@script, ["now you see me", "return value"], fn(value) ->
+           assert value == "return value"
+           send self(), {:callback, value}
+         end)
+
+    assert result == session
+    assert_received{:callback, "return value"}
+    assert session
+    |> find(Query.css("#new-element"))
+    |> Element.text == "now you see me"
+  end
+
+
+
+
 end

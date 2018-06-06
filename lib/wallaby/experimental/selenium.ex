@@ -164,6 +164,10 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.execute_script(parent, script, arguments)
   end
 
+  def execute_script_async(parent, script, arguments \\ []) do
+    WebdriverClient.execute_script_async(parent, script, arguments)
+  end
+
   def send_keys(parent, keys) do
     WebdriverClient.send_keys(parent, keys)
   end

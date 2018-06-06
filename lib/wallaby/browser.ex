@@ -299,6 +299,35 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
+  Executes javascript asynchronously, taking as arguments the script to execute,
+  an optional list of arguments available in the script via `arguments`, and an
+  optional callback function with the result of script execution as a parameter.
+  """
+  @spec execute_script_async(parent, String.t) :: parent
+  @spec execute_script_async(parent, String.t, list) :: parent
+  @spec execute_script_async(parent, String.t, ((binary()) -> any())) :: parent
+  @spec execute_script_async(parent, String.t, list, ((binary()) -> any())) :: parent
+
+  def execute_script_async(session, script) do
+    execute_script_async(session, script, [])
+  end
+
+  def execute_script_async(session, script, arguments) when is_list(arguments) do
+    execute_script_async(session, script, arguments, fn(_) -> nil end)
+  end
+
+  def execute_script_async(session, script, callback) when is_function(callback) do
+    execute_script_async(session, script, [], callback)
+  end
+
+  def execute_script_async(%{driver: driver} = parent, script, arguments, callback) when is_list(arguments) and is_function(callback) do
+    {:ok, value} = driver.execute_script_async(parent, script, arguments)
+    callback.(value)
+    parent
+  end
+
+
+  @doc """
   Sends a list of key strokes to active element. If strings are included
   then they are sent as individual keys. Special keys should be provided as a
   list of atoms, which are automatically converted into the corresponding key

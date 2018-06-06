@@ -169,6 +169,21 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   @doc false
+  def execute_script_async(session_or_element, script, args \\ [], opts \\ []) do
+    check_logs = Keyword.get(opts, :check_logs, true)
+
+    request_fn = fn ->
+      WebdriverClient.execute_script_async(session_or_element, script, args)
+    end
+
+    if check_logs do
+      check_logs!(session_or_element, request_fn)
+    else
+      request_fn.()
+    end
+  end
+
+  @doc false
   def find_elements(session_or_element, compiled_query),
     do: delegate(:find_elements, session_or_element, [compiled_query])
 

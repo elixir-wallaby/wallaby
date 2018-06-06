@@ -323,6 +323,31 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   @doc """
+  Executes javascript asynchoronously, taking as arguments the script to execute,
+  and optionally a list of arguments available in the script via `arguments`
+  """
+  @spec execute_script_async(Session.t, String.t, [any], [execute_script_opts]) :: {:ok, any} | {:error, Driver.reason}
+  def execute_script_async(session, script_function, arguments \\ [], opts \\ []) do
+    check_logs = Keyword.get(opts, :check_logs, true)
+    request_fn = fn ->
+      with {:ok, resp} <-
+             request(
+               :post,
+               "#{session.session_url}/execute_async",
+               %{script: script_function, args: arguments}
+             ),
+           {:ok, value} <- Map.fetch(resp, "value"),
+        do: {:ok, value}
+    end
+
+    if check_logs do
+      check_logs! session, request_fn
+    else
+      request_fn.()
+    end
+  end
+
+  @doc """
   Sends a list of key strokes to active element
   """
   def send_keys(%Session{} = session, keys) when is_list(keys) do
