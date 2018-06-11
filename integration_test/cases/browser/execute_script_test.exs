@@ -64,7 +64,7 @@ defmodule Wallaby.Integration.Browser.ExecuteScriptTest do
     result =
       session
       |> visit("page_1.html")
-      |> execute_script_async("var callback = arguments[0]; setTimeout(function() { callback(document.getElementById('visible').innerHTML) }, 100);", [], fn(value) ->
+      |> execute_script_async("var callback = arguments[0]; setTimeout(function() { callback(document.getElementById('visible').innerHTML) }, 300);", [], fn(value) ->
            assert value == "Visible"
            send self(), {:callback, value}
          end)
