@@ -40,8 +40,8 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
   defp start_chromedriver(tcp_port) do
     case System.find_executable("chromedriver") do
       chromedriver when not is_nil(chromedriver) ->
-        Port.open({:spawn_executable, wrapper_script()},
-          [:binary, :stream, :use_stdio, :exit_status, args: args(chromedriver, tcp_port)])
+        Port.open({:spawn_executable, wrapper_script()}, port_opts(chromedriver, tcp_port))
+
       _ ->
         {:error, :no_chromedriver}
     end
@@ -53,6 +53,16 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
 
   defp args(chromedriver, port), do: [
       chromedriver,
+      "--log-level=OFF",
       "--port=#{port}",
     ]
+
+  defp port_opts(chromedriver, tcp_port), do: [
+    :binary,
+    :stream,
+    :use_stdio,
+    :stderr_to_stdout,
+    :exit_status,
+    args: args(chromedriver, tcp_port),
+  ]
 end
