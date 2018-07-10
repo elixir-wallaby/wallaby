@@ -7,6 +7,7 @@ defmodule Wallaby.HTTPClient do
   @type request_opts :: {:encode_json, boolean}
 
   @status_obscured 13
+  @max_jitter 50 # The maximum time we'll sleep is for 50ms
 
   @doc """
   Sends a request to the webdriver API and parses the
@@ -41,6 +42,7 @@ defmodule Wallaby.HTTPClient do
     |> handle_response
     |> case do
       {:error, :httpoison, error} ->
+        :timer.sleep(jitter())
         make_request(method, url, body, retry_count + 1, [inspect(error) | retry_reasons])
 
       result ->
@@ -107,4 +109,6 @@ defmodule Wallaby.HTTPClient do
   def to_params({:css, css}) do
     %{using: "css selector", value: css}
   end
+
+  defp jitter, do: :rand.uniform(@max_jitter)
 end
