@@ -1,5 +1,6 @@
 defmodule Wallaby.QueryTest do
   use ExUnit.Case, async: true
+  use ExUnitProperties
   doctest Wallaby.Query
 
   alias Wallaby.Query
@@ -93,6 +94,16 @@ defmodule Wallaby.QueryTest do
     test "when minimum is less then the maximum" do
       query = Query.css("#test", minimum: 5, maximum: 3)
       assert Query.validate(query) == {:error, :min_max}
+    end
+  end
+
+  describe "count/2" do
+    property "changes the number of elements to find" do
+      check all num <- integer() do
+        assert Query.new
+        |> Query.count(num)
+        |> Query.count == num
+      end
     end
   end
 end

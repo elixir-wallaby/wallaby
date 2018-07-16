@@ -113,6 +113,15 @@ defmodule Wallaby.Query do
   @type compiled :: {:xpath | :css, String.t}
 
   @doc """
+  Retuns a new query struct.
+  """
+  @spec new :: t
+
+  def new do
+    %Query{}
+  end
+
+  @doc """
   Literally queries for the css selector you provide.
   """
 
@@ -303,6 +312,10 @@ defmodule Wallaby.Query do
 
   def count(%Query{conditions: conditions}) do
     Keyword.get(conditions, :count)
+  end
+
+  def count(%Query{conditions: conditions}=query, c) do
+    %Query{query | conditions: Keyword.put(conditions, :count, c)}
   end
 
   def at_number(%Query{conditions: conditions}) do

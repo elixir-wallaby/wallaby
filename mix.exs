@@ -39,7 +39,7 @@ defmodule Wallaby.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :httpoison, :poolboy, :poison], mod: {Wallaby, []}]
+    [mod: {Wallaby, []}]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
@@ -61,6 +61,7 @@ defmodule Wallaby.Mixfile do
       {:inch_ex, "~> 0.5", only: [:docs]},
       {:excoveralls, "~> 0.7",  only: :test},
       {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
+      {:stream_data, "~> 0.4", only: [:dev, :test]},
     ]
   end
 
