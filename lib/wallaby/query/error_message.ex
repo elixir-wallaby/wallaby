@@ -78,8 +78,20 @@ defmodule Wallaby.Query.ErrorMessage do
 
   defp found_error_message(query) do
     """
-    #{expected_count(query)}, #{visibility(query)} #{method(query)} '#{query.selector}' but #{result_count(query.result)}, #{visibility(query)} #{short_method(query.method, Enum.count(query.result))} #{result_expectation(query.result)}.
+    #{expected_count(query)}, #{visibility(query)} #{method(query)} #{selector(query)} but #{result_count(query.result)}, #{visibility(query)} #{short_method(query.method, Enum.count(query.result))} #{result_expectation(query.result)}.
     """
+  end
+
+  @doc """
+  Extracts the selector from the query
+  """
+  @spec selector(Query.t) :: String.t
+
+  def selector(%Query{selector: {name, value}}) do
+    "'#{name}' with value '#{value}'"
+  end
+  def selector(%Query{selector: selector}) do
+    "'#{selector}'"
   end
 
   @doc """
@@ -126,6 +138,9 @@ defmodule Wallaby.Query.ErrorMessage do
 
   def method(:text, true), do: "elements with the text"
   def method(:text, false), do: "element with the text"
+
+  def method(:attribute, true), do: "elements with the attribute"
+  def method(:attribute, false), do: "element with the attribute"
 
   def short_method(:css, count) when count > 1,  do: "elements"
   def short_method(:css, count) when count == 0, do: "elements"

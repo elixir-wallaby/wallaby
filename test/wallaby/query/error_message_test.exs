@@ -109,6 +109,26 @@ defmodule Wallaby.Query.ErrorMessageTest do
       Expected to find 2, visible elements with the text 'test' but 0, visible elements with the text were found.
       """
     end
+
+    test "with value queries" do
+      message =
+        Query.value("test")
+        |> ErrorMessage.message(:not_found)
+        |> format
+      assert message == format """
+      Expected to find 1, visible element with the attribute 'value' with value 'test' but 0, visible elements with the attribute were found.
+      """
+    end
+
+    test "with attribute key, value pair queries" do
+      message =
+        Query.attribute("an-attribute", "an-attribute-value")
+        |> ErrorMessage.message(:not_found)
+        |> format
+      assert message == format """
+      Expected to find 1, visible element with the attribute 'an-attribute' with value 'an-attribute-value' but 0, visible elements with the attribute were found.
+      """
+    end
   end
 
   describe "visibility/1" do
