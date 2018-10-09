@@ -88,7 +88,9 @@ defmodule Wallaby.Query do
                 | :option
                 | :select
                 | :file_field
+  @type attribute_key_value_pair :: {String.t, String.t}
   @type selector :: String.t
+                  | :attribute_key_value_pair
   @type html_validation :: :bad_label
                          | :button_type
                          | nil
@@ -142,6 +144,24 @@ defmodule Wallaby.Query do
     %Query{
       method: :text,
       selector: selector,
+      conditions: build_conditions(opts)
+    }
+  end
+
+  @doc """
+  Checks if the provided value is contained anywhere.
+  """
+  def value(selector, opts \\ []) do
+    attribute("value", selector, opts)
+  end
+
+  @doc """
+  Checks if the provided attribute, value pair is contained anywhere.
+  """
+  def attribute(name, value, opts \\ []) do
+    %Query{
+      method: :attribute,
+      selector: {name, value},
       conditions: build_conditions(opts)
     }
   end
@@ -296,6 +316,7 @@ defmodule Wallaby.Query do
   def compile(%{method: :select, selector: selector}), do: {:xpath, XPath.select(selector)}
   def compile(%{method: :file_field, selector: selector}), do: {:xpath, XPath.file_field(selector)}
   def compile(%{method: :text, selector: selector}), do: {:xpath, XPath.text(selector)}
+  def compile(%{method: :attribute, selector: {name, value}}), do: {:xpath, XPath.attribute(name, value)}
 
   def visible?(%Query{conditions: conditions}) do
     Keyword.get(conditions, :visible)

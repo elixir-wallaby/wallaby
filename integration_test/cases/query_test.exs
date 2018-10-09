@@ -132,6 +132,24 @@ defmodule Wallaby.Integration.QueryTest do
     assert element
   end
 
+  test "queries can find an element by only value", %{session: session} do
+    element =
+      session
+      |> Browser.visit("/forms.html")
+      |> Browser.find(Query.value("an-input-value"))
+
+    assert element
+  end
+
+  test "queries can find an element by its attribute and value pair", %{session: session} do
+    element =
+      session
+      |> Browser.visit("/page_1.html")
+      |> Browser.find(Query.attribute("an-attribute", "an-attribute-value"))
+
+    assert element
+  end
+
   test "all returns an empty list if nothing is found", %{session: session} do
     elements =
       session
