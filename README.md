@@ -425,13 +425,26 @@ session
 |> assert_has(css(".alert", text: "Welcome!"))
 ```
 
-### Windows and Screenshots
+### Window Size
 
-It's possible to interact with the window and take screenshots:
+You can set the default window size with the `window_size` config option.
+
+```elixir
+config :wallaby, window_size: [width: 1280, height: 720]
+```
+
+You can also resize the window and get the current window size during the test.
 
 ```elixir
 resize_window(session, 100, 100)
 window_size(session)
+```
+
+### Screenshots
+
+It's possible take screenshots:
+
+```elixir
 take_screenshot(session)
 ```
 
