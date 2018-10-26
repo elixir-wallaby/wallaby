@@ -26,7 +26,7 @@ defmodule Wallaby.Mixfile do
      aliases: ["test.all": ["test", "test.drivers"],
                "test.drivers": &test_drivers/1],
      preferred_cli_env: [
-       "coveralls": :test,
+       coveralls: :test,
        "coveralls.detail": :test,
        "coveralls.post": :test,
        "coveralls.html": :test,
