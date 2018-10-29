@@ -12,7 +12,7 @@ if [ "$WALLABY_DRIVER" = "selenium" ]; then
 
   if [ "$WALLABY_SELENIUM_VERSION" = "3" ]; then
 
-    curl https://selenium-release.storage.googleapis.com/3.4/selenium-server-standalone-3.4.0.jar -o $HOME/selenium.jar
+    curl https://selenium-release.storage.googleapis.com/3.14/selenium-server-standalone-3.14.0.jar -o $HOME/selenium.jar
     # Geckodriver requires java 8.
     sudo add-apt-repository -y ppa:openjdk-r/ppa
     sudo apt-get update && sudo apt-get install -y openjdk-8-jdk
@@ -23,7 +23,7 @@ if [ "$WALLABY_DRIVER" = "selenium" ]; then
     jdk_switcher use openjdk8
 
     # Download geckodriver
-    curl -L https://github.com/mozilla/geckodriver/releases/download/v0.16.0/geckodriver-v0.16.0-linux64.tar.gz -o $HOME/geckodriver.tar.gz
+    curl -L https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz -o $HOME/geckodriver.tar.gz
     tar xfz $HOME/geckodriver.tar.gz -C $HOME/bin
 
     # Download latest firefox
