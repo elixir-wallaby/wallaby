@@ -55,6 +55,23 @@ defmodule Wallaby.HTTPClientTest do
         Client.request(:post, bypass_url(bypass, "/my_url"))
     end
 
+    test "with an obscure status code", %{bypass: bypass} do
+      expected_message = "message from an obsure error"
+
+      Bypass.expect bypass, fn conn ->
+        send_resp(conn, 200, ~s<{
+          "sessionId": "abc123",
+          "status": 13,
+          "value": {
+            "message": "#{expected_message}"
+          }
+        }>)
+      end
+
+      assert {:error, ^expected_message} =
+        Client.request(:post, bypass_url(bypass, "/my_url"))
+    end
+
     test "includes the original HTTPoison error when there is one", %{bypass: bypass} do
       expected_message =
         "Wallaby had an internal issue with HTTPoison:\n%HTTPoison.Error{id: nil, reason: :econnrefused}"

@@ -57,7 +57,7 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
     test "with no phantom_args" do
       state = build_server_state(
         phantom_path: "phantomjs",
-        port_number: 8000,
+        port_number: 8000
       )
 
       assert %ExternalCommand{

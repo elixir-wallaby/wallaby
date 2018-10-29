@@ -69,7 +69,9 @@ defmodule Wallaby.HTTPClient do
   defp check_status(response) do
     case Map.get(response, "status") do
       @status_obscured ->
-        {:error, :obscured}
+        message = get_in(response, ["value", "message"])
+
+        {:error, message}
       _  ->
         {:ok, response}
     end
