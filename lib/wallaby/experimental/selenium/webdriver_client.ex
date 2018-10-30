@@ -7,6 +7,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @type http_method :: :post | :get | :delete
   @type url :: String.t
 
+  @web_element_identifier "element-6066-11e4-a52e-4f735466cecf"
+
   @doc """
   Create a session with the base url.
   """
@@ -359,6 +361,9 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   @spec cast_as_element(Session.t | Element.t, map) :: Element.t
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
+    cast_as_element(parent, %{@web_element_identifier => id})
+  end
+  defp cast_as_element(parent, %{@web_element_identifier => id}) do
     %Wallaby.Element{
       id: id,
       session_url: parent.session_url,
