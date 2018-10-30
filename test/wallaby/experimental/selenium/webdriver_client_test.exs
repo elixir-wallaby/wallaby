@@ -111,6 +111,33 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         driver: Wallaby.Experimental.Selenium,
       }
     end
+
+    test "with newer web element identifier", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element_id = ":wdc:1491326583887"
+      query = ".blue" |> Query.css |> Query.compile
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/elements"
+        assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": [{"element-6066-11e4-a52e-4f735466cecf": "#{element_id}"}]
+        }>)
+      end
+
+      assert {:ok, [element]} = Client.find_elements(session, query)
+      assert element == %Element{
+        id: element_id,
+        parent: session,
+        session_url: session.url,
+        url: "#{session.url}/element/#{element_id}",
+        driver: Wallaby.Experimental.Selenium,
+      }
+    end
   end
 
   describe "set_value/2" do
