@@ -427,10 +427,10 @@ session
 
 ### Window Size
 
-You can set the default window size with the `window_size` config option.
+You can set the default window size by passing in the `window_size` option into `Wallaby.start_session\1`.
 
 ```elixir
-config :wallaby, window_size: [width: 1280, height: 720]
+Wallaby.start_session(window_size: [width: 1280, height: 720])
 ```
 
 You can also resize the window and get the current window size during the test.
