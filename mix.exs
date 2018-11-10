@@ -31,6 +31,7 @@ defmodule Wallaby.Mixfile do
        "coveralls.post": :test,
        "coveralls.html": :test,
        "coveralls.travis": :test,
+       "coveralls.safe_travis": :test,
        "test.all": :test,
        "test.drivers": :test],
      test_coverage: [tool: ExCoveralls],
