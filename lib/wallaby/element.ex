@@ -199,3 +199,18 @@ defmodule Wallaby.Element do
     attr(element, "value")
   end
 end
+
+defimpl Inspect, for: Wallaby.Element  do
+  import Inspect.Algebra
+
+  def inspect(element, opts) do
+    outer_html = Wallaby.Element.attr(element, "outerHTML")
+
+    concat([
+      Inspect.Any.inspect(element, opts),
+      "\n\n",
+      IO.ANSI.cyan <> "outerHTML:\n\n" <> IO.ANSI.reset,
+      IO.ANSI.yellow <> outer_html <> IO.ANSI.reset
+    ])
+  end
+end
