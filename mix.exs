@@ -36,7 +36,7 @@ defmodule Wallaby.Mixfile do
        "test.drivers": :test],
      test_coverage: [tool: ExCoveralls],
      test_paths: test_paths(@selected_driver),
-     dialyzer: [plt_add_apps: [:inets]]]
+     dialyzer: [plt_add_apps: [:inets], ignore_warnings: "dialyzer.ignore_warnings"]]
   end
 
   def application do
