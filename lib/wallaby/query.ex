@@ -63,7 +63,7 @@ defmodule Wallaby.Query do
   query that will be sent to the driver:
 
       iex> Wallaby.Query.compile Wallaby.Query.text("my text")
-      {:xpath, ".//*[contains(normalize-space(text()), 'my text')]"}
+      {:xpath, ".//*[contains(normalize-space(text()), \"my text\")]"}
 
   So, whenever you're not sure whatever a specific query will do just compile
   it to get all the details!
@@ -299,8 +299,8 @@ defmodule Wallaby.Query do
   @doc """
   Compiles a query into css or xpath so its ready to be sent to the driver
 
-      iex> Wallaby.Query.compile Wallaby.Query.text("my text")
-      {:xpath, ".//*[contains(normalize-space(text()), 'my text')]"}
+      iex> Wallaby.Query.compile Wallaby.Query.text("my text") 
+      {:xpath, ".//*[contains(normalize-space(text()), \\"my text\\")]"}
       iex> Wallaby.Query.compile Wallaby.Query.css("#some-id")
       {:css, "#some-id"}
   """
