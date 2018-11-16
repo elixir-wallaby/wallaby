@@ -132,6 +132,15 @@ defmodule Wallaby.Integration.QueryTest do
     assert element
   end
 
+  test "queries can find an element by that has single quotes in it", %{session: session} do
+    element =
+      session
+      |> Browser.visit("/page_1.html")
+      |> Browser.find(Query.text("aren't"))
+
+    assert element
+  end
+
   test "queries can find an element by only value", %{session: session} do
     element =
       session
