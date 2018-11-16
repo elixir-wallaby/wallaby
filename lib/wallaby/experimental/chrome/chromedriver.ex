@@ -55,6 +55,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
       chromedriver,
       "--log-level=OFF",
       "--port=#{port}",
+      "--no-sandbox",
     ]
 
   defp port_opts(chromedriver, tcp_port), do: [
