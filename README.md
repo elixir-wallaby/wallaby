@@ -203,7 +203,7 @@ You will also want to add `phoenix_ecto` as a dependency to `MyWebApp`:
 
 def deps do
   [
-    {:wallaby, "~> 0.20", only: :test},
+    {:wallaby, "~> 0.21", only: :test},
     {:phoenix_ecto, "~> 3.0", only: :test}
   ]
 end

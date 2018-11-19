@@ -1,4 +1,6 @@
-## 0.21.0 (pending)
+## 0.22.0 (pending)
+
+## 0.21.0 (2018-11-19)
 
 ### Breaking changes
 
@@ -8,10 +10,17 @@
 
 * Improved readability of `file_test` failures
 * Allow users to specify the path to the chrome binary
+* Add Query.value and Query.attribute
+* Adds jitter to all http calls
+* Returns better error messages from obscured element responses
+* Option to configure default window size
+* Pretty printing element html
 
 ## Bugfixes
 
 * Chrome takes screenshots correctly if elements are passed to `take_screenshot`.
+* Chrome no longer spits out errors constantly.
+* Find elements that contain single quotes
 
 ## 0.20.0 (2018-04-11)
 
