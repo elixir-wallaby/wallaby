@@ -1,6 +1,6 @@
 defmodule Wallaby.Experimental.Chrome.Logger do
   @moduledoc false
-  @log_regex ~r/^(?<url>\S+) (?<line>\d+):(?<column>\d+) (?<message>.*)$/
+  @log_regex ~r/^(?<url>\S+) (?<line>\d+):(?<column>\d+) (?<message>.*)$/s
   @string_regex ~r/^"(?<string>.+)"$/
 
   def parse_log(%{"level" => "SEVERE", "source" => "javascript", "message" => msg}) do
