@@ -95,8 +95,8 @@ defmodule Wallaby.Phantom.Server do
 
   @spec start_phantom(ServerState.t) ::
     {:ok, ServerState.t} | {:error, StartTask.error_reason}
-  defp start_phantom(%ServerState{} = state) do
-    state |> StartTask.async() |> Task.await()
+  defp start_phantom(%ServerState{phantom_start_timeout: timeout} = state) do
+    state |> StartTask.async() |> Task.await(timeout)
   end
 
   @spec wait_for_stop(os_pid) :: nil

@@ -16,6 +16,7 @@ defmodule Wallaby.Phantom.Server.ServerState do
     wrapper_script_port: port | nil,
     wrapper_script_os_pid: os_pid | nil,
     phantom_os_pid: os_pid | nil,
+    phantom_start_timeout: integer
   }
 
   defstruct [
@@ -25,14 +26,16 @@ defmodule Wallaby.Phantom.Server.ServerState do
     :phantom_args,
     :wrapper_script_port,
     :wrapper_script_os_pid,
-    :phantom_os_pid]
+    :phantom_os_pid,
+    :phantom_start_timeout]
 
   @type workspace_path :: String.t
 
   @type new_opt ::
     {:port_number, port_number} |
     {:phantom_path, String.t} |
-    {:phantom_args, [String.t] | String.t}
+    {:phantom_args, [String.t] | String.t} |
+    {:phantom_start_timeout, integer}
 
   @spec new(workspace_path, [new_opt]) :: t
   def new(workspace_path, params \\ []) do
@@ -45,6 +48,8 @@ defmodule Wallaby.Phantom.Server.ServerState do
       phantom_args: params
                     |> Keyword.get_lazy(:phantom_args, &phantom_args_from_env/0)
                     |> normalize_phantomjs_args,
+      phantom_start_timeout: Keyword.get_lazy(params, :phantom_start_timeout,
+                                              &phantom_start_timeout_from_env/0)
     }
   end
 
@@ -77,6 +82,11 @@ defmodule Wallaby.Phantom.Server.ServerState do
   @spec phantom_args_from_env :: [String.t] | String.t
   defp phantom_args_from_env do
     Application.get_env(:wallaby, :phantomjs_args, "")
+  end
+
+  @spec phantom_start_timeout_from_env :: integer
+  defp phantom_start_timeout_from_env do
+    Application.get_env(:wallaby, :phantomjs_start_timeout, 5_000)
   end
 
   @spec normalize_phantomjs_args(String.t | [String.t]) :: [String.t]
