@@ -43,6 +43,25 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
       assert "--some-opt=value" in phantom_args
       assert "--other-opt" in phantom_args
     end
+
+    test "sets start timeout to 5 seconds if env variables is not set" do
+      Application.delete_env(:wallaby, :phantomjs_start_timeout)
+
+      assert %ServerState{phantom_start_timeout: 5_000} = build_server_state()
+    end
+
+    test "sets start timeout to env variable if it's set" do
+      Application.put_env(:wallaby, :phantomjs_start_timeout, 123)
+
+      assert %ServerState{phantom_start_timeout: 123} = build_server_state()
+    end
+
+    test "sets start timeout to provided value" do
+      Application.put_env(:wallaby, :phantomjs_start_timeout, 456)
+
+      assert %ServerState{phantom_start_timeout: 789} =
+          build_server_state(phantom_start_timeout: 789)
+    end
   end
 
   describe "base_url/1" do
