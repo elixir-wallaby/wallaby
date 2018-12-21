@@ -156,6 +156,13 @@ defmodule Wallaby.Query do
   end
 
   @doc """
+  Checks if the data attribute is contained anywhere.
+  """
+  def data(name, selector, opts \\ []) do
+    attribute("data-#{name}", selector, opts)
+  end
+
+  @doc """
   Checks if the provided attribute, value pair is contained anywhere.
   """
   def attribute(name, value, opts \\ []) do

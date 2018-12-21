@@ -129,6 +129,17 @@ defmodule Wallaby.Query.ErrorMessageTest do
       Expected to find 1, visible element with the attribute 'an-attribute' with value 'an-attribute-value' but 0, visible elements with the attribute were found.
       """
     end
+
+    test "with data attribute queries" do
+      message =
+        Query.data("role", "data-attribute-value")
+        |> ErrorMessage.message(:not_found)
+        |> format
+
+      assert message == format """
+      Expected to find 1, visible element with the attribute 'data-role' with value 'data-attribute-value' but 0, visible elements with the attribute were found.
+      """
+    end
   end
 
   describe "visibility/1" do
