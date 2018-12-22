@@ -159,6 +159,15 @@ defmodule Wallaby.Integration.QueryTest do
     assert element
   end
 
+  test "queries can find an element by data attribute", %{session: session} do
+    element =
+      session
+      |> Browser.visit("/page_1.html")
+      |> Browser.find(Query.data("role", "a-data-attribute"))
+
+    assert Element.text(element) == "A data attribute"
+  end
+
   test "all returns an empty list if nothing is found", %{session: session} do
     elements =
       session
