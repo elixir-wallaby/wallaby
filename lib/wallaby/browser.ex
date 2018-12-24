@@ -862,6 +862,17 @@ defmodule Wallaby.Browser do
     {:ok, Enum.filter(elements, &(Element.visible?(&1) == visible))}
   end
 
+  defp validate_selected(query, elements) do
+    case Query.selected?(query) do
+      :any ->
+        {:ok, elements}
+      true ->
+        {:ok, Enum.filter(elements, &(Element.selected?(&1)))}
+      false ->
+        {:ok, Enum.reject(elements, &(Element.selected?(&1)))}
+    end
+  end
+
   defp validate_count(query, elements) do
     if Query.matches_count?(query, Enum.count(elements)) do
       {:ok, elements}
@@ -908,6 +919,7 @@ defmodule Wallaby.Browser do
              {:ok, elements} <- driver.find_elements(parent, compiled_query),
              {:ok, elements} <- validate_visibility(query, elements),
              {:ok, elements} <- validate_text(query, elements),
+             {:ok, elements} <- validate_selected(query, elements),
              {:ok, elements} <- validate_count(query, elements),
              {:ok, elements} <- do_at(query, elements)
          do
