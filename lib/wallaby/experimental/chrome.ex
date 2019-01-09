@@ -4,7 +4,7 @@ defmodule Wallaby.Experimental.Chrome do
 
   @behaviour Wallaby.Driver
 
-  @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+)/
+  @chromedriver_version_regex ~r/^ChromeDriver (\d+)\.(\d+)/
 
   alias Wallaby.{Session, DependencyError, Metadata}
   alias Wallaby.Experimental.Chrome.{Chromedriver}
@@ -30,23 +30,11 @@ defmodule Wallaby.Experimental.Chrome do
       chromedriver when not is_nil(chromedriver) ->
         {version, 0} = System.cmd("chromedriver", ["--version"])
 
-        version =
-          @chromedriver_version_regex
-          |> Regex.run(version)
-          |> Enum.at(1)
-          |> String.to_integer()
-
-        if version >= 30 do
-          :ok
-        else
-          exception =
-            DependencyError.exception("""
-            Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
-            chromedriver 2.30 to run correctly.
-            """)
-
-          {:error, exception}
-        end
+        @chromedriver_version_regex
+        |> Regex.run(version)
+        |> Enum.drop(1)
+        |> Enum.map(&String.to_integer/1)
+        |> version_check()
 
       _ ->
         exception =
@@ -57,6 +45,25 @@ defmodule Wallaby.Experimental.Chrome do
 
         {:error, exception}
     end
+  end
+
+  defp version_check([major_version, _minor_version]) when major_version > 2 do
+    :ok
+  end
+
+  defp version_check([major_version, minor_version])
+    when major_version == 2 and minor_version >= 30 do
+    :ok
+  end
+
+  defp version_check(_version) do
+    exception =
+      DependencyError.exception("""
+      Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
+      chromedriver 2.30 to run correctly.
+      """)
+
+    {:error, exception}
   end
 
   def start_session(opts) do
