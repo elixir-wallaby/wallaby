@@ -92,6 +92,30 @@ defmodule Wallaby.Query.ErrorMessageTest do
       assert message =~ ~r/query is invalid/
     end
 
+    test "when the result is supposed to be selected" do
+      message =
+        Query.css(".test", count: 1, selected: true)
+        |> ErrorMessage.message(:not_found)
+        |> format
+
+      assert message == format """
+      Expected to find 1, visible, selected element that matched the css '.test' but 0,
+      visible, selected elements were found.
+      """
+    end
+
+    test "when the result is not supposed to be selected" do
+      message =
+        Query.css(".test", count: 1, selected: false)
+        |> ErrorMessage.message(:not_found)
+        |> format
+
+      assert message == format """
+      Expected to find 1, visible, unselected element that matched the css '.test' but 0,
+      visible, unselected elements were found.
+      """
+    end
+
     test "with text queries" do
       message =
         Query.text("test")

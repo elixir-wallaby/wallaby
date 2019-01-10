@@ -78,7 +78,7 @@ defmodule Wallaby.Query.ErrorMessage do
 
   defp found_error_message(query) do
     """
-    #{expected_count(query)}, #{visibility(query)} #{method(query)} #{selector(query)} but #{result_count(query.result)}, #{visibility(query)} #{short_method(query.method, Enum.count(query.result))} #{result_expectation(query.result)}.
+    #{expected_count(query)}, #{visibility_and_selection(query)} #{method(query)} #{selector(query)} but #{result_count(query.result)}, #{visibility_and_selection(query)} #{short_method(query.method, Enum.count(query.result))} #{result_expectation(query.result)}.
     """
   end
 
@@ -173,6 +173,15 @@ defmodule Wallaby.Query.ErrorMessage do
     "text: '#{text}'"
   end
   def condition(_), do: nil
+
+  @spec visibility_and_selection(Query.t) :: String.t
+  defp visibility_and_selection(query) do
+    case Query.selected?(query) do
+      true -> "#{visibility(query)}, selected"
+      false -> "#{visibility(query)}, unselected"
+      :any -> visibility(query)
+    end
+  end
 
   @doc """
   Converts the visibilty attribute into a human readable form.

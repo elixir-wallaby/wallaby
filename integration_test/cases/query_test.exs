@@ -19,6 +19,46 @@ defmodule Wallaby.Integration.QueryTest do
     assert Enum.count(elements) == 2
   end
 
+  describe "filtering queries by selected status" do
+    test "raises QueryError if too many elements are specified", %{session: session} do
+      assert_raise Wallaby.QueryError, fn ->
+        session
+        |> Browser.visit("/forms.html")
+        |> Browser.find(Query.css(".select-options", count: 3, selected: false))
+      end
+    end
+
+    test "finds elements that are not selected", %{session: session} do
+      elements =
+        session
+        |> Browser.visit("/forms.html")
+        |> Browser.click(Query.option("Select Option 2"))
+        |> Browser.find(Query.css(".select-options", count: 2, selected: false))
+
+      assert Enum.count(elements) == 2
+    end
+
+    test "finds elements that are selected", %{session: session} do
+      element =
+        session
+        |> Browser.visit("/forms.html")
+        |> Browser.click(Query.option("Select Option 2"))
+        |> Browser.find(Query.css(".select-options", count: 1, selected: true))
+
+      assert Element.text(element) == "Select Option 2"
+    end
+
+    test "finds all elements (whether selected or not) by default", %{session: session} do
+      elements =
+        session
+        |> Browser.visit("/forms.html")
+        |> Browser.click(Query.option("Select Option 2"))
+        |> Browser.find(Query.css(".select-options", count: 3))
+
+      assert Enum.count(elements) == 3
+    end
+  end
+
   describe "filtering queries by visibility" do
     test "finds elements that are invisible", %{session: session} do
       assert_raise Wallaby.QueryError, fn ->
