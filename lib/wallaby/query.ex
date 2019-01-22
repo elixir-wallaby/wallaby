@@ -28,6 +28,7 @@ defmodule Wallaby.Query do
 
     * `:count` - The number of elements that should be found (default: 1).
     * `:visible` - Determines if the query should return only visible elements (default: true).
+    * `:selected` - Determines if the query should return only selected elements (default: :any for selected and unselected).
     * `:text` - Text that should be found inside the element (default: nil).
     * `:at` - The position number of the element to select if multiple elements satisfy the selection criteria. (:all for all elements)
 
@@ -98,6 +99,7 @@ defmodule Wallaby.Query do
     count: non_neg_integer,
     text: String.t,
     visible: boolean(),
+    selected: boolean() | :any,
     minimum: non_neg_integer,
     at: pos_integer
   ]
@@ -153,6 +155,13 @@ defmodule Wallaby.Query do
   """
   def value(selector, opts \\ []) do
     attribute("value", selector, opts)
+  end
+
+  @doc """
+  Checks if the data attribute is contained anywhere.
+  """
+  def data(name, selector, opts \\ []) do
+    attribute("data-#{name}", selector, opts)
   end
 
   @doc """
@@ -299,7 +308,7 @@ defmodule Wallaby.Query do
   @doc """
   Compiles a query into css or xpath so its ready to be sent to the driver
 
-      iex> Wallaby.Query.compile Wallaby.Query.text("my text") 
+      iex> Wallaby.Query.compile Wallaby.Query.text("my text")
       {:xpath, ".//*[contains(normalize-space(text()), \\"my text\\")]"}
       iex> Wallaby.Query.compile Wallaby.Query.css("#some-id")
       {:css, "#some-id"}
@@ -320,6 +329,10 @@ defmodule Wallaby.Query do
 
   def visible?(%Query{conditions: conditions}) do
     Keyword.get(conditions, :visible)
+  end
+
+  def selected?(%Query{conditions: conditions}) do
+    Keyword.get(conditions, :selected)
   end
 
   def count(%Query{conditions: conditions}) do
@@ -366,11 +379,16 @@ defmodule Wallaby.Query do
     |> add_visibility
     |> add_text
     |> add_count
+    |> add_selected
     |> add_at
   end
 
   defp add_visibility(opts) do
     Keyword.put_new(opts, :visible, true)
+  end
+
+  defp add_selected(opts) do
+    Keyword.put_new(opts, :selected, :any)
   end
 
   defp add_text(opts) do
