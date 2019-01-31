@@ -37,7 +37,7 @@ defmodule Wallaby.Experimental.Selenium do
     capabilities = Map.merge(default_capabilities(), capabilities)
 
     with {:ok, response} <- create_session_fn.(base_url, capabilities) do
-      id = response["sessionId"]
+      id = response["sessionId"] || get_in(response, ["value", "sessionId"])
 
       session = %Wallaby.Session{
         session_url: base_url <> "session/#{id}",
