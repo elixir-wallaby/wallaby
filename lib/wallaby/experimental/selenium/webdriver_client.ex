@@ -4,6 +4,11 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   alias Wallaby.Helpers.KeyCodes
   import Wallaby.HTTPClient
 
+  is_displayed_shim =
+    File.read!("priv/is-displayed.js")
+
+  @is_displayed_shim is_displayed_shim
+
   @type http_method :: :post | :get | :delete
   @type url :: String.t
 
@@ -203,7 +208,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   """
   @spec displayed(Element.t) :: {:ok, boolean} | {:error, :stale_reference}
   def displayed(element) do
-    with {:ok, resp} <- request(:get, "#{element.url}/displayed"),
+    params = %{script: "return (#{@is_displayed_shim}).apply(null, arguments);", args: [%{"ELEMENT" => element.id}]}
+    with {:ok, resp} <- request(:post, "#{element.session_url}/execute", params),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
