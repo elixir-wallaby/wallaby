@@ -208,10 +208,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   """
   @spec displayed(Element.t) :: {:ok, boolean} | {:error, :stale_reference}
   def displayed(element) do
-    params = %{script: "return (#{@is_displayed_shim}).apply(null, arguments);", args: [%{"ELEMENT" => element.id}]}
-    with {:ok, resp} <- request(:post, "#{element.session_url}/execute", params),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+    execute_script(element, "return (#{@is_displayed_shim}).apply(null, arguments);", [%{"ELEMENT" => element.id}])
   end
 
   @doc """
