@@ -19,6 +19,24 @@ defmodule Wallaby.Integration.QueryTest do
     assert Enum.count(elements) == 2
   end
 
+  test "queries can be composed via functions", %{session: session} do
+    composed_query =
+      Query.css(".select-options")
+      |> Query.visible(true)
+      |> Query.selected(true)
+      |> Query.text("Select Option 2")
+      |> Query.count(1)
+      |> Query.at(0)
+
+    element =
+      session
+      |> Browser.visit("/forms.html")
+      |> Browser.click(Query.option("Select Option 2"))
+      |> Browser.find(composed_query)
+
+    assert Element.text(element) == "Select Option 2"
+  end
+
   describe "filtering queries by selected status" do
     test "raises QueryError if too many elements are specified", %{session: session} do
       assert_raise Wallaby.QueryError, fn ->
