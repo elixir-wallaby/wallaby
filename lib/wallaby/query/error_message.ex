@@ -189,10 +189,10 @@ defmodule Wallaby.Query.ErrorMessage do
   @spec visibility(Query.t) :: String.t
 
   def visibility(query) do
-    if Query.visible?(query) do
-      "visible"
-    else
-      "invisible"
+    case Query.visible?(query) do
+      true -> "visible"
+      false -> "invisible"
+      :any -> "visible or invisible"
     end
   end
 
