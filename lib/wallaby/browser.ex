@@ -857,9 +857,14 @@ defmodule Wallaby.Browser do
   end
 
   defp validate_visibility(query, elements) do
-    visible = Query.visible?(query)
-
-    {:ok, Enum.filter(elements, &(Element.visible?(&1) == visible))}
+    case Query.visible?(query) do
+      :any ->
+        {:ok, elements}
+      true ->
+        {:ok, Enum.filter(elements, &(Element.visible?(&1)))}
+      false ->
+        {:ok, Enum.reject(elements, &(Element.visible?(&1)))}
+    end
   end
 
   defp validate_selected(query, elements) do

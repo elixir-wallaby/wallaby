@@ -106,7 +106,7 @@ defmodule Wallaby.Query do
   @type conditions :: [
     count: non_neg_integer,
     text: String.t,
-    visible: boolean(),
+    visible: boolean() | :any,
     selected: boolean() | :any,
     minimum: non_neg_integer,
     at: pos_integer
@@ -395,7 +395,7 @@ defmodule Wallaby.Query do
     cond do
       query.conditions[:minimum] > query.conditions[:maximum] ->
         {:error, :min_max}
-      !Query.visible?(query) && Query.inner_text(query) ->
+      (Query.visible?(query) != true) && Query.inner_text(query) ->
         {:error, :cannot_set_text_with_invisible_elements}
       true ->
         {:ok, query}
