@@ -77,11 +77,16 @@ defmodule Wallaby.HTTPClient do
     end
   end
 
+  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
   defp check_for_response_errors(response) do
     case Map.get(response, "value") do
       %{"class" => "org.openqa.selenium.StaleElementReferenceException"} ->
         {:error, :stale_reference}
+      %{"message" => "Stale element reference" <> _} ->
+        {:error, :stale_reference}
       %{"message" => "stale element reference" <> _} ->
+        {:error, :stale_reference}
+      %{"message" => "An element command failed because the referenced element is no longer available" <> _} ->
         {:error, :stale_reference}
       %{"message" => "invalid selector" <> _} ->
         {:error, :invalid_selector}
