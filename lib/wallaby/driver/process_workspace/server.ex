@@ -22,11 +22,11 @@ defmodule Wallaby.Driver.ProcessWorkspace.Server do
     File.rm_rf(workspace_path)
     {:stop, :normal, state}
   end
-  def handle_info(msg, state), do: super(msg, state)
+  def handle_info(_, state), do: {:noreply, state}
 
   @impl GenServer
   def terminate(:shutdown, %{workspace_path: workspace_path}) do
     File.rm_rf(workspace_path)
   end
-  def terminate(reason, state), do: super(reason, state)
+  def terminate(_, _), do: :ok
 end
