@@ -1,7 +1,7 @@
 defmodule Wallaby.Mixfile do
   use Mix.Project
 
-  @version "0.21.0"
+  @version "0.22.0"
   @drivers ~w(phantom selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers [

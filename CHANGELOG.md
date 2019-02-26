@@ -1,4 +1,20 @@
-## 0.22.0 (pending)
+## 0.23.0 (pending)
+
+## 0.22.0 (2019-02-26)
+
+## Improvements
+
+* Add `Query.data` to find by data attributes
+* Add selected conditions to query
+* Add functions for query options
+* Add `visible: any` option to query
+* Handle Safari and Edge stale reference errors
+
+## Bugfixes
+
+* allow newlines in chrome logs
+* Allow other versions of chromedriver
+* Increase the session store genserver timeout
 
 ## 0.21.0 (2018-11-19)
 
