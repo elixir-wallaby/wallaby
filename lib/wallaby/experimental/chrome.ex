@@ -51,6 +51,10 @@ defmodule Wallaby.Experimental.Chrome do
     :ok
   end
 
+  defp version_check([major_version, _minor_version]) when major_version >= 73 do
+    :ok
+  end
+
   defp version_check([major_version, minor_version])
     when major_version == 2 and minor_version >= 30 do
     :ok
