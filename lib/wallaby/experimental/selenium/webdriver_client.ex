@@ -304,6 +304,30 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       do: {:ok, value}
   end
 
+
+  @doc """
+  Sets the position of the window.
+  """
+  @spec set_window_position(Session.t, non_neg_integer, non_neg_integer) :: :ok
+  @spec set_window_position(Session.t, String.t, non_neg_integer, non_neg_integer) :: :ok
+
+  def set_window_position(session, window_handle \\ "current", x_coordinate, y_coordinate) do
+    with {:ok, _resp} <- request(:post, "#{session.url}/window/#{window_handle}/size", %{x: x_coordinate, y: y_coordinate}),
+      do: :ok
+  end
+
+  @doc """
+  Gets the position of the window.
+  """
+  @spec get_window_position(Session.t) :: {non_neg_integer, non_neg_integer}
+  @spec get_window_position(Session.t, String.t) :: {non_neg_integer, non_neg_integer}
+
+  def get_window_position(session, window_handle \\ "current") do
+    with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle}/size"),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {value["x"], value["y"]}
+  end
+
   @doc """
   Executes javascript synchoronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
