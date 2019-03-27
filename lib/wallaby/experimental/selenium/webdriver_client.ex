@@ -376,6 +376,16 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
          do: :ok
   end
 
+  @doc """
+  Closes the current window
+  """
+  @spec close_window(Session.t()) :: :ok
+  def close_window(session) do
+    with {:ok, _resp} <-
+           request(:delete, "#{session.url}/window"),
+         do: :ok
+  end
+
   @spec cast_as_element(Session.t | Element.t, map) :: Element.t
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
     cast_as_element(parent, %{@web_element_identifier => id})
