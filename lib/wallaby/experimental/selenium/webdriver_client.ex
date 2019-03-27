@@ -329,6 +329,17 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
+  Maximizes the window.
+  """
+  @spec maximize_window(Session.t) :: :ok
+  @spec maximize_window(Session.t, String.t) :: :ok
+
+  def maximize_window(session, window_handle \\ "current") do
+    with {:ok, _resp} <- request(:post, "#{session.url}/window/#{window_handle}/maximize"),
+      do: :ok
+  end
+
+  @doc """
   Executes javascript synchoronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
