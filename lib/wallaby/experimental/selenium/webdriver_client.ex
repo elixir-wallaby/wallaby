@@ -366,6 +366,16 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       do: value
   end
 
+  @doc """
+  Changes focus to specified window
+  """
+  @spec focus_window(Session.t(), String.t()) :: :ok
+  def focus_window(session, window_handle) do
+    with {:ok, _resp} <-
+           request(:post, "#{session.url}/window", %{handle: window_handle, name: window_handle}),
+         do: :ok
+  end
+
   @spec cast_as_element(Session.t | Element.t, map) :: Element.t
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
     cast_as_element(parent, %{@web_element_identifier => id})
