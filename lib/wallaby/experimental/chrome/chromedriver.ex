@@ -3,6 +3,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
   use GenServer
 
   alias Wallaby.Driver.Utils
+  alias Wallaby.Experimental.Chrome
 
   def start_link do
     GenServer.start_link(__MODULE__, :ok, [name: __MODULE__])
@@ -38,12 +39,10 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
 
   @dialyzer {:nowarn_function, start_chromedriver: 1}
   defp start_chromedriver(tcp_port) do
-    case System.find_executable("chromedriver") do
-      chromedriver when not is_nil(chromedriver) ->
-        Port.open({:spawn_executable, wrapper_script()}, port_opts(chromedriver, tcp_port))
-
-      _ ->
-        {:error, :no_chromedriver}
+    with {:ok, chromedriver} <- Chrome.find_chromedriver_executable() do
+      Port.open({:spawn_executable, wrapper_script()}, port_opts(chromedriver, tcp_port))
+    else
+      {:error, _message} -> {:error, :no_chromedriver}
     end
   end
 

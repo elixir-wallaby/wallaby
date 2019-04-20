@@ -26,21 +26,29 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   def validate do
-    case System.find_executable("chromedriver") do
-      chromedriver when not is_nil(chromedriver) ->
-        {version, 0} = System.cmd("chromedriver", ["--version"])
+    with {:ok, executable} <- find_chromedriver_executable() do
+        {version, 0} = System.cmd(executable, ["--version"])
 
         @chromedriver_version_regex
         |> Regex.run(version)
         |> Enum.drop(1)
         |> Enum.map(&String.to_integer/1)
         |> version_check()
+    end
+  end
 
-      _ ->
+  def find_chromedriver_executable do
+    Application.get_env(:wallaby, :chromedriver, "chromedriver")
+    |> Path.expand
+    |> System.find_executable()
+    |> case do
+      path when not is_nil(path) -> {:ok, path}
+      nil ->
         exception =
           DependencyError.exception("""
           Wallaby can't find chromedriver. Make sure you have chromedriver installed
           and included in your path.
+          You can also provide a path using `config :wallaby, chromedriver: <path>`.
           """)
 
         {:error, exception}
