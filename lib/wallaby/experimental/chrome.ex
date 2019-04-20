@@ -38,9 +38,11 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   def find_chromedriver_executable do
-    Application.get_env(:wallaby, :chromedriver, "chromedriver")
-    |> Path.expand
+    :wallaby
+    |> Application.get_env(:chromedriver, "chromedriver")
+    |> Path.expand()
     |> System.find_executable()
+    |> IO.inspect()
     |> case do
       path when not is_nil(path) -> {:ok, path}
       nil ->
