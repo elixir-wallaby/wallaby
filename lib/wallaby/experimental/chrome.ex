@@ -38,7 +38,11 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   def find_chromedriver_executable do
-    with {:error, :not_found} <- Application.get_env(:wallaby, :chromedriver, "") |>  Path.expand() |> do_find_chromedriver(),
+    with {:error, :not_found} <-
+            :wallaby
+            |> Application.get_env(:chromedriver, "")
+            |>  Path.expand()
+            |> do_find_chromedriver(),
          {:error, :not_found} <- do_find_chromedriver("chromedriver") do
         exception =
           DependencyError.exception("""
