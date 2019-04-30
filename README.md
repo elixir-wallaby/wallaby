@@ -121,7 +121,7 @@ Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
 
 #### Assets
 
-Assets are not re-compiled when you run `mix test`. This can lead to confusion if 
+Assets are not re-compiled when you run `mix test`. This can lead to confusion if
 you've made changes in javascript or css but tests are still failing. There are two
 common ways to avoid this confusion.
 
@@ -589,6 +589,16 @@ config :wallaby,
     headless: false
   ]
 ```
+
+### Custom Chromedriver binary
+
+If `chromedriver` is on your `PATH`, then you can skip this step.
+Otherwise (e.g., on NPM-installed `chromedriver` binaries), you can override the path like so:
+
+```elixir
+config :wallaby, chromedriver: "<path/to/chromedriver>"
+```
+
 
 ### Custom Chrome binary
 
