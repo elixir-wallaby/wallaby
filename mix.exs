@@ -13,7 +13,7 @@ defmodule Wallaby.Mixfile do
   def project do
     [app: :wallaby,
      version: @version,
-     elixir: "~> 1.3",
+     elixir: "~> 1.7",
      elixirc_paths: elixirc_paths(Mix.env),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -55,7 +55,7 @@ defmodule Wallaby.Mixfile do
       {:poolboy, "~> 1.5"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:earmark, "~> 1.2", only: :dev},
-      {:ex_doc, "~> 0.16", only: :dev},
+      {:ex_doc, "~> 0.20", only: :dev},
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
       {:bypass, "~> 0.8", only: :test},
