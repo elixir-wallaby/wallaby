@@ -621,7 +621,7 @@ from your test run.
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
 
-To get started and setup the project, make sure you've got Elixir 1.3+ installed and then:
+To get started and setup the project, make sure you've got Elixir 1.7+ installed and then:
 
 ```
 $ mix deps.get
