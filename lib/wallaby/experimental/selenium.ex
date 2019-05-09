@@ -84,8 +84,7 @@ defmodule Wallaby.Experimental.Selenium do
   defdelegate accept_prompt(session, input, fun), to: WebdriverClient
   defdelegate dismiss_prompt(session, fun), to: WebdriverClient
 
-  # Screenshots don't appear to be supported with Gecko Driver
-  def take_screenshot(_session), do: {:error, :not_supported}
+  defdelegate take_screenshot(session_or_element), to: WebdriverClient
 
   def cookies(%Session{} = session) do
     WebdriverClient.cookies(session)
