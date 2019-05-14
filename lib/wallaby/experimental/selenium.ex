@@ -77,13 +77,12 @@ defmodule Wallaby.Experimental.Selenium do
     end
   end
 
-  # Dialog handling not supported yet
-  def accept_alert(_session, _fun), do: {:error, :not_implemented}
-  def dismiss_alert(_session, _fun), do: {:error, :not_implemented}
-  def accept_confirm(_session, _fun), do: {:error, :not_implemented}
-  def dismiss_confirm(_session, _fun), do: {:error, :not_implemented}
-  def accept_prompt(_session, _input, _fun), do: {:error, :not_implemented}
-  def dismiss_prompt(_session, _fun), do: {:error, :not_implemented}
+  defdelegate accept_alert(session, fun), to: WebdriverClient
+  defdelegate dismiss_alert(session, fun), to: WebdriverClient
+  defdelegate accept_confirm(session, fun), to: WebdriverClient
+  defdelegate dismiss_confirm(session, fun), to: WebdriverClient
+  defdelegate accept_prompt(session, input, fun), to: WebdriverClient
+  defdelegate dismiss_prompt(session, fun), to: WebdriverClient
 
   defdelegate take_screenshot(session_or_element), to: WebdriverClient
 

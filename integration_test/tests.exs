@@ -10,6 +10,7 @@ Code.require_file "cases/browser/click_button_test.exs", __DIR__
 Code.require_file "cases/browser/click_test.exs", __DIR__
 Code.require_file "cases/browser/cookies_test.exs", __DIR__
 Code.require_file "cases/browser/current_path_test.exs", __DIR__
+Code.require_file "cases/browser/dialog_test.exs", __DIR__
 Code.require_file "cases/browser/execute_script_test.exs", __DIR__
 Code.require_file "cases/browser/fill_in_test.exs", __DIR__
 Code.require_file "cases/browser/find_test.exs", __DIR__

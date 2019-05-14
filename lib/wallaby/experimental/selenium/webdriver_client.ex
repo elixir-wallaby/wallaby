@@ -105,10 +105,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   def dismiss_prompt(session, fun) do
-    fun.(session)
-    with  {:ok, value} <- alert_text(session),
-          {:ok, _resp} <- request(:post, "#{session.url}/alert/dismiss"),
-      do: value
+    dismiss_confirm(session, fun)
   end
 
   @doc """
