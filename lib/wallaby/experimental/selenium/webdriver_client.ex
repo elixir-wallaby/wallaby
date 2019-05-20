@@ -271,17 +271,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Sets the size of the window.
-  """
-  @spec set_window_size(Session.t, non_neg_integer, non_neg_integer) :: {:ok, map}
-  @spec set_window_size(Session.t, String.t, non_neg_integer, non_neg_integer) :: {:ok, map}
+  Sets the size of the window
 
-  def set_window_size(session, width, height) do
-    with {:ok, resp} <- request(:post, "#{session.url}/window/rect", %{width: width, height: height}),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
-  end
-  def set_window_size(session, window_handle, width, height) do
+  If the window_handle argument is not provided, the currently active window
+  will be resized.
+  """
+  @spec set_window_size(Session.t(), non_neg_integer(), non_neg_integer()) :: {:ok, map()}
+  @spec set_window_size(Session.t(), String.t(), non_neg_integer(), non_neg_integer()) :: {:ok, map()}
+  # TODO: There is no return value for this command in JSON Wire Protocol. Can we change the returned type and value to simply :ok ? - michallepicki 20 May 2019
+  def set_window_size(session, window_handle \\ "current", width, height) do
     with {:ok, resp} <- request(:post, "#{session.url}/window/#{window_handle}/size", %{width: width, height: height}),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
@@ -289,27 +287,26 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   @doc """
   Gets the size of the window
-  """
-  @spec get_window_size(Session.t) :: {:ok, map}
-  @spec get_window_size(Session.t, String.t) :: {:ok, map}
 
-  def get_window_size(session) do
-    with {:ok, resp} <- request(:get, "#{session.url}/window/rect"),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
-  end
-  def get_window_size(session, window_handle) do
+  If the window_handle argument is not provided, the size of the currently active window
+  will be returned.
+  """
+  @spec get_window_size(Session.t()) :: {:ok, map()}
+  @spec get_window_size(Session.t(), String.t()) :: {:ok, map()}
+
+  def get_window_size(session, window_handle \\ "current") do
     with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle}/size"),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
 
-
   @doc """
-  Sets the position of the window.
+  Changes the position of the window
+
+  If the window_handle argument is not provided, the currently active window will be moved.
   """
-  @spec set_window_position(Session.t, non_neg_integer, non_neg_integer) :: :ok
-  @spec set_window_position(Session.t, String.t, non_neg_integer, non_neg_integer) :: :ok
+  @spec set_window_position(Session.t(), non_neg_integer(), non_neg_integer()) :: :ok
+  @spec set_window_position(Session.t(), String.t(), non_neg_integer(), non_neg_integer()) :: :ok
 
   def set_window_position(session, window_handle \\ "current", x_coordinate, y_coordinate) do
     with {:ok, _resp} <- request(:post, "#{session.url}/window/#{window_handle}/size", %{x: x_coordinate, y: y_coordinate}),
@@ -317,22 +314,28 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Gets the position of the window.
+  Gets the position of the window
+
+  If the window_handle argument is not provided, the position of the currently active window
+  will be returned.
   """
-  @spec get_window_position(Session.t) :: {non_neg_integer, non_neg_integer}
-  @spec get_window_position(Session.t, String.t) :: {non_neg_integer, non_neg_integer}
+  @spec get_window_position(Session.t()) :: {:ok, map()}
+  @spec get_window_position(Session.t(), String.t()) :: {:ok, map()}
 
   def get_window_position(session, window_handle \\ "current") do
     with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle}/size"),
           {:ok, value} <- Map.fetch(resp, "value"),
-      do: {value["x"], value["y"]}
+      do: {:ok, value}
   end
 
   @doc """
-  Maximizes the window.
+  Maximizes the window if not already maximized.
+
+  If the window_handle argument is not provided, the currently active window
+  will be maximized.
   """
-  @spec maximize_window(Session.t) :: :ok
-  @spec maximize_window(Session.t, String.t) :: :ok
+  @spec maximize_window(Session.t()) :: :ok
+  @spec maximize_window(Session.t(), String.t()) :: :ok
 
   def maximize_window(session, window_handle \\ "current") do
     with {:ok, _resp} <- request(:post, "#{session.url}/window/#{window_handle}/maximize"),
@@ -385,6 +388,10 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       do: {:ok, value}
   end
 
+  @doc """
+  Retrieves the list of window handles of all windows (or tabs) available to the session
+  """
+  @spec window_handles(Session.t()) :: {:ok, list(String.t())}
   def window_handles(session) do
     with {:ok, resp} <- request(:get, "#{session.url}/window_handles"),
          {:ok, value} <- Map.fetch(resp, "value"),
@@ -392,9 +399,10 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Retrieves the window handle for from session
+  Retrieves the window handle for the currently focused window (or tab) for the session
   """
-  @spec window_handle(Session.t) :: String.t
+  @spec window_handle(Session.t()) :: String.t()
+  # TODO: Most of functions in this module are returning :ok or a {:ok, value} tuple. Can we change this function to return the tuple as well? - michallepicki 20 May 2019
   def window_handle(session) do
     with  {:ok, resp} <- request(:get, "#{session.url}/window_handle"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -402,17 +410,20 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Changes focus to specified window
+  Changes focus to another window (or tab)
+
+  The window to change focus to may be specified by its server assigned
+  window handle, or by the value of its name attribute.
   """
   @spec focus_window(Session.t(), String.t()) :: :ok
-  def focus_window(session, window_handle) do
+  def focus_window(session, window_handle_or_name) do
     with {:ok, _resp} <-
-           request(:post, "#{session.url}/window", %{handle: window_handle, name: window_handle}),
+           request(:post, "#{session.url}/window", %{name: window_handle_or_name}), # do we need to add `handle: window_handle`
          do: :ok
   end
 
   @doc """
-  Closes the current window
+  Closes the current window (or tab)
   """
   @spec close_window(Session.t()) :: :ok
   def close_window(session) do
