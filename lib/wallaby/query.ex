@@ -32,6 +32,14 @@ defmodule Wallaby.Query do
     * `:text` - Text that should be found inside the element (default: nil).
     * `:at` - The position number of the element to select if multiple elements satisfy the selection criteria. (:all for all elements)
 
+  Query options can also be set via functions by the same names:
+
+  ```
+  Query.css(".names")
+  |> Query.visible(true)
+  |> Query.count(3)
+  ```
+
   ## Re-using queries
 
   It is often convenient to re-use queries. The easiest way is to use module
@@ -98,7 +106,7 @@ defmodule Wallaby.Query do
   @type conditions :: [
     count: non_neg_integer,
     text: String.t,
-    visible: boolean(),
+    visible: boolean() | :any,
     selected: boolean() | :any,
     minimum: non_neg_integer,
     at: pos_integer
@@ -140,9 +148,36 @@ defmodule Wallaby.Query do
   end
 
   @doc """
-  Checks if the provided text is contained anywhere.
+  This function can be used in one of two ways.
+
+  The first is by providing a selector and possible options. This generates a
+  query that checks if the provided text is contained anywhere.
+
+  ## Example
+
+    ```
+    Query.text("Submit", count: 1)
+    ```
+
+  The second is by providing an existing query and a value to set as the `text`
+  option.
+
+  ## Example
+
+    ```
+    submit_button = Query.css("#submit-button")
+
+    update_button = submit_button |> Query.text("Update")
+    create_button = submit_button |> Query.text("Create")
+    ```
   """
-  def text(selector, opts \\ []) do
+  def text(query_or_selector, value_or_opts \\ [])
+
+  def text(%Query{} = query, value) do
+    update_condition(query, :text, value)
+  end
+
+  def text(selector, opts) do
     %Query{
       method: :text,
       selector: selector,
@@ -294,11 +329,73 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Updates a query's visibility (visible if `true`, hidden if `false`).
+
+  ## Examples
+
+    ```
+    Query.css("#modal")
+    |> Query.visible(true)
+
+    Query.css("#modal")
+    |> Query.visible(false)
+    ```
+  """
+  def visible(query, value) do
+    update_condition(query, :visible, value)
+  end
+
+  @doc """
+  Updates a query's `selected` option.
+
+  ## Examples
+
+    ```
+    Query.css("#select-dropdown")
+    |> Query.selected(true)
+
+    Query.css("#select-dropdown")
+    |> Query.selected(false)
+    ```
+  """
+  def selected(query, value) do
+    update_condition(query, :selected, value)
+  end
+
+  @doc """
+  Updates a query's `count` option.
+
+  ## Example
+
+    ```
+    Query.css(".names > li")
+    |> Query.count(2)
+    ```
+  """
+  def count(query, value) do
+    update_condition(query, :count, value)
+  end
+
+  @doc """
+  Updates a query's `at` option.
+
+  ## Example
+
+    ```
+    Query.css(".names")
+    |> Query.at(3)
+    ```
+  """
+  def at(query, value) do
+    update_condition(query, :at, value)
+  end
+
   def validate(query) do
     cond do
       query.conditions[:minimum] > query.conditions[:maximum] ->
         {:error, :min_max}
-      !Query.visible?(query) && Query.inner_text(query) ->
+      (Query.visible?(query) != true) && Query.inner_text(query) ->
         {:error, :cannot_set_text_with_invisible_elements}
       true ->
         {:ok, query}
@@ -408,5 +505,10 @@ defmodule Wallaby.Query do
 
   defp add_at(opts) do
     Keyword.put_new(opts, :at, :all)
+  end
+
+  defp update_condition(%Query{conditions: conditions} = query, key, value) do
+    updated_conditions = Keyword.put(conditions, key, value)
+    %Query{query | conditions: updated_conditions}
   end
 end

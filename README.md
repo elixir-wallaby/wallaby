@@ -71,7 +71,7 @@ Add Wallaby to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:wallaby, "~> 0.20.0", [runtime: false, only: :test]}]
+  [{:wallaby, "~> 0.22.0", [runtime: false, only: :test]}]
 end
 ```
 
@@ -121,7 +121,7 @@ Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
 
 #### Assets
 
-Assets are not re-compiled when you run `mix test`. This can lead to confusion if 
+Assets are not re-compiled when you run `mix test`. This can lead to confusion if
 you've made changes in javascript or css but tests are still failing. There are two
 common ways to avoid this confusion.
 
@@ -590,6 +590,16 @@ config :wallaby,
   ]
 ```
 
+### Custom Chromedriver binary
+
+If `chromedriver` is on your `PATH`, then you can skip this step.
+Otherwise (e.g., on NPM-installed `chromedriver` binaries), you can override the path like so:
+
+```elixir
+config :wallaby, chromedriver: "<path/to/chromedriver>"
+```
+
+
 ### Custom Chrome binary
 
 By default chromedriver will find chrome for you but if you want to test against a different version you may use this option to point to the other chrome binary.
@@ -611,7 +621,7 @@ from your test run.
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
 
-To get started and setup the project, make sure you've got Elixir 1.3+ installed and then:
+To get started and setup the project, make sure you've got Elixir 1.7+ installed and then:
 
 ```
 $ mix deps.get
