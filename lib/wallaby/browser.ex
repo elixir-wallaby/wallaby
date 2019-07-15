@@ -207,7 +207,7 @@ defmodule Wallaby.Browser do
   Pass `[{:name, "some_name"}]` to specify the file name. Defaults to a timestamp.
   Pass `[{:log, true}]` to log the location of the screenshot to stdout. Defaults to false.
   """
-  @type take_screenshot_opt :: {:name, String.t} | {:log, boolean }
+  @type take_screenshot_opt :: {:name, String.t} | {:log, boolean}
   @spec take_screenshot(parent, [take_screenshot_opt]) :: parent
 
   def take_screenshot(%{driver: driver} = screenshotable, opts \\ []) do
