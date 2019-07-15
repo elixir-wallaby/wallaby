@@ -762,6 +762,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         send_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
+          "value": {}
         }>)
       end
 
