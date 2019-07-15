@@ -390,7 +390,7 @@ defmodule Wallaby.Browser do
   @doc """
   Hovers over an element.
   """
-  @spec click(parent, Query.t) :: parent
+  @spec hover(parent, Query.t) :: parent
 
   def hover(parent, query) do
     parent
