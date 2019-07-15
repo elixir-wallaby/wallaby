@@ -97,6 +97,18 @@ defmodule Wallaby.Element do
   end
 
   @doc """
+  Hovers on the element.
+  """
+  @spec hover(t) :: t
+
+  def hover(%__MODULE__{driver: driver} = element) do
+    case driver.hover(element) do
+      {:ok, _} ->
+        element
+    end
+  end
+
+  @doc """
   Returns the text from the element.
   """
   @spec text(t) :: String.t

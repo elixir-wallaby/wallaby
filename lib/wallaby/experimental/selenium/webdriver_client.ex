@@ -119,6 +119,16 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
+  Hovers over an element
+  """
+  @spec hover(Element.t) :: {:ok, map}
+  def hover(%Element{session_url: session_url, id: id}) do
+    with  {:ok, resp} <- request(:post, "#{session_url}/moveto", %{"element" => id}),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
+  @doc """
   Gets the text for an element
   """
   @spec text(Element.t) :: {:ok, String.t}

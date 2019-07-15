@@ -8,6 +8,10 @@ defmodule Wallaby.Driver.LogStore do
   @doc """
   Appends logs to a session
   """
+  def append_logs(session, logs) when is_binary(session) and not is_list(logs) do
+    append_logs(session, List.wrap(logs))
+  end
+
   def append_logs(session, logs) when is_binary(session) do
     Agent.get_and_update __MODULE__, fn(map) ->
       Map.get_and_update map, session, fn

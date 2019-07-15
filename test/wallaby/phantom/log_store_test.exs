@@ -9,11 +9,20 @@ defmodule Wallaby.Driver.LogStoreTest do
 
   @session "123abc"
 
+  setup do
+    Agent.update(LogStore, fn _ -> Map.new end)
+  end
+
   describe "append_logs/2" do
     test "only appends new logs" do
-      LogStore.start_link
       assert LogStore.append_logs(@session, [@l1, @l2]) == [@l1, @l2]
       assert LogStore.append_logs(@session, [@l2, @l3]) == [@l3]
+      assert LogStore.get_logs(@session) == [@l1, @l2, @l3]
+    end
+
+    test "wraps logs in a list if they are not already in one" do
+      assert LogStore.append_logs(@session, [@l1, @l2]) == [@l1, @l2]
+      assert LogStore.append_logs(@session, @l3) == [@l3]
       assert LogStore.get_logs(@session) == [@l1, @l2, @l3]
     end
   end

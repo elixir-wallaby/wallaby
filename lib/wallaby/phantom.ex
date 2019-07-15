@@ -116,59 +116,59 @@ defmodule Wallaby.Phantom do
   end
 
   @doc false
-  defdelegate accept_alert(session, open_dialog_fn),              to: Driver
+  defdelegate accept_alert(session, open_dialog_fn), to: Driver
   @doc false
-  defdelegate accept_confirm(session, open_dialog_fn),            to: Driver
+  defdelegate accept_confirm(session, open_dialog_fn), to: Driver
   @doc false
-  defdelegate accept_prompt(session, input_va, open_dialog_fn),   to: Driver
+  defdelegate accept_prompt(session, input_va, open_dialog_fn), to: Driver
   @doc false
-  defdelegate cookies(session),                                   to: Driver
+  defdelegate cookies(session), to: Driver
   @doc false
-  defdelegate current_path(session),                             to: Driver
+  defdelegate current_path(session), to: Driver
   @doc false
-  defdelegate current_url(session),                              to: Driver
+  defdelegate current_url(session), to: Driver
   @doc false
-  defdelegate dismiss_confirm(session, open_dialog_fn),           to: Driver
+  defdelegate dismiss_confirm(session, open_dialog_fn), to: Driver
   @doc false
-  defdelegate dismiss_prompt(session, open_dialog_fn),            to: Driver
+  defdelegate dismiss_prompt(session, open_dialog_fn), to: Driver
   @doc false
-  defdelegate get_window_size(session),                           to: Driver
+  defdelegate get_window_size(session), to: Driver
   @doc false
-  defdelegate page_title(session),                                to: Driver
+  defdelegate page_title(session), to: Driver
   @doc false
-  defdelegate page_source(session),                               to: Driver
+  defdelegate page_source(session), to: Driver
   @doc false
-  defdelegate set_cookie(session, key, value),                    to: Driver
+  defdelegate set_cookie(session, key, value), to: Driver
   @doc false
-  defdelegate set_window_size(session, width, height),            to: Driver
+  defdelegate set_window_size(session, width, height), to: Driver
   @doc false
-  defdelegate visit(session, url),                                to: Driver
+  defdelegate visit(session, url), to: Driver
 
   @doc false
-  defdelegate attribute(element, name),                           to: Driver
+  defdelegate attribute(element, name), to: Driver
   @doc false
-  defdelegate click(element),                                     to: Driver
+  defdelegate click(element), to: Driver
   @doc false
-  defdelegate clear(element),                                     to: Driver
+  defdelegate clear(element), to: Driver
   @doc false
-  defdelegate displayed(element),                                 to: Driver
+  defdelegate displayed(element), to: Driver
   @doc false
-  defdelegate selected(element),                                  to: Driver
+  defdelegate selected(element), to: Driver
   @doc false
-  defdelegate set_value(element, value),                          to: Driver
+  defdelegate set_value(element, value), to: Driver
   @doc false
-  defdelegate text(element),                                      to: Driver
+  defdelegate text(element), to: Driver
 
   @doc false
-  defdelegate execute_script(session_or_element, script, args),   to: Driver
+  defdelegate execute_script(session_or_element, script, args), to: Driver
   @doc false
-  defdelegate find_elements(session_or_element, compiled_query),  to: Driver
+  defdelegate find_elements(session_or_element, compiled_query), to: Driver
   @doc false
-  defdelegate send_keys(session_or_element, keys),                to: Driver
+  defdelegate send_keys(session_or_element, keys), to: Driver
   @doc false
-  defdelegate take_screenshot(session_or_element),                to: Driver
-  defdelegate log(session_or_element),                            to: Driver
-  defdelegate parse_log(log),                                     to: Wallaby.Phantom.Logger
+  defdelegate take_screenshot(session_or_element), to: Driver
+  defdelegate log(session_or_element), to: Driver
+  defdelegate parse_log(log), to: Wallaby.Phantom.Logger
 
   @doc false
   def user_agent do

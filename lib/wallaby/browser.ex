@@ -378,13 +378,23 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Clicks a element.
+  Clicks an element.
   """
   @spec click(parent, Query.t) :: parent
 
   def click(parent, query) do
     parent
     |> find(query, &Element.click/1)
+  end
+
+  @doc """
+  Hovers over an element.
+  """
+  @spec click(parent, Query.t) :: parent
+
+  def hover(parent, query) do
+    parent
+    |> find(query, &Element.hover/1)
   end
 
   @doc """

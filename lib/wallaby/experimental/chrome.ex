@@ -170,6 +170,8 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   def click(element), do: delegate(:click, element)
   @doc false
+  def hover(element), do: delegate(:hover, element)
+  @doc false
   def clear(element), do: delegate(:clear, element)
   @doc false
   def displayed(element), do: delegate(:displayed, element)
