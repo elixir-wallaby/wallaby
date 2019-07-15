@@ -8,11 +8,11 @@ defmodule Wallaby.Integration.Browser.HoverTest do
   describe "hover/2" do
     test "sends keys to the specified element", %{page: page} do
       refute page
-      |> visible?(Query.text("HI"))
+             |> visible?(Query.text("HI"))
 
       assert page
-      |> hover(Query.css(".group"))
-      |> visible?(Query.text("HI"))
+             |> hover(Query.css(".group"))
+             |> visible?(Query.text("HI"))
     end
   end
 end

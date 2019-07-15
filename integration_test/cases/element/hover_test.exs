@@ -11,7 +11,7 @@ defmodule Wallaby.Integration.Element.HoverTest do
       |> find(Query.text("HI", visible: false), fn el ->
         refute Element.visible?(el)
       end)
-      |> find(Query.css(".group"), fn el -> 
+      |> find(Query.css(".group"), fn el ->
         Element.hover(el)
       end)
       |> find(Query.text("HI"), fn el ->
