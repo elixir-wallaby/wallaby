@@ -30,6 +30,7 @@ defmodule Wallaby do
     end
 
     children = [
+      supervisor(Wallaby.Driver.ProcessWorkspace.ServerSupervisor, []),
       supervisor(driver(), [[name: Wallaby.Driver.Supervisor]]),
       worker(Wallaby.SessionStore, []),
     ]

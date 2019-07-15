@@ -6,15 +6,15 @@ defmodule Wallaby.QueryError do
   end
 end
 
-defmodule Wallaby.ExpectationNotMet do
+defmodule Wallaby.ExpectationNotMetError do
   defexception [:message]
 end
 
-defmodule Wallaby.BadMetadata do
+defmodule Wallaby.BadMetadataError do
   defexception [:message]
 end
 
-defmodule Wallaby.NoBaseUrl do
+defmodule Wallaby.NoBaseUrlError do
   defexception [:message]
 
   def exception(relative_path) do
@@ -47,7 +47,7 @@ defmodule Wallaby.JSError do
   end
 end
 
-defmodule Wallaby.StaleReferenceException do
+defmodule Wallaby.StaleReferenceError do
   defexception [:message]
 
   def exception(_) do
@@ -63,7 +63,7 @@ defmodule Wallaby.StaleReferenceException do
   end
 end
 
-defmodule Wallaby.InvalidSelector do
+defmodule Wallaby.InvalidSelectorError do
   defexception [:message]
 
   def exception(_) do
@@ -71,7 +71,7 @@ defmodule Wallaby.InvalidSelector do
   end
 end
 
-defmodule Wallaby.CookieException do
+defmodule Wallaby.CookieError do
   defexception [:message]
 
   def exception(_) do
@@ -87,7 +87,7 @@ defmodule Wallaby.CookieException do
   end
 end
 
-defmodule Wallaby.DependencyException do
+defmodule Wallaby.DependencyError do
   defexception [:message]
 
   def exception(msg) do

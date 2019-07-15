@@ -31,11 +31,6 @@ defmodule Wallaby.Driver do
   @callback accept_confirm(Session.t, open_dialog_fn) :: {:ok, [String.t]} | {:error, reason}
 
   @doc """
-  Invoked to accept all open dialogs.
-  """
-  @callback accept_dialogs(Session.t) :: {:ok, String.t} | {:error, reason}
-
-  @doc """
   Invoked to accept one prompt triggered within `open_dialog_fn` and return the prompt message.
   """
   @callback accept_prompt(Session.t, String.t | nil, open_dialog_fn) ::
@@ -55,11 +50,6 @@ defmodule Wallaby.Driver do
   Invoked to get the current url of the browser's session.
   """
   @callback current_url(Session.t) :: {:ok, String.t} | {:error, reason}
-
-  @doc """
-  Invoked to dismiss all open dialogs.
-  """
-  @callback dismiss_dialogs(Session.t) :: {:ok, String.t} | {:error, reason}
 
   @doc """
   Invoked to dismiss one confirm triggered within `open_dialog_fn` and return the confirm message.

@@ -2,6 +2,9 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
   @moduledoc false
   use GenServer
 
+  alias Wallaby.Driver.Utils
+  alias Wallaby.Experimental.Chrome
+
   def start_link do
     GenServer.start_link(__MODULE__, :ok, [name: __MODULE__])
   end
@@ -16,7 +19,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
 
   @dialyzer {:nowarn_function, init: 1}
   def init(_) do
-    tcp_port = find_available_port()
+    tcp_port = Utils.find_available_port()
     port = start_chromedriver(tcp_port)
 
     {:ok, %{running: false, port: port, base_url: "http://localhost:#{tcp_port}/"}}
@@ -34,21 +37,12 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     IO.puts("terminating")
   end
 
-  defp find_available_port do
-    {:ok, listen} = :gen_tcp.listen(0, [])
-    {:ok, port} = :inet.port(listen)
-    :gen_tcp.close(listen)
-    port
-  end
-
   @dialyzer {:nowarn_function, start_chromedriver: 1}
   defp start_chromedriver(tcp_port) do
-    case System.find_executable("chromedriver") do
-      chromedriver when not is_nil(chromedriver) ->
-        Port.open({:spawn_executable, wrapper_script()},
-          [:binary, :stream, :use_stdio, :exit_status, args: args(chromedriver, tcp_port)])
-      _ ->
-        {:error, :no_chromedriver}
+    with {:ok, chromedriver} <- Chrome.find_chromedriver_executable() do
+      Port.open({:spawn_executable, wrapper_script()}, port_opts(chromedriver, tcp_port))
+    else
+      {:error, _message} -> {:error, :no_chromedriver}
     end
   end
 
@@ -58,6 +52,16 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
 
   defp args(chromedriver, port), do: [
       chromedriver,
+      "--log-level=OFF",
       "--port=#{port}",
     ]
+
+  defp port_opts(chromedriver, tcp_port), do: [
+    :binary,
+    :stream,
+    :use_stdio,
+    :stderr_to_stdout,
+    :exit_status,
+    args: args(chromedriver, tcp_port),
+  ]
 end

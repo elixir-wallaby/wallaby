@@ -28,7 +28,17 @@ defmodule Wallaby.Query do
 
     * `:count` - The number of elements that should be found (default: 1).
     * `:visible` - Determines if the query should return only visible elements (default: true).
+    * `:selected` - Determines if the query should return only selected elements (default: :any for selected and unselected).
     * `:text` - Text that should be found inside the element (default: nil).
+    * `:at` - The position number of the element to select if multiple elements satisfy the selection criteria. (:all for all elements)
+
+  Query options can also be set via functions by the same names:
+
+  ```
+  Query.css(".names")
+  |> Query.visible(true)
+  |> Query.count(3)
+  ```
 
   ## Re-using queries
 
@@ -62,7 +72,7 @@ defmodule Wallaby.Query do
   query that will be sent to the driver:
 
       iex> Wallaby.Query.compile Wallaby.Query.text("my text")
-      {:xpath, ".//*[contains(normalize-space(text()), 'my text')]"}
+      {:xpath, ".//*[contains(normalize-space(text()), \"my text\")]"}
 
   So, whenever you're not sure whatever a specific query will do just compile
   it to get all the details!
@@ -87,15 +97,19 @@ defmodule Wallaby.Query do
                 | :option
                 | :select
                 | :file_field
+  @type attribute_key_value_pair :: {String.t, String.t}
   @type selector :: String.t
+                  | :attribute_key_value_pair
   @type html_validation :: :bad_label
                          | :button_type
                          | nil
   @type conditions :: [
     count: non_neg_integer,
     text: String.t,
-    visible: boolean(),
+    visible: boolean() | :any,
+    selected: boolean() | :any,
     minimum: non_neg_integer,
+    at: pos_integer
   ]
   @type result :: list(Element.t)
   @type opts :: nonempty_list()
@@ -134,12 +148,64 @@ defmodule Wallaby.Query do
   end
 
   @doc """
-  Checks if the provided text is contained anywhere.
+  This function can be used in one of two ways.
+
+  The first is by providing a selector and possible options. This generates a
+  query that checks if the provided text is contained anywhere.
+
+  ## Example
+
+    ```
+    Query.text("Submit", count: 1)
+    ```
+
+  The second is by providing an existing query and a value to set as the `text`
+  option.
+
+  ## Example
+
+    ```
+    submit_button = Query.css("#submit-button")
+
+    update_button = submit_button |> Query.text("Update")
+    create_button = submit_button |> Query.text("Create")
+    ```
   """
-  def text(selector, opts \\ []) do
+  def text(query_or_selector, value_or_opts \\ [])
+
+  def text(%Query{} = query, value) do
+    update_condition(query, :text, value)
+  end
+
+  def text(selector, opts) do
     %Query{
       method: :text,
       selector: selector,
+      conditions: build_conditions(opts)
+    }
+  end
+
+  @doc """
+  Checks if the provided value is contained anywhere.
+  """
+  def value(selector, opts \\ []) do
+    attribute("value", selector, opts)
+  end
+
+  @doc """
+  Checks if the data attribute is contained anywhere.
+  """
+  def data(name, selector, opts \\ []) do
+    attribute("data-#{name}", selector, opts)
+  end
+
+  @doc """
+  Checks if the provided attribute, value pair is contained anywhere.
+  """
+  def attribute(name, value, opts \\ []) do
+    %Query{
+      method: :attribute,
+      selector: {name, value},
       conditions: build_conditions(opts)
     }
   end
@@ -263,27 +329,88 @@ defmodule Wallaby.Query do
     }
   end
 
+  @doc """
+  Updates a query's visibility (visible if `true`, hidden if `false`).
+
+  ## Examples
+
+    ```
+    Query.css("#modal")
+    |> Query.visible(true)
+
+    Query.css("#modal")
+    |> Query.visible(false)
+    ```
+  """
+  def visible(query, value) do
+    update_condition(query, :visible, value)
+  end
+
+  @doc """
+  Updates a query's `selected` option.
+
+  ## Examples
+
+    ```
+    Query.css("#select-dropdown")
+    |> Query.selected(true)
+
+    Query.css("#select-dropdown")
+    |> Query.selected(false)
+    ```
+  """
+  def selected(query, value) do
+    update_condition(query, :selected, value)
+  end
+
+  @doc """
+  Updates a query's `count` option.
+
+  ## Example
+
+    ```
+    Query.css(".names > li")
+    |> Query.count(2)
+    ```
+  """
+  def count(query, value) do
+    update_condition(query, :count, value)
+  end
+
+  @doc """
+  Updates a query's `at` option.
+
+  ## Example
+
+    ```
+    Query.css(".names")
+    |> Query.at(3)
+    ```
+  """
+  def at(query, value) do
+    update_condition(query, :at, value)
+  end
+
   def validate(query) do
-    # TODO: This should be handled with xpath if we avoid throwing the error.
     cond do
-    query.conditions[:minimum] > query.conditions[:maximum] ->
-      {:error, :min_max}
-    !Query.visible?(query) && Query.inner_text(query) ->
-      {:error, :cannot_set_text_with_invisible_elements}
-    true ->
-      {:ok, query}
+      query.conditions[:minimum] > query.conditions[:maximum] ->
+        {:error, :min_max}
+      (Query.visible?(query) != true) && Query.inner_text(query) ->
+        {:error, :cannot_set_text_with_invisible_elements}
+      true ->
+        {:ok, query}
     end
   end
 
-  @spec compile(t) :: compiled
   @doc """
   Compiles a query into css or xpath so its ready to be sent to the driver
 
       iex> Wallaby.Query.compile Wallaby.Query.text("my text")
-      {:xpath, ".//*[contains(normalize-space(text()), 'my text')]"}
+      {:xpath, ".//*[contains(normalize-space(text()), \\"my text\\")]"}
       iex> Wallaby.Query.compile Wallaby.Query.css("#some-id")
       {:css, "#some-id"}
   """
+  @spec compile(t) :: compiled
   def compile(%{method: :css, selector: selector}), do: {:css, selector}
   def compile(%{method: :xpath, selector: selector}), do: {:xpath, selector}
   def compile(%{method: :link, selector: selector}), do: {:xpath, XPath.link(selector)}
@@ -295,13 +422,22 @@ defmodule Wallaby.Query do
   def compile(%{method: :select, selector: selector}), do: {:xpath, XPath.select(selector)}
   def compile(%{method: :file_field, selector: selector}), do: {:xpath, XPath.file_field(selector)}
   def compile(%{method: :text, selector: selector}), do: {:xpath, XPath.text(selector)}
+  def compile(%{method: :attribute, selector: {name, value}}), do: {:xpath, XPath.attribute(name, value)}
 
   def visible?(%Query{conditions: conditions}) do
     Keyword.get(conditions, :visible)
   end
 
+  def selected?(%Query{conditions: conditions}) do
+    Keyword.get(conditions, :selected)
+  end
+
   def count(%Query{conditions: conditions}) do
     Keyword.get(conditions, :count)
+  end
+
+  def at_number(%Query{conditions: conditions}) do
+    Keyword.get(conditions, :at)
   end
 
   def inner_text(%Query{conditions: conditions}) do
@@ -309,12 +445,16 @@ defmodule Wallaby.Query do
   end
 
   def result(query) do
-    if count(query) == 1 do
+    if specific_element_requested(query) do
       [element] = query.result
       element
     else
       query.result
     end
+  end
+
+  def specific_element_requested(query) do
+      count(query) == 1 || at_number(query) != :all
   end
 
   def matches_count?(%{conditions: conditions}, count) do
@@ -336,10 +476,16 @@ defmodule Wallaby.Query do
     |> add_visibility
     |> add_text
     |> add_count
+    |> add_selected
+    |> add_at
   end
 
   defp add_visibility(opts) do
     Keyword.put_new(opts, :visible, true)
+  end
+
+  defp add_selected(opts) do
+    Keyword.put_new(opts, :selected, :any)
   end
 
   defp add_text(opts) do
@@ -355,5 +501,14 @@ defmodule Wallaby.Query do
       |> Keyword.put_new(:minimum, opts[:minimum])
       |> Keyword.put_new(:maximum, opts[:maximum])
     end
+  end
+
+  defp add_at(opts) do
+    Keyword.put_new(opts, :at, :all)
+  end
+
+  defp update_condition(%Query{conditions: conditions} = query, key, value) do
+    updated_conditions = Keyword.put(conditions, key, value)
+    %Query{query | conditions: updated_conditions}
   end
 end

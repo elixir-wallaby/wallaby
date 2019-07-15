@@ -47,6 +47,12 @@ defmodule Wallaby.Query.ErrorMessage do
     can't apply both filters correctly.
     """
   end
+  def message(_, {:at_number, query}) do
+#   The query is invalid. the 'at' number requested is not within the results list (1-#{size}).
+    """
+    The element at index #{Query.at_number(query)} is not available because #{result_count(query.result)} #{method(query)} #{result_expectation(query.result)}
+    """
+  end
   def message(_, :min_max) do
     """
     The query is invalid. Cannot set the minimum greater than the maximum.
@@ -55,6 +61,11 @@ defmodule Wallaby.Query.ErrorMessage do
   def message(%{method: method, selector: selector}, :invalid_selector) do
     """
     The #{method} '#{selector}' is not a valid query.
+    """
+  end
+  def message(_, :unexpected_alert) do
+    """
+    There was an unexpected alert.
     """
   end
 
@@ -67,8 +78,20 @@ defmodule Wallaby.Query.ErrorMessage do
 
   defp found_error_message(query) do
     """
-    #{expected_count(query)}, #{visibility(query)} #{method(query)} '#{query.selector}' but #{result_count(query.result)}, #{visibility(query)} #{short_method(query.method, Enum.count(query.result))} #{result_expectation(query.result)}.
+    #{expected_count(query)}, #{visibility_and_selection(query)} #{method(query)} #{selector(query)} but #{result_count(query.result)}, #{visibility_and_selection(query)} #{short_method(query.method, Enum.count(query.result))} #{result_expectation(query.result)}.
     """
+  end
+
+  @doc """
+  Extracts the selector from the query
+  """
+  @spec selector(Query.t) :: String.t
+
+  def selector(%Query{selector: {name, value}}) do
+    "'#{name}' with value '#{value}'"
+  end
+  def selector(%Query{selector: selector}) do
+    "'#{selector}'"
   end
 
   @doc """
@@ -116,6 +139,9 @@ defmodule Wallaby.Query.ErrorMessage do
   def method(:text, true), do: "elements with the text"
   def method(:text, false), do: "element with the text"
 
+  def method(:attribute, true), do: "elements with the attribute"
+  def method(:attribute, false), do: "element with the attribute"
+
   def short_method(:css, count) when count > 1,  do: "elements"
   def short_method(:css, count) when count == 0, do: "elements"
   def short_method(:css, _),                 do: "element"
@@ -148,16 +174,25 @@ defmodule Wallaby.Query.ErrorMessage do
   end
   def condition(_), do: nil
 
+  @spec visibility_and_selection(Query.t) :: String.t
+  defp visibility_and_selection(query) do
+    case Query.selected?(query) do
+      true -> "#{visibility(query)}, selected"
+      false -> "#{visibility(query)}, unselected"
+      :any -> visibility(query)
+    end
+  end
+
   @doc """
   Converts the visibilty attribute into a human readable form.
   """
   @spec visibility(Query.t) :: String.t
 
   def visibility(query) do
-    if Query.visible?(query) do
-      "visible"
-    else
-      "invisible"
+    case Query.visible?(query) do
+      true -> "visible"
+      false -> "invisible"
+      :any -> "visible or invisible"
     end
   end
 

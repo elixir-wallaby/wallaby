@@ -75,6 +75,13 @@ defmodule Wallaby.Query.XPath do
   Matches any element by its inner text.
   """
   def text(selector) do
-    ~s{.//*[contains(normalize-space(text()), '#{selector}')]}
+    ~s{.//*[contains(normalize-space(text()), "#{selector}")]}
+  end
+
+  @doc """
+  Matches any element by its attribute name and value pair.
+  """
+  def attribute(name, value) do
+    ~s{.//*[./@#{name} = "#{value}"]}
   end
 end

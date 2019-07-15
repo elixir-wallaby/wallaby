@@ -1,6 +1,8 @@
 defmodule Wallaby.Integration.Browser.CookiesTest do
   use Wallaby.Integration.SessionCase, async: true
 
+  alias Wallaby.CookieError
+
   describe "cookies/1" do
     test "returns all of the cookies in the browser", %{session: session} do
       list =
@@ -27,7 +29,7 @@ defmodule Wallaby.Integration.Browser.CookiesTest do
     end
 
     test "without visiting a page first throws an error", %{session: session} do
-      assert_raise Wallaby.CookieException, fn ->
+      assert_raise CookieError, fn ->
         session
         |> Browser.set_cookie("other_cookie", "test")
       end

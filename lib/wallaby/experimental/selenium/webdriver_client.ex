@@ -7,6 +7,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @type http_method :: :post | :get | :delete
   @type url :: String.t
 
+  @web_element_identifier "element-6066-11e4-a52e-4f735466cecf"
+
   @doc """
   Create a session with the base url.
   """
@@ -102,9 +104,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       do: value
   end
 
-  def dismiss_prompt(session, _fun) do
-    with  {:ok, resp} <- request(:post, "#{session.url}/dismiss_alert"),
-      do: resp
+  def dismiss_prompt(session, fun) do
+    dismiss_confirm(session, fun)
   end
 
   @doc """
@@ -231,9 +232,9 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Takes a screenshot.
   """
-  @spec take_screenshot(Session.t) :: binary
+  @spec take_screenshot(Session.t | Element.t) :: binary
   def take_screenshot(session) do
-    with {:ok, resp}   <- request(:get, "#{session.url}/screenshot"),
+    with {:ok, resp}   <- request(:get, "#{session.session_url}/screenshot"),
           {:ok, value}  <- Map.fetch(resp, "value"),
           decoded_value <- :base64.decode(value),
       do: decoded_value
@@ -357,6 +358,9 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   @spec cast_as_element(Session.t | Element.t, map) :: Element.t
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
+    cast_as_element(parent, %{@web_element_identifier => id})
+  end
+  defp cast_as_element(parent, %{@web_element_identifier => id}) do
     %Wallaby.Element{
       id: id,
       session_url: parent.session_url,

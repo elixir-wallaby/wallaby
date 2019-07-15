@@ -1,12 +1,17 @@
 defmodule Wallaby.Phantom.Driver do
   @moduledoc false
 
-  alias Wallaby.{Driver, Element, Session, Phantom, Metadata}
-  alias Wallaby.Helpers.KeyCodes
-  alias Wallaby.Phantom.Server
+  import Wallaby.HTTPClient
   import Wallaby.Driver.LogChecker
 
-  import Wallaby.HTTPClient
+  alias Wallaby.Driver
+  alias Wallaby.Element
+  alias Wallaby.Helpers.KeyCodes
+  alias Wallaby.Phantom
+  alias Wallaby.Phantom.Server
+  alias Wallaby.Metadata
+  alias Wallaby.Session
+  alias Wallaby.StaleReferenceError
 
   @type method :: :post | :get | :delete
   @type url :: String.t
@@ -40,6 +45,9 @@ defmodule Wallaby.Phantom.Driver do
       server: server,
       driver: Phantom
     }
+
+    if window_size = Keyword.get(opts, :window_size),
+      do: {:ok, _} = set_window_size(session, window_size[:width], window_size[:height])
 
     {:ok, session}
   end
@@ -208,7 +216,7 @@ defmodule Wallaby.Phantom.Driver do
           value
 
         {:error, :stale_reference} ->
-          raise Wallaby.StaleReferenceException
+          raise StaleReferenceError
       end
     end
   end
@@ -365,34 +373,6 @@ defmodule Wallaby.Phantom.Driver do
             {:ok, value} <- Map.fetch(resp, "value"),
         do: {:ok, value}
     end
-  end
-
-  @doc """
-  Accept all JavaScript dialogs
-  """
-  def accept_dialogs(session) do
-    script = """
-    var page = this;
-    page.onAlert = function(msg) {}
-    page.onConfirm = function(msg) { return true; }
-    page.onPrompt = function(msg, defaultVal) { return defaultVal; }
-    return "ok";
-    """
-    {:ok, "ok"} = execute_phantom_script(session, script)
-  end
-
-  @doc """
-  Dismiss all JavaScript dialogs
-  """
-  def dismiss_dialogs(session) do
-    script = """
-    var page = this;
-    page.onAlert = function(msg) {}
-    page.onConfirm = function(msg) { return false; }
-    page.onPrompt = function(msg, defaultVal) { return null; }
-    return "ok";
-    """
-    {:ok, "ok"} = execute_phantom_script(session, script)
   end
 
   @doc """

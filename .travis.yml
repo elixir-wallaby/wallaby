@@ -1,26 +1,9 @@
 language: elixir
 elixir:
-  - 1.4.5
-  - 1.3.4
-  - 1.5.0
+  - 1.7.4
+  - 1.8.1
 otp_release:
-  - 19.3
-  - 18.3
-  - 20.0
-matrix:
-  exclude:
-    - elixir: 1.3.4
-      otp_release: 19.3
-    - elixir: 1.3.4
-      otp_release: 20.0
-    - elixir: 1.4.5
-      otp_release: 18.3
-    - elixir: 1.4.5
-      otp_release: 20.0
-    - elixir: 1.5.0
-      otp_release: 18.3
-    - elixir: 1.5.0
-      otp_release: 19.3
+  - 20.3
 env:
   - ""
   - WALLABY_DRIVER=phantom
@@ -46,16 +29,16 @@ before_script:
   - sudo mv chromedriver /usr/local/bin
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test --yes
   - sudo apt-get update
-  - sudo apt-get install google-chrome-beta
+  - sudo apt-get --only-upgrade install google-chrome-stable
   - sudo apt-get install libstdc++6-4.7-dev
   - MIX_ENV=test mix compile --warnings-as-errors
   - if [ -z ${WALLABY_DRIVER} ]; then travis_wait mix dialyzer --plt; fi # only run dialyzer for the env without drivers
   - bash $TRAVIS_BUILD_DIR/test/tools/start_webdriver.sh
 
 script:
-  - mix coveralls.travis
+  - mix coveralls.safe_travis
   - if [ -z ${WALLABY_DRIVER} ]; then mix dialyzer --halt-exit-status; fi # only run dialyzer for the env without drivers
-  - mix credo -- strict
+  - mix credo --strict
 
 after_script:
   - mix deps.get --only docs

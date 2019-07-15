@@ -1,5 +1,5 @@
-# Wallaby
-
+![Wallaby](https://i.imgur.com/eQ1tlI3.png)
+============
 [![Build Status](https://travis-ci.org/keathley/wallaby.svg?branch=master)](https://travis-ci.org/keathley/wallaby)
 [![Hex pm](https://img.shields.io/hexpm/v/wallaby.svg?style=flat)](https://hex.pm/packages/wallaby)
 [![Coverage Status](https://coveralls.io/repos/github/keathley/wallaby/badge.svg?branch=master)](https://coveralls.io/github/keathley/wallaby?branch=master)
@@ -71,7 +71,7 @@ Add Wallaby to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:wallaby, "~> 0.19.1"}]
+  [{:wallaby, "~> 0.22.0", [runtime: false, only: :test]}]
 end
 ```
 
@@ -118,6 +118,43 @@ Then in your `test_helper.exs` you can provide some configuration to Wallaby. At
 
 Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
 ```
+
+#### Assets
+
+Assets are not re-compiled when you run `mix test`. This can lead to confusion if
+you've made changes in javascript or css but tests are still failing. There are two
+common ways to avoid this confusion.
+
+The first solution is to run `brunch watch` from the assets directory. This will ensure
+that assets get recompiled after any changes.
+
+The second solution is to add a new alias to your mix config that recompiles assets for you:
+
+```elixir
+  def project do
+    [
+      app: :my_app,
+      version: "1.0.0",
+      aliases: aliases()
+    ]
+  end
+
+  defp aliases, do: [
+    "test": [
+      "assets.compile --quiet",
+      "ecto.create --quiet",
+      "ecto.migrate",
+      "test",
+    ],
+    "assets.compile": &compile_assets/1
+  ]
+
+  defp compile_assets(_) do
+    Mix.shell.cmd("assets/node_modules/brunch/bin/brunch build assets/")
+  end
+```
+
+This method is less error prone but it will cause a delay when starting your test suite.
 
 #### Umbrella Apps
 
@@ -166,7 +203,7 @@ You will also want to add `phoenix_ecto` as a dependency to `MyWebApp`:
 
 def deps do
   [
-    {:wallaby, "~> 0.17.0", only: :test},
+    {:wallaby, "~> 0.21", only: :test},
     {:phoenix_ecto, "~> 3.0", only: :test}
   ]
 end
@@ -388,13 +425,26 @@ session
 |> assert_has(css(".alert", text: "Welcome!"))
 ```
 
-### Windows and Screenshots
+### Window Size
 
-It's possible to interact with the window and take screenshots:
+You can set the default window size by passing in the `window_size` option into `Wallaby.start_session\1`.
+
+```elixir
+Wallaby.start_session(window_size: [width: 1280, height: 720])
+```
+
+You can also resize the window and get the current window size during the test.
 
 ```elixir
 resize_window(session, 100, 100)
 window_size(session)
+```
+
+### Screenshots
+
+It's possible take screenshots:
+
+```elixir
 take_screenshot(session)
 ```
 
@@ -490,7 +540,6 @@ sent along on every request. This can be controlled with the `:hackney_options`
 setting in `config.exs`.
 
 ```elixir
-# default values
 config :wallaby,
   hackney_options: [timeout: :infinity, recv_timeout: :infinity]
 
@@ -541,6 +590,27 @@ config :wallaby,
   ]
 ```
 
+### Custom Chromedriver binary
+
+If `chromedriver` is on your `PATH`, then you can skip this step.
+Otherwise (e.g., on NPM-installed `chromedriver` binaries), you can override the path like so:
+
+```elixir
+config :wallaby, chromedriver: "<path/to/chromedriver>"
+```
+
+
+### Custom Chrome binary
+
+By default chromedriver will find chrome for you but if you want to test against a different version you may use this option to point to the other chrome binary.
+
+```elixir
+config :wallaby,
+  chrome: [
+    binary: "path/to/google/chrome"
+  ]
+```
+
 ### Selenium
 
 To run selenium you'll need to install selenium-server-standalone and geckodriver.
@@ -551,7 +621,7 @@ from your test run.
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
 
-To get started and setup the project, make sure you've got Elixir 1.3+ installed and then:
+To get started and setup the project, make sure you've got Elixir 1.7+ installed and then:
 
 ```
 $ mix deps.get

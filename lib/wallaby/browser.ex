@@ -103,10 +103,14 @@ defmodule Wallaby.Browser do
   |> todo_was_created?
   """
 
+  alias Wallaby.CookieError
   alias Wallaby.Element
+  alias Wallaby.ExpectationNotMetError
   alias Wallaby.Query
   alias Wallaby.Query.ErrorMessage
+  alias Wallaby.NoBaseUrlError
   alias Wallaby.Session
+  alias Wallaby.StaleReferenceError
 
   @type t :: any()
 
@@ -474,6 +478,7 @@ defmodule Wallaby.Browser do
         case validate_html(parent, query) do
           {:ok, _} ->
             raise Wallaby.QueryError, ErrorMessage.message(query, :not_found)
+
           {:error, html_error} ->
             raise Wallaby.QueryError, ErrorMessage.message(query, html_error)
         end
@@ -586,7 +591,7 @@ defmodule Wallaby.Browser do
     |> assert_text(text)
   end
   def assert_text(parent, text) when is_binary(text) do
-    has_text?(parent, text) || raise Wallaby.ExpectationNotMet, "Text '#{text}' was not found."
+    has_text?(parent, text) || raise ExpectationNotMetError, "Text '#{text}' was not found."
   end
 
   @doc """
@@ -617,13 +622,13 @@ defmodule Wallaby.Browser do
           case error do
             {:error, {:not_found, results}} ->
               query = %Query{query | result: results}
-              raise Wallaby.ExpectationNotMet,
+              raise ExpectationNotMetError,
                     Query.ErrorMessage.message(query, :not_found)
             {:error, :invalid_selector} ->
               raise Wallaby.QueryError,
                 Query.ErrorMessage.message(query, :invalid_selector)
             _ ->
-              raise Wallaby.ExpectationNotMet,
+              raise Wallaby.ExpectationNotMetError,
                 "Wallaby has encountered an internal error: #{inspect error} with session: #{inspect parent}"
           end
       end
@@ -652,7 +657,7 @@ defmodule Wallaby.Browser do
         {:error, _not_found} ->
           parent
         {:ok, query} ->
-          raise Wallaby.ExpectationNotMet,
+          raise Wallaby.ExpectationNotMetError,
                 Query.ErrorMessage.message(query, :found)
       end
     end
@@ -703,7 +708,7 @@ defmodule Wallaby.Browser do
 
     cond do
       uri.host == nil && String.length(base_url()) == 0 ->
-        raise Wallaby.NoBaseUrl, path
+        raise NoBaseUrlError, path
       uri.host ->
         driver.visit(session, path)
       true ->
@@ -721,35 +726,19 @@ defmodule Wallaby.Browser do
 
   def set_cookie(%Session{driver: driver} = session, key, value) do
     if blank_page?(session) do
-      raise Wallaby.CookieException
+      raise CookieError
     end
 
     case driver.set_cookie(session, key, value) do
       {:ok, _list} ->
         session
       {:error, :invalid_cookie_domain} ->
-        raise Wallaby.CookieException
+        raise CookieError
     end
   end
 
   defp blank_page?(%Session{driver: driver} = session) do
     driver.blank_page?(session)
-  end
-
-  @doc """
-  Accepts all subsequent JavaScript dialogs in the given session.
-  """
-  def accept_dialogs(%Session{driver: driver} = session) do
-    driver.accept_dialogs(session)
-    session
-  end
-
-  @doc """
-  Dismisses all subsequent JavaScript dialogs in the given session.
-  """
-  def dismiss_dialogs(%Session{driver: driver} = session) do
-    driver.dismiss_dialogs(session)
-    session
   end
 
   @doc """
@@ -873,9 +862,25 @@ defmodule Wallaby.Browser do
   end
 
   defp validate_visibility(query, elements) do
-    visible = Query.visible?(query)
+    case Query.visible?(query) do
+      :any ->
+        {:ok, elements}
+      true ->
+        {:ok, Enum.filter(elements, &(Element.visible?(&1)))}
+      false ->
+        {:ok, Enum.reject(elements, &(Element.visible?(&1)))}
+    end
+  end
 
-    {:ok, Enum.filter(elements, &(Element.visible?(&1) == visible))}
+  defp validate_selected(query, elements) do
+    case Query.selected?(query) do
+      :any ->
+        {:ok, elements}
+      true ->
+        {:ok, Enum.filter(elements, &(Element.selected?(&1)))}
+      false ->
+        {:ok, Enum.reject(elements, &(Element.selected?(&1)))}
+    end
   end
 
   defp validate_count(query, elements) do
@@ -883,6 +888,17 @@ defmodule Wallaby.Browser do
       {:ok, elements}
     else
       {:error, {:not_found, elements}}
+    end
+  end
+
+  defp do_at(query, elements) do
+    case {Query.at_number(query), length(elements)} do
+      {:all, _} ->
+        {:ok, elements}
+      {n, count} when n >= 0 and n < count ->
+        {:ok, [Enum.at(elements, n)]}
+      {_, _} ->
+        {:error, {:at_number, query}}
     end
   end
 
@@ -913,12 +929,14 @@ defmodule Wallaby.Browser do
              {:ok, elements} <- driver.find_elements(parent, compiled_query),
              {:ok, elements} <- validate_visibility(query, elements),
              {:ok, elements} <- validate_text(query, elements),
-             {:ok, elements} <- validate_count(query, elements)
+             {:ok, elements} <- validate_selected(query, elements),
+             {:ok, elements} <- validate_count(query, elements),
+             {:ok, elements} <- do_at(query, elements)
          do
            {:ok, %Query{query | result: elements}}
         end
       rescue
-        Wallaby.StaleReferenceException ->
+        StaleReferenceError ->
           {:error, :stale_reference}
       end
     end
