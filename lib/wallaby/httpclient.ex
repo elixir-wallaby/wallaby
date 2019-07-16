@@ -7,6 +7,7 @@ defmodule Wallaby.HTTPClient do
   @type request_opts :: {:encode_json, boolean}
 
   @status_obscured 13
+  @max_jitter 50 # The maximum time we'll sleep is for 50ms
 
   @doc """
   Sends a request to the webdriver API and parses the
@@ -28,24 +29,31 @@ defmodule Wallaby.HTTPClient do
     make_request(method, url, Poison.encode!(params))
   end
 
-  defp make_request(method, url, body, retry_count \\ 0)
-  defp make_request(_, _, _, 5), do: raise "Wallaby had an internal issue with HTTPoison"
-  defp make_request(method, url, body, retry_count) do
+  defp make_request(method, url, body), do: make_request(method, url, body, 0, [])
+  defp make_request(_, _, _, 5, retry_reasons) do
+    ["Wallaby had an internal issue with HTTPoison:" | retry_reasons]
+    |> Enum.uniq()
+    |> Enum.join("\n")
+    |> raise
+  end
+  defp make_request(method, url, body, retry_count, retry_reasons) do
     method
     |> HTTPoison.request(url, body, headers(), request_opts())
     |> handle_response
     |> case do
-         {:error, :httpoison} ->
-           make_request(method, url, body, retry_count + 1)
-         result ->
-           result
+      {:error, :httpoison, error} ->
+        :timer.sleep(jitter())
+        make_request(method, url, body, retry_count + 1, [inspect(error) | retry_reasons])
+
+      result ->
+        result
     end
   end
 
   defp handle_response(resp) do
     case resp do
-      {:error, %HTTPoison.Error{}} ->
-        {:error, :httpoison}
+      {:error, %HTTPoison.Error{} = error} ->
+        {:error, :httpoison, error}
 
       {:ok, %HTTPoison.Response{status_code: 204}} ->
         {:ok, %{"value" => nil}}
@@ -61,17 +69,24 @@ defmodule Wallaby.HTTPClient do
   defp check_status(response) do
     case Map.get(response, "status") do
       @status_obscured ->
-        {:error, :obscured}
+        message = get_in(response, ["value", "message"])
+
+        {:error, message}
       _  ->
         {:ok, response}
     end
   end
 
+  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
   defp check_for_response_errors(response) do
     case Map.get(response, "value") do
       %{"class" => "org.openqa.selenium.StaleElementReferenceException"} ->
         {:error, :stale_reference}
+      %{"message" => "Stale element reference" <> _} ->
+        {:error, :stale_reference}
       %{"message" => "stale element reference" <> _} ->
+        {:error, :stale_reference}
+      %{"message" => "An element command failed because the referenced element is no longer available" <> _} ->
         {:error, :stale_reference}
       %{"message" => "invalid selector" <> _} ->
         {:error, :invalid_selector}
@@ -101,4 +116,6 @@ defmodule Wallaby.HTTPClient do
   def to_params({:css, css}) do
     %{using: "css selector", value: css}
   end
+
+  defp jitter, do: :rand.uniform(@max_jitter)
 end

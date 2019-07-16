@@ -46,6 +46,9 @@ defmodule Wallaby.Phantom.Driver do
       driver: Phantom
     }
 
+    if window_size = Keyword.get(opts, :window_size),
+      do: {:ok, _} = set_window_size(session, window_size[:width], window_size[:height])
+
     {:ok, session}
   end
 
