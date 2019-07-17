@@ -66,7 +66,7 @@ defmodule Wallaby.Phantom do
   def init(:ok) do
     children = [
       :poolboy.child_spec(@pool_name, poolboy_config(), []),
-      worker(Wallaby.Driver.LogStore, []),
+      worker(Wallaby.Driver.LogStore, [[]]),
     ]
 
     supervise(children, strategy: :one_for_one)

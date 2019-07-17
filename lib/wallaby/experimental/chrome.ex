@@ -19,7 +19,7 @@ defmodule Wallaby.Experimental.Chrome do
   def init(:ok) do
     children = [
       worker(Wallaby.Experimental.Chrome.Chromedriver, []),
-      worker(Wallaby.Driver.LogStore, [])
+      worker(Wallaby.Driver.LogStore, [[]])
     ]
 
     supervise(children, strategy: :one_for_one)
