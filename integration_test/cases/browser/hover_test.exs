@@ -6,7 +6,7 @@ defmodule Wallaby.Integration.Browser.HoverTest do
   end
 
   describe "hover/2" do
-    test "sends keys to the specified element", %{page: page} do
+    test "hovers over the specified element", %{page: page} do
       refute page
              |> visible?(Query.text("HI"))
 

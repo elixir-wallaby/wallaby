@@ -6,7 +6,7 @@ defmodule Wallaby.Integration.Element.HoverTest do
   end
 
   describe "hover/2" do
-    test "sends keys to the specified element", %{page: page} do
+    test "hovers over the specified element", %{page: page} do
       page
       |> find(Query.text("HI", visible: false), fn el ->
         refute Element.visible?(el)
