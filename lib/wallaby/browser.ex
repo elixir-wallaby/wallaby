@@ -205,8 +205,9 @@ defmodule Wallaby.Browser do
   tests are run in.
 
   Pass `[{:name, "some_name"}]` to specify the file name. Defaults to a timestamp.
+  Pass `[{:log, true}]` to log the location of the screenshot to stdout. Defaults to false.
   """
-  @type take_screenshot_opt :: {:name, String.t}
+  @type take_screenshot_opt :: {:name, String.t} | {:log, boolean}
   @spec take_screenshot(parent, [take_screenshot_opt]) :: parent
 
   def take_screenshot(%{driver: driver} = screenshotable, opts \\ []) do
@@ -217,6 +218,10 @@ defmodule Wallaby.Browser do
     name = opts |> Keyword.get(:name, :erlang.system_time) |> to_string
     path = path_for_screenshot(name)
     File.write! path, image_data
+
+    if opts[:log] do
+      IO.puts "Screenshot taken, find it at file:///#{path}"
+    end
 
     Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
   end
@@ -477,7 +482,7 @@ defmodule Wallaby.Browser do
         query = %Query{query | result: result}
 
         if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent)
+          take_screenshot(parent, log: true)
         end
 
         case validate_html(parent, query) do
@@ -490,7 +495,7 @@ defmodule Wallaby.Browser do
 
       {:error, e} ->
         if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent)
+          take_screenshot(parent, log: true)
         end
 
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
@@ -622,7 +627,7 @@ defmodule Wallaby.Browser do
       else
         error ->
           if Wallaby.screenshot_on_failure? do
-            take_screenshot(parent)
+            take_screenshot(parent, log: true)
           end
           case error do
             {:error, {:not_found, results}} ->
