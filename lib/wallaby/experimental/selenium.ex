@@ -140,6 +140,10 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.click(element)
   end
 
+  def hover(%Element{} = element) do
+    WebdriverClient.hover(element)
+  end
+
   def displayed(%Element{} = element) do
     WebdriverClient.displayed(element)
   end

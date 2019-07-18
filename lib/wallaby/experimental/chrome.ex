@@ -19,7 +19,7 @@ defmodule Wallaby.Experimental.Chrome do
   def init(:ok) do
     children = [
       worker(Wallaby.Experimental.Chrome.Chromedriver, []),
-      worker(Wallaby.Driver.LogStore, [])
+      worker(Wallaby.Driver.LogStore, [[]])
     ]
 
     supervise(children, strategy: :one_for_one)
@@ -169,6 +169,8 @@ defmodule Wallaby.Experimental.Chrome do
   def attribute(element, name), do: delegate(:attribute, element, [name])
   @doc false
   def click(element), do: delegate(:click, element)
+  @doc false
+  def hover(element), do: delegate(:hover, element)
   @doc false
   def clear(element), do: delegate(:clear, element)
   @doc false

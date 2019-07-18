@@ -749,6 +749,27 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     end
   end
 
+  describe "hover/2" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/moveto"
+        assert conn.body_params == %{"element" => element.id}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.hover(element)
+    end
+  end
+
   defp handle_request(bypass, handler_fn) do
     Bypass.expect bypass, fn conn ->
       conn |> parse_body |> handler_fn.()

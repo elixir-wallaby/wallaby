@@ -1,4 +1,5 @@
 defmodule Wallaby.Integration.SessionCase do
+  @moduledoc false
   use ExUnit.CaseTemplate
 
   using do
@@ -15,7 +16,8 @@ defmodule Wallaby.Integration.SessionCase do
   """
   def start_test_session(opts \\ []) do
     session_opts =
-      System.get_env("WALLABY_DRIVER")
+      "WALLABY_DRIVER"
+      |> System.get_env()
       |> default_opts_for_driver
       |> Keyword.merge(opts)
 
