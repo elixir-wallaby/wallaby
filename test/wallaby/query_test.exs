@@ -95,4 +95,85 @@ defmodule Wallaby.QueryTest do
       assert Query.validate(query) == {:error, :min_max}
     end
   end
+
+  describe "visible/2" do
+    test "marks query as visible when true is passed" do
+      query =
+        Query.css("#test", visible: false)
+        |> Query.visible(true)
+
+      assert Query.visible?(query)
+    end
+
+    test "marks query as hidden when false is passed" do
+      query =
+        Query.css("#test", visible: true)
+        |> Query.visible(false)
+
+      refute Query.visible?(query)
+    end
+  end
+
+  describe "selected/2" do
+    test "marks query as selected when true is passed" do
+      query =
+        Query.css("#test", selected: false)
+        |> Query.selected(true)
+
+      assert Query.selected?(query)
+    end
+
+    test "marks query as unselected when false is passed" do
+      query =
+        Query.css("#test", selected: true)
+        |> Query.selected(false)
+
+      refute Query.selected?(query)
+    end
+  end
+
+  describe "text/2 when a query is passed" do
+    test "sets the text option of the query" do
+      query =
+        Query.css("#test")
+        |> Query.text("Submit")
+
+      assert Query.inner_text(query) == "Submit"
+    end
+  end
+
+  describe "text/2 when a selector is passed" do
+    test "creates a text query" do
+      query = Query.text("Submit")
+
+      assert query.method == :text
+    end
+
+    test "accepts options" do
+      query = Query.text("Submit", count: 1)
+
+      assert query.method == :text
+      assert Query.count(query) == 1
+    end
+  end
+
+  describe "count/2" do
+    test "sets the count in a query" do
+      query =
+        Query.css(".test")
+        |> Query.count(9)
+
+      assert Query.count(query) == 9
+    end
+  end
+
+  describe "at/2" do
+    test "sets at option in a query" do
+      query =
+        Query.css(".test")
+        |> Query.at(3)
+
+      assert Query.at_number(query) == 3
+    end
+  end
 end

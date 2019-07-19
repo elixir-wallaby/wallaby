@@ -205,8 +205,9 @@ defmodule Wallaby.Browser do
   tests are run in.
 
   Pass `[{:name, "some_name"}]` to specify the file name. Defaults to a timestamp.
+  Pass `[{:log, true}]` to log the location of the screenshot to stdout. Defaults to false.
   """
-  @type take_screenshot_opt :: {:name, String.t}
+  @type take_screenshot_opt :: {:name, String.t} | {:log, boolean}
   @spec take_screenshot(parent, [take_screenshot_opt]) :: parent
 
   def take_screenshot(%{driver: driver} = screenshotable, opts \\ []) do
@@ -217,6 +218,10 @@ defmodule Wallaby.Browser do
     name = opts |> Keyword.get(:name, :erlang.system_time) |> to_string
     path = path_for_screenshot(name)
     File.write! path, image_data
+
+    if opts[:log] do
+      IO.puts "Screenshot taken, find it at file:///#{path}"
+    end
 
     Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
   end
@@ -406,13 +411,23 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Clicks a element.
+  Clicks an element.
   """
   @spec click(parent, Query.t) :: parent
 
   def click(parent, query) do
     parent
     |> find(query, &Element.click/1)
+  end
+
+  @doc """
+  Hovers over an element.
+  """
+  @spec hover(parent, Query.t) :: parent
+
+  def hover(parent, query) do
+    parent
+    |> find(query, &Element.hover/1)
   end
 
   @doc """
@@ -495,7 +510,7 @@ defmodule Wallaby.Browser do
         query = %Query{query | result: result}
 
         if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent)
+          take_screenshot(parent, log: true)
         end
 
         case validate_html(parent, query) do
@@ -508,7 +523,7 @@ defmodule Wallaby.Browser do
 
       {:error, e} ->
         if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent)
+          take_screenshot(parent, log: true)
         end
 
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
@@ -640,7 +655,7 @@ defmodule Wallaby.Browser do
       else
         error ->
           if Wallaby.screenshot_on_failure? do
-            take_screenshot(parent)
+            take_screenshot(parent, log: true)
           end
           case error do
             {:error, {:not_found, results}} ->
@@ -885,9 +900,25 @@ defmodule Wallaby.Browser do
   end
 
   defp validate_visibility(query, elements) do
-    visible = Query.visible?(query)
+    case Query.visible?(query) do
+      :any ->
+        {:ok, elements}
+      true ->
+        {:ok, Enum.filter(elements, &(Element.visible?(&1)))}
+      false ->
+        {:ok, Enum.reject(elements, &(Element.visible?(&1)))}
+    end
+  end
 
-    {:ok, Enum.filter(elements, &(Element.visible?(&1) == visible))}
+  defp validate_selected(query, elements) do
+    case Query.selected?(query) do
+      :any ->
+        {:ok, elements}
+      true ->
+        {:ok, Enum.filter(elements, &(Element.selected?(&1)))}
+      false ->
+        {:ok, Enum.reject(elements, &(Element.selected?(&1)))}
+    end
   end
 
   defp validate_count(query, elements) do
@@ -936,6 +967,7 @@ defmodule Wallaby.Browser do
              {:ok, elements} <- driver.find_elements(parent, compiled_query),
              {:ok, elements} <- validate_visibility(query, elements),
              {:ok, elements} <- validate_text(query, elements),
+             {:ok, elements} <- validate_selected(query, elements),
              {:ok, elements} <- validate_count(query, elements),
              {:ok, elements} <- do_at(query, elements)
          do

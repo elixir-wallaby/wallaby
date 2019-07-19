@@ -7,6 +7,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @type http_method :: :post | :get | :delete
   @type url :: String.t
 
+  @web_element_identifier "element-6066-11e4-a52e-4f735466cecf"
+
   @doc """
   Create a session with the base url.
   """
@@ -103,10 +105,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   def dismiss_prompt(session, fun) do
-    fun.(session)
-    with  {:ok, value} <- alert_text(session),
-          {:ok, _resp} <- request(:post, "#{session.url}/alert/dismiss"),
-      do: value
+    dismiss_confirm(session, fun)
   end
 
   @doc """
@@ -115,6 +114,16 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @spec click(Element.t) :: {:ok, map}
   def click(%Element{url: url}) do
     with  {:ok, resp} <- request(:post, "#{url}/click"),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
+  @doc """
+  Hovers over an element
+  """
+  @spec hover(Element.t) :: {:ok, map}
+  def hover(%Element{session_url: session_url, id: id}) do
+    with  {:ok, resp} <- request(:post, "#{session_url}/moveto", %{"element" => id}),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
@@ -370,6 +379,9 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   @spec cast_as_element(Session.t | Element.t, map) :: Element.t
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
+    cast_as_element(parent, %{@web_element_identifier => id})
+  end
+  defp cast_as_element(parent, %{@web_element_identifier => id}) do
     %Wallaby.Element{
       id: id,
       session_url: parent.session_url,

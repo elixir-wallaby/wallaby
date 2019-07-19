@@ -1,7 +1,7 @@
 defmodule Wallaby.Mixfile do
   use Mix.Project
 
-  @version "0.20.0"
+  @version "0.22.0"
   @drivers ~w(phantom selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers [
@@ -13,7 +13,7 @@ defmodule Wallaby.Mixfile do
   def project do
     [app: :wallaby,
      version: @version,
-     elixir: "~> 1.3",
+     elixir: "~> 1.7",
      elixirc_paths: elixirc_paths(Mix.env),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -26,16 +26,17 @@ defmodule Wallaby.Mixfile do
      aliases: ["test.all": ["test", "test.drivers"],
                "test.drivers": &test_drivers/1],
      preferred_cli_env: [
-       "coveralls": :test,
+       coveralls: :test,
        "coveralls.detail": :test,
        "coveralls.post": :test,
        "coveralls.html": :test,
        "coveralls.travis": :test,
+       "coveralls.safe_travis": :test,
        "test.all": :test,
        "test.drivers": :test],
      test_coverage: [tool: ExCoveralls],
      test_paths: test_paths(@selected_driver),
-     dialyzer: [plt_add_apps: [:inets]]]
+     dialyzer: [plt_add_apps: [:inets], ignore_warnings: "dialyzer.ignore_warnings"]]
   end
 
   def application do
@@ -49,12 +50,12 @@ defmodule Wallaby.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 0.12"},
+      {:httpoison, "~> 0.12 or ~> 1.0"},
       {:poison, ">= 1.4.0"},
       {:poolboy, "~> 1.5"},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:earmark, "~> 1.2", only: :dev},
-      {:ex_doc, "~> 0.16", only: :dev},
+      {:ex_doc, "~> 0.20", only: :dev},
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
       {:bypass, "~> 0.8", only: :test},

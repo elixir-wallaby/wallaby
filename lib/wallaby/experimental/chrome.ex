@@ -4,7 +4,7 @@ defmodule Wallaby.Experimental.Chrome do
 
   @behaviour Wallaby.Driver
 
-  @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+)/
+  @chromedriver_version_regex ~r/^ChromeDriver (\d+)\.(\d+)/
 
   alias Wallaby.{Session, DependencyError, Metadata}
   alias Wallaby.Experimental.Chrome.{Chromedriver}
@@ -19,44 +19,68 @@ defmodule Wallaby.Experimental.Chrome do
   def init(:ok) do
     children = [
       worker(Wallaby.Experimental.Chrome.Chromedriver, []),
-      worker(Wallaby.Driver.LogStore, [])
+      worker(Wallaby.Driver.LogStore, [[]])
     ]
 
     supervise(children, strategy: :one_for_one)
   end
 
   def validate do
-    case System.find_executable("chromedriver") do
-      chromedriver when not is_nil(chromedriver) ->
-        {version, 0} = System.cmd("chromedriver", ["--version"])
+    with {:ok, executable} <- find_chromedriver_executable() do
+        {version, 0} = System.cmd(executable, ["--version"])
 
-        version =
-          @chromedriver_version_regex
-          |> Regex.run(version)
-          |> Enum.at(1)
-          |> String.to_integer()
+        @chromedriver_version_regex
+        |> Regex.run(version)
+        |> Enum.drop(1)
+        |> Enum.map(&String.to_integer/1)
+        |> version_check()
+    end
+  end
 
-        if version >= 30 do
-          :ok
-        else
-          exception =
-            DependencyError.exception("""
-            Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
-            chromedriver 2.30 to run correctly.
-            """)
-
-          {:error, exception}
-        end
-
-      _ ->
+  def find_chromedriver_executable do
+    with {:error, :not_found} <-
+            :wallaby
+            |> Application.get_env(:chromedriver, "")
+            |>  Path.expand()
+            |> do_find_chromedriver(),
+         {:error, :not_found} <- do_find_chromedriver("chromedriver") do
         exception =
           DependencyError.exception("""
           Wallaby can't find chromedriver. Make sure you have chromedriver installed
           and included in your path.
+          You can also provide a path using `config :wallaby, chromedriver: <path>`.
           """)
 
         {:error, exception}
     end
+  end
+
+  defp do_find_chromedriver(executable) do
+    executable
+    |> System.find_executable()
+    |> case do
+      path when not is_nil(path) -> {:ok, path}
+      nil -> {:error, :not_found}
+    end
+  end
+
+  defp version_check([major_version, _minor_version]) when major_version > 2 do
+    :ok
+  end
+
+  defp version_check([major_version, minor_version])
+    when major_version == 2 and minor_version >= 30 do
+    :ok
+  end
+
+  defp version_check(_version) do
+    exception =
+      DependencyError.exception("""
+      Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
+      chromedriver 2.30 to run correctly.
+      """)
+
+    {:error, exception}
   end
 
   def start_session(opts) do
@@ -79,6 +103,9 @@ defmodule Wallaby.Experimental.Chrome do
         driver: __MODULE__,
         server: Chromedriver
       }
+
+      if window_size = Keyword.get(opts, :window_size),
+        do: {:ok, _} = set_window_size(session, window_size[:width], window_size[:height])
 
       {:ok, session}
     end
@@ -142,6 +169,8 @@ defmodule Wallaby.Experimental.Chrome do
   def attribute(element, name), do: delegate(:attribute, element, [name])
   @doc false
   def click(element), do: delegate(:click, element)
+  @doc false
+  def hover(element), do: delegate(:hover, element)
   @doc false
   def clear(element), do: delegate(:clear, element)
   @doc false

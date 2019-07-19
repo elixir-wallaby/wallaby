@@ -9,12 +9,21 @@ defmodule Wallaby.Driver.LogStoreTest do
 
   @session "123abc"
 
+  setup do
+    [log_store: start_supervised!({LogStore, name: :test})]
+  end
+
   describe "append_logs/2" do
-    test "only appends new logs" do
-      LogStore.start_link
-      assert LogStore.append_logs(@session, [@l1, @l2]) == [@l1, @l2]
-      assert LogStore.append_logs(@session, [@l2, @l3]) == [@l3]
-      assert LogStore.get_logs(@session) == [@l1, @l2, @l3]
+    test "only appends new logs", %{log_store: log_store} do
+      assert LogStore.append_logs(@session, [@l1, @l2], log_store) == [@l1, @l2]
+      assert LogStore.append_logs(@session, [@l2, @l3], log_store) == [@l3]
+      assert LogStore.get_logs(@session, log_store) == [@l1, @l2, @l3]
+    end
+
+    test "wraps logs in a list if they are not already in one", %{log_store: log_store} do
+      assert LogStore.append_logs(@session, [@l1, @l2], log_store) == [@l1, @l2]
+      assert LogStore.append_logs(@session, @l3, log_store) == [@l3]
+      assert LogStore.get_logs(@session, log_store) == [@l1, @l2, @l3]
     end
   end
 end
