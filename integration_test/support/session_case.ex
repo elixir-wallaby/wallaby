@@ -45,8 +45,15 @@ defmodule Wallaby.Integration.SessionCase do
 
   defp default_opts_for_driver("phantom"), do: []
   defp default_opts_for_driver("selenium") do
-    [driver: Wallaby.Experimental.Selenium,
-     capabilities: %{browserName: "firefox"}]
+    [
+      driver: Wallaby.Experimental.Selenium,
+      capabilities: %{
+        browserName: "firefox",
+        "moz:firefoxOptions": %{
+          args: ["-headless"]
+        }
+      }
+    ]
   end
   defp default_opts_for_driver("chrome"), do: [driver: Wallaby.Experimental.Chrome]
   defp default_opts_for_driver(other) do
