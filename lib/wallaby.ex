@@ -40,9 +40,7 @@ defmodule Wallaby do
   end
 
   @type reason :: any
-  @type start_session_opts ::
-    {:driver, module} |
-    {atom, any}
+  @type start_session_opts :: {atom, any}
 
   @doc """
   Starts a browser session.

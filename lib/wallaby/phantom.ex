@@ -7,7 +7,7 @@ defmodule Wallaby.Phantom do
   Start a Wallaby Session using this driver with the following command:
 
   ```
-  {:ok, session} = Wallaby.start_session(driver: Wallaby.Phantom)
+  {:ok, session} = Wallaby.start_session()
   ```
 
   ## Notes
