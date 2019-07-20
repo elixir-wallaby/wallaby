@@ -309,7 +309,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @spec set_window_position(Session.t(), String.t(), non_neg_integer(), non_neg_integer()) :: :ok
 
   def set_window_position(session, window_handle \\ "current", x_coordinate, y_coordinate) do
-    with {:ok, _resp} <- request(:post, "#{session.url}/window/#{window_handle}/size", %{x: x_coordinate, y: y_coordinate}),
+    with {:ok, _resp} <- request(:post, "#{session.url}/window/#{window_handle}/position", %{x: x_coordinate, y: y_coordinate}),
       do: :ok
   end
 
@@ -323,7 +323,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @spec get_window_position(Session.t(), String.t()) :: {:ok, map()}
 
   def get_window_position(session, window_handle \\ "current") do
-    with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle}/size"),
+    with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle}/position"),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
