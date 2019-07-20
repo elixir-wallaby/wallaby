@@ -170,6 +170,11 @@ defmodule Wallaby.Browser do
       |> fill_in(Query.text_field("name"), with: "Chris")
       |> fill_in(Query.css("#password_field", with: "secret42"))
 
+  ### Note
+  
+  Currently, ChromeDriver only supports [BMP Unicode](http://www.unicode.org/roadmaps/bmp/) characters. Emojis are [SMP](https://www.unicode.org/roadmaps/smp/) characters and will be ignored by ChromeDriver.
+
+  Using JavaScript is a known workaround for filling in fields with Emojis and other non-BMP characters.
   """
   @spec fill_in(parent, Query.t, with: String.t) :: parent
   def fill_in(parent, query, with: value) do
@@ -316,6 +321,12 @@ defmodule Wallaby.Browser do
       iex> Wallaby.Session.send_keys(session, ["Example Text", :enter])
       iex> Wallaby.Session.send_keys(session, [:enter])
       iex> Wallaby.Session.send_keys(session, [:shift, :enter])
+
+  ### Note
+  
+  Currently, ChromeDriver only supports [BMP Unicode](http://www.unicode.org/roadmaps/bmp/) characters. Emojis are [SMP](https://www.unicode.org/roadmaps/smp/) characters and will be ignored by ChromeDriver.
+
+  Using JavaScript is a known workaround for filling in fields with Emojis and other non-BMP characters.
   """
   @spec send_keys(parent, Query.t, Element.keys_to_send) :: parent
   @spec send_keys(parent, Element.keys_to_send) :: parent
