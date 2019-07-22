@@ -275,7 +275,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Sets the size of the window
 
-  If the window_handle argument is not provided, the currently active window
+  If the window_handle argument is not provided, the currently focused window
   will be resized.
   """
   @spec set_window_size(Session.t, non_neg_integer, non_neg_integer) :: {:ok, map}
@@ -289,7 +289,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Gets the size of the window
 
-  If the window_handle argument is not provided, the size of the currently active window
+  If the window_handle argument is not provided, the size of the currently focused window
   will be returned.
   """
   @spec get_window_size(Session.t) :: {:ok, map}
@@ -304,7 +304,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Changes the position of the window
 
-  If the window_handle argument is not provided, the currently active window will be moved.
+  If the window_handle argument is not provided, the currently focused window will be moved.
   """
   @spec set_window_position(Session.t, non_neg_integer, non_neg_integer) :: {:ok, map}
   @spec set_window_position(Session.t, String.t, non_neg_integer, non_neg_integer) :: {:ok, map()}
@@ -319,7 +319,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Gets the position of the window
 
-  If the window_handle argument is not provided, the position of the currently active window
+  If the window_handle argument is not provided, the position of the currently focused window
   will be returned.
   """
   @spec get_window_position(Session.t) :: {:ok, map}
@@ -334,7 +334,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Maximizes the window if not already maximized.
 
-  If the window_handle argument is not provided, the currently active window
+  If the window_handle argument is not provided, the currently focused window
   will be maximized.
   """
   @spec maximize_window(Session.t) :: {:ok, map}
