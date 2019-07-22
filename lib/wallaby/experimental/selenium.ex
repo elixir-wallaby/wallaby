@@ -102,8 +102,7 @@ defmodule Wallaby.Experimental.Selenium do
   end
 
   def get_window_size(%Session{} = session) do
-    handle = WebdriverClient.window_handle(session)
-    WebdriverClient.get_window_size(session, handle)
+    WebdriverClient.get_window_size(session)
   end
 
   def page_source(%Session{} = session) do
@@ -119,8 +118,7 @@ defmodule Wallaby.Experimental.Selenium do
   end
 
   def set_window_size(%Session{} = session, width, height) do
-    handle = WebdriverClient.window_handle(session)
-    WebdriverClient.set_window_size(session, handle, width, height)
+    WebdriverClient.set_window_size(session, width, height)
   end
 
   def visit(%Session{} = session, path) do

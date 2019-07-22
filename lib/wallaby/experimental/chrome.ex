@@ -128,13 +128,11 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   def get_window_size(%Session{} = session) do
-    handle = delegate(:window_handle, session)
-    delegate(:get_window_size, session, [handle])
+    delegate(:get_window_size, session, [])
   end
 
   def set_window_size(session, width, height) do
-    handle = delegate(:window_handle, session)
-    delegate(:set_window_size, session, [handle, width, height])
+    delegate(:set_window_size, session, [width, height])
   end
 
   defp delegate(fun, element_or_session, args \\ []) do
