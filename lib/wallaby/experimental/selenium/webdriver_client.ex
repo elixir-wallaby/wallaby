@@ -428,7 +428,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Closes the current window (or tab)
+  Closes the currently focused window (or tab)
   """
   @spec close_window(Session.t) :: {:ok, map}
   def close_window(session) do
