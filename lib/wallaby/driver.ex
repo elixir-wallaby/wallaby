@@ -62,9 +62,14 @@ defmodule Wallaby.Driver do
   @callback dismiss_prompt(Session.t, open_dialog_fn) :: {:ok, [String.t]} | {:error, reason}
 
   @doc """
-  Invoked to retrieve the size of the window.
+  Invoked to retrieve the size of the currently focused window.
   """
   @callback get_window_size(Session.t) :: {:ok, window_dimension} | {:error, reason}
+
+  @doc """
+  Invoked to retrieve the size of the currently identified by the handle.
+  """
+  @callback get_window_size(Session.t, String.t) :: {:ok, window_dimension} | {:error, reason}
 
   @doc """
   Invoked to retrieve the html source of the current page.
@@ -82,9 +87,14 @@ defmodule Wallaby.Driver do
   @callback set_cookie(Session.t, String.t, String.t) :: {:ok, any} | {:error, reason}
 
   @doc """
-  Invoked to set the size of the window.
+  Invoked to set the size of the currently focused window.
   """
   @callback set_window_size(Session.t, pos_integer, pos_integer) :: {:ok, any} | {:error, reason}
+
+  @doc """
+  Invoked to set the size of the window identified by the handle.
+  """
+  @callback set_window_size(Session.t, String.t, pos_integer, pos_integer) :: {:ok, any} | {:error, reason}
 
   @doc """
   Invoked to visit a url.

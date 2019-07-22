@@ -77,6 +77,10 @@ defmodule Wallaby.Experimental.Selenium do
     end
   end
 
+  defdelegate window_handle(session), to: WebdriverClient
+  defdelegate window_handles(session), to: WebdriverClient
+  defdelegate focus_window(session, window_handle), to: WebdriverClient
+
   defdelegate accept_alert(session, fun), to: WebdriverClient
   defdelegate dismiss_alert(session, fun), to: WebdriverClient
   defdelegate accept_confirm(session, fun), to: WebdriverClient

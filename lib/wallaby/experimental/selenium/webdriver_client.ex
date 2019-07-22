@@ -421,8 +421,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   """
   @spec focus_window(Session.t, String.t) :: {:ok, map}
   def focus_window(session, window_handle_or_name) do
-    with {:ok, resp} <- request(:post, "#{session.url}/window", %{name: window_handle_or_name}),
-          # do we need to add `handle: window_handle` ?
+    with {:ok, resp} <- request(:post, "#{session.url}/window", %{name: window_handle_or_name, handle: window_handle_or_name}),
+          # without :handle it doesn't work in firefox
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
