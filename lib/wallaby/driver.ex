@@ -125,17 +125,20 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to set the size of the window identified by the handle.
   """
-  @callback set_window_size(Session.t, String.t, pos_integer, pos_integer) :: {:ok, any} | {:error, reason}
+  @callback set_window_size(Session.t, String.t, pos_integer, pos_integer) :: {:ok, any} |
+    {:error, reason}
 
   @doc """
   Invoked to set the position of the currently focused window.
   """
-  @callback set_window_position(Session.t, pos_integer, pos_integer) :: {:ok, any} | {:error, reason}
+  @callback set_window_position(Session.t, pos_integer, pos_integer) :: {:ok, any} |
+    {:error, reason}
 
   @doc """
   Invoked to set the position of the window identified by the handle.
   """
-  @callback set_window_position(Session.t, String.t, pos_integer, pos_integer) :: {:ok, any} | {:error, reason}
+  @callback set_window_position(Session.t, String.t, pos_integer, pos_integer) :: {:ok, any} |
+    {:error, reason}
 
   @doc """
   Invoked to visit a url.

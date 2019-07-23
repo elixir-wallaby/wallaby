@@ -209,7 +209,6 @@ defmodule Wallaby.Phantom do
     Application.get_env(:wallaby, :phantomjs, "phantomjs")
   end
 
-
   def window_handle(_session), do: {:error, :not_supported}
   def window_handles(_session), do: {:error, :not_supported}
   def focus_window(_session, _window_handle), do: {:error, :not_supported}

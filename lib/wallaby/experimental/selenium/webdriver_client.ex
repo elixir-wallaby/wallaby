@@ -421,13 +421,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   """
   @spec focus_window(Session.t, String.t) :: {:ok, map}
   def focus_window(session, window_handle_or_name) do
-    with {:ok, resp} <- request(:post, "#{session.url}/window", %{name: window_handle_or_name, handle: window_handle_or_name}),
-          # docs say it should be `name:` https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidwindow
-          # official java client has only `handle:` https://github.com/SeleniumHQ/selenium/blob/aa041a8f9ed39014734510c347d307756b179493/java/client/src/org/openqa/selenium/remote/DriverCommand.java#L122
-          # without `handle:` it doesn't work for Firefox
-          # without `name:` it doesn't work for Chrome
-          # in official java client it works for Chrome through a javascript workaround: https://github.com/SeleniumHQ/selenium/blob/96fec3ca49a1462c7881fcd0c06194cb565bdd2d/java/client/src/org/openqa/selenium/remote/RemoteWebDriver.java#L968
-          # I think we should just keep both params
+    with {:ok, resp} <- request(:post, "#{session.url}/window",
+                                 %{
+                                   name: window_handle_or_name,
+                                   handle: window_handle_or_name
+                                }),
+          # In the Selenium WebDriver Protocol, the parameter is called name:
+          #  https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidwindow
+          # In the new W3C protocol, the parameter is called handle:
+          #  https://w3c.github.io/webdriver/#switch-to-window
+          # Browsers are starting to support only the new W3C protocol,
+          # so we're adding `handle` as well to have it working until
+          # we implement a separate client module for the new protocol.
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
@@ -444,6 +449,13 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   @spec cast_as_element(Session.t | Element.t, map) :: Element.t
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
+          # In the Selenium WebDriver Protocol, the identifier is "ELEMENT":
+          #  https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#webelement-json-object
+          # In the new W3C protocol, the identifier is a specific constant:
+          #  https://w3c.github.io/webdriver/#elements
+          # Browsers are starting to support only the new W3C protocol,
+          # so we're reading the constant as well to have it working until
+          # we implement a separate client module for the new protocol.
     cast_as_element(parent, %{@web_element_identifier => id})
   end
   defp cast_as_element(parent, %{@web_element_identifier => id}) do

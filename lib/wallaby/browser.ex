@@ -231,7 +231,6 @@ defmodule Wallaby.Browser do
     Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
   end
 
-
   def window_handle(%Session{driver: driver} = session) do
     {:ok, handle} = driver.window_handle(session)
     handle
