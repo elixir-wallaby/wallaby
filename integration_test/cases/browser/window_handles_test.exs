@@ -26,13 +26,46 @@ defmodule Wallaby.Integration.Browser.WindowHandlesTest do
     |> click(Query.link("New window"))
     :timer.sleep(200)
 
-    handles = window_handles(session)
-    assert length(handles) == 3
+    handles2 = window_handles(session)
+    assert length(handles2) == 3
 
-    new_window_handle = Enum.find(handles, fn handle -> handle not in [initial_handle, new_tab_handle] end)
+    new_window_handle = Enum.find(handles2, fn handle -> handle not in [initial_handle, new_tab_handle] end)
     focus_window(session, new_window_handle)
 
     assert new_window_handle == window_handle(session)
     assert_has(session, Query.css("h1", text: "Page 2"))
+  end
+
+  test "closing tabs and windows", %{session: session} do
+    session
+    |> visit("windows.html")
+
+    initial_handle = window_handle(session)
+
+    session
+    |> click(Query.link("New tab"))
+    :timer.sleep(200)
+
+    new_tab_handle = Enum.find(window_handles(session), fn handle -> handle != initial_handle end)
+
+    session
+    |> focus_window(new_tab_handle)
+    |> close_window()
+    |> focus_window(initial_handle)
+
+    assert [initial_handle] == window_handles(session)
+
+    session
+    |> click(Query.link("New window"))
+    :timer.sleep(200)
+
+    new_window_handle = Enum.find(window_handles(session), fn handle -> handle != initial_handle end)
+
+    session
+    |> focus_window(new_window_handle)
+    |> close_window()
+    |> focus_window(initial_handle)
+
+    assert [initial_handle] == window_handles(session)
   end
 end
