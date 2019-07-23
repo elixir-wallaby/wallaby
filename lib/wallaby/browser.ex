@@ -251,7 +251,6 @@ defmodule Wallaby.Browser do
     handles
   end
 
-
   @doc """
   Changes the driver focus to the window identified by the handle.
   """
