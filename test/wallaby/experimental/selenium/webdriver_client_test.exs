@@ -949,7 +949,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       handle_request bypass, fn conn ->
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/window"
-        assert conn.body_params == %{"name" => window_handle_id}
+        assert conn.body_params == %{"name" => window_handle_id, "handle" => window_handle_id}
 
         send_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
