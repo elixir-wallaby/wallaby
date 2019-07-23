@@ -8,6 +8,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   @type http_method :: :post | :get | :delete
   @type url :: String.t
+  @type parent :: Element.t
+                | Session.t
 
   @web_element_identifier "element-6066-11e4-a52e-4f735466cecf"
 
@@ -275,7 +277,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Sets the size of the window
   """
-  @spec set_window_size(Session.t, non_neg_integer, non_neg_integer) :: {:ok, map}
+  @spec set_window_size(parent, non_neg_integer, non_neg_integer) :: {:ok, map}
   def set_window_size(session, width, height) do
     with {:ok, resp} <- request(:post, "#{session.url}/window/current/size", %{width: width, height: height}),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -285,7 +287,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Gets the size of the window
   """
-  @spec get_window_size(Session.t) :: {:ok, map}
+  @spec get_window_size(parent) :: {:ok, map}
   def get_window_size(session) do
     with {:ok, resp} <- request(:get, "#{session.url}/window/current/size"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -295,7 +297,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Changes the position of the window
   """
-  @spec set_window_position(Session.t, non_neg_integer, non_neg_integer) :: {:ok, map}
+  @spec set_window_position(parent, non_neg_integer, non_neg_integer) :: {:ok, map}
   def set_window_position(session, x_coordinate, y_coordinate) do
     with {:ok, resp} <-
            request(:post, "#{session.url}/window/current/position", %{x: x_coordinate, y: y_coordinate}),
@@ -306,7 +308,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Gets the position of the window
   """
-  @spec get_window_position(Session.t) :: {:ok, map}
+  @spec get_window_position(parent) :: {:ok, map}
   def get_window_position(session) do
     with {:ok, resp} <- request(:get, "#{session.url}/window/current/position"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -316,7 +318,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Maximizes the window if not already maximized.
   """
-  @spec maximize_window(Session.t) :: {:ok, map}
+  @spec maximize_window(parent) :: {:ok, map}
   def maximize_window(session) do
     with {:ok, resp} <- request(:post, "#{session.url}/window/current/maximize"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -373,7 +375,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Retrieves the list of window handles of all windows (or tabs) available to the session
   """
-  @spec window_handles(Session.t) :: {:ok, list(String.t)}
+  @spec window_handles(parent) :: {:ok, list(String.t)}
   def window_handles(session) do
     with {:ok, resp} <- request(:get, "#{session.url}/window_handles"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -383,7 +385,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Retrieves the window handle for the currently focused window (or tab) for the session
   """
-  @spec window_handle(Session.t) :: {:ok, String.t}
+  @spec window_handle(parent) :: {:ok, String.t}
   def window_handle(session) do
     with {:ok, resp} <- request(:get, "#{session.url}/window_handle"),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -396,7 +398,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   The window to change focus to may be specified by its server assigned
   window handle, or by the value of its name attribute.
   """
-  @spec focus_window(Session.t, String.t) :: {:ok, map}
+  @spec focus_window(parent, String.t) :: {:ok, map}
   def focus_window(session, window_handle_or_name) do
     with {:ok, resp} <- request(:post, "#{session.url}/window",
                                  %{
@@ -417,7 +419,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Closes the currently focused window (or tab)
   """
-  @spec close_window(Session.t) :: {:ok, map}
+  @spec close_window(parent) :: {:ok, map}
   def close_window(session) do
     with {:ok, resp} <- request(:delete, "#{session.url}/window"),
           {:ok, value} <- Map.fetch(resp, "value"),
