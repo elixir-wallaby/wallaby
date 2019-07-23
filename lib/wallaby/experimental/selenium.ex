@@ -81,6 +81,8 @@ defmodule Wallaby.Experimental.Selenium do
   defdelegate window_handles(session), to: WebdriverClient
   defdelegate focus_window(session, window_handle), to: WebdriverClient
   defdelegate close_window(session), to: WebdriverClient
+  defdelegate get_window_size(session), to: WebdriverClient
+  defdelegate set_window_size(session, width, height), to: WebdriverClient
   defdelegate get_window_position(session), to: WebdriverClient
   defdelegate set_window_position(session, x, y), to: WebdriverClient
   defdelegate maximize_window(session), to: WebdriverClient
@@ -109,10 +111,6 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.current_url(session)
   end
 
-  def get_window_size(%Session{} = session) do
-    WebdriverClient.get_window_size(session)
-  end
-
   def page_source(%Session{} = session) do
     WebdriverClient.page_source(session)
   end
@@ -123,10 +121,6 @@ defmodule Wallaby.Experimental.Selenium do
 
   def set_cookie(%Session{} = session, key, value) do
     WebdriverClient.set_cookie(session, key, value)
-  end
-
-  def set_window_size(%Session{} = session, width, height) do
-    WebdriverClient.set_window_size(session, width, height)
   end
 
   def visit(%Session{} = session, path) do

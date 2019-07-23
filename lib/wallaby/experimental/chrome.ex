@@ -127,27 +127,11 @@ defmodule Wallaby.Experimental.Chrome do
     end
   end
 
-  def get_window_size(%Session{} = session) do
-    delegate(:get_window_size, session, [])
-  end
-
-  def set_window_size(session, width, height) do
-    delegate(:set_window_size, session, [width, height])
-  end
-
   defp delegate(fun, element_or_session, args \\ []) do
     check_logs!(element_or_session, fn ->
       apply(WebdriverClient, fun, [element_or_session | args])
     end)
   end
-
-  defdelegate window_handle(session), to: WebdriverClient
-  defdelegate window_handles(session), to: WebdriverClient
-  defdelegate focus_window(session, window_handle), to: WebdriverClient
-  defdelegate close_window(session), to: WebdriverClient
-  defdelegate get_window_position(session), to: WebdriverClient
-  defdelegate set_window_position(session, x, y), to: WebdriverClient
-  defdelegate maximize_window(session), to: WebdriverClient
 
   defdelegate accept_alert(session, fun), to: WebdriverClient
   defdelegate dismiss_alert(session, fun), to: WebdriverClient
@@ -157,6 +141,27 @@ defmodule Wallaby.Experimental.Chrome do
   defdelegate dismiss_prompt(session, fun), to: WebdriverClient
   defdelegate parse_log(log), to: Wallaby.Experimental.Chrome.Logger
 
+  @doc false
+  def window_handle(%Session{} = session), do: delegate(:window_handle, session)
+  @doc false
+  def window_handles(%Session{} = session), do: delegate(:window_handles, session)
+  @doc false
+  def focus_window(%Session{} = session, window_handle),
+    do: delegate(:focus_window, session, [window_handle])
+  @doc false
+  def close_window(%Session{} = session), do: delegate(:close_window, session)
+  @doc false
+  def get_window_size(%Session{} = session), do: delegate(:get_window_size, session)
+  @doc false
+  def set_window_size(%Session{} = session, width, height),
+    do: delegate(:set_window_size, session, [width, height])
+  @doc false
+  def get_window_position(%Session{} = session), do: delegate(:get_window_position, session)
+  @doc false
+  def set_window_position(%Session{} = session, x, y),
+    do: delegate(:set_window_position, session, [x, y])
+  @doc false
+  def maximize_window(%Session{} = session), do: delegate(:maximize_window, session)
   @doc false
   def cookies(session), do: delegate(:cookies, session)
   @doc false
