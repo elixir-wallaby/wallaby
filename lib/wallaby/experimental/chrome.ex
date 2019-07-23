@@ -145,14 +145,9 @@ defmodule Wallaby.Experimental.Chrome do
   defdelegate window_handles(session), to: WebdriverClient
   defdelegate focus_window(session, window_handle), to: WebdriverClient
   defdelegate close_window(session), to: WebdriverClient
-  defdelegate get_window_size(session, window_handle), to: WebdriverClient
-  defdelegate set_window_size(session, window_handle, width, height), to: WebdriverClient
   defdelegate get_window_position(session), to: WebdriverClient
-  defdelegate get_window_position(session, window_handle), to: WebdriverClient
   defdelegate set_window_position(session, x, y), to: WebdriverClient
-  defdelegate set_window_position(session, window_handle, x, y), to: WebdriverClient
   defdelegate maximize_window(session), to: WebdriverClient
-  defdelegate maximize_window(session, window_handle), to: WebdriverClient
 
   defdelegate accept_alert(session, fun), to: WebdriverClient
   defdelegate dismiss_alert(session, fun), to: WebdriverClient

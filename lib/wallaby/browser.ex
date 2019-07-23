@@ -261,11 +261,6 @@ defmodule Wallaby.Browser do
     size
   end
 
-  def window_size(%Session{driver: driver} = session, window_handle) do
-    {:ok, size} = driver.get_window_size(session, window_handle)
-    size
-  end
-
   @doc """
   Sets the size of the sessions window.
   """
@@ -276,18 +271,8 @@ defmodule Wallaby.Browser do
     session
   end
 
-  def resize_window(%Session{driver: driver} = session, window_handle, width, height) do
-    {:ok, _} = driver.set_window_size(session, window_handle, width, height)
-    session
-  end
-
   def maximize_window(%Session{driver: driver} = session) do
     {:ok, _} = driver.maximize_window(session)
-    session
-  end
-
-  def maximize_window(%Session{driver: driver} = session, window_handle) do
-    {:ok, _} = driver.maximize_window(session, window_handle)
     session
   end
 
@@ -296,18 +281,8 @@ defmodule Wallaby.Browser do
     position
   end
 
-  def window_position(%Session{driver: driver} = session, window_handle) do
-    {:ok, position} = driver.get_window_position(session, window_handle)
-    position
-  end
-
   def move_window(%Session{driver: driver} = session, x, y) do
     {:ok, _} = driver.set_window_position(session, x, y)
-    session
-  end
-
-  def move_window(%Session{driver: driver} = session, window_handle, x, y) do
-    {:ok, _} = driver.set_window_position(session, window_handle, x, y)
     session
   end
 

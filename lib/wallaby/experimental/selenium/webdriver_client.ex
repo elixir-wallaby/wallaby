@@ -274,74 +274,51 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   @doc """
   Sets the size of the window
-
-  If the window_handle argument is not provided, the currently focused window
-  will be resized.
   """
   @spec set_window_size(Session.t, non_neg_integer, non_neg_integer) :: {:ok, map}
-  @spec set_window_size(Session.t, String.t, non_neg_integer, non_neg_integer) :: {:ok, map}
-  def set_window_size(session, window_handle \\ "current", width, height) do
-    with {:ok, resp} <- request(:post, "#{session.url}/window/#{window_handle}/size", %{width: width, height: height}),
+  def set_window_size(session, width, height) do
+    with {:ok, resp} <- request(:post, "#{session.url}/window/current/size", %{width: width, height: height}),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
 
   @doc """
   Gets the size of the window
-
-  If the window_handle argument is not provided, the size of the currently focused window
-  will be returned.
   """
   @spec get_window_size(Session.t) :: {:ok, map}
-  @spec get_window_size(Session.t, String.t) :: {:ok, map}
-
-  def get_window_size(session, window_handle \\ "current") do
-    with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle}/size"),
+  def get_window_size(session) do
+    with {:ok, resp} <- request(:get, "#{session.url}/window/current/size"),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
 
   @doc """
   Changes the position of the window
-
-  If the window_handle argument is not provided, the currently focused window will be moved.
   """
   @spec set_window_position(Session.t, non_neg_integer, non_neg_integer) :: {:ok, map}
-  @spec set_window_position(Session.t, String.t, non_neg_integer, non_neg_integer) :: {:ok, map()}
-
-  def set_window_position(session, window_handle \\ "current", x_coordinate, y_coordinate) do
+  def set_window_position(session, x_coordinate, y_coordinate) do
     with {:ok, resp} <-
-           request(:post, "#{session.url}/window/#{window_handle}/position", %{x: x_coordinate, y: y_coordinate}),
+           request(:post, "#{session.url}/window/current/position", %{x: x_coordinate, y: y_coordinate}),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
 
   @doc """
   Gets the position of the window
-
-  If the window_handle argument is not provided, the position of the currently focused window
-  will be returned.
   """
   @spec get_window_position(Session.t) :: {:ok, map}
-  @spec get_window_position(Session.t, String.t) :: {:ok, map}
-
-  def get_window_position(session, window_handle \\ "current") do
-    with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle}/position"),
+  def get_window_position(session) do
+    with {:ok, resp} <- request(:get, "#{session.url}/window/current/position"),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
 
   @doc """
   Maximizes the window if not already maximized.
-
-  If the window_handle argument is not provided, the currently focused window
-  will be maximized.
   """
   @spec maximize_window(Session.t) :: {:ok, map}
-  @spec maximize_window(Session.t, String.t) :: {:ok, map}
-
-  def maximize_window(session, window_handle \\ "current") do
-    with {:ok, resp} <- request(:post, "#{session.url}/window/#{window_handle}/maximize"),
+  def maximize_window(session) do
+    with {:ok, resp} <- request(:post, "#{session.url}/window/current/maximize"),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end

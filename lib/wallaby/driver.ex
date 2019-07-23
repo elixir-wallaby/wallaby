@@ -78,29 +78,14 @@ defmodule Wallaby.Driver do
   @callback get_window_position(Session.t) :: {:ok, window_position} | {:error, reason}
 
   @doc """
-  Invoked to retrieve the position of the window identified by the handle.
-  """
-  @callback get_window_position(Session.t, String.t) :: {:ok, window_position} | {:error, reason}
-
-  @doc """
   Invoked to retrieve the size of the currently focused window.
   """
   @callback get_window_size(Session.t) :: {:ok, window_dimension} | {:error, reason}
 
   @doc """
-  Invoked to retrieve the size of the window identified by the handle.
-  """
-  @callback get_window_size(Session.t, String.t) :: {:ok, window_dimension} | {:error, reason}
-
-  @doc """
   Invoked to maximize the currently focused window.
   """
   @callback maximize_window(Session.t) :: {:ok, any} | {:error, reason}
-
-  @doc """
-  Invoked to maximize the window identified by the handle.
-  """
-  @callback maximize_window(Session.t, String.t) :: {:ok, any} | {:error, reason}
 
   @doc """
   Invoked to retrieve the html source of the current page.
@@ -123,21 +108,9 @@ defmodule Wallaby.Driver do
   @callback set_window_size(Session.t, pos_integer, pos_integer) :: {:ok, any} | {:error, reason}
 
   @doc """
-  Invoked to set the size of the window identified by the handle.
-  """
-  @callback set_window_size(Session.t, String.t, pos_integer, pos_integer) :: {:ok, any} |
-    {:error, reason}
-
-  @doc """
   Invoked to set the position of the currently focused window.
   """
   @callback set_window_position(Session.t, pos_integer, pos_integer) :: {:ok, any} |
-    {:error, reason}
-
-  @doc """
-  Invoked to set the position of the window identified by the handle.
-  """
-  @callback set_window_position(Session.t, String.t, pos_integer, pos_integer) :: {:ok, any} |
     {:error, reason}
 
   @doc """
