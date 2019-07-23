@@ -1,9 +1,12 @@
 language: elixir
 elixir:
   - 1.7.4
-  - 1.8.1
+  - 1.8.2
+  - 1.9.1
 otp_release:
   - 20.3
+  - 21.3
+  - 22.0
 env:
   - ""
   - WALLABY_DRIVER=phantom
