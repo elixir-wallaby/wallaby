@@ -6,3 +6,4 @@ Code.require_file "../cases/browser/js_errors_test.exs", __DIR__
 Code.require_file "../cases/browser/hover_test.exs", __DIR__
 Code.require_file "../cases/element/hover_test.exs", __DIR__
 Code.require_file "../cases/browser/window_handles_test.exs", __DIR__
+Code.require_file "../cases/browser/window_position_test.exs", __DIR__
