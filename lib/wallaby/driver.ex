@@ -40,7 +40,7 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to close the currently focused window.
   """
-  @callback close_window(Session.t) :: {:ok, any} | {:error, reason}
+  @callback close_window(Session.t | Element.t) :: {:ok, any} | {:error, reason}
 
   @doc """
   Invoked to retrieve cookies for the given session.
@@ -70,22 +70,22 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to change the driver focus to window specified by handle.
   """
-  @callback focus_window(Session.t, String.t) :: {:ok, any} | {:error, reason}
+  @callback focus_window(Session.t | Element.t, String.t) :: {:ok, any} | {:error, reason}
 
   @doc """
   Invoked to retrieve the position of the currently focused window.
   """
-  @callback get_window_position(Session.t) :: {:ok, window_position} | {:error, reason}
+  @callback get_window_position(Session.t | Element.t) :: {:ok, window_position} | {:error, reason}
 
   @doc """
   Invoked to retrieve the size of the currently focused window.
   """
-  @callback get_window_size(Session.t) :: {:ok, window_dimension} | {:error, reason}
+  @callback get_window_size(Session.t | Element.t) :: {:ok, window_dimension} | {:error, reason}
 
   @doc """
   Invoked to maximize the currently focused window.
   """
-  @callback maximize_window(Session.t) :: {:ok, any} | {:error, reason}
+  @callback maximize_window(Session.t | Element.t) :: {:ok, any} | {:error, reason}
 
   @doc """
   Invoked to retrieve the html source of the current page.
@@ -105,12 +105,12 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to set the size of the currently focused window.
   """
-  @callback set_window_size(Session.t, pos_integer, pos_integer) :: {:ok, any} | {:error, reason}
+  @callback set_window_size(Session.t | Element.t, pos_integer, pos_integer) :: {:ok, any} | {:error, reason}
 
   @doc """
   Invoked to set the position of the currently focused window.
   """
-  @callback set_window_position(Session.t, pos_integer, pos_integer) :: {:ok, any} |
+  @callback set_window_position(Session.t | Element.t, pos_integer, pos_integer) :: {:ok, any} |
     {:error, reason}
 
   @doc """
@@ -180,10 +180,10 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to get the handle for the currently focused window.
   """
-  @callback window_handle(Session.t) :: {:ok, String.t} | {:error, reason}
+  @callback window_handle(Session.t | Element.t) :: {:ok, String.t} | {:error, reason}
 
   @doc """
   Invoked to get the list of handles for all windows.
   """
-  @callback window_handles(Session.t) :: {:ok, [String.t]} | {:error, reason}
+  @callback window_handles(Session.t | Element.t) :: {:ok, [String.t]} | {:error, reason}
 end
