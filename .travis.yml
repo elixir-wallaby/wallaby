@@ -20,6 +20,7 @@ matrix:
 sudo: required
 cache:
   directories:
+    - _build
     - deps
 
 dist: trusty
