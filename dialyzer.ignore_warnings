@@ -1,4 +1,3 @@
 :0: Unknown function 'Elixir.Mix':shell/0
 :0: Unknown function 'Elixir.Mix.Tasks.Coveralls':do_run/2
 lib/mix/tasks/safe_travis.ex:1: Callback info about the 'Elixir.Mix.Task' behaviour is not available
-lib/wallaby/experimental/chrome/logger.ex:35: The pattern

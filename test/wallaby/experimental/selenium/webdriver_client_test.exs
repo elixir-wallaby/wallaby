@@ -718,7 +718,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       handle_request bypass, fn conn ->
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/keys"
-        assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Poison.decode!
+        assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!
 
         resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
@@ -738,7 +738,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       handle_request bypass, fn conn ->
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/value"
-        assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Poison.decode!
+        assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!
 
         resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",

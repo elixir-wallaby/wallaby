@@ -26,7 +26,7 @@ defmodule Wallaby.HTTPClient do
     make_request(method, url, params)
   end
   def request(method, url, params, _opts) do
-    make_request(method, url, Poison.encode!(params))
+    make_request(method, url, Jason.encode!(params))
   end
 
   defp make_request(method, url, body), do: make_request(method, url, body, 0, [])
@@ -59,7 +59,7 @@ defmodule Wallaby.HTTPClient do
         {:ok, %{"value" => nil}}
 
       {:ok, %HTTPoison.Response{body: body}} ->
-        with {:ok, decoded} <- Poison.decode(body),
+        with {:ok, decoded} <- Jason.decode(body),
              {:ok, response} <- check_status(decoded),
              {:ok, validated} <- check_for_response_errors(response),
           do: {:ok, validated}
