@@ -208,4 +208,12 @@ defmodule Wallaby.Phantom do
   defp configured_phantom_js do
     Application.get_env(:wallaby, :phantomjs, "phantomjs")
   end
+
+  def window_handle(_session), do: {:error, :not_supported}
+  def window_handles(_session), do: {:error, :not_supported}
+  def focus_window(_session, _window_handle), do: {:error, :not_supported}
+  def close_window(_session), do: {:error, :not_supported}
+  def get_window_position(_session), do: {:error, :not_supported}
+  def set_window_position(_session, _x, _y), do: {:error, :not_supported}
+  def maximize_window(_session), do: {:error, :not_supported}
 end

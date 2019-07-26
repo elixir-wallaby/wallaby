@@ -13,13 +13,12 @@ defmodule Wallaby.Integration.Browser.WindowSizeTest do
 
   describe "default window size" do
     setup do
-      inject_test_session(%{skip_test_session: true})
-
       {:ok, session} = start_test_session(window_size: [width: 600, height: 400])
 
       {:ok, %{session: session}}
     end
 
+    @tag :skip_test_session
     test "sets window size from config option", %{session: session} do
       window_size =
         session

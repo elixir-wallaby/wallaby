@@ -7,6 +7,7 @@ defmodule Wallaby.Driver do
   @type url :: String.t
   @type open_dialog_fn :: ((Session.t) -> any)
   @type window_dimension :: %{String.t => pos_integer, String.t => pos_integer}
+  @type window_position :: %{String.t => pos_integer, String.t => pos_integer}
 
   @type on_start_session :: {:ok, Session.t} | {:error, reason}
 
@@ -37,6 +38,11 @@ defmodule Wallaby.Driver do
     {:ok, [String.t]} | {:error, reason}
 
   @doc """
+  Invoked to close the currently focused window.
+  """
+  @callback close_window(Session.t | Element.t) :: {:ok, any} | {:error, reason}
+
+  @doc """
   Invoked to retrieve cookies for the given session.
   """
   @callback cookies(Session.t) :: {:ok, [%{String.t => String.t}]} | {:error, reason}
@@ -62,9 +68,24 @@ defmodule Wallaby.Driver do
   @callback dismiss_prompt(Session.t, open_dialog_fn) :: {:ok, [String.t]} | {:error, reason}
 
   @doc """
-  Invoked to retrieve the size of the window.
+  Invoked to change the driver focus to window specified by handle.
   """
-  @callback get_window_size(Session.t) :: {:ok, window_dimension} | {:error, reason}
+  @callback focus_window(Session.t | Element.t, String.t) :: {:ok, any} | {:error, reason}
+
+  @doc """
+  Invoked to retrieve the position of the currently focused window.
+  """
+  @callback get_window_position(Session.t | Element.t) :: {:ok, window_position} | {:error, reason}
+
+  @doc """
+  Invoked to retrieve the size of the currently focused window.
+  """
+  @callback get_window_size(Session.t | Element.t) :: {:ok, window_dimension} | {:error, reason}
+
+  @doc """
+  Invoked to maximize the currently focused window.
+  """
+  @callback maximize_window(Session.t | Element.t) :: {:ok, any} | {:error, reason}
 
   @doc """
   Invoked to retrieve the html source of the current page.
@@ -82,9 +103,16 @@ defmodule Wallaby.Driver do
   @callback set_cookie(Session.t, String.t, String.t) :: {:ok, any} | {:error, reason}
 
   @doc """
-  Invoked to set the size of the window.
+  Invoked to set the size of the currently focused window.
   """
-  @callback set_window_size(Session.t, pos_integer, pos_integer) :: {:ok, any} | {:error, reason}
+  @callback set_window_size(Session.t | Element.t, pos_integer, pos_integer) :: {:ok, any} |
+    {:error, reason}
+
+  @doc """
+  Invoked to set the position of the currently focused window.
+  """
+  @callback set_window_position(Session.t | Element.t, pos_integer, pos_integer) :: {:ok, any} |
+    {:error, reason}
 
   @doc """
   Invoked to visit a url.
@@ -149,4 +177,14 @@ defmodule Wallaby.Driver do
   Invoked to take a screenshot of the session/element.
   """
   @callback take_screenshot(Session.t | Element.t) :: binary | {:error, reason}
+
+  @doc """
+  Invoked to get the handle for the currently focused window.
+  """
+  @callback window_handle(Session.t | Element.t) :: {:ok, String.t} | {:error, reason}
+
+  @doc """
+  Invoked to get the list of handles for all windows.
+  """
+  @callback window_handles(Session.t | Element.t) :: {:ok, [String.t]} | {:error, reason}
 end

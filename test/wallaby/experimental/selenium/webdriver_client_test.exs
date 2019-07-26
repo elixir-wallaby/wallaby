@@ -584,13 +584,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
   describe "set_window_size/3" do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
-      window_handle_id = "my-window-handle"
       height = 600
       width = 400
 
       handle_request bypass, fn conn ->
         assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/window/#{window_handle_id}/size"
+        assert conn.request_path == "/session/#{session.id}/window/current/size"
         assert conn.body_params == %{"height" => height, "width" => width}
 
         send_resp(conn, 200, ~s<{
@@ -600,18 +599,17 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert {:ok, %{}} = Client.set_window_size(session, window_handle_id, width, height)
+      assert {:ok, %{}} = Client.set_window_size(session, width, height)
     end
   end
 
   describe "get_window_size/1" do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
-      window_handle_id = "my-window-handle"
 
       handle_request bypass, fn conn ->
         assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/window/#{window_handle_id}/size"
+        assert conn.request_path == "/session/#{session.id}/window/current/size"
 
         send_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
@@ -623,7 +621,70 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert {:ok, %{"height" => 600, "width" => 400}} == Client.get_window_size(session, window_handle_id)
+      assert {:ok, %{"height" => 600, "width" => 400}} == Client.get_window_size(session)
+    end
+  end
+
+  describe "set_window_position/3" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      x_coordinate = 600
+      y_coordinate = 400
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/window/current/position"
+        assert conn.body_params == %{"x" => x_coordinate, "y" => y_coordinate}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.set_window_position(session, x_coordinate, y_coordinate)
+    end
+  end
+
+  describe "get_window_position/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "GET"
+        assert conn.request_path == "/session/#{session.id}/window/current/position"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {
+            "x": 600,
+            "y": 400
+          }
+        }>)
+      end
+
+      assert {:ok, %{"x" => 600, "y" => 400}} == Client.get_window_position(session)
+    end
+  end
+
+  describe "maximize_window/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/window/current/maximize"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} == Client.maximize_window(session)
     end
   end
 
@@ -730,6 +791,25 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     end
   end
 
+  describe "window_handles/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "GET"
+        assert conn.request_path == "/session/#{session.id}/window_handles"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": ["some-window-handle", "other-window-handle"]
+        }>)
+      end
+
+      assert {:ok, ["some-window-handle", "other-window-handle"]} = Client.window_handles(session)
+    end
+  end
+
   describe "window_handle/1" do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
@@ -745,7 +825,47 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert "my-window-handle" = Client.window_handle(session)
+      assert {:ok, "my-window-handle"} = Client.window_handle(session)
+    end
+  end
+
+  describe "focus_window/2" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      window_handle_id = "my-window-handle"
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/window"
+        assert conn.body_params == %{"name" => window_handle_id, "handle" => window_handle_id}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_window(session, window_handle_id)
+    end
+  end
+
+  describe "close_window/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "DELETE"
+        assert conn.request_path == "/session/#{session.id}/window"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.close_window(session)
     end
   end
 

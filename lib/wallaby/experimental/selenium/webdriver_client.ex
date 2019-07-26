@@ -1,11 +1,15 @@
 defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @moduledoc false
+  # Client implementation for the WebDriver Wire Protocol
+  # documented on https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol
   alias Wallaby.{Driver, Element, Query, Session}
   alias Wallaby.Helpers.KeyCodes
   import Wallaby.HTTPClient
 
   @type http_method :: :post | :get | :delete
   @type url :: String.t
+  @type parent :: Element.t
+                | Session.t
 
   @web_element_identifier "element-6066-11e4-a52e-4f735466cecf"
 
@@ -271,18 +275,11 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Sets the size of the window.
+  Sets the size of the window
   """
-  @spec set_window_size(Session.t, non_neg_integer, non_neg_integer) :: {:ok, map}
-  @spec set_window_size(Session.t, String.t, non_neg_integer, non_neg_integer) :: {:ok, map}
-
+  @spec set_window_size(parent, non_neg_integer, non_neg_integer) :: {:ok, map}
   def set_window_size(session, width, height) do
-    with {:ok, resp} <- request(:post, "#{session.url}/window/rect", %{width: width, height: height}),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
-  end
-  def set_window_size(session, window_handle, width, height) do
-    with {:ok, resp} <- request(:post, "#{session.url}/window/#{window_handle}/size", %{width: width, height: height}),
+    with {:ok, resp} <- request(:post, "#{session.url}/window/current/size", %{width: width, height: height}),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
@@ -290,16 +287,40 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Gets the size of the window
   """
-  @spec get_window_size(Session.t) :: {:ok, map}
-  @spec get_window_size(Session.t, String.t) :: {:ok, map}
-
+  @spec get_window_size(parent) :: {:ok, map}
   def get_window_size(session) do
-    with {:ok, resp} <- request(:get, "#{session.url}/window/rect"),
+    with {:ok, resp} <- request(:get, "#{session.url}/window/current/size"),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
-  def get_window_size(session, window_handle) do
-    with {:ok, resp} <- request(:get, "#{session.url}/window/#{window_handle}/size"),
+
+  @doc """
+  Changes the position of the window
+  """
+  @spec set_window_position(parent, non_neg_integer, non_neg_integer) :: {:ok, map}
+  def set_window_position(session, x_coordinate, y_coordinate) do
+    with {:ok, resp} <-
+           request(:post, "#{session.url}/window/current/position", %{x: x_coordinate, y: y_coordinate}),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
+  @doc """
+  Gets the position of the window
+  """
+  @spec get_window_position(parent) :: {:ok, map}
+  def get_window_position(session) do
+    with {:ok, resp} <- request(:get, "#{session.url}/window/current/position"),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
+  @doc """
+  Maximizes the window if not already maximized
+  """
+  @spec maximize_window(parent) :: {:ok, map}
+  def maximize_window(session) do
+    with {:ok, resp} <- request(:post, "#{session.url}/window/current/maximize"),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
@@ -324,6 +345,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
           {:ok, value} <- Map.fetch(resp, "value"),
     do: {:ok, value}
   end
+
   def send_keys(parent, keys) when is_list(keys) do
     with {:ok, resp} <- request(:post, "#{parent.url}/value", KeyCodes.json(keys), encode_json: false),
           {:ok, value} <- Map.fetch(resp, "value"),
@@ -350,24 +372,69 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       do: {:ok, value}
   end
 
+  @doc """
+  Retrieves the list of window handles of all windows (or tabs) available to the session
+  """
+  @spec window_handles(parent) :: {:ok, list(String.t)}
   def window_handles(session) do
     with {:ok, resp} <- request(:get, "#{session.url}/window_handles"),
-         {:ok, value} <- Map.fetch(resp, "value"),
+          {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
 
   @doc """
-  Retrieves the window handle for from session
+  Retrieves the window handle for the currently focused window (or tab) for the session
   """
-  @spec window_handle(Session.t) :: String.t
+  @spec window_handle(parent) :: {:ok, String.t}
   def window_handle(session) do
-    with  {:ok, resp} <- request(:get, "#{session.url}/window_handle"),
+    with {:ok, resp} <- request(:get, "#{session.url}/window_handle"),
           {:ok, value} <- Map.fetch(resp, "value"),
-      do: value
+      do: {:ok, value}
+  end
+
+  @doc """
+  Changes focus to another window (or tab)
+
+  You may specify the the window by its server-assigned window handle
+  or by the value of its name attribute.
+  """
+  @spec focus_window(parent, String.t) :: {:ok, map}
+  def focus_window(session, window_handle_or_name) do
+    with {:ok, resp} <- request(:post, "#{session.url}/window",
+                                 %{
+                                   name: window_handle_or_name,
+                                   handle: window_handle_or_name
+                                }),
+          # In the Selenium WebDriver Protocol, the parameter is called name:
+          #  https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidwindow
+          # In the new W3C protocol, the parameter is called handle:
+          #  https://w3c.github.io/webdriver/#switch-to-window
+          # Browsers are starting to support only the new W3C protocol,
+          # so we're adding `handle` as well to have it working until
+          # we implement a separate client module for the new protocol.
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
+  @doc """
+  Closes the currently focused window (or tab)
+  """
+  @spec close_window(parent) :: {:ok, map}
+  def close_window(session) do
+    with {:ok, resp} <- request(:delete, "#{session.url}/window"),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
   end
 
   @spec cast_as_element(Session.t | Element.t, map) :: Element.t
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
+          # In the Selenium WebDriver Protocol, the identifier is "ELEMENT":
+          #  https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#webelement-json-object
+          # In the new W3C protocol, the identifier is a specific constant:
+          #  https://w3c.github.io/webdriver/#elements
+          # Browsers are starting to support only the new W3C protocol,
+          # so we're reading the constant as well to have it working until
+          # we implement a separate client module for the new protocol.
     cast_as_element(parent, %{@web_element_identifier => id})
   end
   defp cast_as_element(parent, %{@web_element_identifier => id}) do

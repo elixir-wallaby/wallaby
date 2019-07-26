@@ -171,7 +171,7 @@ defmodule Wallaby.Browser do
       |> fill_in(Query.css("#password_field", with: "secret42"))
 
   ### Note
-  
+
   Currently, ChromeDriver only supports [BMP Unicode](http://www.unicode.org/roadmaps/bmp/) characters. Emojis are [SMP](https://www.unicode.org/roadmaps/smp/) characters and will be ignored by ChromeDriver.
 
   Using JavaScript is a known workaround for filling in fields with Emojis and other non-BMP characters.
@@ -232,22 +232,94 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Gets the size of the session's window.
+  Gets the window handle of the currently focused window.
+  """
+  @spec window_handle(parent) :: String.t
+
+  def window_handle(%{driver: driver} = session) do
+    {:ok, handle} = driver.window_handle(session)
+    handle
+  end
+
+  @doc """
+  Gets the window handles of all available windows.
+  """
+  @spec window_handles(parent) :: [String.t]
+
+  def window_handles(%{driver: driver} = session) do
+    {:ok, handles} = driver.window_handles(session)
+    handles
+  end
+
+  @doc """
+  Changes the driver focus to the window identified by the handle.
+  """
+  @spec focus_window(parent, String.t) :: parent
+
+  def focus_window(%{driver: driver} = session, window_handle) do
+    {:ok, _} = driver.focus_window(session, window_handle)
+    session
+  end
+
+  @doc """
+  Closes the currently focused window.
+  """
+  @spec close_window(parent) :: parent
+
+  def close_window(%{driver: driver} = session) do
+    {:ok, _} = driver.close_window(session)
+    session
+  end
+
+  @doc """
+  Gets the size of the currently focused window.
   """
   @spec window_size(parent) :: %{String.t => pos_integer, String.t => pos_integer}
 
-  def window_size(%Session{driver: driver} = session) do
+  def window_size(%{driver: driver} = session) do
     {:ok, size} = driver.get_window_size(session)
     size
   end
 
   @doc """
-  Sets the size of the sessions window.
+  Sets the size of the currenty focused window.
   """
   @spec resize_window(parent, pos_integer, pos_integer) :: parent
 
-  def resize_window(%Session{driver: driver} = session, width, height) do
+  def resize_window(%{driver: driver} = session, width, height) do
     {:ok, _} = driver.set_window_size(session, width, height)
+    session
+  end
+
+  @doc """
+  Maximizes the currenty focused window.
+
+  For most browsers, this requires a window manager to be running.
+  """
+  @spec maximize_window(parent) :: parent
+
+  def maximize_window(%{driver: driver} = session) do
+    {:ok, _} = driver.maximize_window(session)
+    session
+  end
+
+  @doc """
+  Gets the position of the currently focused window.
+  """
+  @spec window_position(parent) :: %{String.t => pos_integer, String.t => pos_integer}
+
+  def window_position(%{driver: driver} = session) do
+    {:ok, position} = driver.get_window_position(session)
+    position
+  end
+
+  @doc """
+  Sets the position of the currenty focused window.
+  """
+  @spec move_window(parent, pos_integer, pos_integer) :: parent
+
+  def move_window(%{driver: driver} = session, x, y) do
+    {:ok, _} = driver.set_window_position(session, x, y)
     session
   end
 
@@ -323,7 +395,7 @@ defmodule Wallaby.Browser do
       iex> Wallaby.Session.send_keys(session, [:shift, :enter])
 
   ### Note
-  
+
   Currently, ChromeDriver only supports [BMP Unicode](http://www.unicode.org/roadmaps/bmp/) characters. Emojis are [SMP](https://www.unicode.org/roadmaps/smp/) characters and will be ignored by ChromeDriver.
 
   Using JavaScript is a known workaround for filling in fields with Emojis and other non-BMP characters.
