@@ -316,7 +316,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Maximizes the window if not already maximized.
+  Maximizes the window if not already maximized
   """
   @spec maximize_window(parent) :: {:ok, map}
   def maximize_window(session) do
@@ -395,8 +395,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Changes focus to another window (or tab)
 
-  The window to change focus to may be specified by its server assigned
-  window handle, or by the value of its name attribute.
+  You may specify the the window by its server-assigned window handle
+  or by the value of its name attribute.
   """
   @spec focus_window(parent, String.t) :: {:ok, map}
   def focus_window(session, window_handle_or_name) do
