@@ -30,8 +30,8 @@ defmodule Wallaby.Experimental.Chrome.Logger do
 
   defp format_string(message) do
     unescaped = String.replace(message, ~r/\\(.)/, "\\1")
-    case Poison.decode(unescaped) do
-      {:ok, data} -> "\n#{Poison.encode!(data, pretty: true)}"
+    case Jason.decode(unescaped) do
+      {:ok, data} -> "\n#{Jason.encode!(data, pretty: true)}"
       {:error, _} -> unescaped
     end
   end
