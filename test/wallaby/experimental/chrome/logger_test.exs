@@ -49,7 +49,7 @@ defmodule Wallaby.Experimental.Chrome.LoggerTest do
         |> Logger.parse_log
       end
 
-      assert capture_io(fun) == "\n{\n  \"href\": \"http://localhost:54579/logs.html\",\n  \"ancestorOrigins\": {}\n}\n"
+      assert capture_io(fun) == "\n{\n  \"ancestorOrigins\": {},\n  \"href\": \"http://localhost:54579/logs.html\"\n}\n"
     end
 
     test "can be disabled" do
