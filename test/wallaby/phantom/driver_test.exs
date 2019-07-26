@@ -593,7 +593,7 @@ defmodule Wallaby.Phantom.DriverTest do
 
       stub_backend bypass, session, fn conn ->
         if conn.method == "POST" && conn.request_path == "/session/#{session.id}/keys" do
-          assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Poison.decode!
+          assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!
 
           resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
@@ -614,7 +614,7 @@ defmodule Wallaby.Phantom.DriverTest do
       stub_backend bypass, session, fn conn ->
         if conn.method == "POST" &&
           conn.request_path == "/session/#{session.id}/element/#{element.id}/value" do
-          assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Poison.decode!
+          assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!
 
           resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
