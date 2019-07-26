@@ -1,15 +1,21 @@
 language: elixir
 elixir:
-  - 1.7.4
-  - 1.8.1
+  - 1.8.2
+  - 1.9.1
 otp_release:
-  - 20.3
+  - 21.3
+  - 22.0
 env:
   - ""
   - WALLABY_DRIVER=phantom
   - WALLABY_DRIVER=chrome
-  - WALLABY_DRIVER=selenium WALLABY_SELENIUM_VERSION=3
-  - WALLABY_DRIVER=selenium WALLABY_SELENIUM_VERSION=2
+  - WALLABY_DRIVER=selenium
+matrix:
+  exclude:
+  - elixir: 1.8.2
+    otp_release: 22.0
+  - elixir: 1.9.1
+    otp_release: 21.3
 # Run in bigger container so we don't run out of memory generating the plt
 sudo: required
 cache:

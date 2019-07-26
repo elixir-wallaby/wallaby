@@ -6,7 +6,7 @@ defmodule Wallaby.Experimental.Chrome do
 
   @chromedriver_version_regex ~r/^ChromeDriver (\d+)\.(\d+)/
 
-  alias Wallaby.{Session, DependencyError, Metadata}
+  alias Wallaby.{DependencyError, Metadata}
   alias Wallaby.Experimental.Chrome.{Chromedriver}
   alias Wallaby.Experimental.Selenium.WebdriverClient
   import Wallaby.Driver.LogChecker
@@ -127,16 +127,6 @@ defmodule Wallaby.Experimental.Chrome do
     end
   end
 
-  def get_window_size(%Session{} = session) do
-    handle = delegate(:window_handle, session)
-    delegate(:get_window_size, session, [handle])
-  end
-
-  def set_window_size(session, width, height) do
-    handle = delegate(:window_handle, session)
-    delegate(:set_window_size, session, [handle, width, height])
-  end
-
   defp delegate(fun, element_or_session, args \\ []) do
     check_logs!(element_or_session, fn ->
       apply(WebdriverClient, fun, [element_or_session | args])
@@ -151,6 +141,25 @@ defmodule Wallaby.Experimental.Chrome do
   defdelegate dismiss_prompt(session, fun), to: WebdriverClient
   defdelegate parse_log(log), to: Wallaby.Experimental.Chrome.Logger
 
+  @doc false
+  def window_handle(session), do: delegate(:window_handle, session)
+  @doc false
+  def window_handles(session), do: delegate(:window_handles, session)
+  @doc false
+  def focus_window(session, window_handle), do: delegate(:focus_window, session, [window_handle])
+  @doc false
+  def close_window(session), do: delegate(:close_window, session)
+  @doc false
+  def get_window_size(session), do: delegate(:get_window_size, session)
+  @doc false
+  def set_window_size(session, width, height),
+    do: delegate(:set_window_size, session, [width, height])
+  @doc false
+  def get_window_position(session), do: delegate(:get_window_position, session)
+  @doc false
+  def set_window_position(session, x, y), do: delegate(:set_window_position, session, [x, y])
+  @doc false
+  def maximize_window(session), do: delegate(:maximize_window, session)
   @doc false
   def cookies(session), do: delegate(:cookies, session)
   @doc false
