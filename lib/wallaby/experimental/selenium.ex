@@ -179,10 +179,7 @@ defmodule Wallaby.Experimental.Selenium do
 
   defp default_capabilities do
     %{
-      javascriptEnabled: true,
-      timeouts: %{
-        script: "null"
-      }
+      javascriptEnabled: true
     }
   end
 end
