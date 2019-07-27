@@ -222,13 +222,20 @@ defmodule Wallaby.Browser do
 
     name = opts |> Keyword.get(:name, :erlang.system_time) |> to_string
     path = path_for_screenshot(name)
-    File.write! path, image_data
+    try do
+      File.write! path, image_data
 
-    if opts[:log] do
-      IO.puts "Screenshot taken, find it at file:///#{path}"
+      if opts[:log] do
+        IO.puts "Screenshot taken, find it at file:///#{path}"
+      end
+
+      Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
+    rescue
+      _ ->
+        IO.puts("\nFailed to make a screenshot")
+
+        screenshotable
     end
-
-    Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
   end
 
   @doc """
