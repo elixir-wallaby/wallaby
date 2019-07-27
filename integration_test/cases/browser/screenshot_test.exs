@@ -79,7 +79,7 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
 
     Application.put_env(:wallaby, :screenshot_on_failure, true)
 
-    output = capture_io( fn ->
+    output = capture_io(fn ->
       assert_raise Wallaby.QueryError, fn ->
         find(page, css(".some-selector"))
       end
