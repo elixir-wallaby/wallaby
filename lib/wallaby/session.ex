@@ -7,8 +7,9 @@ defmodule Wallaby.Session do
     url: String.t,
     server: pid | :none,
     screenshots: list,
+    context: String.t,
     driver: module,
   }
 
-  defstruct [:id, :url, :session_url, :driver, server: :none, screenshots: []]
+  defstruct [:id, :url, :session_url, :driver, :context, server: :none, screenshots: []]
 end

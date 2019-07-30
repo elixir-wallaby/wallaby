@@ -105,6 +105,7 @@ defmodule Wallaby.Experimental.Selenium do
         session_url: base_url <> "session/#{id}",
         url: base_url <> "session/#{id}",
         id: id,
+        context: opts[:context],
         driver: __MODULE__
       }
 

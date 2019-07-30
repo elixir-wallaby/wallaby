@@ -689,10 +689,6 @@ defmodule Wallaby.Browser do
       {:error, {:not_found, result}} ->
         query = %Query{query | result: result}
 
-        if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent, log: true)
-        end
-
         case validate_html(parent, query) do
           {:ok, _} ->
             raise Wallaby.QueryError, ErrorMessage.message(query, :not_found)
@@ -702,10 +698,6 @@ defmodule Wallaby.Browser do
         end
 
       {:error, e} ->
-        if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent, log: true)
-        end
-
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
     end
   end
@@ -834,9 +826,6 @@ defmodule Wallaby.Browser do
         parent
       else
         error ->
-          if Wallaby.screenshot_on_failure? do
-            take_screenshot(parent, log: true)
-          end
           case error do
             {:error, {:not_found, results}} ->
               query = %Query{query | result: results}
