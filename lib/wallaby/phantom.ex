@@ -216,4 +216,6 @@ defmodule Wallaby.Phantom do
   def get_window_position(_session), do: {:error, :not_supported}
   def set_window_position(_session, _x, _y), do: {:error, :not_supported}
   def maximize_window(_session), do: {:error, :not_supported}
+  def focus_frame(_session, _frame), do: {:error, :not_supported}
+  def focus_parent_frame(_session), do: {:error, :not_supported}
 end
