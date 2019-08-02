@@ -324,21 +324,13 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Changes the driver focus to the specified frame.
-
-  You may specify the the frame by passing the frame Query or its id.
-  When passed `nil`, the browser should switch to the page's default context.
+  Changes the driver focus to the frame found by query.
   """
-  @spec focus_frame(parent,  Query.t | String.t | number | nil) :: parent
+  @spec focus_frame(parent,  Query.t) :: parent
 
-  def focus_frame(%{driver: driver} = session, frame_query = %Query{}) do
+  def focus_frame(%{driver: driver} = session, %Query{} = query) do
     session
-    |> find(frame_query, &driver.focus_frame(session, &1))
-  end
-
-  def focus_frame(%{driver: driver} = session, frame_id_or_nil) do
-    {:ok, _} = driver.focus_frame(session, frame_id_or_nil)
-    session
+    |> find(query, &driver.focus_frame(session, &1))
   end
 
   @doc """
@@ -348,6 +340,16 @@ defmodule Wallaby.Browser do
 
   def focus_parent_frame(%{driver: driver} = session) do
     {:ok, _} = driver.focus_parent_frame(session)
+    session
+  end
+
+  @doc """
+  Changes the driver focus to the default (top level) frame.
+  """
+  @spec focus_default_frame(parent) :: parent
+
+  def focus_default_frame(%{driver: driver} = session) do
+    {:ok, _} = driver.focus_frame(session, nil)
     session
   end
 

@@ -429,11 +429,11 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Changes focus to another frame
 
-  You may specify the the frame by passing the frame Element or its id.
-  When passed `nil`, the server should switch to the page's default context.
+  You may specify the the frame by passing the frame Element, its index or id.
+  When passed `nil`, the server should switch to the page's default (top level) frame.
   """
   @spec focus_frame(parent, String.t | number | nil | Element.t) :: {:ok, map}
-  def focus_frame(session, frame_element = %Element{}) do
+  def focus_frame(session, %Element{} = frame_element) do
     with {:ok, resp} <- request(:post, "#{session.url}/frame",
                                 %{
                                   id: %{

@@ -16,7 +16,7 @@ defmodule Wallaby.Integration.Browser.FramesTest do
     |> assert_has(Query.css("h1", text: "Frames Page", count: 0))
     |> assert_has(Query.css("h1", text: "Page 1", count: 0))
     |> assert_has(Query.css("h1", text: "Page 2"))
-    |> focus_frame(nil)
+    |> focus_default_frame()
     |> assert_has(Query.css("h1", text: "Frames Page"))
     |> assert_has(Query.css("h1", text: "Page 1", count: 0))
     |> assert_has(Query.css("h1", text: "Page 2", count: 0))

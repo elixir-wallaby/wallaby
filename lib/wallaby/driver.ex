@@ -90,7 +90,7 @@ defmodule Wallaby.Driver do
   @doc """
   Invoked to change the driver focus to specified frame.
   """
-  @callback focus_frame(Session.t | Element.t, String.t | number | nil | Element.t) :: {:ok, any} |
+  @callback focus_frame(Session.t | Element.t, nil | Element.t) :: {:ok, any} |
     {:error, reason}
 
   @doc """
