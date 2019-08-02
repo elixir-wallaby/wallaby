@@ -891,9 +891,29 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       assert {:ok, %{}} = Client.focus_frame(session, frame_element)
     end
 
+    test "sends the correct request to the server when switching to default frame", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      frame_id = nil
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/frame"
+        assert conn.body_params == %{"id" => frame_id}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_frame(session, frame_id)
+    end
+
+
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
-      frame_id = "my-frame-id"
+      frame_id = 1
 
       handle_request bypass, fn conn ->
         assert conn.method == "POST"
