@@ -88,6 +88,17 @@ defmodule Wallaby.Driver do
   @callback maximize_window(Session.t | Element.t) :: {:ok, any} | {:error, reason}
 
   @doc """
+  Invoked to change the driver focus to specified frame.
+  """
+  @callback focus_frame(Session.t | Element.t, nil | Element.t) :: {:ok, any} |
+    {:error, reason}
+
+  @doc """
+  Invoked to change the driver focus to parent frame.
+  """
+  @callback focus_parent_frame(Session.t | Element.t) :: {:ok, any} | {:error, reason}
+
+  @doc """
   Invoked to retrieve the html source of the current page.
   """
   @callback page_source(Session.t) :: {:ok, String.t} | {:error, reason}

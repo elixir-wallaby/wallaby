@@ -426,6 +426,41 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
       do: {:ok, value}
   end
 
+  @doc """
+  Changes focus to another frame
+
+  You may specify the the frame by passing the frame Element, its index or id.
+  When passed `nil`, the server should switch to the page's default (top level) frame.
+  """
+  @spec focus_frame(parent, String.t | number | nil | Element.t) :: {:ok, map}
+  def focus_frame(session, %Element{} = frame_element) do
+    with {:ok, resp} <- request(:post, "#{session.url}/frame",
+                                %{
+                                  id: %{
+                                    "ELEMENT" => frame_element.id,
+                                    @web_element_identifier => frame_element.id
+                                  }
+                                }),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
+  def focus_frame(session, frame) do
+    with {:ok, resp} <- request(:post, "#{session.url}/frame", %{id: frame}),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
+  @doc """
+  Changes focus to parent frame
+  """
+  @spec focus_parent_frame(parent) :: {:ok, map}
+  def focus_parent_frame(session) do
+    with {:ok, resp} <- request(:post, "#{session.url}/frame/parent"),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
   @spec cast_as_element(Session.t | Element.t, map) :: Element.t
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
           # In the Selenium WebDriver Protocol, the identifier is "ELEMENT":
