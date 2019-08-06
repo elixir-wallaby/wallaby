@@ -4,6 +4,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
   alias Wallaby.Experimental.Selenium.WebdriverClient, as: Client
   alias Wallaby.{Element, Query, Session}
 
+  @web_element_identifier "element-6066-11e4-a52e-4f735466cecf"
+
   describe "create_session/2" do
     test "sends the correct request to the webdriver backend", %{bypass: bypass} do
       base_url = bypass_url(bypass) <> "/"
@@ -125,7 +127,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         send_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
-          "value": [{"element-6066-11e4-a52e-4f735466cecf": "#{element_id}"}]
+          "value": [{"#{@web_element_identifier}": "#{element_id}"}]
         }>)
       end
 
@@ -866,6 +868,85 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       end
 
       assert {:ok, %{}} = Client.close_window(session)
+    end
+  end
+
+  describe "focus_frame/2" do
+    test "sends the correct request to the server when passed an element", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      frame_element = build_element_for_session(session, "frame-element-id")
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/frame"
+        assert conn.body_params == %{"id" => %{"ELEMENT" => frame_element.id, @web_element_identifier => frame_element.id}}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_frame(session, frame_element)
+    end
+
+    test "sends the correct request to the server when switching to default frame", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      frame_id = nil
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/frame"
+        assert conn.body_params == %{"id" => frame_id}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_frame(session, frame_id)
+    end
+
+
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      frame_id = 1
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/frame"
+        assert conn.body_params == %{"id" => frame_id}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_frame(session, frame_id)
+    end
+  end
+
+  describe "focus_parent_frame/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/frame/parent"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_parent_frame(session)
     end
   end
 

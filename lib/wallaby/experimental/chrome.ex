@@ -161,6 +161,10 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   def maximize_window(session), do: delegate(:maximize_window, session)
   @doc false
+  def focus_frame(session, frame), do: delegate(:focus_frame, session, [frame])
+  @doc false
+  def focus_parent_frame(session), do: delegate(:focus_parent_frame, session)
+  @doc false
   def cookies(session), do: delegate(:cookies, session)
   @doc false
   def current_path(session), do: delegate(:current_path, session)

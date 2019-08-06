@@ -87,6 +87,9 @@ defmodule Wallaby.Experimental.Selenium do
   defdelegate set_window_position(session, x, y), to: WebdriverClient
   defdelegate maximize_window(session), to: WebdriverClient
 
+  defdelegate focus_frame(session, frame), to: WebdriverClient
+  defdelegate focus_parent_frame(session), to: WebdriverClient
+
   defdelegate accept_alert(session, fun), to: WebdriverClient
   defdelegate dismiss_alert(session, fun), to: WebdriverClient
   defdelegate accept_confirm(session, fun), to: WebdriverClient

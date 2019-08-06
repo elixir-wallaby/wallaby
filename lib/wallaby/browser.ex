@@ -324,6 +324,36 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
+  Changes the driver focus to the frame found by query.
+  """
+  @spec focus_frame(parent,  Query.t) :: parent
+
+  def focus_frame(%{driver: driver} = session, %Query{} = query) do
+    session
+    |> find(query, &driver.focus_frame(session, &1))
+  end
+
+  @doc """
+  Changes the driver focus to the parent frame.
+  """
+  @spec focus_parent_frame(parent) :: parent
+
+  def focus_parent_frame(%{driver: driver} = session) do
+    {:ok, _} = driver.focus_parent_frame(session)
+    session
+  end
+
+  @doc """
+  Changes the driver focus to the default (top level) frame.
+  """
+  @spec focus_default_frame(parent) :: parent
+
+  def focus_default_frame(%{driver: driver} = session) do
+    {:ok, _} = driver.focus_frame(session, nil)
+    session
+  end
+
+  @doc """
   Gets the current url of the session
   """
   @spec current_url(parent) :: String.t
