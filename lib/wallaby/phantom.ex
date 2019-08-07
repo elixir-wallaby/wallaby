@@ -162,6 +162,8 @@ defmodule Wallaby.Phantom do
   @doc false
   defdelegate execute_script(session_or_element, script, args), to: Driver
   @doc false
+  defdelegate execute_script_async(session_or_element, script, args), to: Driver
+  @doc false
   defdelegate find_elements(session_or_element, compiled_query), to: Driver
   @doc false
   defdelegate send_keys(session_or_element, keys), to: Driver

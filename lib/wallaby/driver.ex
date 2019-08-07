@@ -179,6 +179,12 @@ defmodule Wallaby.Driver do
     {:ok, any} | {:error, reason}
 
   @doc """
+  Invoked to execute asynchronous javascript in the browser.
+  """
+  @callback execute_script_async(Session.t | Element, String.t, [any]) ::
+    {:ok, any} | {:error, reason}
+
+  @doc """
   Invoked to send keys to the browser.
   """
   @callback send_keys(Session.t | Element.t, String.t | [String.t | atom]) ::

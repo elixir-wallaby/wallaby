@@ -300,7 +300,7 @@ defmodule Wallaby.Phantom.Driver do
   @type execute_script_opts :: {:check_logs, boolean}
 
   @doc """
-  Executes javascript synchoronously, taking as arguments the script to execute,
+  Executes javascript synchronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
   @spec execute_script(Session.t, String.t, [any], [execute_script_opts]) ::
@@ -313,6 +313,32 @@ defmodule Wallaby.Phantom.Driver do
                :post,
                "#{session.session_url}/execute",
                %{script: script, args: arguments}
+             ),
+           {:ok, value} <- Map.fetch(resp, "value"),
+        do: {:ok, value}
+    end
+
+    if check_logs do
+      check_logs! session, request_fn
+    else
+      request_fn.()
+    end
+  end
+
+  @doc """
+  Executes asynchronous javascript, taking as arguments the script to execute,
+  and optionally a list of arguments available in the script via `arguments`
+  """
+  @spec execute_script_async(Session.t, String.t, [any], [execute_script_opts]) ::
+    {:ok, any} | {:error, Driver.reason}
+  def execute_script_async(session, script_function, arguments \\ [], opts \\ []) do
+    check_logs = Keyword.get(opts, :check_logs, true)
+    request_fn = fn ->
+      with {:ok, resp} <-
+             request(
+               :post,
+               "#{session.session_url}/execute_async",
+               %{script: script_function, args: arguments}
              ),
            {:ok, value} <- Map.fetch(resp, "value"),
         do: {:ok, value}

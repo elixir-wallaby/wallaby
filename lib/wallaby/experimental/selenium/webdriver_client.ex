@@ -326,12 +326,23 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Executes javascript synchoronously, taking as arguments the script to execute,
+  Executes javascript synchronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
   @spec execute_script(Session.t | Element.t, String.t, Keyword.t) :: {:ok, any}
   def execute_script(session, script, arguments \\ []) do
     with {:ok, resp} <- request(:post, "#{session.session_url}/execute", %{script: script, args: arguments}),
+          {:ok, value} <- Map.fetch(resp, "value"),
+      do: {:ok, value}
+  end
+
+  @doc """
+  Executes asynchronous javascript, taking as arguments the script to execute,
+  and optionally a list of arguments available in the script via `arguments`
+  """
+  @spec execute_script_async(Session.t | Element.t, String.t, Keyword.t) :: {:ok, any}
+  def execute_script_async(session, script, arguments \\ []) do
+    with {:ok, resp} <- request(:post, "#{session.session_url}/execute_async", %{script: script, args: arguments}),
           {:ok, value} <- Map.fetch(resp, "value"),
       do: {:ok, value}
   end
