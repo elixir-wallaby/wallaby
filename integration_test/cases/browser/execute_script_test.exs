@@ -36,7 +36,7 @@ defmodule Wallaby.Integration.Browser.ExecuteScriptTest do
     |> Element.text == "now you see me"
   end
 
-  test "executing script asynchronously and callback returns session", %{session: session} do
+  test "executing asynchronous script and callback returns session", %{session: session} do
     result =
       session
       |> visit("page_1.html")
@@ -48,7 +48,7 @@ defmodule Wallaby.Integration.Browser.ExecuteScriptTest do
     assert_received{:callback, "hello"}
   end
 
-  test "executing script with arguments asynchronously and callback returns session", %{session: session} do
+  test "executing asynchronous script with arguments and callback returns session", %{session: session} do
     result =
       session
       |> visit("page_1.html")

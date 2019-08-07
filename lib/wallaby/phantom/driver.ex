@@ -326,7 +326,7 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   @doc """
-  Executes javascript asynchronously, taking as arguments the script to execute,
+  Executes asynchronous javascript, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
   @spec execute_script_async(Session.t, String.t, [any], [execute_script_opts]) ::
