@@ -92,4 +92,18 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
     File.rm_rf! "#{File.cwd!}/screenshots"
     Application.put_env(:wallaby, :screenshot_on_failure, nil)
   end
+
+  test "filters out illegal characters in screenshot name", %{page: page} do
+    Application.put_env(:wallaby, :screenshot_dir, "shots")
+
+    [screenshot_path] =
+      page
+      |> take_screenshot(name: "some_page<>:\"/\\?*")
+      |> Map.get(:screenshots)
+
+    assert screenshot_path == "shots/some_page.png"
+
+    Application.put_env(:wallaby, :screenshot_dir, nil)
+    File.rm_rf! "#{File.cwd!}/shots"
+  end
 end

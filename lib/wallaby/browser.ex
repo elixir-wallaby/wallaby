@@ -220,7 +220,10 @@ defmodule Wallaby.Browser do
       screenshotable
       |> driver.take_screenshot
 
-    name = opts |> Keyword.get(:name, :erlang.system_time) |> to_string
+    name = opts
+           |> Keyword.get(:name, :erlang.system_time)
+           |> to_string
+           |> remove_illegal_characters
     path = path_for_screenshot(name)
     try do
       File.write! path, image_data
@@ -237,6 +240,8 @@ defmodule Wallaby.Browser do
         screenshotable
     end
   end
+
+  defp remove_illegal_characters(string), do: String.replace(string, ~r{<>:"/\\\?\*}, "")
 
   @doc """
   Gets the window handle of the currently focused window.
