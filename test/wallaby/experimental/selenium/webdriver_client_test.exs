@@ -950,8 +950,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     end
   end
 
-  describe "hover/2" do
-    test "sends the correct request to the server", %{bypass: bypass} do
+  describe "move_to/4" do
+    test "sends the correct request to the server when only element is not nil", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
@@ -967,7 +967,46 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert {:ok, %{}} = Client.hover(element)
+      assert {:ok, %{}} = Client.move_to(nil, element)
+    end
+
+    test "sends the correct request to the server when session and offsets are given", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      {x_offset, y_offset} = {20, 30}
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/moveto"
+        assert conn.body_params == %{"xoffset" => x_offset, "yoffset" => y_offset}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.move_to(session, nil, x_offset, y_offset)
+    end
+
+    test "sends the correct request to the server when element and offsets are given", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+      {x_offset, y_offset} = {20, 30}
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/moveto"
+        assert conn.body_params == %{"element" => element.id, "xoffset" => x_offset, "yoffset" => y_offset}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.move_to(nil, element, x_offset, y_offset)
     end
   end
 

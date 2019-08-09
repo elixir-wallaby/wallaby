@@ -144,7 +144,11 @@ defmodule Wallaby.Experimental.Selenium do
   end
 
   def hover(%Element{} = element) do
-    WebdriverClient.hover(element)
+    WebdriverClient.move_to(nil, element)
+  end
+
+  def move_by(session, x_offset, y_offset) do
+    WebdriverClient.move_to(session, nil, x_offset, y_offset)
   end
 
   def displayed(%Element{} = element) do

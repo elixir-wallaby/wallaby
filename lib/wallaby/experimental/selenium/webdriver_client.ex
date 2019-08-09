@@ -113,33 +113,57 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Clicks an element
+  Clicks an element.
   """
   @spec click(Element.t) :: {:ok, map}
   def click(%Element{url: url}) do
-    with  {:ok, resp} <- request(:post, "#{url}/click"),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+    with {:ok, resp} <- request(:post, "#{url}/click"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
   end
 
   @doc """
-  Hovers over an element
+  Move the mouse by an offset of the specificed element.
+  If no element is specified, the move is relative to the current mouse cursor.
+  If an element is provided but no offset, the mouse will be moved to the center of the element.
+
+  Gets keyword list with element, xoffset and yoffset specified as an argument.
   """
-  @spec hover(Element.t) :: {:ok, map}
-  def hover(%Element{session_url: session_url, id: id}) do
-    with  {:ok, resp} <- request(:post, "#{session_url}/moveto", %{"element" => id}),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+  @spec move_to(Session.t, Element.t, integer, integer) :: {:ok, map}
+  def move_to(session, element, x_offset \\ nil, y_offset \\ nil) do
+    params =
+      %{element: element, xoffset: x_offset, yoffset: y_offset}
+      |> Enum.filter(fn {_key, value} -> not is_nil(value) end)
+      |> Enum.into(%{})
+
+    params =
+      if Map.has_key?(params, :element) do
+        Map.put(params, :element, params[:element].id)
+      else
+        params
+      end
+
+    session_url =
+      if is_nil(element) do
+        session.session_url
+      else
+        element.session_url
+      end
+
+    with {:ok, resp} <-
+           request(:post, "#{session_url}/moveto", params),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
   end
 
   @doc """
-  Gets the text for an element
+  Gets the text for an element.
   """
   @spec text(Element.t) :: {:ok, String.t}
   def text(element) do
-    with  {:ok, resp} <- request(:get, "#{element.url}/text"),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+    with {:ok, resp} <- request(:get, "#{element.url}/text"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
   end
 
   @doc """
