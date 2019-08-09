@@ -1,21 +1,21 @@
 defmodule Wallaby.Integration.Browser.ClickTest do
   use Wallaby.Integration.SessionCase, async: true
 
-  setup %{session: session} do
-    page = visit(session, "forms.html")
-
-    {:ok, %{page: page}}
-  end
-
   describe "click/2" do
+    setup %{session: session} do
+      page = visit(session, "forms.html")
+
+      {:ok, %{page: page}}
+    end
+
     test "accepts queries", %{page: page} do
       assert page
-      |> click(Query.button("Submit button"))
+             |> click(Query.button("Submit button"))
     end
 
     test "can click invisible elements", %{page: page} do
       assert page
-      |> click(Query.button("Invisible Button", visible: false))
+             |> click(Query.button("Invisible Button", visible: false))
     end
 
     test "can be chained/returns parent", %{page: page} do
@@ -28,6 +28,12 @@ defmodule Wallaby.Integration.Browser.ClickTest do
   end
 
   describe "click/2 with radio buttons (choose replacement)" do
+    setup %{session: session} do
+      page = visit(session, "forms.html")
+
+      {:ok, %{page: page}}
+    end
+
     test "choosing a radio button", %{page: page} do
       refute selected?(page, Query.css("#option2"))
 
@@ -76,18 +82,24 @@ defmodule Wallaby.Integration.Browser.ClickTest do
   end
 
   describe "click/2 with checkboxes" do
+    setup %{session: session} do
+      page = visit(session, "forms.html")
+
+      {:ok, %{page: page}}
+    end
+
     test "checking a checkbox", %{page: page} do
       assert page
-      |> click( Query.checkbox("Checkbox 1") )
-      |> click( Query.checkbox("Checkbox 1") )
+             |> click(Query.checkbox("Checkbox 1"))
+             |> click(Query.checkbox("Checkbox 1"))
 
       refute page
-      |> find(Query.checkbox("Checkbox 1"))
-      |> Element.selected?
+             |> find(Query.checkbox("Checkbox 1"))
+             |> Element.selected?()
     end
 
     test "escapes quotes", %{page: page} do
-      assert click(page, Query.checkbox("I'm a checkbox") )
+      assert click(page, Query.checkbox("I'm a checkbox"))
     end
 
     test "throw an error if a label exists but does not have a for attribute", %{page: page} do
@@ -102,18 +114,68 @@ defmodule Wallaby.Integration.Browser.ClickTest do
   end
 
   describe "click/2 with links" do
+    setup %{session: session} do
+      page = visit(session, "forms.html")
+
+      {:ok, %{page: page}}
+    end
+
     test "works with queries", %{page: page} do
       assert page
-      |> visit("")
-      |> click(Query.link("Page 1"))
-      |> assert_has(Query.css(".blue"))
+             |> visit("")
+             |> click(Query.link("Page 1"))
+             |> assert_has(Query.css(".blue"))
     end
   end
 
   describe "click/2 with buttons" do
+    setup %{session: session} do
+      page = visit(session, "forms.html")
+
+      {:ok, %{page: page}}
+    end
+
     test "works with queries", %{page: page} do
       assert page
-      |> click(Query.button("Reset input"))
+             |> click(Query.button("Reset input"))
+    end
+  end
+
+  describe "click/2 for clicking at current mouse position" do
+    setup %{session: session} do
+      page = visit(session, "click.html")
+
+      {:ok, %{page: page}}
+    end
+
+    test "clicks left button", %{page: page} do
+      refute page
+             |> visible?(Query.text("Left"))
+
+      assert page
+             |> hover(Query.text("Click"))
+             |> click(:left)
+             |> visible?(Query.text("Left"))
+    end
+
+    test "clicks middle button", %{page: page} do
+      refute page
+             |> visible?(Query.text("Middle"))
+
+      assert page
+             |> hover(Query.text("Click"))
+             |> click(:middle)
+             |> visible?(Query.text("Middle"))
+    end
+
+    test "clicks right button", %{page: page} do
+      refute page
+             |> visible?(Query.text("Right"))
+
+      assert page
+             |> hover(Query.text("Click"))
+             |> click(:right)
+             |> visible?(Query.text("Right"))
     end
   end
 end

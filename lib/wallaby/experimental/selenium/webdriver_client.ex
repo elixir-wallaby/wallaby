@@ -115,9 +115,59 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Clicks an element.
   """
-  @spec click(Element.t) :: {:ok, map}
+  @spec click(Element.t()) :: {:ok, map}
   def click(%Element{url: url}) do
     with {:ok, resp} <- request(:post, "#{url}/click"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
+  Clicks given mouse button on the current cursor position.
+  """
+  @spec click(parent, atom) :: {:ok, map}
+  def click(parent, button) when button in [:left, :middle, :right] do
+    button_mapping = %{left: 0, middle: 1, right: 2}
+
+    with {:ok, resp} <-
+           request(:post, "#{parent.session_url}/click", %{button: 2}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: IO.inspect resp;# {:ok, value}
+  end
+
+  @doc """
+  Double-clicks left mouse button at the current mouse coordinates.
+  """
+  @spec double_click(parent) :: {:ok, map}
+  def double_click(parent) do
+    with {:ok, resp} <-
+           request(:post, "#{parent.session_url}/doubleclick"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
+  Clicks and holds the given mouse button at the current mouse coordinates.
+  """
+  @spec button_down(parent, atom) :: {:ok, map}
+  def button_down(parent, button) when button in [:left, :middle, :right] do
+    button_mapping = %{left: 0, middle: 1, right: 2}
+
+    with {:ok, resp} <-
+           request(:post, "#{parent.session_url}/buttondown", %{button: button_mapping[button]}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
+  Releases given previously held mouse button.
+  """
+  @spec button_down(parent, atom) :: {:ok, map}
+  def button_up(parent, button) when button in [:left, :middle, :right] do
+    button_mapping = %{left: 0, middle: 1, right: 2}
+
+    with {:ok, resp} <-
+           request(:post, "#{parent.session_url}/buttonup", %{button: button_mapping[button]}),
          {:ok, value} <- Map.fetch(resp, "value"),
          do: {:ok, value}
   end
@@ -129,7 +179,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   Gets keyword list with element, xoffset and yoffset specified as an argument.
   """
-  @spec move_to(Session.t, Element.t, integer, integer) :: {:ok, map}
+  @spec move_to(Session.t(), Element.t(), integer, integer) :: {:ok, map}
   def move_to(session, element, x_offset \\ nil, y_offset \\ nil) do
     params =
       %{element: element, xoffset: x_offset, yoffset: y_offset}

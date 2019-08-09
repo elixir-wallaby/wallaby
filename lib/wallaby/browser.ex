@@ -524,6 +524,18 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
+  Clicks at the current mouse cursor position.
+  """
+  @spec click(parent, atom) :: parent
+
+  def click(parent, button) when button in [:left, :middle, :right] do
+    case parent.driver.click(parent, button) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
   Clicks an element.
   """
   @spec click(parent, Query.t) :: parent
@@ -531,6 +543,42 @@ defmodule Wallaby.Browser do
   def click(parent, query) do
     parent
     |> find(query, &Element.click/1)
+  end
+
+  @doc """
+  Double-clicks left mouse button at the current mouse coordinates.
+  """
+  @spec double_click(parent) :: parent
+
+  def double_click(parent) do
+    case parent.driver.double_click(parent) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
+   Clicks and holds the given mouse button at the current mouse coordinates.
+  """
+  @spec button_down(parent, atom) :: parent
+
+  def button_down(parent, button \\ :left) when button in [:left, :middle, :right] do
+    case parent.driver.button_down(parent, button) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
+   Releases given previously held mouse button.
+  """
+  @spec button_up(parent, atom) :: parent
+
+  def button_up(parent, button \\ :left) when button in [:left, :middle, :right] do
+    case parent.driver.button_up(parent, button) do
+      {:ok, _} ->
+        parent
+    end
   end
 
   @doc """

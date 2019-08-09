@@ -1010,6 +1010,85 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     end
   end
 
+  describe "click/2" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/click"
+        assert conn.body_params == %{"button" => 0}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.click(session, :left)
+    end
+  end
+
+  describe "double_click/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/doubleclick"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.double_click(session)
+    end
+  end
+
+  describe "button_down/2" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/buttondown"
+        assert conn.body_params == %{"button" => 0}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.button_down(session, :left)
+    end
+  end
+
+  describe "button_up/2" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/buttonup"
+        assert conn.body_params == %{"button" => 0}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.button_up(session, :left)
+    end
+  end
+
   defp handle_request(bypass, handler_fn) do
     Bypass.expect bypass, fn conn ->
       conn |> parse_body |> handler_fn.()
