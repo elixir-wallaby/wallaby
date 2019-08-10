@@ -50,16 +50,16 @@ matrix:
     otp_release: 21.3
     env: WALLABY_DRIVER=selenium
   - elixir: 1.9.1
-    otp_release: 22
+    otp_release: 22.0.7
     env: ""
   - elixir: 1.9.1
-    otp_release: 22
+    otp_release: 22.0.7
     env: WALLABY_DRIVER=phantom
   - elixir: 1.9.1
-    otp_release: 22
+    otp_release: 22.0.7
     env: WALLABY_DRIVER=chrome
   - elixir: 1.9.1
-    otp_release: 22
+    otp_release: 22.0.7
     env: WALLABY_DRIVER=selenium
 # Run in bigger container so we don't run out of memory generating the plt
 sudo: required
