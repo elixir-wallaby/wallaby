@@ -1,3 +1,4 @@
+language: elixir
 matrix:
   include:
   - elixir: 1.5.3
