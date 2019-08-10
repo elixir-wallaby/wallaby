@@ -10,7 +10,8 @@ defmodule Wallaby.Driver.LogStoreTest do
   @session "123abc"
 
   setup do
-    [log_store: start_supervised!({LogStore, name: :test})]
+    {:ok, log_store} = start_supervised({LogStore, name: :test})
+    [log_store: log_store]
   end
 
   describe "append_logs/2" do
