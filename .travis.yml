@@ -1,4 +1,5 @@
 language: elixir
+if: type = push OR (type = pull_request AND fork = true)
 matrix:
   include:
   - elixir: 1.5.3
