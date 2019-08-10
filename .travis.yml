@@ -1,21 +1,66 @@
 language: elixir
-elixir:
-  - 1.8.2
-  - 1.9.1
-otp_release:
-  - 21.3
-  - 22.0
-env:
-  - ""
-  - WALLABY_DRIVER=phantom
-  - WALLABY_DRIVER=chrome
-  - WALLABY_DRIVER=selenium
 matrix:
-  exclude:
+  include:
+  - elixir: 1.5.3
+    otp_release: 18.3
+    env: ""
+  - elixir: 1.5.3
+    otp_release: 18.3
+    env: WALLABY_DRIVER=phantom
+  - elixir: 1.5.3
+    otp_release: 18.3
+    env: WALLABY_DRIVER=chrome
+  - elixir: 1.5.3
+    otp_release: 18.3
+    env: WALLABY_DRIVER=selenium
+  - elixir: 1.6.6
+    otp_release: 19.3
+    env: ""
+  - elixir: 1.6.6
+    otp_release: 19.3
+    env: WALLABY_DRIVER=phantom
+  - elixir: 1.6.6
+    otp_release: 19.3
+    env: WALLABY_DRIVER=chrome
+  - elixir: 1.6.6
+    otp_release: 19.3
+    env: WALLABY_DRIVER=selenium
+  - elixir: 1.7.4
+    otp_release: 20.3
+    env: ""
+  - elixir: 1.7.4
+    otp_release: 20.3
+    env: WALLABY_DRIVER=phantom
+  - elixir: 1.7.4
+    otp_release: 20.3
+    env: WALLABY_DRIVER=chrome
+  - elixir: 1.7.4
+    otp_release: 20.3
+    env: WALLABY_DRIVER=selenium
   - elixir: 1.8.2
-    otp_release: 22.0
-  - elixir: 1.9.1
     otp_release: 21.3
+    env: ""
+  - elixir: 1.8.2
+    otp_release: 21.3
+    env: WALLABY_DRIVER=phantom
+  - elixir: 1.8.2
+    otp_release: 21.3
+    env: WALLABY_DRIVER=chrome
+  - elixir: 1.8.2
+    otp_release: 21.3
+    env: WALLABY_DRIVER=selenium
+  - elixir: 1.9.1
+    otp_release: 22.0.7
+    env: ""
+  - elixir: 1.9.1
+    otp_release: 22.0.7
+    env: WALLABY_DRIVER=phantom
+  - elixir: 1.9.1
+    otp_release: 22.0.7
+    env: WALLABY_DRIVER=chrome
+  - elixir: 1.9.1
+    otp_release: 22.0.7
+    env: WALLABY_DRIVER=selenium
 # Run in bigger container so we don't run out of memory generating the plt
 sudo: required
 cache:
