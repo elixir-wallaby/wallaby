@@ -3,7 +3,7 @@ defmodule Wallaby.Integration.Browser.MoveByTest do
   import Wallaby.Browser
 
   setup %{session: session} do
-    {:ok, page: visit(session, "move_by.html")}
+    {:ok, page: visit(session, "move_mouse.html")}
   end
 
   describe "move_by/3" do
