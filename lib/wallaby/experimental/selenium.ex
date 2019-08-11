@@ -143,9 +143,10 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.click(element)
   end
 
-  def click(parent, button) do
-    WebdriverClient.click(parent, button)
-  end
+  # TODO: make it working for Selenium, now it doesn't work for middle and right mouse button
+  # def click(parent, button) do
+  #   WebdriverClient.click(parent, button)
+  # end
 
   def hover(%Element{} = element) do
     WebdriverClient.move_to(nil, element)

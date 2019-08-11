@@ -185,9 +185,9 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   def click(parent, button), do: delegate(:click, parent, [button])
   @doc false
-  def hover(element), do: delegate(:hover, element)
+  def hover(element), do: delegate(:move_to, element, [element])
   @doc false
-  def move_by(parent, x_offset, y_offset), do: delegate(:move_by, parent, [x_offset, y_offset])
+  def move_by(parent, x_offset, y_offset), do: delegate(:move_to, parent, [nil, x_offset, y_offset])
   @doc false
   def clear(element), do: delegate(:clear, element)
   @doc false

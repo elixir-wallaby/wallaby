@@ -130,9 +130,9 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
     button_mapping = %{left: 0, middle: 1, right: 2}
 
     with {:ok, resp} <-
-           request(:post, "#{parent.session_url}/click", %{button: 2}),
+           request(:post, "#{parent.session_url}/click", %{button: button_mapping[button]}),
          {:ok, value} <- Map.fetch(resp, "value"),
-         do: IO.inspect resp;# {:ok, value}
+         do: {:ok, value}
   end
 
   @doc """
