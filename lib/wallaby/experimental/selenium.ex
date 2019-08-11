@@ -148,6 +148,16 @@ defmodule Wallaby.Experimental.Selenium do
   #   WebdriverClient.click(parent, button)
   # end
 
+  # TODO: make it working for Selenium, now it doesn't work for middle and right mouse button
+  # def button_down(parent, button) do
+  #   WebdriverClient.button_down(parent, button)
+  # end
+
+  # TODO: make it working for Selenium, now it doesn't work for middle and right mouse button
+  # def button_up(parent, button) do
+  #   WebdriverClient.button_up(parent, button)
+  # end
+
   def double_click(parent) do
     WebdriverClient.double_click(parent)
   end
