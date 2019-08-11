@@ -148,6 +148,10 @@ defmodule Wallaby.Experimental.Selenium do
   #   WebdriverClient.click(parent, button)
   # end
 
+  def double_click(parent) do
+    WebdriverClient.double_click(parent)
+  end
+
   def hover(%Element{} = element) do
     WebdriverClient.move_to(nil, element)
   end

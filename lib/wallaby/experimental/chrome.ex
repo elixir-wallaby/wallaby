@@ -185,6 +185,8 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   def click(parent, button), do: delegate(:click, parent, [button])
   @doc false
+  def double_click(parent), do: delegate(:double_click, parent)
+  @doc false
   def button_down(parent, button), do: delegate(:button_down, parent, [button])
   @doc false
   def button_up(parent, button), do: delegate(:button_up, parent, [button])
