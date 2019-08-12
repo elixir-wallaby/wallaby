@@ -130,6 +130,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Clicks given mouse button on the current cursor position.
   """
+  # TODO: make it working for Firefox, now it doesn't work for middle and right mouse button
   @spec click(parent, atom) :: {:ok, map}
   def click(parent, button) when button in [:left, :middle, :right] do
     button_mapping = %{left: 0, middle: 1, right: 2}
@@ -154,6 +155,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Clicks and holds the given mouse button at the current mouse coordinates.
   """
+  # TODO: make it working for Firefox, now it doesn't work for middle and right mouse button
   @spec button_down(parent, atom) :: {:ok, map}
   def button_down(parent, button) when button in [:left, :middle, :right] do
     button_mapping = %{left: 0, middle: 1, right: 2}
@@ -167,6 +169,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Releases given previously held mouse button.
   """
+  # TODO: make it working for Firefox, now it doesn't work for middle and right mouse button
   @spec button_down(parent, atom) :: {:ok, map}
   def button_up(parent, button) when button in [:left, :middle, :right] do
     button_mapping = %{left: 0, middle: 1, right: 2}
