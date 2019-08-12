@@ -170,7 +170,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   Releases given previously held mouse button.
   """
   # Doesn't work for Firefox with middle and right mouse button.
-  @spec button_down(parent, atom) :: {:ok, map}
+  @spec button_up(parent, atom) :: {:ok, map}
   def button_up(parent, button) when button in [:left, :middle, :right] do
     button_mapping = %{left: 0, middle: 1, right: 2}
 
@@ -187,7 +187,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   Gets keyword list with element, xoffset and yoffset specified as an argument.
   """
-  @spec move_mouse_to(Session.t(), Element.t(), integer, integer) :: {:ok, map}
+  @spec move_mouse_to(parent | nil, Element.t() | nil, integer | nil, integer | nil) :: {:ok, map}
   def move_mouse_to(session, element, x_offset \\ nil, y_offset \\ nil) do
     params =
       %{element: element, xoffset: x_offset, yoffset: y_offset}
