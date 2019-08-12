@@ -950,7 +950,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     end
   end
 
-  describe "move_to/4" do
+  describe "move_mouse_to/4" do
     test "sends the correct request to the server when only element is not nil", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
@@ -967,7 +967,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert {:ok, %{}} = Client.move_to(nil, element)
+      assert {:ok, %{}} = Client.move_mouse_to(nil, element)
     end
 
     test "sends the correct request to the server when session and offsets are given", %{bypass: bypass} do
@@ -986,7 +986,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert {:ok, %{}} = Client.move_to(session, nil, x_offset, y_offset)
+      assert {:ok, %{}} = Client.move_mouse_to(session, nil, x_offset, y_offset)
     end
 
     test "sends the correct request to the server when element and offsets are given", %{bypass: bypass} do
@@ -1006,7 +1006,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert {:ok, %{}} = Client.move_to(nil, element, x_offset, y_offset)
+      assert {:ok, %{}} = Client.move_mouse_to(nil, element, x_offset, y_offset)
     end
   end
 

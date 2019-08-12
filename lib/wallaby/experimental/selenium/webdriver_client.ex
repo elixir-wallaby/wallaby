@@ -187,8 +187,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
 
   Gets keyword list with element, xoffset and yoffset specified as an argument.
   """
-  @spec move_to(Session.t(), Element.t(), integer, integer) :: {:ok, map}
-  def move_to(session, element, x_offset \\ nil, y_offset \\ nil) do
+  @spec move_mouse_to(Session.t(), Element.t(), integer, integer) :: {:ok, map}
+  def move_mouse_to(session, element, x_offset \\ nil, y_offset \\ nil) do
     params =
       %{element: element, xoffset: x_offset, yoffset: y_offset}
       |> Enum.filter(fn {_key, value} -> not is_nil(value) end)
