@@ -594,10 +594,10 @@ defmodule Wallaby.Browser do
   @doc """
   Moves mouse by an offset relative to current cursor position.
   """
-  @spec move_by(parent, integer, integer) :: parent
+  @spec move_mouse_by(parent, integer, integer) :: parent
 
-  def move_by(parent, x_offset, y_offset) do
-    case parent.driver.move_by(parent, x_offset, y_offset) do
+  def move_mouse_by(parent, x_offset, y_offset) do
+    case parent.driver.move_mouse_by(parent, x_offset, y_offset) do
       {:ok, _} ->
         parent
     end

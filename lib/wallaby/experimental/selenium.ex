@@ -166,7 +166,7 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.move_to(nil, element)
   end
 
-  def move_by(session, x_offset, y_offset) do
+  def move_mouse_by(session, x_offset, y_offset) do
     WebdriverClient.move_to(session, nil, x_offset, y_offset)
   end
 
