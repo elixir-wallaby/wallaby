@@ -1,8 +1,29 @@
 ## 0.23.0 (pending)
 
+### Improvements
+
+* Ability to configure the path to the ChromeDriver executable
+* Screenshot support for Selenium
+* Introduce`accept_alert/2`, `dismiss_alert/2`, `accept_confirm/2`, `dismiss_confirm/2`, `accept_prompt/2`, `dismiss_prompt/2` for Selenium
+* `hover/1`
+* Add `:log` option to `take_screnshot`, this is set to `true` when taking screenshots on failure
+* Introduce `Browser.focus_window/2`
+* Introduce `Browser.close_window/1`
+* Introduce `Browser.set_window_position/3`
+* Introduce `Browser.get_window_position/1`
+* Introduce `Browser.maximize_window/1`
+* Introduce `Browser.focus_frame/2`
+* Introduce `Browser.focus_parent_frame/1`
+* Introduce `Browser.focus_frame/1`
+* Introduce `Browser.execute_script_async/2`, `Browser.execute_script_async/3`, and `Browser.execute_script_async/4`
+
+### Bugfixes
+
+* LogStore now wraps logs in a list before attempting to pass them to List functions. This was causing Wallaby to crash and would mask actual test errors.
+
 ## 0.22.0 (2019-02-26)
 
-## Improvements
+### Improvements
 
 * Add `Query.data` to find by data attributes
 * Add selected conditions to query
@@ -10,7 +31,7 @@
 * Add `visible: any` option to query
 * Handle Safari and Edge stale reference errors
 
-## Bugfixes
+### Bugfixes
 
 * allow newlines in chrome logs
 * Allow other versions of chromedriver
@@ -32,7 +53,7 @@
 * Option to configure default window size
 * Pretty printing element html
 
-## Bugfixes
+### Bugfixes
 
 * Chrome takes screenshots correctly if elements are passed to `take_screenshot`.
 * Chrome no longer spits out errors constantly.
