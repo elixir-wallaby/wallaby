@@ -2,20 +2,15 @@
 
 ### Improvements
 
-* Ability to configure the path to the ChromeDriver executable
-* Screenshot support for Selenium
-* Introduce`accept_alert/2`, `dismiss_alert/2`, `accept_confirm/2`, `dismiss_confirm/2`, `accept_prompt/2`, `dismiss_prompt/2` for Selenium
-* `hover/1`
+* Add ability to configure the path to the ChromeDriver executable
+* Enable screenshot support for Selenium driver
+* Enable `accept_alert/2`, `dismiss_alert/2`, `accept_confirm/2`, `dismiss_confirm/2`, `accept_prompt/2`, `dismiss_prompt/2` for Selenium driver
 * Add `:log` option to `take_screnshot`, this is set to `true` when taking screenshots on failure
-* Introduce `Browser.focus_window/2`
-* Introduce `Browser.close_window/1`
-* Introduce `Browser.set_window_position/3`
-* Introduce `Browser.get_window_position/1`
-* Introduce `Browser.maximize_window/1`
-* Introduce `Browser.focus_frame/2`
-* Introduce `Browser.focus_parent_frame/1`
-* Introduce `Browser.focus_frame/1`
-* Introduce `Browser.execute_script_async/2`, `Browser.execute_script_async/3`, and `Browser.execute_script_async/4`
+* Introduce window/tab switching support: `Browser.window_handle/1`, `Browser.window_handles/1`, `Browser.focus_window/2` and `Browser.close_window/1`
+* Introduce window placement support: `Browser.window_position/1`, `Browser.move_window/3` and `Browser.maximize_window/1`
+* Introduce frame switching support: `Browser.focus_frame/2`, `Browser.focus_parent_frame/1`, `Browser.focus_default_frame/1`
+* Introduce async script support: `Browser.execute_script_async/2`, `Browser.execute_script_async/3`, and `Browser.execute_script_async/4`
+* Introduce mouse events support: `Browser.hover/2`, `Browser.move_mouse_by/3`, `Browser.double_click/1`, `Browser.button_down/2` and `Browser.button_up/2`
 
 ### Bugfixes
 
