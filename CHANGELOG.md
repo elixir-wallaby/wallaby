@@ -1,4 +1,6 @@
-## 0.23.0 (pending)
+## Master
+
+## 0.23.0 (2019-08-14)
 
 ### Improvements
 
