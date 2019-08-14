@@ -1,8 +1,24 @@
 ## 0.23.0 (pending)
 
+### Improvements
+
+* Add ability to configure the path to the ChromeDriver executable
+* Enable screenshot support for Selenium driver
+* Enable `accept_alert/2`, `dismiss_alert/2`, `accept_confirm/2`, `dismiss_confirm/2`, `accept_prompt/2`, `dismiss_prompt/2` for Selenium driver
+* Add `:log` option to `take_screenshot`, this is set to `true` when taking screenshots on failure
+* Introduce window/tab switching support: `Browser.window_handle/1`, `Browser.window_handles/1`, `Browser.focus_window/2` and `Browser.close_window/1`
+* Introduce window placement support: `Browser.window_position/1`, `Browser.move_window/3` and `Browser.maximize_window/1`
+* Introduce frame switching support: `Browser.focus_frame/2`, `Browser.focus_parent_frame/1`, `Browser.focus_default_frame/1`
+* Introduce async script support: `Browser.execute_script_async/2`, `Browser.execute_script_async/3`, and `Browser.execute_script_async/4`
+* Introduce mouse events support: `Browser.hover/2`, `Browser.move_mouse_by/3`, `Browser.double_click/1`, `Browser.button_down/2`, `Browser.button_up/2`, and a version of `Browser.click/2` that clicks in current mouse position.
+
+### Bugfixes
+
+* LogStore now wraps logs in a list before attempting to pass them to List functions. This was causing Wallaby to crash and would mask actual test errors.
+
 ## 0.22.0 (2019-02-26)
 
-## Improvements
+### Improvements
 
 * Add `Query.data` to find by data attributes
 * Add selected conditions to query
@@ -10,7 +26,7 @@
 * Add `visible: any` option to query
 * Handle Safari and Edge stale reference errors
 
-## Bugfixes
+### Bugfixes
 
 * allow newlines in chrome logs
 * Allow other versions of chromedriver
@@ -32,7 +48,7 @@
 * Option to configure default window size
 * Pretty printing element html
 
-## Bugfixes
+### Bugfixes
 
 * Chrome takes screenshots correctly if elements are passed to `take_screenshot`.
 * Chrome no longer spits out errors constantly.

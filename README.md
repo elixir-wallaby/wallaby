@@ -493,7 +493,7 @@ session
 
 ### Interacting with dialogs
 
-Wallaby provides several ways to interact with JavaScript dialogs such as `window.alert`, `window.confirm` and `window.prompt`. 
+Wallaby provides several ways to interact with JavaScript dialogs such as `window.alert`, `window.confirm` and `window.prompt`.
 
 You can use one of the following functions:
 
@@ -621,7 +621,7 @@ from your test run.
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
 
-To get started and setup the project, make sure you've got Elixir 1.7+ installed and then:
+To get started and setup the project, make sure you've got Elixir 1.5+ installed and then:
 
 ```
 $ mix deps.get
