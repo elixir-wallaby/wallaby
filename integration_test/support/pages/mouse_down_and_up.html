@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+
+<body>
+
+  <button id="button-1" oncontextmenu="event.preventDefault();">Button 1</button>
+  <button id="button-2" oncontextmenu="event.preventDefault();">Button 2</button>
+  <p id="log"></p>
+
+  <script>
+
+    let button1 = document.querySelector('#button-1');
+    let button2 = document.querySelector('#button-2');
+    let log = document.querySelector('#log');
+
+    function logButtonEvent(e, logSuffix) {
+      if (typeof e === 'object') {
+        switch (e.button) {
+          case 0:
+            log.textContent = 'Left ' + logSuffix;
+            break;
+          case 1:
+            log.textContent = 'Middle ' + logSuffix;
+            break;
+          case 2:
+            log.textContent = 'Right ' + logSuffix;
+            break;
+          default:
+            log.textContent = `Unknown`;
+        }
+      }
+    }
+
+    button1.addEventListener('mousedown', logButtonDown);
+    button1.addEventListener('mouseup', logButtonUp);
+    button2.addEventListener('mouseup', logButtonUp);
+
+    function logButtonDown(e) {
+      logButtonEvent(e, "Down");
+    }
+
+    function logButtonUp(e) {
+      logButtonEvent(e, "Up");
+    }
+  </script>
+
+</body>
+
+</html>

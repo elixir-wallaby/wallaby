@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+
+<body>
+
+  <button id="button" ondblclick="doubleClick()" oncontextmenu="event.preventDefault();">Click</button>
+  <p id="log"></p>
+
+  <script>
+    function doubleClick() {
+      document.querySelector('#log').textContent = "Double";
+    }
+
+    let button = document.querySelector('#button');
+    let log = document.querySelector('#log');
+    button.addEventListener('mouseup', logMouseButton);
+
+    function logMouseButton(e) {
+      if (typeof e === 'object') {
+        switch (e.button) {
+          case 0:
+            log.textContent = 'Left';
+            break;
+          case 1:
+            log.textContent = 'Middle';
+            break;
+          case 2:
+            log.textContent = 'Right';
+            break;
+          default:
+            log.textContent = `Unknown`;
+        }
+      }
+    }
+  </script>
+
+</body>
+
+</html>
