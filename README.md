@@ -493,9 +493,9 @@ session
 
 ### Interacting with dialogs
 
-Wallaby provides several ways to interact with JavaScript dialogs such as `window.alert`, `window.confirm` and `window.prompt`. To accept/dismiss all dialogs in the current session you can use `accept_dialogs` and `dismiss_dialogs`. The default behavior is equivalent to using `dismiss_dialogs`.
+Wallaby provides several ways to interact with JavaScript dialogs such as `window.alert`, `window.confirm` and `window.prompt`. 
 
-For more fine-grained control over individual dialogs, you can use one of the following functions:
+You can use one of the following functions:
 
 * For `window.alert` use `accept_alert/2`
 * For `window.confirm` use `accept_confirm/2` or `dismiss_confirm/2`
