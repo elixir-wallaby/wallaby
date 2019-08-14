@@ -67,6 +67,7 @@ defmodule Wallaby.Mixfile do
   defp package do
     [
       files: ["lib", "mix.exs", "README.md", "LICENSE.md", "priv"],
+      exclude_patterns: ["safe_travis.ex"],
       maintainers: @maintainers,
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/keathley/wallaby"}
