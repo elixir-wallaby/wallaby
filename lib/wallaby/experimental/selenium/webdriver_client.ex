@@ -436,7 +436,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Sends a list of key strokes to active element
+  Sends a list of key strokes to active element.
   """
   @spec send_keys(Session.t(), [String.t() | atom]) :: {:ok, nil}
   def send_keys(%Session{} = session, keys) when is_list(keys) do

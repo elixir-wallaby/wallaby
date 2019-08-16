@@ -23,7 +23,7 @@ Code.require_file "cases/browser/page_source_test.exs", __DIR__
 Code.require_file "cases/browser/screenshot_test.exs", __DIR__
 Code.require_file "cases/browser/select_test.exs", __DIR__
 Code.require_file "cases/browser/set_value_test.exs", __DIR__
-Code.require_file "cases/browser/send_text_test.exs", __DIR__
+Code.require_file "cases/browser/send_keys_test.exs", __DIR__
 Code.require_file "cases/browser/stale_nodes_test.exs", __DIR__
 Code.require_file "cases/browser/text_test.exs", __DIR__
 Code.require_file "cases/browser/title_test.exs", __DIR__
