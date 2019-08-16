@@ -1,7 +1,7 @@
 defmodule Wallaby.Mixfile do
   use Mix.Project
 
-  @version "0.22.0"
+  @version "0.23.0"
   @drivers ~w(phantom selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers [
@@ -67,6 +67,7 @@ defmodule Wallaby.Mixfile do
   defp package do
     [
       files: ["lib", "mix.exs", "README.md", "LICENSE.md", "priv"],
+      exclude_patterns: ["safe_travis.ex"],
       maintainers: @maintainers,
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/keathley/wallaby"}
