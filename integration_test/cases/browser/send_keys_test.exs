@@ -1,4 +1,4 @@
-defmodule Wallaby.Integration.Browser.SendTextTest do
+defmodule Wallaby.Integration.Browser.SendKeysTest do
   use Wallaby.Integration.SessionCase, async: true
 
   setup %{session: session} do
