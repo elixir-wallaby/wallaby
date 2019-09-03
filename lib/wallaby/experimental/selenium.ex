@@ -8,17 +8,16 @@ defmodule Wallaby.Experimental.Selenium do
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   @type start_session_opts ::
-    {:remote_url, String.t} |
-    {:capabilities, map} |
-    {:create_session_fn, ((String.t, map) -> {:ok, %{}})}
+          {:remote_url, String.t()}
+          | {:capabilities, map}
+          | {:create_session_fn, (String.t(), map -> {:ok, %{}})}
 
   def start_link(opts \\ []) do
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
   def init(:ok) do
-    children = [
-    ]
+    children = []
 
     supervise(children, strategy: :one_for_one)
   end
@@ -27,12 +26,11 @@ defmodule Wallaby.Experimental.Selenium do
     :ok
   end
 
-  @spec start_session([start_session_opts]) :: {:ok, Session.t}
+  @spec start_session([start_session_opts]) :: {:ok, Session.t()}
   def start_session(opts \\ []) do
     base_url = Keyword.get(opts, :remote_url, "http://localhost:4444/wd/hub/")
     capabilities = Keyword.get(opts, :capabilities, %{})
-    create_session_fn = Keyword.get(opts, :create_session_fn,
-                                    &WebdriverClient.create_session/2)
+    create_session_fn = Keyword.get(opts, :create_session_fn, &WebdriverClient.create_session/2)
 
     capabilities = Map.merge(default_capabilities(), capabilities)
 
@@ -54,15 +52,14 @@ defmodule Wallaby.Experimental.Selenium do
   end
 
   @type end_session_opts ::
-    {:end_session_fn, ((Session.t) -> any)}
+          {:end_session_fn, (Session.t() -> any)}
 
   @doc """
   Invoked to end a browser session.
   """
-  @spec end_session(Session.t, [end_session_opts]) :: :ok
+  @spec end_session(Session.t(), [end_session_opts]) :: :ok
   def end_session(session, opts \\ []) do
-    end_session_fn =
-      Keyword.get(opts, :end_session_fn, &WebdriverClient.delete_session/1)
+    end_session_fn = Keyword.get(opts, :end_session_fn, &WebdriverClient.delete_session/1)
 
     end_session_fn.(session)
     :ok
@@ -72,6 +69,7 @@ defmodule Wallaby.Experimental.Selenium do
     case current_url(session) do
       {:ok, url} ->
         url == "about:blank"
+
       _ ->
         false
     end
@@ -104,10 +102,10 @@ defmodule Wallaby.Experimental.Selenium do
   end
 
   def current_path(%Session{} = session) do
-    with  {:ok, url} <- WebdriverClient.current_url(session),
-          uri <- URI.parse(url),
-          {:ok, path} <- Map.fetch(uri, :path),
-      do: {:ok, path}
+    with {:ok, url} <- WebdriverClient.current_url(session),
+         uri <- URI.parse(url),
+         {:ok, path} <- Map.fetch(uri, :path),
+         do: {:ok, path}
   end
 
   def current_url(%Session{} = session) do
@@ -134,7 +132,7 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.attribute(element, name)
   end
 
-  @spec clear(Element.t) :: {:ok, nil} | {:error, Driver.reason}
+  @spec clear(Element.t()) :: {:ok, nil} | {:error, Driver.reason()}
   def clear(%Element{} = element) do
     WebdriverClient.clear(element)
   end
@@ -167,6 +165,18 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.move_mouse_to(session, nil, x_offset, y_offset)
   end
 
+  def touch_down(element) do
+    WebdriverClient.touch_down(element)
+  end
+
+  def touch_up(session) do
+    WebdriverClient.touch_up(session)
+  end
+
+  def tap(element) do
+    WebdriverClient.tap(element)
+  end
+
   def displayed(%Element{} = element) do
     WebdriverClient.displayed(element)
   end
@@ -175,7 +185,7 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.selected(element)
   end
 
-  @spec set_value(Element.t, String.t) :: {:ok, nil} | {:error, Driver.reason}
+  @spec set_value(Element.t(), String.t()) :: {:ok, nil} | {:error, Driver.reason()}
   def set_value(%Element{} = element, value) do
     WebdriverClient.set_value(element, value)
   end
@@ -198,6 +208,14 @@ defmodule Wallaby.Experimental.Selenium do
 
   def send_keys(parent, keys) do
     WebdriverClient.send_keys(parent, keys)
+  end
+    
+  def element_size(element) do
+    WebdriverClient.element_size(element)
+  end
+
+  def element_location(element) do
+    WebdriverClient.element_location(element)
   end
 
   defp default_capabilities do

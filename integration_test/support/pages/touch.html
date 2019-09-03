@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+
+<body>
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    #button {
+      width: 200px;
+      height: 100px;
+    }
+  </style>
+
+
+  <p>Touch events</p>
+  <button id="button">Touch me!</button>
+  <p id="log-start"></p>
+  <p id="log-move"></p>
+  <p id="log-end"></p>
+
+  <script>
+    let button = document.querySelector('#button');
+    let logStart = document.querySelector('#log-start');
+    let logMove = document.querySelector('#log-move');
+    let logEnd = document.querySelector('#log-end');
+
+    button.addEventListener('touchstart', process_touchstart, false);
+    button.addEventListener('touchmove', process_touchmove, false);
+    button.addEventListener('touchend', process_touchend, false);
+
+    function process_touchstart(ev) {
+      logStart.textContent = 'Start ' + ev.touches[0].clientX + ' ' + + ev.touches[0].clientY;
+    }
+    function process_touchmove(ev) {
+      logMove.textContent = 'Move ' + ev.touches[0].clientX + ' ' + + ev.touches[0].clientY;
+    }
+    function process_touchend(ev) {
+      logEnd.textContent = 'End';
+    }
+  </script>
+
+</body>
+
+</html>

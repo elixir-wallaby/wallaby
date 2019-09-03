@@ -195,6 +195,12 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   def move_mouse_by(parent, x_offset, y_offset), do: delegate(:move_mouse_to, parent, [nil, x_offset, y_offset])
   @doc false
+  def touch_down(element), do: delegate(:touch_down, element)
+  @doc false
+  def touch_up(session), do: delegate(:touch_up, session)
+  @doc false
+  def tap(element), do: delegate(:tap, element)
+  @doc false
   def clear(element), do: delegate(:clear, element)
   @doc false
   def displayed(element), do: delegate(:displayed, element)
@@ -241,6 +247,10 @@ defmodule Wallaby.Experimental.Chrome do
 
   @doc false
   def send_keys(session_or_element, keys), do: delegate(:send_keys, session_or_element, [keys])
+  @doc false
+  def element_size(element), do: delegate(:element_size, element)
+  @doc false
+  def element_location(element), do: delegate(:element_location, element)
   @doc false
   def take_screenshot(session_or_element), do: delegate(:take_screenshot, session_or_element)
   @doc false

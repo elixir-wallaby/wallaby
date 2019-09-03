@@ -215,6 +215,42 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
+  Touches and holds the element.
+  """
+  @spec touch_down(Element.t()) :: {:ok, map}
+  def touch_down(element) do
+    {:ok, {x, y}} = element_location(element)
+
+    with {:ok, resp} <-
+           request(:post, "#{element.session_url}/touch/down", %{x: x, y: y}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
+  Stops touching the screen.
+  """
+  @spec touch_up(parent) :: {:ok, map}
+  def touch_up(parent) do
+    # in fact x and y (in request params) can be any coordinates not greater than page size
+    with {:ok, resp} <-
+           request(:post, "#{parent.session_url}/touch/up", %{x: 0, y: 0}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
+  Taps the element.
+  """
+  @spec tap(Element.t()) :: {:ok, map}
+  def tap(element) do
+    with {:ok, resp} <-
+           request(:post, "#{element.session_url}/touch/click", %{element: element.id}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
   Gets the text for an element.
   """
   @spec text(Element.t()) :: {:ok, String.t()}
@@ -428,11 +464,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   Executes asynchronous javascript, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
-  @spec execute_script_async(Session.t | Element.t, String.t, Keyword.t) :: {:ok, any}
+  @spec execute_script_async(Session.t() | Element.t(), String.t(), Keyword.t()) :: {:ok, any}
   def execute_script_async(session, script, arguments \\ []) do
-    with {:ok, resp} <- request(:post, "#{session.session_url}/execute_async", %{script: script, args: arguments}),
-          {:ok, value} <- Map.fetch(resp, "value"),
-      do: {:ok, value}
+    with {:ok, resp} <-
+           request(:post, "#{session.session_url}/execute_async", %{
+             script: script,
+             args: arguments
+           }),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
   end
 
   @doc """
@@ -560,6 +600,28 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
     with {:ok, resp} <- request(:post, "#{session.url}/frame/parent"),
          {:ok, value} <- Map.fetch(resp, "value"),
          do: {:ok, value}
+  end
+
+  @doc """
+  Returns tuple {width, height} with size of the given element.
+  """
+  @spec element_size(Element.t()) :: {:ok, map}
+  def element_size(element) do
+    with {:ok, resp} <- request(:get, "#{element.session_url}/element/#{element.id}/size"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, {value["width"], value["height"]}}
+  end
+
+  @doc """
+  Returns tuple {x, y} with coordinates of the middle of given element.
+  """
+  @spec element_location(Element.t()) :: {:ok, map}
+  def element_location(element) do
+    {:ok, {width, height}} = element_size(element)
+
+    with {:ok, resp} <- request(:get, "#{element.session_url}/element/#{element.id}/location"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, {value["x"] + div(width, 2), value["y"] + div(height, 2)}}
   end
 
   @spec cast_as_element(Session.t() | Element.t(), map) :: Element.t()

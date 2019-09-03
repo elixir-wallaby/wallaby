@@ -30,19 +30,20 @@ defmodule Wallaby.Element do
 
   defstruct [:url, :session_url, :parent, :id, :driver, screenshots: []]
 
-  @type value :: String.t
-               | number()
-               | :selected
-               | :unselected
-  @type attr :: String.t
-  @type keys_to_send :: String.t | list(atom | String.t)
+  @type value ::
+          String.t()
+          | number()
+          | :selected
+          | :unselected
+  @type attr :: String.t()
+  @type keys_to_send :: String.t() | list(atom | String.t())
   @type t :: %__MODULE__{
-    session_url: String.t,
-    url: String.t,
-    id: String.t,
-    screenshots: list,
-    driver: module,
-  }
+          session_url: String.t(),
+          url: String.t(),
+          id: String.t(),
+          screenshots: list,
+          driver: module
+        }
 
   @doc """
   Clears any value set in the element.
@@ -53,8 +54,10 @@ defmodule Wallaby.Element do
     case driver.clear(element) do
       {:ok, _} ->
         element
+
       {:error, :stale_reference} ->
         raise StaleReferenceError
+
       {:error, :invalid_selector} ->
         raise InvalidSelectorError
     end
@@ -63,11 +66,12 @@ defmodule Wallaby.Element do
   @doc """
   Fills in the element with the specified value.
   """
-  @spec fill_in(t, with: String.t | number()) :: t
+  @spec fill_in(t, with: String.t() | number()) :: t
 
   def fill_in(element, with: value) when is_number(value) do
     fill_in(element, with: to_string(value))
   end
+
   def fill_in(element, with: value) when is_binary(value) do
     element
     |> clear
@@ -83,8 +87,10 @@ defmodule Wallaby.Element do
     case driver.click(element) do
       {:ok, _} ->
         element
+
       {:error, :stale_reference} ->
         raise StaleReferenceError
+
       {:error, :obscured} ->
         if retry_count > 4 do
           raise Wallaby.ExpectationNotMetError, """
@@ -109,14 +115,39 @@ defmodule Wallaby.Element do
   end
 
   @doc """
+  Touches and holds the element.
+  """
+  @spec touch_down(t) :: t
+
+  def touch_down(%__MODULE__{driver: driver} = element) do
+    case driver.touch_down(element) do
+      {:ok, _} ->
+        element
+    end
+  end
+
+  @doc """
+  Taps the element.
+  """
+  @spec tap(t) :: t
+
+  def tap(%__MODULE__{driver: driver} = element) do
+    case driver.tap(element) do
+      {:ok, _} ->
+        element
+    end
+  end
+
+  @doc """
   Returns the text from the element.
   """
-  @spec text(t) :: String.t
+  @spec text(t) :: String.t()
 
   def text(%__MODULE__{driver: driver} = element) do
     case driver.text(element) do
       {:ok, text} ->
         text
+
       {:error, :stale_reference} ->
         raise StaleReferenceError
     end
@@ -125,12 +156,13 @@ defmodule Wallaby.Element do
   @doc """
   Gets the value of the element's attribute.
   """
-  @spec attr(t, attr()) :: String.t | nil
+  @spec attr(t, attr()) :: String.t() | nil
 
   def attr(%__MODULE__{driver: driver} = element, name) do
     case driver.attribute(element, name) do
       {:ok, attribute} ->
         attribute
+
       {:error, :stale_reference} ->
         raise StaleReferenceError
     end
@@ -150,6 +182,7 @@ defmodule Wallaby.Element do
     case driver.selected(element) do
       {:ok, value} ->
         value
+
       {:error, _} ->
         false
     end
@@ -164,6 +197,7 @@ defmodule Wallaby.Element do
     case driver.displayed(element) do
       {:ok, value} ->
         value
+
       {:error, _} ->
         false
     end
@@ -178,9 +212,12 @@ defmodule Wallaby.Element do
     case driver.set_value(element, value) do
       {:ok, _} ->
         element
+
       {:error, :stale_reference} ->
         raise StaleReferenceError
-      error -> error
+
+      error ->
+        error
     end
   end
 
@@ -192,27 +229,55 @@ defmodule Wallaby.Element do
   def send_keys(element, text) when is_binary(text) do
     send_keys(element, [text])
   end
+
   def send_keys(%__MODULE__{driver: driver} = element, keys) when is_list(keys) do
     case driver.send_keys(element, keys) do
       {:ok, _} ->
         element
+
       {:error, :stale_reference} ->
         raise StaleReferenceError
-      error -> error
+
+      error ->
+        error
     end
   end
 
   @doc """
   Matches the Element's value with the provided value.
   """
-  @spec value(t) :: String.t
+  @spec value(t) :: String.t()
 
   def value(element) do
     attr(element, "value")
   end
+
+  @doc """
+  Returns tuple {width, height} with size of the given element.
+  """
+  @spec size(Element.t()) :: Element.t()
+
+  def size(%__MODULE__{driver: driver} = element) do
+    case driver.element_size(element) do
+      {:ok, value} ->
+        value
+    end
+  end
+
+  @doc """
+  Returns tuple {x, y} with coordinates of the middle of the given element.
+  """
+  @spec location(Element.t()) :: Element.t()
+
+  def location(%__MODULE__{driver: driver} = element) do
+    case driver.element_location(element) do
+      {:ok, value} ->
+        value
+    end
+  end
 end
 
-defimpl Inspect, for: Wallaby.Element  do
+defimpl Inspect, for: Wallaby.Element do
   import Inspect.Algebra
 
   def inspect(element, opts) do
@@ -221,8 +286,8 @@ defimpl Inspect, for: Wallaby.Element  do
     concat([
       Inspect.Any.inspect(element, opts),
       "\n\n",
-      IO.ANSI.cyan <> "outerHTML:\n\n" <> IO.ANSI.reset,
-      IO.ANSI.yellow <> outer_html <> IO.ANSI.reset
+      IO.ANSI.cyan() <> "outerHTML:\n\n" <> IO.ANSI.reset(),
+      IO.ANSI.yellow() <> outer_html <> IO.ANSI.reset()
     ])
   end
 end
