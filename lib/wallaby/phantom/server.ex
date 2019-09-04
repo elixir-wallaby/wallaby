@@ -85,7 +85,7 @@ defmodule Wallaby.Phantom.Server do
   def handle_info({port, {:exit_status, status}}, %ServerState{wrapper_script_port: port} = state) do
     {:stop, {:exit_status, status}, state}
   end
-  def handle_info(msg, state), do: super(msg, state)
+  def handle_info(_, state), do: {:noreply, state}
 
   @impl GenServer
   def terminate(_reason, %ServerState{wrapper_script_port: wrapper_script_port, wrapper_script_os_pid: wrapper_script_os_pid}) do

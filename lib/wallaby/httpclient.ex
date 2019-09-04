@@ -26,7 +26,7 @@ defmodule Wallaby.HTTPClient do
     make_request(method, url, params)
   end
   def request(method, url, params, _opts) do
-    make_request(method, url, Poison.encode!(params))
+    make_request(method, url, Jason.encode!(params))
   end
 
   defp make_request(method, url, body), do: make_request(method, url, body, 0, [])
@@ -59,7 +59,7 @@ defmodule Wallaby.HTTPClient do
         {:ok, %{"value" => nil}}
 
       {:ok, %HTTPoison.Response{body: body}} ->
-        with {:ok, decoded} <- Poison.decode(body),
+        with {:ok, decoded} <- Jason.decode(body),
              {:ok, response} <- check_status(decoded),
              {:ok, validated} <- check_for_response_errors(response),
           do: {:ok, validated}
@@ -69,17 +69,24 @@ defmodule Wallaby.HTTPClient do
   defp check_status(response) do
     case Map.get(response, "status") do
       @status_obscured ->
-        {:error, :obscured}
+        message = get_in(response, ["value", "message"])
+
+        {:error, message}
       _  ->
         {:ok, response}
     end
   end
 
+  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
   defp check_for_response_errors(response) do
     case Map.get(response, "value") do
       %{"class" => "org.openqa.selenium.StaleElementReferenceException"} ->
         {:error, :stale_reference}
+      %{"message" => "Stale element reference" <> _} ->
+        {:error, :stale_reference}
       %{"message" => "stale element reference" <> _} ->
+        {:error, :stale_reference}
+      %{"message" => "An element command failed because the referenced element is no longer available" <> _} ->
         {:error, :stale_reference}
       %{"message" => "invalid selector" <> _} ->
         {:error, :invalid_selector}

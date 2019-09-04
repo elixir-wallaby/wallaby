@@ -170,6 +170,11 @@ defmodule Wallaby.Browser do
       |> fill_in(Query.text_field("name"), with: "Chris")
       |> fill_in(Query.css("#password_field", with: "secret42"))
 
+  ### Note
+
+  Currently, ChromeDriver only supports [BMP Unicode](http://www.unicode.org/roadmaps/bmp/) characters. Emojis are [SMP](https://www.unicode.org/roadmaps/smp/) characters and will be ignored by ChromeDriver.
+
+  Using JavaScript is a known workaround for filling in fields with Emojis and other non-BMP characters.
   """
   @spec fill_in(parent, Query.t, with: String.t) :: parent
   def fill_in(parent, query, with: value) do
@@ -205,8 +210,9 @@ defmodule Wallaby.Browser do
   tests are run in.
 
   Pass `[{:name, "some_name"}]` to specify the file name. Defaults to a timestamp.
+  Pass `[{:log, true}]` to log the location of the screenshot to stdout. Defaults to false.
   """
-  @type take_screenshot_opt :: {:name, String.t}
+  @type take_screenshot_opt :: {:name, String.t} | {:log, boolean}
   @spec take_screenshot(parent, [take_screenshot_opt]) :: parent
 
   def take_screenshot(%{driver: driver} = screenshotable, opts \\ []) do
@@ -218,26 +224,132 @@ defmodule Wallaby.Browser do
     path = path_for_screenshot(name)
     File.write! path, image_data
 
+    if opts[:log] do
+      IO.puts "Screenshot taken, find it at file:///#{path}"
+    end
+
     Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
   end
 
   @doc """
-  Gets the size of the session's window.
+  Gets the window handle of the currently focused window.
+  """
+  @spec window_handle(parent) :: String.t
+
+  def window_handle(%{driver: driver} = session) do
+    {:ok, handle} = driver.window_handle(session)
+    handle
+  end
+
+  @doc """
+  Gets the window handles of all available windows.
+  """
+  @spec window_handles(parent) :: [String.t]
+
+  def window_handles(%{driver: driver} = session) do
+    {:ok, handles} = driver.window_handles(session)
+    handles
+  end
+
+  @doc """
+  Changes the driver focus to the window identified by the handle.
+  """
+  @spec focus_window(parent, String.t) :: parent
+
+  def focus_window(%{driver: driver} = session, window_handle) do
+    {:ok, _} = driver.focus_window(session, window_handle)
+    session
+  end
+
+  @doc """
+  Closes the currently focused window.
+  """
+  @spec close_window(parent) :: parent
+
+  def close_window(%{driver: driver} = session) do
+    {:ok, _} = driver.close_window(session)
+    session
+  end
+
+  @doc """
+  Gets the size of the currently focused window.
   """
   @spec window_size(parent) :: %{String.t => pos_integer, String.t => pos_integer}
 
-  def window_size(%Session{driver: driver} = session) do
+  def window_size(%{driver: driver} = session) do
     {:ok, size} = driver.get_window_size(session)
     size
   end
 
   @doc """
-  Sets the size of the sessions window.
+  Sets the size of the currenty focused window.
   """
   @spec resize_window(parent, pos_integer, pos_integer) :: parent
 
-  def resize_window(%Session{driver: driver} = session, width, height) do
+  def resize_window(%{driver: driver} = session, width, height) do
     {:ok, _} = driver.set_window_size(session, width, height)
+    session
+  end
+
+  @doc """
+  Maximizes the currenty focused window.
+
+  For most browsers, this requires a window manager to be running.
+  """
+  @spec maximize_window(parent) :: parent
+
+  def maximize_window(%{driver: driver} = session) do
+    {:ok, _} = driver.maximize_window(session)
+    session
+  end
+
+  @doc """
+  Gets the position of the currently focused window.
+  """
+  @spec window_position(parent) :: %{String.t => pos_integer, String.t => pos_integer}
+
+  def window_position(%{driver: driver} = session) do
+    {:ok, position} = driver.get_window_position(session)
+    position
+  end
+
+  @doc """
+  Sets the position of the currenty focused window.
+  """
+  @spec move_window(parent, pos_integer, pos_integer) :: parent
+
+  def move_window(%{driver: driver} = session, x, y) do
+    {:ok, _} = driver.set_window_position(session, x, y)
+    session
+  end
+
+  @doc """
+  Changes the driver focus to the frame found by query.
+  """
+  @spec focus_frame(parent,  Query.t) :: parent
+
+  def focus_frame(%{driver: driver} = session, %Query{} = query) do
+    session
+    |> find(query, &driver.focus_frame(session, &1))
+  end
+
+  @doc """
+  Changes the driver focus to the parent frame.
+  """
+  @spec focus_parent_frame(parent) :: parent
+
+  def focus_parent_frame(%{driver: driver} = session) do
+    {:ok, _} = driver.focus_parent_frame(session)
+    session
+  end
+
+  @doc """
+  Changes the driver focus to the default (top level) frame.
+  """
+  @spec focus_default_frame(parent) :: parent
+
+  def focus_default_frame(%{driver: driver} = session) do
+    {:ok, _} = driver.focus_frame(session, nil)
     session
   end
 
@@ -272,7 +384,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Executes javascript synchoronously, taking as arguments the script to execute,
+  Executes javascript synchronously, taking as arguments the script to execute,
   an optional list of arguments available in the script via `arguments`, and an
   optional callback function with the result of script execution as a parameter.
   """
@@ -299,6 +411,34 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
+  Executes asynchronous javascript, taking as arguments the script to execute,
+  an optional list of arguments available in the script via `arguments`, and an
+  optional callback function with the result of script execution as a parameter.
+  """
+  @spec execute_script_async(parent, String.t) :: parent
+  @spec execute_script_async(parent, String.t, list) :: parent
+  @spec execute_script_async(parent, String.t, ((binary()) -> any())) :: parent
+  @spec execute_script_async(parent, String.t, list, ((binary()) -> any())) :: parent
+
+  def execute_script_async(session, script) do
+    execute_script_async(session, script, [])
+  end
+
+  def execute_script_async(session, script, arguments) when is_list(arguments) do
+    execute_script_async(session, script, arguments, fn(_) -> nil end)
+  end
+
+  def execute_script_async(session, script, callback) when is_function(callback) do
+    execute_script_async(session, script, [], callback)
+  end
+
+  def execute_script_async(%{driver: driver} = parent, script, arguments, callback) when is_list(arguments) and is_function(callback) do
+    {:ok, value} = driver.execute_script_async(parent, script, arguments)
+    callback.(value)
+    parent
+  end
+
+  @doc """
   Sends a list of key strokes to active element. If strings are included
   then they are sent as individual keys. Special keys should be provided as a
   list of atoms, which are automatically converted into the corresponding key
@@ -311,6 +451,12 @@ defmodule Wallaby.Browser do
       iex> Wallaby.Session.send_keys(session, ["Example Text", :enter])
       iex> Wallaby.Session.send_keys(session, [:enter])
       iex> Wallaby.Session.send_keys(session, [:shift, :enter])
+
+  ### Note
+
+  Currently, ChromeDriver only supports [BMP Unicode](http://www.unicode.org/roadmaps/bmp/) characters. Emojis are [SMP](https://www.unicode.org/roadmaps/smp/) characters and will be ignored by ChromeDriver.
+
+  Using JavaScript is a known workaround for filling in fields with Emojis and other non-BMP characters.
   """
   @spec send_keys(parent, Query.t, Element.keys_to_send) :: parent
   @spec send_keys(parent, Element.keys_to_send) :: parent
@@ -378,13 +524,83 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Clicks a element.
+  Clicks at the current mouse cursor position.
+  """
+  @spec click(parent, atom) :: parent
+
+  def click(parent, button) when button in [:left, :middle, :right] do
+    case parent.driver.click(parent, button) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
+  Clicks an element.
   """
   @spec click(parent, Query.t) :: parent
 
   def click(parent, query) do
     parent
     |> find(query, &Element.click/1)
+  end
+
+  @doc """
+  Double-clicks left mouse button at the current mouse coordinates.
+  """
+  @spec double_click(parent) :: parent
+
+  def double_click(parent) do
+    case parent.driver.double_click(parent) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
+   Clicks and holds the given mouse button at the current mouse coordinates.
+  """
+  @spec button_down(parent, atom) :: parent
+
+  def button_down(parent, button \\ :left) when button in [:left, :middle, :right] do
+    case parent.driver.button_down(parent, button) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
+   Releases given previously held mouse button.
+  """
+  @spec button_up(parent, atom) :: parent
+
+  def button_up(parent, button \\ :left) when button in [:left, :middle, :right] do
+    case parent.driver.button_up(parent, button) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
+  Hovers over an element.
+  """
+  @spec hover(parent, Query.t) :: parent
+
+  def hover(parent, query) do
+    parent
+    |> find(query, &Element.hover/1)
+  end
+
+  @doc """
+  Moves mouse by an offset relative to current cursor position.
+  """
+  @spec move_mouse_by(parent, integer, integer) :: parent
+
+  def move_mouse_by(parent, x_offset, y_offset) do
+    case parent.driver.move_mouse_by(parent, x_offset, y_offset) do
+      {:ok, _} ->
+        parent
+    end
   end
 
   @doc """
@@ -467,7 +683,7 @@ defmodule Wallaby.Browser do
         query = %Query{query | result: result}
 
         if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent)
+          take_screenshot(parent, log: true)
         end
 
         case validate_html(parent, query) do
@@ -480,7 +696,7 @@ defmodule Wallaby.Browser do
 
       {:error, e} ->
         if Wallaby.screenshot_on_failure? do
-          take_screenshot(parent)
+          take_screenshot(parent, log: true)
         end
 
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
@@ -612,7 +828,7 @@ defmodule Wallaby.Browser do
       else
         error ->
           if Wallaby.screenshot_on_failure? do
-            take_screenshot(parent)
+            take_screenshot(parent, log: true)
           end
           case error do
             {:error, {:not_found, results}} ->
@@ -857,9 +1073,25 @@ defmodule Wallaby.Browser do
   end
 
   defp validate_visibility(query, elements) do
-    visible = Query.visible?(query)
+    case Query.visible?(query) do
+      :any ->
+        {:ok, elements}
+      true ->
+        {:ok, Enum.filter(elements, &(Element.visible?(&1)))}
+      false ->
+        {:ok, Enum.reject(elements, &(Element.visible?(&1)))}
+    end
+  end
 
-    {:ok, Enum.filter(elements, &(Element.visible?(&1) == visible))}
+  defp validate_selected(query, elements) do
+    case Query.selected?(query) do
+      :any ->
+        {:ok, elements}
+      true ->
+        {:ok, Enum.filter(elements, &(Element.selected?(&1)))}
+      false ->
+        {:ok, Enum.reject(elements, &(Element.selected?(&1)))}
+    end
   end
 
   defp validate_count(query, elements) do
@@ -908,6 +1140,7 @@ defmodule Wallaby.Browser do
              {:ok, elements} <- driver.find_elements(parent, compiled_query),
              {:ok, elements} <- validate_visibility(query, elements),
              {:ok, elements} <- validate_text(query, elements),
+             {:ok, elements} <- validate_selected(query, elements),
              {:ok, elements} <- validate_count(query, elements),
              {:ok, elements} <- do_at(query, elements)
          do

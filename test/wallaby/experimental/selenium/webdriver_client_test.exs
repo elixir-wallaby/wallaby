@@ -4,6 +4,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
   alias Wallaby.Experimental.Selenium.WebdriverClient, as: Client
   alias Wallaby.{Element, Query, Session}
 
+  @web_element_identifier "element-6066-11e4-a52e-4f735466cecf"
+
   describe "create_session/2" do
     test "sends the correct request to the webdriver backend", %{bypass: bypass} do
       base_url = bypass_url(bypass) <> "/"
@@ -106,6 +108,33 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       assert element == %Element{
         id: element_id,
         parent: parent_element,
+        session_url: session.url,
+        url: "#{session.url}/element/#{element_id}",
+        driver: Wallaby.Experimental.Selenium,
+      }
+    end
+
+    test "with newer web element identifier", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element_id = ":wdc:1491326583887"
+      query = ".blue" |> Query.css |> Query.compile
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/elements"
+        assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": [{"#{@web_element_identifier}": "#{element_id}"}]
+        }>)
+      end
+
+      assert {:ok, [element]} = Client.find_elements(session, query)
+      assert element == %Element{
+        id: element_id,
+        parent: session,
         session_url: session.url,
         url: "#{session.url}/element/#{element_id}",
         driver: Wallaby.Experimental.Selenium,
@@ -557,13 +586,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
   describe "set_window_size/3" do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
-      window_handle_id = "my-window-handle"
       height = 600
       width = 400
 
       handle_request bypass, fn conn ->
         assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/window/#{window_handle_id}/size"
+        assert conn.request_path == "/session/#{session.id}/window/current/size"
         assert conn.body_params == %{"height" => height, "width" => width}
 
         send_resp(conn, 200, ~s<{
@@ -573,18 +601,17 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert {:ok, %{}} = Client.set_window_size(session, window_handle_id, width, height)
+      assert {:ok, %{}} = Client.set_window_size(session, width, height)
     end
   end
 
   describe "get_window_size/1" do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
-      window_handle_id = "my-window-handle"
 
       handle_request bypass, fn conn ->
         assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/window/#{window_handle_id}/size"
+        assert conn.request_path == "/session/#{session.id}/window/current/size"
 
         send_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
@@ -596,7 +623,70 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert {:ok, %{"height" => 600, "width" => 400}} == Client.get_window_size(session, window_handle_id)
+      assert {:ok, %{"height" => 600, "width" => 400}} == Client.get_window_size(session)
+    end
+  end
+
+  describe "set_window_position/3" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      x_coordinate = 600
+      y_coordinate = 400
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/window/current/position"
+        assert conn.body_params == %{"x" => x_coordinate, "y" => y_coordinate}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.set_window_position(session, x_coordinate, y_coordinate)
+    end
+  end
+
+  describe "get_window_position/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "GET"
+        assert conn.request_path == "/session/#{session.id}/window/current/position"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {
+            "x": 600,
+            "y": 400
+          }
+        }>)
+      end
+
+      assert {:ok, %{"x" => 600, "y" => 400}} == Client.get_window_position(session)
+    end
+  end
+
+  describe "maximize_window/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/window/current/maximize"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} == Client.maximize_window(session)
     end
   end
 
@@ -630,7 +720,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       handle_request bypass, fn conn ->
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/keys"
-        assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Poison.decode!
+        assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!
 
         resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
@@ -650,7 +740,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       handle_request bypass, fn conn ->
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/value"
-        assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Poison.decode!
+        assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!
 
         resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
@@ -703,6 +793,25 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     end
   end
 
+  describe "window_handles/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "GET"
+        assert conn.request_path == "/session/#{session.id}/window_handles"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": ["some-window-handle", "other-window-handle"]
+        }>)
+      end
+
+      assert {:ok, ["some-window-handle", "other-window-handle"]} = Client.window_handles(session)
+    end
+  end
+
   describe "window_handle/1" do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
@@ -718,7 +827,265 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end
 
-      assert "my-window-handle" = Client.window_handle(session)
+      assert {:ok, "my-window-handle"} = Client.window_handle(session)
+    end
+  end
+
+  describe "focus_window/2" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      window_handle_id = "my-window-handle"
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/window"
+        assert conn.body_params == %{"name" => window_handle_id, "handle" => window_handle_id}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_window(session, window_handle_id)
+    end
+  end
+
+  describe "close_window/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "DELETE"
+        assert conn.request_path == "/session/#{session.id}/window"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.close_window(session)
+    end
+  end
+
+  describe "focus_frame/2" do
+    test "sends the correct request to the server when passed an element", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      frame_element = build_element_for_session(session, "frame-element-id")
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/frame"
+        assert conn.body_params == %{"id" => %{"ELEMENT" => frame_element.id, @web_element_identifier => frame_element.id}}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_frame(session, frame_element)
+    end
+
+    test "sends the correct request to the server when switching to default frame", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      frame_id = nil
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/frame"
+        assert conn.body_params == %{"id" => frame_id}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_frame(session, frame_id)
+    end
+
+
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      frame_id = 1
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/frame"
+        assert conn.body_params == %{"id" => frame_id}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_frame(session, frame_id)
+    end
+  end
+
+  describe "focus_parent_frame/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/frame/parent"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.focus_parent_frame(session)
+    end
+  end
+
+  describe "move_mouse_to/4" do
+    test "sends the correct request to the server when only element is not nil", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/moveto"
+        assert conn.body_params == %{"element" => element.id}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.move_mouse_to(nil, element)
+    end
+
+    test "sends the correct request to the server when session and offsets are given", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      {x_offset, y_offset} = {20, 30}
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/moveto"
+        assert conn.body_params == %{"xoffset" => x_offset, "yoffset" => y_offset}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.move_mouse_to(session, nil, x_offset, y_offset)
+    end
+
+    test "sends the correct request to the server when element and offsets are given", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+      {x_offset, y_offset} = {20, 30}
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/moveto"
+        assert conn.body_params == %{"element" => element.id, "xoffset" => x_offset, "yoffset" => y_offset}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.move_mouse_to(nil, element, x_offset, y_offset)
+    end
+  end
+
+  describe "click/2" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/click"
+        assert conn.body_params == %{"button" => 0}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.click(session, :left)
+    end
+  end
+
+  describe "double_click/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/doubleclick"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.double_click(session)
+    end
+  end
+
+  describe "button_down/2" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/buttondown"
+        assert conn.body_params == %{"button" => 0}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.button_down(session, :left)
+    end
+  end
+
+  describe "button_up/2" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/buttonup"
+        assert conn.body_params == %{"button" => 0}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.button_up(session, :left)
     end
   end
 

@@ -31,6 +31,15 @@ defmodule Wallaby.Experimental.Chrome.LoggerTest do
       assert capture_io(fun) == "Array(2)\n"
     end
 
+    test "prints messages with embedded newlines" do
+      fun = fn ->
+        build_log(~s[http://localhost:52615/logs.html 13:14 "test\nlog"])
+        |> Logger.parse_log
+      end
+
+      assert capture_io(fun) == "\"test\nlog\"\n"
+    end
+
     test "pretty prints json" do
       message = ~s(http://localhost:54579/logs.html 13:14 "{\"href\":\"http://localhost:54579/logs.html\",\"ancestorOrigins\":{}}")
 
@@ -40,7 +49,7 @@ defmodule Wallaby.Experimental.Chrome.LoggerTest do
         |> Logger.parse_log
       end
 
-      assert capture_io(fun) == "\n{\n  \"href\": \"http://localhost:54579/logs.html\",\n  \"ancestorOrigins\": {}\n}\n"
+      assert capture_io(fun) == "\n{\n  \"ancestorOrigins\": {},\n  \"href\": \"http://localhost:54579/logs.html\"\n}\n"
     end
 
     test "can be disabled" do

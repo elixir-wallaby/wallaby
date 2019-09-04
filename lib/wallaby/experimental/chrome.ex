@@ -4,9 +4,9 @@ defmodule Wallaby.Experimental.Chrome do
 
   @behaviour Wallaby.Driver
 
-  @chromedriver_version_regex ~r/^ChromeDriver 2\.(\d+)/
+  @chromedriver_version_regex ~r/^ChromeDriver (\d+)\.(\d+)/
 
-  alias Wallaby.{Session, DependencyError, Metadata}
+  alias Wallaby.{DependencyError, Metadata}
   alias Wallaby.Experimental.Chrome.{Chromedriver}
   alias Wallaby.Experimental.Selenium.WebdriverClient
   import Wallaby.Driver.LogChecker
@@ -19,44 +19,68 @@ defmodule Wallaby.Experimental.Chrome do
   def init(:ok) do
     children = [
       worker(Wallaby.Experimental.Chrome.Chromedriver, []),
-      worker(Wallaby.Driver.LogStore, [])
+      worker(Wallaby.Driver.LogStore, [[]])
     ]
 
     supervise(children, strategy: :one_for_one)
   end
 
   def validate do
-    case System.find_executable("chromedriver") do
-      chromedriver when not is_nil(chromedriver) ->
-        {version, 0} = System.cmd("chromedriver", ["--version"])
+    with {:ok, executable} <- find_chromedriver_executable() do
+        {version, 0} = System.cmd(executable, ["--version"])
 
-        version =
-          @chromedriver_version_regex
-          |> Regex.run(version)
-          |> Enum.at(1)
-          |> String.to_integer()
+        @chromedriver_version_regex
+        |> Regex.run(version)
+        |> Enum.drop(1)
+        |> Enum.map(&String.to_integer/1)
+        |> version_check()
+    end
+  end
 
-        if version >= 30 do
-          :ok
-        else
-          exception =
-            DependencyError.exception("""
-            Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
-            chromedriver 2.30 to run correctly.
-            """)
-
-          {:error, exception}
-        end
-
-      _ ->
+  def find_chromedriver_executable do
+    with {:error, :not_found} <-
+            :wallaby
+            |> Application.get_env(:chromedriver, "")
+            |>  Path.expand()
+            |> do_find_chromedriver(),
+         {:error, :not_found} <- do_find_chromedriver("chromedriver") do
         exception =
           DependencyError.exception("""
           Wallaby can't find chromedriver. Make sure you have chromedriver installed
           and included in your path.
+          You can also provide a path using `config :wallaby, chromedriver: <path>`.
           """)
 
         {:error, exception}
     end
+  end
+
+  defp do_find_chromedriver(executable) do
+    executable
+    |> System.find_executable()
+    |> case do
+      path when not is_nil(path) -> {:ok, path}
+      nil -> {:error, :not_found}
+    end
+  end
+
+  defp version_check([major_version, _minor_version]) when major_version > 2 do
+    :ok
+  end
+
+  defp version_check([major_version, minor_version])
+    when major_version == 2 and minor_version >= 30 do
+    :ok
+  end
+
+  defp version_check(_version) do
+    exception =
+      DependencyError.exception("""
+      Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
+      chromedriver 2.30 to run correctly.
+      """)
+
+    {:error, exception}
   end
 
   def start_session(opts) do
@@ -80,6 +104,9 @@ defmodule Wallaby.Experimental.Chrome do
         server: Chromedriver
       }
 
+      if window_size = Keyword.get(opts, :window_size),
+        do: {:ok, _} = set_window_size(session, window_size[:width], window_size[:height])
+
       {:ok, session}
     end
   end
@@ -100,16 +127,6 @@ defmodule Wallaby.Experimental.Chrome do
     end
   end
 
-  def get_window_size(%Session{} = session) do
-    handle = delegate(:window_handle, session)
-    delegate(:get_window_size, session, [handle])
-  end
-
-  def set_window_size(session, width, height) do
-    handle = delegate(:window_handle, session)
-    delegate(:set_window_size, session, [handle, width, height])
-  end
-
   defp delegate(fun, element_or_session, args \\ []) do
     check_logs!(element_or_session, fn ->
       apply(WebdriverClient, fun, [element_or_session | args])
@@ -124,6 +141,29 @@ defmodule Wallaby.Experimental.Chrome do
   defdelegate dismiss_prompt(session, fun), to: WebdriverClient
   defdelegate parse_log(log), to: Wallaby.Experimental.Chrome.Logger
 
+  @doc false
+  def window_handle(session), do: delegate(:window_handle, session)
+  @doc false
+  def window_handles(session), do: delegate(:window_handles, session)
+  @doc false
+  def focus_window(session, window_handle), do: delegate(:focus_window, session, [window_handle])
+  @doc false
+  def close_window(session), do: delegate(:close_window, session)
+  @doc false
+  def get_window_size(session), do: delegate(:get_window_size, session)
+  @doc false
+  def set_window_size(session, width, height),
+    do: delegate(:set_window_size, session, [width, height])
+  @doc false
+  def get_window_position(session), do: delegate(:get_window_position, session)
+  @doc false
+  def set_window_position(session, x, y), do: delegate(:set_window_position, session, [x, y])
+  @doc false
+  def maximize_window(session), do: delegate(:maximize_window, session)
+  @doc false
+  def focus_frame(session, frame), do: delegate(:focus_frame, session, [frame])
+  @doc false
+  def focus_parent_frame(session), do: delegate(:focus_parent_frame, session)
   @doc false
   def cookies(session), do: delegate(:cookies, session)
   @doc false
@@ -143,6 +183,18 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   def click(element), do: delegate(:click, element)
   @doc false
+  def click(parent, button), do: delegate(:click, parent, [button])
+  @doc false
+  def double_click(parent), do: delegate(:double_click, parent)
+  @doc false
+  def button_down(parent, button), do: delegate(:button_down, parent, [button])
+  @doc false
+  def button_up(parent, button), do: delegate(:button_up, parent, [button])
+  @doc false
+  def hover(element), do: delegate(:move_mouse_to, element, [element])
+  @doc false
+  def move_mouse_by(parent, x_offset, y_offset), do: delegate(:move_mouse_to, parent, [nil, x_offset, y_offset])
+  @doc false
   def clear(element), do: delegate(:clear, element)
   @doc false
   def displayed(element), do: delegate(:displayed, element)
@@ -159,6 +211,21 @@ defmodule Wallaby.Experimental.Chrome do
 
     request_fn = fn ->
       WebdriverClient.execute_script(session_or_element, script, args)
+    end
+
+    if check_logs do
+      check_logs!(session_or_element, request_fn)
+    else
+      request_fn.()
+    end
+  end
+
+  @doc false
+  def execute_script_async(session_or_element, script, args \\ [], opts \\ []) do
+    check_logs = Keyword.get(opts, :check_logs, true)
+
+    request_fn = fn ->
+      WebdriverClient.execute_script_async(session_or_element, script, args)
     end
 
     if check_logs do

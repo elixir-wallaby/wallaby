@@ -10,12 +10,12 @@ defmodule Wallaby.Integration.Browser.ClickTest do
   describe "click/2" do
     test "accepts queries", %{page: page} do
       assert page
-      |> click(Query.button("Submit button"))
+             |> click(Query.button("Submit button"))
     end
 
     test "can click invisible elements", %{page: page} do
       assert page
-      |> click(Query.button("Invisible Button", visible: false))
+             |> click(Query.button("Invisible Button", visible: false))
     end
 
     test "can be chained/returns parent", %{page: page} do
@@ -78,16 +78,16 @@ defmodule Wallaby.Integration.Browser.ClickTest do
   describe "click/2 with checkboxes" do
     test "checking a checkbox", %{page: page} do
       assert page
-      |> click( Query.checkbox("Checkbox 1") )
-      |> click( Query.checkbox("Checkbox 1") )
+             |> click(Query.checkbox("Checkbox 1"))
+             |> click(Query.checkbox("Checkbox 1"))
 
       refute page
-      |> find(Query.checkbox("Checkbox 1"))
-      |> Element.selected?
+             |> find(Query.checkbox("Checkbox 1"))
+             |> Element.selected?()
     end
 
     test "escapes quotes", %{page: page} do
-      assert click(page, Query.checkbox("I'm a checkbox") )
+      assert click(page, Query.checkbox("I'm a checkbox"))
     end
 
     test "throw an error if a label exists but does not have a for attribute", %{page: page} do
@@ -104,16 +104,16 @@ defmodule Wallaby.Integration.Browser.ClickTest do
   describe "click/2 with links" do
     test "works with queries", %{page: page} do
       assert page
-      |> visit("")
-      |> click(Query.link("Page 1"))
-      |> assert_has(Query.css(".blue"))
+             |> visit("")
+             |> click(Query.link("Page 1"))
+             |> assert_has(Query.css(".blue"))
     end
   end
 
   describe "click/2 with buttons" do
     test "works with queries", %{page: page} do
       assert page
-      |> click(Query.button("Reset input"))
+             |> click(Query.button("Reset input"))
     end
   end
 end
