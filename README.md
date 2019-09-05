@@ -617,6 +617,17 @@ To run selenium you'll need to install selenium-server-standalone and geckodrive
 Once you have these tools installed you'll need to manually start selenium-server separately
 from your test run.
 
+#### Custom Selenium URL
+
+To configure the `remote_url` that Wallaby will use to connect to the Selenium server, pass it as an option to `Wallaby.start_session`.
+
+```elixir
+Wallaby.start_session(
+  remote_url: "http://selenium:4444/wd/hub/",
+  capabilities: %{browserName: "firefox"}
+)
+```
+
 ## Contributing
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
