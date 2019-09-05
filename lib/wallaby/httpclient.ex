@@ -102,7 +102,7 @@ defmodule Wallaby.HTTPClient do
   end
 
   defp request_opts do
-    Application.get_env(:wallaby, :hackney_options, [])
+    Application.get_env(:wallaby, :hackney_options, [hackney: [pool: :wallaby_pool]])
   end
 
   defp headers do
