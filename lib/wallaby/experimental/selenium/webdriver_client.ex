@@ -264,7 +264,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Scroll on the screen from the given element by the given offset using touch events.
   """
-  @spec touch_move(Element.t(), integer, integer) :: {:ok, map}
+  @spec touch_scroll(Element.t(), integer, integer) :: {:ok, map}
   def touch_scroll(element, x_offset, y_offset) do
     with {:ok, resp} <-
            request(:post, "#{element.session_url}/touch/scroll", %{element: element.id, xoffset: x_offset, yoffset: y_offset}),

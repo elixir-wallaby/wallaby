@@ -1089,6 +1089,108 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     end
   end
 
+  describe "touch_up/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/touch/up"
+        assert conn.body_params == %{"x" => 0, "y" => 0}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.touch_up(session)
+    end
+  end
+
+  describe "tap/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/touch/click"
+        assert conn.body_params == %{"element" => element.id}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.tap(element)
+    end
+  end
+
+  describe "touch_move/3" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/touch/move"
+        assert conn.body_params == %{"x" => 50, "y" => 40}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.touch_move(session, 50, 40)
+    end
+  end
+
+  describe "touch_scroll/3" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/session/#{session.id}/touch/scroll"
+        assert conn.body_params == %{"element" => element.id, "xoffset" => 50, "yoffset" => 40}
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, %{}} = Client.touch_scroll(element, 50, 40)
+    end
+  end
+
+  describe "element_size/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      handle_request bypass, fn conn ->
+        assert conn.method == "GET"
+        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/size"
+
+        send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+      end
+
+      assert {:ok, {nil, nil}} = Client.element_size(element)
+    end
+  end
+
   defp handle_request(bypass, handler_fn) do
     Bypass.expect bypass, fn conn ->
       conn |> parse_body |> handler_fn.()
