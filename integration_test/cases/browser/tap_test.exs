@@ -16,6 +16,7 @@ defmodule Wallaby.Integration.Browser.TapTest do
 
       assert visible?(page, Query.text("Start"))
       assert visible?(page, Query.text("End"))
+      assert page |> find(Query.css("#log-count-touches")) |> Element.text() == "0"
     end
   end
 end

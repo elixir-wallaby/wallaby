@@ -251,6 +251,28 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
+  Moves touch pointer (finger, stylus etc.) on the screen to the point determinated by the given coordinates.
+  """
+  @spec touch_move(parent, non_neg_integer, non_neg_integer) :: {:ok, map}
+  def touch_move(parent, x, y) do
+    with {:ok, resp} <-
+           request(:post, "#{parent.session_url}/touch/move", %{x: x, y: y}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
+  Scroll on the screen from the given element by the given offset using touch events.
+  """
+  @spec touch_move(Element.t(), integer, integer) :: {:ok, map}
+  def touch_scroll(element, x_offset, y_offset) do
+    with {:ok, resp} <-
+           request(:post, "#{element.session_url}/touch/scroll", %{element: element.id, xoffset: x_offset, yoffset: y_offset}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
   Gets the text for an element.
   """
   @spec text(Element.t()) :: {:ok, String.t()}

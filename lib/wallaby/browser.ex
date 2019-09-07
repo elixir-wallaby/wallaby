@@ -646,6 +646,28 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
+  Moves touch pointer (finger, stylus etc.) on the screen to the point determinated by the given coordinates.
+  """
+  @spec touch_move(parent, non_neg_integer, non_neg_integer) :: parent
+
+  def touch_move(parent, x, y) do
+    case parent.driver.touch_move(parent, x, y) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
+  Scroll on the screen from the given element by the given offset using touch events.
+  """
+  @spec touch_scroll(parent, Query.t(), integer, integer) :: parent
+
+  def touch_scroll(parent, query, x, y) do
+    parent
+    |> find(query, &Element.touch_scroll(&1, x, y))
+  end
+
+  @doc """
   Gets the Element's text value.
   """
   @spec text(parent) :: String.t()

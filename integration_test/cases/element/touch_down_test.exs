@@ -17,6 +17,7 @@ defmodule Wallaby.Integration.Element.TouchDownTest do
 
       assert visible?(page, Query.text("Start 100 100"))
       refute visible?(page, Query.text("End"))
+      assert page |> find(Query.css("#log-count-touches")) |> Element.text() == "1"
     end
   end
 end

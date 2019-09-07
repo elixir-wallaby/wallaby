@@ -15,6 +15,8 @@ defmodule Wallaby.Integration.Browser.TouchDownTest do
              |> touch_down(Query.text("Touch me!"))
              |> visible?(Query.text("Start 100 100"))
 
+      assert page |> find(Query.css("#log-count-touches")) |> Element.text() == "1"
+
       refute visible?(page, Query.text("End"))
     end
   end

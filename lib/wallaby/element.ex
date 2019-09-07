@@ -139,6 +139,18 @@ defmodule Wallaby.Element do
   end
 
   @doc """
+  Scroll on the screen from the given element by the given offset using touch events.
+  """
+  @spec touch_scroll(t, integer, integer) :: t
+
+  def touch_scroll(%__MODULE__{driver: driver} = element, x_offset, y_offset) do
+    case driver.touch_scroll(element, x_offset, y_offset) do
+      {:ok, _} ->
+        element
+    end
+  end
+
+  @doc """
   Returns the text from the element.
   """
   @spec text(t) :: String.t()

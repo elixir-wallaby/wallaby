@@ -15,11 +15,15 @@ defmodule Wallaby.Integration.Browser.TouchUpTest do
              |> touch_down(Query.text("Touch me!"))
              |> visible?(Query.text("Start"))
 
+      assert page |> find(Query.css("#log-count-touches")) |> Element.text() == "1"
+
       refute visible?(page, Query.text("End"))
 
       assert page
              |> touch_up()
              |> visible?(Query.text("End"))
+
+      assert page |> find(Query.css("#log-count-touches")) |> Element.text() == "0"
     end
   end
 end

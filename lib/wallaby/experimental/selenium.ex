@@ -169,12 +169,20 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.touch_down(element)
   end
 
-  def touch_up(session) do
-    WebdriverClient.touch_up(session)
+  def touch_up(parent) do
+    WebdriverClient.touch_up(parent)
   end
 
   def tap(element) do
     WebdriverClient.tap(element)
+  end
+
+  def touch_move(parent, x, y) do
+    WebdriverClient.touch_move(parent, x, y)
+  end
+
+  def touch_scroll(parent, x_offset, y_offset) do
+    WebdriverClient.touch_scroll(parent, x_offset, y_offset)
   end
 
   def displayed(%Element{} = element) do
@@ -209,7 +217,7 @@ defmodule Wallaby.Experimental.Selenium do
   def send_keys(parent, keys) do
     WebdriverClient.send_keys(parent, keys)
   end
-    
+
   def element_size(element) do
     WebdriverClient.element_size(element)
   end
