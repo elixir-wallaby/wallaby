@@ -47,6 +47,7 @@ defmodule Wallaby.Integration.SessionCase do
   defp default_opts_for_driver("selenium") do
     [
       capabilities: %{
+        browserName: "firefox",
         "moz:firefoxOptions": %{
           args: ["-headless"]
         }
