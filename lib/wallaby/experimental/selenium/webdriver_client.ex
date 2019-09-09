@@ -635,7 +635,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Returns tuple {x, y} with coordinates of the left-top corner of given element.
+  Returns tuple {x, y} with coordinates of the top-left corner of given element.
   """
   @spec element_location(Element.t()) :: {:ok, map}
   def element_location(element) do
