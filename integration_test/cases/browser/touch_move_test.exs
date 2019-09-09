@@ -17,7 +17,7 @@ defmodule Wallaby.Integration.Browser.TouchMoveTest do
       |> touch_down(Query.text("Touch me!"))
       |> touch_move(200, 250)
 
-      assert visible?(page, Query.text("Start 100 100"))
+      assert visible?(page, Query.text("Start 0 16"))
       assert visible?(page, Query.text("Move 200 250"))
       refute visible?(page, Query.text("End"))
     end

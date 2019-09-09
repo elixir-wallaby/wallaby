@@ -115,12 +115,12 @@ defmodule Wallaby.Element do
   end
 
   @doc """
-  Touches and holds the element.
+  Touches and holds the element on its top-left corner plus optional offset.
   """
-  @spec touch_down(t) :: t
+  @spec touch_down(t, integer, integer) :: t
 
-  def touch_down(%__MODULE__{driver: driver} = element) do
-    case driver.touch_down(element) do
+  def touch_down(%__MODULE__{driver: driver} = element, x_offset \\ 0, y_offset \\ 0) do
+    case driver.touch_down(element, x_offset, y_offset) do
       {:ok, _} ->
         element
     end
@@ -277,7 +277,7 @@ defmodule Wallaby.Element do
   end
 
   @doc """
-  Returns tuple {x, y} with coordinates of the middle of the given element.
+  Returns tuple {x, y} with coordinates of the left-top corner of given element.
   """
   @spec location(Element.t()) :: Element.t()
 

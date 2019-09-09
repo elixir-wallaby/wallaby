@@ -614,13 +614,13 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Touches and holds the element.
+  Touches and holds the element on its top-left corner plus optional offset.
   """
-  @spec touch_down(parent, Query.t()) :: session
+  @spec touch_down(parent, Query.t(), integer, integer) :: session
 
-  def touch_down(parent, query) do
+  def touch_down(parent, query, x_offset \\ 0, y_offset \\ 0) do
     parent
-    |> find(query, &Element.touch_down/1)
+    |> find(query, &Element.touch_down(&1, x_offset, y_offset))
   end
 
   @doc """

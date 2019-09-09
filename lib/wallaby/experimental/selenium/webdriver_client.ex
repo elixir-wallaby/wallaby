@@ -217,12 +217,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @doc """
   Touches and holds the element.
   """
-  @spec touch_down(Element.t()) :: {:ok, map}
-  def touch_down(element) do
+  @spec touch_down(Element.t(), integer, integer) :: {:ok, map}
+  def touch_down(element, x_offset, y_offset) do
     {:ok, {x, y}} = element_location(element)
 
     with {:ok, resp} <-
-           request(:post, "#{element.session_url}/touch/down", %{x: x, y: y}),
+           request(:post, "#{element.session_url}/touch/down", %{x: x + x_offset, y: y + y_offset}),
          {:ok, value} <- Map.fetch(resp, "value"),
          do: {:ok, value}
   end
@@ -635,15 +635,13 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Returns tuple {x, y} with coordinates of the middle of given element.
+  Returns tuple {x, y} with coordinates of the left-top corner of given element.
   """
   @spec element_location(Element.t()) :: {:ok, map}
   def element_location(element) do
-    {:ok, {width, height}} = element_size(element)
-
     with {:ok, resp} <- request(:get, "#{element.session_url}/element/#{element.id}/location"),
          {:ok, value} <- Map.fetch(resp, "value"),
-         do: {:ok, {value["x"] + div(width, 2), value["y"] + div(height, 2)}}
+         do: {:ok, {value["x"], value["y"]}}
   end
 
   @spec cast_as_element(Session.t() | Element.t(), map) :: Element.t()
