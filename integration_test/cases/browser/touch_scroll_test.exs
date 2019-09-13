@@ -19,7 +19,7 @@ defmodule Wallaby.Integration.Browser.TouchScrollTest do
 
       assert Helpers.displayed_in_viewport?(page, Query.text("Hello there"))
 
-      assert visible?(page, Query.text("Start 0 16"))
+      assert visible?(page, Query.text("Start 100 66"))
       assert visible?(page, Query.text("Move"))
       assert visible?(page, Query.text("End"))
     end
