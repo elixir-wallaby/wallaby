@@ -9,7 +9,7 @@ defmodule Wallaby.Integration.Browser.TouchDownTest do
 
   describe "touch_down/4" do
     test "touches and holds given element on its top-left corner", %{page: page} do
-      refute visible?(page, Query.text("Start"))
+      assert visible?(page, Query.text("Start", count: 0))
 
       assert page
              |> touch_down(Query.text("Touch me!"))
@@ -17,11 +17,12 @@ defmodule Wallaby.Integration.Browser.TouchDownTest do
 
       assert page |> find(Query.css("#log-count-touches")) |> Element.text() == "1"
 
-      refute visible?(page, Query.text("End"))
+      assert visible?(page, Query.text("End", count: 0))
     end
 
-    test "touches and holds given element on the point moved by given offset from its top-left corner", %{page: page} do
-      refute visible?(page, Query.text("Start"))
+    test "touches and holds given element on the point moved by given offset from its top-left corner",
+         %{page: page} do
+      assert visible?(page, Query.text("Start", count: 0))
 
       assert page
              |> touch_down(Query.text("Touch me!"), 10, 20)
@@ -29,7 +30,7 @@ defmodule Wallaby.Integration.Browser.TouchDownTest do
 
       assert page |> find(Query.css("#log-count-touches")) |> Element.text() == "1"
 
-      refute visible?(page, Query.text("End"))
+      assert visible?(page, Query.text("End", count: 0))
     end
   end
 end

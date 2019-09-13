@@ -9,7 +9,7 @@ defmodule Wallaby.Integration.Browser.TouchUpTest do
 
   describe "touch_up/1" do
     test "stops touching screen over the given element", %{page: page} do
-      refute visible?(page, Query.text("Start"))
+      assert visible?(page, Query.text("Start", count: 0))
 
       assert page
              |> touch_down(Query.text("Touch me!"))
@@ -17,7 +17,7 @@ defmodule Wallaby.Integration.Browser.TouchUpTest do
 
       assert page |> find(Query.css("#log-count-touches")) |> Element.text() == "1"
 
-      refute visible?(page, Query.text("End"))
+      assert visible?(page, Query.text("End", count: 0))
 
       assert page
              |> touch_up()

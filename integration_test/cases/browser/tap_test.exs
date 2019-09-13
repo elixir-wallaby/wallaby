@@ -9,8 +9,8 @@ defmodule Wallaby.Integration.Browser.TapTest do
 
   describe "tap/2" do
     test "taps the given element", %{page: page} do
-      refute visible?(page, Query.text("Start"))
-      refute visible?(page, Query.text("End"))
+      assert visible?(page, Query.text("Start", count: 0))
+      assert visible?(page, Query.text("End", count: 0))
 
       tap(page, Query.text("Touch me!"))
 

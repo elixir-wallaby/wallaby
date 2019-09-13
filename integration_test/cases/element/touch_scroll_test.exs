@@ -10,9 +10,9 @@ defmodule Wallaby.Integration.Element.TouchScrollTest do
 
   describe "touch_scroll/3" do
     test "scrolls the page using touch events", %{page: page} do
-      refute visible?(page, Query.text("Start"))
-      refute visible?(page, Query.text("Move"))
-      refute visible?(page, Query.text("End"))
+      assert visible?(page, Query.text("Start", count: 0))
+      assert visible?(page, Query.text("Move", count: 0))
+      assert visible?(page, Query.text("End", count: 0))
       refute Helpers.displayed_in_viewport?(page, Query.text("Hello there"))
 
       element = find(page, Query.text("Touch me!"))
