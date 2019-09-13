@@ -165,8 +165,8 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.move_mouse_to(session, nil, x_offset, y_offset)
   end
 
-  def touch_down(element, x_offset, y_offset) do
-    WebdriverClient.touch_down(element, x_offset, y_offset)
+  def touch_down(session, element, x_or_offset, y_or_offset) do
+    WebdriverClient.touch_down(session, element, x_or_offset, y_or_offset)
   end
 
   def touch_up(parent) do

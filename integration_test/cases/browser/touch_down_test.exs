@@ -33,4 +33,19 @@ defmodule Wallaby.Integration.Browser.TouchDownTest do
       assert visible?(page, Query.text("End", count: 0))
     end
   end
+
+  describe "touch_down/3" do
+    test "touches page at the point defined by the given coordinates", %{page: page} do
+      assert visible?(page, Query.text("Start", count: 0))
+
+      assert page
+             |> touch_down(25, 42)
+             |> visible?(Query.text("Start 25 42"))
+
+      assert page |> find(Query.css("#log-count-touches")) |> Element.text() == "1"
+
+      assert visible?(page, Query.text("End", count: 0))
+    end
+
+  end
 end

@@ -215,14 +215,27 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Touches and holds the element.
+  Touches screen at the given position.
   """
-  @spec touch_down(Element.t(), integer, integer) :: {:ok, map}
-  def touch_down(element, x_offset, y_offset) do
-    {:ok, {x, y}} = element_location(element)
+  @spec touch_down(parent | nil, Element.t() | nil, integer, integer) :: {:ok, map}
+  def touch_down(session, element, x_or_offset \\ 0, y_or_offset \\ 0) do
+    session_url =
+      if is_nil(element) do
+        session.session_url
+      else
+        element.session_url
+      end
+
+    {x, y} =
+      if is_nil(element) do
+        {x_or_offset, y_or_offset}
+      else
+        {:ok, {x, y}} = element_location(element)
+        {x + x_or_offset, y + y_or_offset}
+      end
 
     with {:ok, resp} <-
-           request(:post, "#{element.session_url}/touch/down", %{x: x + x_offset, y: y + y_offset}),
+           request(:post, "#{session_url}/touch/down", %{x: x, y: y}),
          {:ok, value} <- Map.fetch(resp, "value"),
          do: {:ok, value}
   end
@@ -267,7 +280,11 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   @spec touch_scroll(Element.t(), integer, integer) :: {:ok, map}
   def touch_scroll(element, x_offset, y_offset) do
     with {:ok, resp} <-
-           request(:post, "#{element.session_url}/touch/scroll", %{element: element.id, xoffset: x_offset, yoffset: y_offset}),
+           request(:post, "#{element.session_url}/touch/scroll", %{
+             element: element.id,
+             xoffset: x_offset,
+             yoffset: y_offset
+           }),
          {:ok, value} <- Map.fetch(resp, "value"),
          do: {:ok, value}
   end

@@ -120,7 +120,7 @@ defmodule Wallaby.Element do
   @spec touch_down(t, integer, integer) :: t
 
   def touch_down(%__MODULE__{driver: driver} = element, x_offset \\ 0, y_offset \\ 0) do
-    case driver.touch_down(element, x_offset, y_offset) do
+    case driver.touch_down(element, element, x_offset, y_offset) do
       {:ok, _} ->
         element
     end

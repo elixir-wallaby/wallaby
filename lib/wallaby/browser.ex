@@ -614,6 +614,18 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
+  Touches screen at the given position.
+  """
+  @spec touch_down(parent, integer, integer) :: session
+
+  def touch_down(parent, x, y) do
+    case parent.driver.touch_down(parent, nil, x, y) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
   Touches and holds the element on its top-left corner plus optional offset.
   """
   @spec touch_down(parent, Query.t(), integer, integer) :: session
