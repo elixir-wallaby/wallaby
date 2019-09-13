@@ -527,4 +527,10 @@ defmodule Wallaby.Phantom.Driver do
         do: {:ok, value}
     end
   end
+
+  def touch_down(_session, _element, _x_or_offset, _y_or_offset), do: {:error, :not_implemented}
+  def touch_up(_parent), do: {:error, :not_implemented}
+  def tap(_element), do: {:error, :not_implemented}
+  def touch_move(_parent, _x, _y), do: {:error, :not_implemented}
+  def touch_scroll(_parent, _x_offset, _y_offset), do: {:error, :not_implemented}
 end
