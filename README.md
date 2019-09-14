@@ -5,9 +5,9 @@
 [![Coverage Status](https://coveralls.io/repos/github/keathley/wallaby/badge.svg?branch=master)](https://coveralls.io/github/keathley/wallaby?branch=master)
 [![Inline docs](http://inch-ci.org/github/keathley/wallaby.svg)](http://inch-ci.org/github/keathley/wallaby)
 
-Wallaby helps you test your web applications by simulating realistic user
-interactions. By default it runs each test case concurrently and manages
-browsers for you. Here's an example test for a simple Todo application:
+Wallaby helps you test your web applications by simulating realistic user interactions.
+By default it runs each test case concurrently and manages browsers for you.
+Here's an example test for a simple Todo application:
 
 ```elixir
 defmodule MyApp.Features.TodoTest do
@@ -26,8 +26,7 @@ defmodule MyApp.Features.TodoTest do
 end
 ```
 
-Because Wallaby manages multiple browsers for you, its possible to test several
-users interacting with a page simultaneously.
+Because Wallaby manages multiple browsers for you, its possible to test several users interacting with a page simultaneously.
 
 ```elixir
 defmodule MyApp.Features.MultipleUsersTest do
@@ -83,10 +82,8 @@ Then ensure that Wallaby is started in your `test_helper.exs`:
 
 ### Phoenix
 
-If you're testing a Phoenix application with Ecto 2 and a database that
-supports sandbox mode then you can enable concurrent testing by adding the
-`Phoenix.Ecto.SQL.Sandbox` plug to your `Endpoint`. It's important that
-this is at the top of `endpoint.ex` before any other plugs.
+If you're testing a Phoenix application with Ecto 2 and a database that supports sandbox mode then you can enable concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` plug to your `Endpoint`.
+It's important that this is at the top of `endpoint.ex` before any other plugs.
 
 ```elixir
 # lib/endpoint.ex
@@ -99,8 +96,7 @@ defmodule YourApp.Endpoint do
   end
 ```
 
-Make sure Phoenix is set up to serve endpoints in tests and that the SQL
-sandbox is enabled:
+Make sure Phoenix is set up to serve endpoints in tests and that the SQL sandbox is enabled:
 
 ```elixir
 # config/test.exs
@@ -111,7 +107,8 @@ config :your_app, YourApplication.Endpoint,
 config :your_app, :sql_sandbox, true
 ```
 
-Then in your `test_helper.exs` you can provide some configuration to Wallaby. At minimum, you need to specify a `:base_url`, so Wallaby knows how to resolve relative paths.
+Then in your `test_helper.exs` you can provide some configuration to Wallaby.
+At minimum, you need to specify a `:base_url`, so Wallaby knows how to resolve relative paths.
 
 ```elixir
 # test/test_helper.exs
@@ -121,12 +118,12 @@ Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
 
 #### Assets
 
-Assets are not re-compiled when you run `mix test`. This can lead to confusion if
-you've made changes in javascript or css but tests are still failing. There are two
-common ways to avoid this confusion.
+Assets are not re-compiled when you run `mix test`.
+This can lead to confusion if you've made changes in javascript or css but tests are still failing.
+There are two common ways to avoid this confusion.
 
-The first solution is to run `brunch watch` from the assets directory. This will ensure
-that assets get recompiled after any changes.
+The first solution is to run `brunch watch` from the assets directory.
+This will ensure that assets get recompiled after any changes.
 
 The second solution is to add a new alias to your mix config that recompiles assets for you:
 
@@ -158,10 +155,7 @@ This method is less error prone but it will cause a delay when starting your tes
 
 #### Umbrella Apps
 
-If you're testing an umbrella application containing a Phoenix application for
-the web interface (`MyWebApp`) and a separate persistence application
-(`MyPersistenceApp`) using Ecto 2 with a database that supports
-sandbox mode, then you can use the same setup as above, with a few tweaks.
+If you're testing an umbrella application containing a Phoenix application for the web interface (`MyWebApp`) and a separate persistence application (`MyPersistenceApp`) using Ecto 2 with a database that supports sandbox mode, then you can use the same setup as above, with a few tweaks.
 
 ```elixir
 # my_web_app/lib/endpoint.ex
@@ -174,8 +168,7 @@ defmodule MyWebApp.Endpoint do
   end
 ```
 
-Make sure `MyWebApp` is set up to serve endpoints in tests and that the SQL
-sandbox is enabled:
+Make sure `MyWebApp` is set up to serve endpoints in tests and that the SQL sandbox is enabled:
 
 ```elixir
 # my_web_app/config/test.exs
@@ -186,9 +179,8 @@ config :my_web_app, MyWebApp.Endpoint,
 config :my_persistence_app, :sql_sandbox, true
 ```
 
-Then in `MyWebApp`'s `test_helper.exs` you can provide some configuration to
-Wallaby. At minimum, you need to specify a `:base_url`, so Wallaby knows how to
-resolve relative paths.
+Then in `MyWebApp`'s `test_helper.exs` you can provide some configuration to Wallaby.
+At minimum, you need to specify a `:base_url`, so Wallaby knows how to resolve relative paths.
 
 ```elixir
 # my_web_app/test/test_helper.exs
@@ -231,8 +223,7 @@ config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
 
 ### Writing tests
 
-It's easiest to add Wallaby to your test suite by creating a new case template
-(in case of an umbrella app, take care to adjust `YourApp` appropriately):
+It's easiest to add Wallaby to your test suite by creating a new case template (in case of an umbrella app, take care to adjust `YourApp` appropriately):
 
 ```elixir
 defmodule YourApp.FeatureCase do
@@ -291,9 +282,7 @@ The full documentation for the DSL is in the [official documentation](https://he
 
 Wallaby's API is broken into 2 concepts: Queries and Actions.
 
-Queries allow us to declaratively describe the elements that we would like to
-interact with and Actions allow us to use those queries to interact with the
-DOM.
+Queries allow us to declaratively describe the elements that we would like to interact with and Actions allow us to use those queries to interact with the DOM.
 
 Lets say that our html looks like this:
 
@@ -311,10 +300,9 @@ Lets say that our html looks like this:
 </ul>
 ```
 
-If we wanted to interact with all of the users then we could write a query like so
-`css(".user", count: 3)`.
-If we only wanted to interact with a specific user then we could write a query like this `css(".user-name",
-count: 1, text: "Ada")`. Now we can use those queries with some actions:
+If we wanted to interact with all of the users then we could write a query like so `css(".user", count: 3)`.
+
+If we only wanted to interact with a specific user then we could write a query like this `css(".user-name", count: 1, text: "Ada")`. Now we can use those queries with some actions:
 
 ```elixir
 session
@@ -323,12 +311,11 @@ session
 |> assert_has(css(".user-name", count: 1, text: "Ada"))
 ```
 
-There are several queries for common html elements defined in
-the [Query module](https://hexdocs.pm/wallaby/Wallaby.Query.html#content). All
-actions accept a query. This makes it easy to use queries we've already
-defined. Actions will block until the query is either satisfied or the action times
-out. Blocking reduces race conditions when elements are added or removed
-dynamically.
+There are several queries for common html elements defined in the [Query module](https://hexdocs.pm/wallaby/Wallaby.Query.html#content).
+All actions accept a query.
+This makes it easy to use queries we've already defined.
+Actions will block until the query is either satisfied or the action times out.
+Blocking reduces race conditions when elements are added or removed dynamically.
 
 ### Navigation
 
@@ -363,8 +350,7 @@ find(page, @user_form, fn(form) ->
 end)
 ```
 
-Passing a callback to `find` will return the parent which makes it easy to chain
-`find` with other actions:
+Passing a callback to `find` will return the parent which makes it easy to chain `find` with other actions:
 
 ```elixir
 page
@@ -372,8 +358,8 @@ page
 |> click(link("Next Page"))
 ```
 
-Without the callback `find` returns the element. This provides a way to scope
-all future actions within an element.
+Without the callback `find` returns the element.
+This provides a way to scope all future actions within an element.
 
 ```elixir
 page
@@ -395,8 +381,7 @@ click(session, radio_button("My Fancy Radio Button"))
 click(session, button("Some Button"))
 ```
 
-If you need to send specific keys to an element, you can do that with
-`send_keys`:
+If you need to send specific keys to an element, you can do that with `send_keys`:
 
 ```elixir
 send_keys(session, ["Example", "Text", :enter])
@@ -412,9 +397,8 @@ refute_has(session, css(".alert"))
 has?(session, css(".user-edit-modal", visible: false))
 ```
 
-`assert_has` and `refute_has` both take a parent element as their first
-argument. They return that parent, making it easy to chain them together with
-other actions.
+`assert_has` and `refute_has` both take a parent element as their first argument.
+They return that parent, making it easy to chain them together with other actions.
 
 ```elixir
 session
@@ -476,13 +460,12 @@ Application.put_env(:wallaby, :screenshot_on_failure, true)
 
 ### Asynchronous code
 
-Testing asynchronous JavaScript code can expose timing issues and race
-conditions. We might try to interact with an element that hasn't yet appeared on
-the page. Elements can become stale while we're trying to interact with them.
+Testing asynchronous JavaScript code can expose timing issues and race conditions.
+We might try to interact with an element that hasn't yet appeared on the page.
+Elements can become stale while we're trying to interact with them.
 
-Wallaby helps solve this by blocking. Instead of manually setting timeouts we
-can use `assert_has` and some declarative queries to block until the DOM is in a
-good state.
+Wallaby helps solve this by blocking.
+Instead of manually setting timeouts we can use `assert_has` and some declarative queries to block until the DOM is in a good state.
 
 ```elixir
 session
@@ -519,9 +502,13 @@ end
 
 ### JavaScript logging and errors
 
-Wallaby captures both JavaScript logs and errors. Any uncaught exceptions in JavaScript will be re-thrown in Elixir. This can be disabled by specifying `js_errors: false` in your Wallaby config.
+Wallaby captures both JavaScript logs and errors.
+Any uncaught exceptions in JavaScript will be re-thrown in Elixir.
+This can be disabled by specifying `js_errors: false` in your Wallaby config.
 
-JavaScript logs are written to :stdio by default. This can be changed to any IO device by setting the `:js_logger` option in your Wallaby config. For instance if you want to write all JavaScript console logs to a file you could do something like this:
+JavaScript logs are written to :stdio by default.
+This can be changed to any IO device by setting the `:js_logger` option in your Wallaby config.
+For instance if you want to write all JavaScript console logs to a file you could do something like this:
 
 ```elixir
 {:ok, file} = File.open("browser_logs.log", [:write])
@@ -534,10 +521,8 @@ Logging can be disabled by setting `:js_logger` to `nil`.
 
 ### Adjusting timeouts
 
-Wallaby uses [hackney](https://github.com/benoitc/hackney) under the hood, so we
-offer a hook that allows you to control any hackney options you'd like to have
-sent along on every request. This can be controlled with the `:hackney_options`
-setting in `config.exs`.
+Wallaby uses [hackney](https://github.com/benoitc/hackney) under the hood, so we offer a hook that allows you to control any hackney options you'd like to have sent along on every request.
+This can be controlled with the `:hackney_options` setting in `config.exs`.
 
 ```elixir
 config :wallaby,
@@ -550,9 +535,8 @@ config :wallaby,
 
 ### Drivers
 
-Wallaby works with phantomjs out of the box. There is also experimental support for
-both headless chrome and selenium. The driver can be specified by setting the `driver` option in
-the wallaby config like so:
+Wallaby works with PhantomJS out of the box. There is also experimental support for both headless chrome and selenium.
+The driver can be specified by setting the `driver` option in the wallaby config like so:
 
 ```elixir
 # Chrome
