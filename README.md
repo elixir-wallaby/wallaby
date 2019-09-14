@@ -553,64 +553,22 @@ See below for more information on the experimental drivers.
 ## Experimental Driver Support
 
 Currently Wallaby provides experimental support for both headless chrome and selenium.
-Both of these drivers are still "experimental" because they don't support the full
-api yet and because the implementation is changing rapidly. But, if you would like
-to use them in your project here's what you'll need to do.
+Both of these drivers are still "experimental" because they don't support the full API yet and because the implementation is changing rapidly.
+But, if you would like to use them in your project here's what you'll need to do.
+
+Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Chrome.html#content) for further information about using the Chrome driver.
 
 ### Headless Chrome
 
-In order to run headless chrome you'll need to have chromedriver 2.30 and chrome 60.
-Previous versions of both of these tools _may_ work, but several features will be
-buggy. If you want to setup chrome in a CI environment then you'll still
-need to install and run xvfb. This is due to a bug in chromedriver 2.30 that inhibits
-chromedriver from handling input text correctly. The bug should be fixed in chromedriver 2.31.
-
-If you would like to disable headless mode in chrome you can pass `headless: false` in your config like so:
-
-```elixir
-config :wallaby,
-  chrome: [
-    headless: false
-  ]
-```
-
-### Custom Chromedriver binary
-
-If `chromedriver` is on your `PATH`, then you can skip this step.
-Otherwise (e.g., on NPM-installed `chromedriver` binaries), you can override the path like so:
-
-```elixir
-config :wallaby, chromedriver: "<path/to/chromedriver>"
-```
-
-
-### Custom Chrome binary
-
-By default chromedriver will find chrome for you but if you want to test against a different version you may use this option to point to the other chrome binary.
-
-```elixir
-config :wallaby,
-  chrome: [
-    binary: "path/to/google/chrome"
-  ]
-```
+In order to run headless chrome you'll need to have ChromeDriver >= 2.30 and chrome >= 60.
+Previous versions of both of these tools _may_ work, but several features will be buggy.
+If you want to setup chrome in a CI environment then you'll still need to install and run xvfb.
+This is due to a bug in ChromeDriver 2.30 that inhibits ChromeDriver from handling input text correctly.
+The bug should be fixed in ChromeDriver 2.31.
 
 ### Selenium
 
-To run selenium you'll need to install selenium-server-standalone and geckodriver.
-Once you have these tools installed you'll need to manually start selenium-server separately
-from your test run.
-
-#### Custom Selenium URL
-
-To configure the `remote_url` that Wallaby will use to connect to the Selenium server, pass it as an option to `Wallaby.start_session`.
-
-```elixir
-Wallaby.start_session(
-  remote_url: "http://selenium:4444/wd/hub/",
-  capabilities: %{browserName: "firefox"}
-)
-```
+Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Selenium.html#content) for further information about using the Selenium driver.
 
 ## Contributing
 

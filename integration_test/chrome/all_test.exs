@@ -13,3 +13,4 @@ Code.require_file "../cases/browser/move_mouse_by_test.exs", __DIR__
 Code.require_file "../cases/browser/send_keys_to_active_element_test.exs", __DIR__
 Code.require_file "../cases/browser/window_handles_test.exs", __DIR__
 Code.require_file "../cases/browser/window_position_test.exs", __DIR__
+Code.require_file "../chrome/capabilities_test.exs", __DIR__
