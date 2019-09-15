@@ -101,10 +101,6 @@ defmodule Wallaby.Experimental.Selenium do
     with {:ok, response} <- create_session_fn.(base_url, capabilities) do
       id = response["sessionId"]
 
-      if id == nil do
-        raise inspect(response)
-      end
-
       session = %Wallaby.Session{
         session_url: base_url <> "session/#{id}",
         url: base_url <> "session/#{id}",

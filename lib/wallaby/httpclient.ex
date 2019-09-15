@@ -96,6 +96,8 @@ defmodule Wallaby.HTTPClient do
         {:error, :invalid_selector}
       %{"message" => "unexpected alert" <> _} ->
         {:error, :unexpected_alert}
+      %{"error" => _, "message" => message} ->
+        raise message
       _ ->
         {:ok, response}
     end
