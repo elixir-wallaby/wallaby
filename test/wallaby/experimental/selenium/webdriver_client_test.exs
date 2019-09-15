@@ -1111,21 +1111,11 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     end
   end
 
-  describe "touch_down/1" do
-    test "sends the correct request to the server", %{bypass: bypass} do
+  describe "touch_down/4" do
+    test "sends the correct request to the server when element is not specified", %{
+      bypass: bypass
+    } do
       session = build_session_for_bypass(bypass)
-      element = build_element_for_session(session)
-
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/location"
-
-        send_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {"x": 50, "y": 20}
-        }>)
-      end)
 
       handle_request(bypass, fn conn ->
         assert conn.method == "POST"
@@ -1139,7 +1129,40 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         }>)
       end)
 
-      assert {:ok, %{}} = Client.touch_down(session, 0, 0)
+      assert {:ok, %{}} = Client.touch_down(session, nil, 50, 20)
+    end
+
+    test "sends the correct request to the server when element is specified", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      handle_request(
+        bypass,
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/location",
+        fn conn ->
+          send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {"x": 50, "y": 20}
+        }>)
+        end
+      )
+
+      handle_request(
+        bypass,
+        "POST",
+        "/session/#{session.id}/touch/down",
+        fn conn ->
+          send_resp(conn, 200, ~s<{
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": {}
+        }>)
+        end
+      )
+
+      assert {:ok, %{}} = Client.touch_down(nil, element)
     end
   end
 
@@ -1267,6 +1290,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
 
   defp handle_request(bypass, handler_fn) do
     Bypass.expect(bypass, fn conn ->
+      conn |> parse_body |> handler_fn.()
+    end)
+  end
+
+  defp handle_request(bypass, method, path, handler_fn) do
+    Bypass.expect(bypass, method, path, fn conn ->
       conn |> parse_body |> handler_fn.()
     end)
   end
