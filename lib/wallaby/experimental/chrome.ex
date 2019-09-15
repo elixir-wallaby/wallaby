@@ -206,7 +206,7 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   @doc false
-  @spec start_session([start_session_opts]) :: Wallaby.Driver.on_start_session()
+  @spec start_session([start_session_opts]) :: Wallaby.Driver.on_start_session() | no_return
   def start_session(opts \\ []) do
     {:ok, base_url} = Chromedriver.base_url()
     create_session_fn = Keyword.get(opts, :create_session_fn, &WebdriverClient.create_session/2)
@@ -215,6 +215,10 @@ defmodule Wallaby.Experimental.Chrome do
 
     with {:ok, response} <- create_session_fn.(base_url, capabilities) do
       id = response["sessionId"]
+
+      if id == nil do
+        raise inspect(response)
+      end
 
       session = %Wallaby.Session{
         session_url: base_url <> "session/#{id}",
