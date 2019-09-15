@@ -5,9 +5,9 @@ defmodule Wallaby.Integration.CapabilitiesTest do
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   setup do
-    on_exit fn ->
+    on_exit(fn ->
       Application.delete_env(:wallaby, :chromedriver)
-    end
+    end)
   end
 
   describe "capabilities" do
@@ -69,6 +69,58 @@ defmodule Wallaby.Integration.CapabilitiesTest do
       |> assert_has(Query.text("Page 1"))
 
       assert :ok = Wallaby.end_session(session)
+    end
+
+    test "reads headless config from application config" do
+      headful_capabilities = %{chromeOptions: %{args: []}}
+
+      Application.put_env(:wallaby, :chromedriver,
+        capabilities: headful_capabilities,
+        headless: true
+      )
+
+      create_session_fn = fn url, capabilities ->
+        assert capabilities == %{chromeOptions: %{args: ["--headless"]}}
+
+        {:ok, %{}}
+      end
+
+      SessionCase.start_test_session(create_session_fn: create_session_fn)
+    end
+
+    test "reads headful config from application config" do
+      headless_capabilities = %{chromeOptions: %{args: ["--headless"]}}
+
+      Application.put_env(:wallaby, :chromedriver,
+        capabilities: headless_capabilities,
+        headless: false
+      )
+
+      create_session_fn = fn _url, capabilities ->
+        assert capabilities == %{chromeOptions: %{args: []}}
+
+        {:ok, %{}}
+      end
+
+      SessionCase.start_test_session(create_session_fn: create_session_fn)
+    end
+
+    test "reads chrome binary from application config" do
+      capabilities = %{chromeOptions: %{args: [], binary: "wrong/path"}}
+      expected_binary_path = "binary/path"
+
+      Application.put_env(:wallaby, :chromedriver,
+        capabilities: capabilities,
+        binary: expected_binary_path
+      )
+
+      create_session_fn = fn _url, capabilities ->
+        assert capabilities == %{chromeOptions: %{args: [], binary: expected_binary_path}}
+
+        {:ok, %{}}
+      end
+
+      SessionCase.start_test_session(create_session_fn: create_session_fn)
     end
 
     test "reads capabilities from opts when also using application config" do
