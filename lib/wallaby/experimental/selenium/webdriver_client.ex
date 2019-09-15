@@ -29,7 +29,9 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   """
   @spec delete_session(Session.t() | Element.t()) :: {:ok, map}
   def delete_session(session) do
-    request(:delete, session.session_url, %{})
+      request(:delete, session.session_url, %{})
+  rescue
+    _ -> {:ok, %{}}
   end
 
   @doc """
