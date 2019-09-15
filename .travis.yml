@@ -69,6 +69,12 @@ cache:
 dist: trusty
 
 addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - dpkg
+      - google-chrome-stable
   chrome: stable
   firefox: latest
 
