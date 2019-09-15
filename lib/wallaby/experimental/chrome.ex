@@ -232,9 +232,6 @@ defmodule Wallaby.Experimental.Chrome do
         do: {:ok, _} = set_window_size(session, window_size[:width], window_size[:height])
 
       {:ok, session}
-    else
-      error ->
-        raise inspect(error)
     end
   end
 
