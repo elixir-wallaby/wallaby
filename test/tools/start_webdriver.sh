@@ -24,13 +24,6 @@ if [ "$WALLABY_DRIVER" = "selenium" ]; then
   curl -L https://github.com/mozilla/geckodriver/releases/download/v0.23.0/geckodriver-v0.23.0-linux64.tar.gz -o $HOME/geckodriver.tar.gz
   tar xfz $HOME/geckodriver.tar.gz -C $HOME/bin
 
-  # Download latest firefox
-  export FIREFOX_SOURCE_URL='https://download.mozilla.org/?product=firefox-latest&lang=en-US&os=linux64'
-  wget -O /tmp/firefox-latest.tar.bz2 $FIREFOX_SOURCE_URL
-  mkdir -p $HOME/firefox-latest
-  tar xf /tmp/firefox-latest.tar.bz2 -C $HOME/firefox-latest
-  export PATH=$HOME/firefox-latest/firefox:$PATH
-
   java -version
 
   nohup java -jar $HOME/selenium.jar &
