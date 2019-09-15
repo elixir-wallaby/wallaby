@@ -91,7 +91,7 @@ defmodule Wallaby.Experimental.Selenium do
   end
 
   @doc false
-  @spec start_session([start_session_opts]) :: {:ok, Session.t()}
+  @spec start_session([start_session_opts]) :: Wallaby.Driver.on_start_session()
   def start_session(opts \\ []) do
     base_url = Keyword.get(opts, :remote_url, "http://localhost:4444/wd/hub/")
     create_session_fn = Keyword.get(opts, :create_session_fn, &WebdriverClient.create_session/2)

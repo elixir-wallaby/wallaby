@@ -81,7 +81,7 @@
         {Credo.Check.Readability.ModuleAttributeNames},
         {Credo.Check.Readability.ModuleDoc},
         {Credo.Check.Readability.ModuleNames},
-        {Credo.Check.Readability.ParenthesesOnZeroArityDefs},
+        {Credo.Check.Readability.ParenthesesOnZeroArityDefs, false},
         {Credo.Check.Readability.ParenthesesInCondition},
         {Credo.Check.Readability.PredicateFunctionNames},
         {Credo.Check.Readability.PreferImplicitTry},
@@ -102,7 +102,7 @@
         {Credo.Check.Refactor.NegatedConditionsInUnless},
         {Credo.Check.Refactor.NegatedConditionsWithElse},
         {Credo.Check.Refactor.Nesting},
-        {Credo.Check.Refactor.PipeChainStart},
+        {Credo.Check.Refactor.PipeChainStart, false},
         {Credo.Check.Refactor.UnlessWithElse},
 
         {Credo.Check.Warning.BoolOperationOnSameValues},
