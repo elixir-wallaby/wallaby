@@ -84,12 +84,33 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
         find(page, css(".some-selector"))
       end
     end)
+    check_screenshot(output)
+    Application.put_env(:wallaby, :screenshot_on_failure, nil)
+  end
+
+  test "automatically taking screenshots on failure for assert_text/2", %{page: page} do
+    assert_raise Wallaby.QueryError, fn ->
+      find(page, css(".some-selector"))
+    end
+    refute File.exists?("#{File.cwd!}/screenshots")
+
+    Application.put_env(:wallaby, :screenshot_on_failure, true)
+
+    output = capture_io( fn ->
+      assert_raise Wallaby.QueryError, fn ->
+        assert_text(page, "This text does not exist")
+      end
+    end)
+    check_screenshot(output)
+    Application.put_env(:wallaby, :screenshot_on_failure, nil)
+  end
+
+  defp check_screenshot(output) do
     assert Regex.match?(~r/Screenshot taken/, output)
 
     assert File.exists?("#{File.cwd!}/screenshots")
     assert File.ls!("#{File.cwd!}/screenshots") |> Enum.count == 1
 
     File.rm_rf! "#{File.cwd!}/screenshots"
-    Application.put_env(:wallaby, :screenshot_on_failure, nil)
   end
 end

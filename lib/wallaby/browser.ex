@@ -786,6 +786,10 @@ defmodule Wallaby.Browser do
       {:ok, true} ->
         true
       {:error, false} ->
+        if Wallaby.screenshot_on_failure? do
+          take_screenshot(parent, log: true)
+        end
+
         false
     end
   end
