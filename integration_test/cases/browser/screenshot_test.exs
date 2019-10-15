@@ -4,6 +4,8 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
 
   import Wallaby.Query, only: [css: 1]
 
+  alias Wallaby.ExpectationNotMetError
+
   setup %{session: session} do
     page =
       session
@@ -88,7 +90,7 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
     Application.put_env(:wallaby, :screenshot_on_failure, nil)
   end
 
-  test "automatically taking screenshots on failure for assert_text/2", %{page: page} do
+  test "automatically taking screenshots on failure for has_text?/2", %{session: session, page: page} do
     assert_raise Wallaby.QueryError, fn ->
       find(page, css(".some-selector"))
     end
@@ -96,12 +98,19 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
 
     Application.put_env(:wallaby, :screenshot_on_failure, true)
 
+    element =
+    session
+      |> visit("wait.html")
+      |> find(Query.css("#container"))
+
     output = capture_io( fn ->
-      assert_raise Wallaby.QueryError, fn ->
-        assert_text(page, "This text does not exist")
+      assert_raise ExpectationNotMetError, "Text 'rain' was not found.", fn ->
+        assert_text(element, "rain")
       end
     end)
+
     check_screenshot(output)
+
     Application.put_env(:wallaby, :screenshot_on_failure, nil)
   end
 
