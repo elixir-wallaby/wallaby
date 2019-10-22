@@ -62,7 +62,7 @@ defmodule Wallaby.FeatureCase do
             if Wallaby.screenshot_on_failure?(),
               do: Wallaby.FeatureCase.__take_screenshot__(unquote(context))
 
-            reraise(e, __STACKTRACE__)
+            reraise(e, System.stacktrace())
         end
       end
 
