@@ -6,12 +6,10 @@ defmodule Wallaby.FeatureCase do
 
   using do
     quote do
-      Case.register_attribute(__MODULE__, :sessions)
+      ExUnit.Case.register_attribute(__MODULE__, :sessions)
 
       use Wallaby.DSL
       import Wallaby.FeatureCase
-
-      alias ExUnit.Case
     end
   end
 
@@ -73,7 +71,7 @@ defmodule Wallaby.FeatureCase do
     contents = Macro.escape(contents, unquote: true)
 
     quote bind_quoted: [context: context, contents: contents, message: message] do
-      name = Case.register_test(__ENV__, :feature, message, [:feature])
+      name = ExUnit.Case.register_test(__ENV__, :feature, message, [:feature])
       def unquote(name)(unquote(context)), do: unquote(contents)
     end
   end
