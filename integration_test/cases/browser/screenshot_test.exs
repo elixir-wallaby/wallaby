@@ -1,8 +1,5 @@
 defmodule Wallaby.Integration.Browser.ScreenshotTest do
   use Wallaby.Integration.SessionCase, async: false
-  import ExUnit.CaptureIO
-
-  import Wallaby.Query, only: [css: 1]
 
   setup %{session: session} do
     page =
@@ -69,28 +66,6 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
 
     Application.put_env(:wallaby, :screenshot_dir, nil)
     File.rm_rf! "#{File.cwd!}/shots"
-  end
-
-  test "automatically taking screenshots on failure", %{page: page} do
-    assert_raise Wallaby.QueryError, fn ->
-      find(page, css(".some-selector"))
-    end
-    refute File.exists?("#{File.cwd!}/screenshots")
-
-    Application.put_env(:wallaby, :screenshot_on_failure, true)
-
-    output = capture_io(fn ->
-      assert_raise Wallaby.QueryError, fn ->
-        find(page, css(".some-selector"))
-      end
-    end)
-    assert Regex.match?(~r/Screenshot taken/, output)
-
-    assert File.exists?("#{File.cwd!}/screenshots")
-    assert File.ls!("#{File.cwd!}/screenshots") |> Enum.count == 1
-
-    File.rm_rf! "#{File.cwd!}/screenshots"
-    Application.put_env(:wallaby, :screenshot_on_failure, nil)
   end
 
   test "filters out illegal characters in screenshot name", %{page: page} do
