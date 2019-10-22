@@ -1,14 +1,20 @@
 defmodule Wallaby.FeatureCase do
+  @moduledoc """
+  TODO
+  """
   use ExUnit.CaseTemplate
 
   @otp_app Application.get_env(:wallaby, :otp_app)
 
   using do
     quote do
-      ExUnit.Case.register_attribute(__MODULE__, :sessions)
+      Case.register_attribute(__MODULE__, :sessions)
 
       use Wallaby.DSL
       import Wallaby.FeatureCase
+
+      alias ExUnit.Case
+      alias Wallaby.Browser
     end
   end
 
@@ -59,7 +65,7 @@ defmodule Wallaby.FeatureCase do
         rescue
           e ->
             if Wallaby.screenshot_on_failure?(),
-              do: Wallaby.FeatureCase.__take_screenshot__(unquote(context))
+              do: __take_screenshot__(unquote(context))
 
             reraise(e, __STACKTRACE__)
         end
@@ -69,7 +75,7 @@ defmodule Wallaby.FeatureCase do
     contents = Macro.escape(contents, unquote: true)
 
     quote bind_quoted: [context: context, contents: contents, message: message] do
-      name = ExUnit.Case.register_test(__ENV__, :feature, message, [:feature])
+      name = Case.register_test(__ENV__, :feature, message, [:feature])
       def unquote(name)(unquote(context)), do: unquote(contents)
     end
   end
@@ -84,7 +90,7 @@ defmodule Wallaby.FeatureCase do
     |> Enum.each(fn {s, i} ->
       filename = time <> "_" <> s.context <> "(#{i + 1})"
 
-      Wallaby.Browser.take_screenshot(s, name: filename, log: true)
+      Browser.take_screenshot(s, name: filename, log: true)
     end)
   end
 end
