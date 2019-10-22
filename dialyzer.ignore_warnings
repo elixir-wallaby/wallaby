@@ -1,3 +1,5 @@
 :0: Unknown function 'Elixir.Mix':shell/0
 :0: Unknown function 'Elixir.Mix.Tasks.Coveralls':do_run/2
 lib/mix/tasks/safe_travis.ex:1: Callback info about the 'Elixir.Mix.Task' behaviour is not available
+:0: Unknown function 'Elixir.ExUnit.Callbacks':'__merge__'/3
+:0: Unknown function 'Elixir.ExUnit.CaseTemplate':'__proxy__'/2

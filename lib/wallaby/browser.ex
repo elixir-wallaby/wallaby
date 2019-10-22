@@ -114,13 +114,11 @@ defmodule Wallaby.Browser do
 
   @type t :: any()
 
-  @opaque session :: Session.t
-  @opaque element :: Element.t
-  @opaque queryable :: Query.t
-                     | Element.t
+  @typep session :: Session.t
+  @typep element :: Element.t
+  @opaque queryable :: Query.t | Element.t
 
-  @type parent :: element
-                | session
+  @type parent :: element | session
   @type locator :: String.t
   @type opts :: Query.opts()
 

@@ -4,8 +4,6 @@ defmodule Wallaby.FeatureCase do
   """
   use ExUnit.CaseTemplate
 
-  @otp_app Application.get_env(:wallaby, :otp_app)
-
   using do
     quote do
       Case.register_attribute(__MODULE__, :sessions)
@@ -14,7 +12,6 @@ defmodule Wallaby.FeatureCase do
       import Wallaby.FeatureCase
 
       alias ExUnit.Case
-      alias Wallaby.Browser
     end
   end
 
@@ -23,7 +20,7 @@ defmodule Wallaby.FeatureCase do
     capabilities = Application.get_env(:wallaby, :capabilities)
 
     metadata =
-      @otp_app
+      otp_app()
       |> ecto_repos()
       |> Enum.map(&checkout_ecto_repos(&1, context[:async]))
       |> metadata_for_ecto_repos()
@@ -42,6 +39,7 @@ defmodule Wallaby.FeatureCase do
     [sessions: sessions]
   end
 
+  defp otp_app(), do: Application.get_env(:wallaby, :otp_app)
   defp ecto_repos(nil), do: []
   defp ecto_repos(otp_app), do: Application.get_env(otp_app, :ecto_repos, [])
 
@@ -65,7 +63,7 @@ defmodule Wallaby.FeatureCase do
         rescue
           e ->
             if Wallaby.screenshot_on_failure?(),
-              do: __take_screenshot__(unquote(context))
+              do: Wallaby.FeatureCase.__take_screenshot__(unquote(context))
 
             reraise(e, __STACKTRACE__)
         end
@@ -90,7 +88,7 @@ defmodule Wallaby.FeatureCase do
     |> Enum.each(fn {s, i} ->
       filename = time <> "_" <> s.context <> "(#{i + 1})"
 
-      Browser.take_screenshot(s, name: filename, log: true)
+      Wallaby.Browser.take_screenshot(s, name: filename, log: true)
     end)
   end
 end
