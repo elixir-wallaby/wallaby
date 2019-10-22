@@ -15,7 +15,6 @@ defmodule Wallaby.FeatureCase do
 
   setup context do
     sessions_count = get_in(context, [:registered, :sessions]) || 1
-    capabilities = Application.get_env(:wallaby, :capabilities)
 
     metadata =
       otp_app()
@@ -29,7 +28,7 @@ defmodule Wallaby.FeatureCase do
         context = String.replace(to_string(context.test), " ", "_")
 
         {:ok, session} =
-          Wallaby.start_session(context: context, capabilities: capabilities, metadata: metadata)
+          Wallaby.start_session(context: context, metadata: metadata)
 
         session
       end)
