@@ -3,3 +3,6 @@
 lib/mix/tasks/safe_travis.ex:1: Callback info about the 'Elixir.Mix.Task' behaviour is not available
 :0: Unknown function 'Elixir.ExUnit.Callbacks':'__merge__'/3
 :0: Unknown function 'Elixir.ExUnit.CaseTemplate':'__proxy__'/2
+:0: Unknown function 'Elixir.Ecto.Adapters.SQL.Sandbox':checkout/1
+:0: Unknown function 'Elixir.Ecto.Adapters.SQL.Sandbox':mode/2
+:0: Unknown function 'Elixir.Phoenix.Ecto.SQL.Sandbox':metadata_for/2
