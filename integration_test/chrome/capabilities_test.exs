@@ -79,7 +79,7 @@ defmodule Wallaby.Integration.CapabilitiesTest do
         headless: true
       )
 
-      create_session_fn = fn url, capabilities ->
+      create_session_fn = fn _url, capabilities ->
         assert capabilities == %{chromeOptions: %{args: ["--headless"]}}
 
         {:ok, %{}}
