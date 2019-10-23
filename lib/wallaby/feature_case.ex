@@ -25,10 +25,7 @@ defmodule Wallaby.FeatureCase do
     sessions =
       1..sessions_count
       |> Enum.map(fn _ ->
-        context = String.replace(to_string(context.test), " ", "_")
-
-        {:ok, session} =
-          Wallaby.start_session(context: context, metadata: metadata)
+        {:ok, session} = Wallaby.start_session(metadata: metadata)
 
         session
       end)
@@ -51,7 +48,7 @@ defmodule Wallaby.FeatureCase do
   def metadata_for_ecto_repos([]), do: Map.new()
   def metadata_for_ecto_repos(repos), do: Phoenix.Ecto.SQL.Sandbox.metadata_for(repos, self())
 
-  defmacro feature(message, context \\ quote(do: _), contents) do
+  defmacro feature(test_name, context \\ quote(do: _), contents) do
     contents =
       quote do
         try do
@@ -59,8 +56,9 @@ defmodule Wallaby.FeatureCase do
           :ok
         rescue
           e ->
-            if Wallaby.screenshot_on_failure?(),
-              do: Wallaby.FeatureCase.__take_screenshot__(unquote(context))
+            if Wallaby.screenshot_on_failure?() do
+              Wallaby.FeatureCase.__take_screenshot__(unquote_splicing([context, test_name]))
+            end
 
             reraise(e, System.stacktrace())
         end
@@ -69,21 +67,23 @@ defmodule Wallaby.FeatureCase do
     context = Macro.escape(context)
     contents = Macro.escape(contents, unquote: true)
 
-    quote bind_quoted: [context: context, contents: contents, message: message] do
-      name = ExUnit.Case.register_test(__ENV__, :feature, message, [:feature])
+    quote bind_quoted: [context: context, contents: contents, test_name: test_name] do
+      name = ExUnit.Case.register_test(__ENV__, :feature, test_name, [:feature])
+
       def unquote(name)(unquote(context)), do: unquote(contents)
     end
   end
 
   @doc false
-  def __take_screenshot__(context) do
+  def __take_screenshot__(context, test_name) do
     time = :erlang.system_time() |> to_string()
+    test_name = String.replace(test_name, " ", "_")
 
     context
     |> Map.fetch!(:sessions)
     |> Enum.with_index()
     |> Enum.each(fn {s, i} ->
-      filename = time <> "_" <> s.context <> "(#{i + 1})"
+      filename = time <> "_" <> test_name <> "(#{i + 1})"
 
       Wallaby.Browser.take_screenshot(s, name: filename, log: true)
     end)

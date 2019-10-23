@@ -220,7 +220,6 @@ defmodule Wallaby.Experimental.Chrome do
         session_url: base_url <> "session/#{id}",
         url: base_url <> "session/#{id}",
         id: id,
-        context: opts[:context],
         driver: __MODULE__,
         server: Chromedriver
       }
