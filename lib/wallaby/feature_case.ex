@@ -60,7 +60,7 @@ defmodule Wallaby.FeatureCase do
               Wallaby.FeatureCase.__take_screenshot__(unquote_splicing([context, test_name]))
             end
 
-            reraise(e, System.stacktrace())
+            reraise(e, __STACKTRACE__)
         end
       end
 
