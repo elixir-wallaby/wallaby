@@ -4,6 +4,14 @@ defmodule Wallaby.FeatureCase do
 
   This module will automatically call `use Wallaby.DSL`.
 
+  If you are using Ecto, please configure your `otp_app`.
+  
+  ```
+  config :wallaby, otp_app: :your_app
+  ```
+
+  ## Example
+
   ```
   defmodule MyAppWeb.MyFeatureCase do
     use Wallaby.FeatureCase, async: true
