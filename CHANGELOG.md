@@ -6,10 +6,13 @@
 
 - Enables the ability to set capabilities by passing them as an option and using application configuration.
 - Implements default capabilities for Selenium.
+- Implements the `Wallaby.FeatureCase` case template module.
 
 #### Breaking
 
 - Moves configuration options for using chrome headlessly, the chrome binary, and the chromedriver binary to the `:chromedriver` key in the `:wallaby` application config.
+- Increases the minimum Elixir version to v1.7.
+- Increases the minimum Erlang version to v21.
 
 ## 0.23.0 (2019-08-14)
 
