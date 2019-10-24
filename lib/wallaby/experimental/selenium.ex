@@ -306,7 +306,8 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.send_keys(parent, keys)
   end
 
-  defp default_capabilities do
+  @doc false
+  def default_capabilities do
     %{
       javascriptEnabled: true,
       browserName: "firefox",
