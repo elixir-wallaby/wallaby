@@ -1,4 +1,4 @@
-defmodule Wallaby.Integration.CapabilitiesTest do
+defmodule Wallaby.Integration.Selenium.CapabilitiesTest do
   use ExUnit.Case
   use Wallaby.DSL
   alias Wallaby.Integration.SessionCase
