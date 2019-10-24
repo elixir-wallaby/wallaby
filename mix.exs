@@ -8,12 +8,13 @@ defmodule Wallaby.Mixfile do
     "Chris Keathley",
     "Tobias Pfeiffer",
     "Aaron Renner",
+    "Mitchell Hanberg"
   ]
 
   def project do
     [app: :wallaby,
      version: @version,
-     elixir: "~> 1.5",
+     elixir: "~> 1.7",
      elixirc_paths: elixirc_paths(Mix.env),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -59,8 +60,8 @@ defmodule Wallaby.Mixfile do
       {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
       {:bypass, "~> 0.8", only: :test},
       {:excoveralls, "~> 0.7",  only: :test},
-      {:ex_doc, "~> 0.20", only: :docs},
-      {:inch_ex, "~> 0.5", only: :docs},
+      {:ex_doc, "~> 0.20", only: :dev},
+      {:inch_ex, "~> 0.5", only: :dev},
       {:ecto_sql, "~> 3.0.0", only: [:dev, :test], runtime: false},
       {:phoenix_ecto, "~> 4.0.0", only: [:dev, :test], runtime: false},
     ]

@@ -1,6 +1,23 @@
 defmodule Wallaby.FeatureCase do
   @moduledoc """
-  TODO
+  Helpers for defining feature cases.
+
+  This module will automatically call `use Wallaby.DSL`.
+
+  ```
+  defmodule MyAppWeb.MyFeatureCase do
+    use Wallaby.FeatureCase, async: true
+
+    feature "users can create todos", %{sessions: [session]} do
+      session
+      |> visit("/todos")
+      |> fill_in(Query.text_field("New Todo"), with: "Write my first Wallaby test")
+      |> click(Query.button("Save"))
+      |> assert_has(Query.css(".alert", text: "You created a todo"))
+      |> assert_has(Query.css(".todo-list > .todo", text: "Write my first Wallaby test"))
+    end
+  end
+  ```
   """
   use ExUnit.CaseTemplate
 
@@ -66,9 +83,46 @@ defmodule Wallaby.FeatureCase do
     repo
   end
 
-  def metadata_for_ecto_repos([]), do: Map.new()
-  def metadata_for_ecto_repos(repos), do: Phoenix.Ecto.SQL.Sandbox.metadata_for(repos, self())
+  defp metadata_for_ecto_repos([]), do: Map.new()
+  defp metadata_for_ecto_repos(repos), do: Phoenix.Ecto.SQL.Sandbox.metadata_for(repos, self())
 
+  @doc """
+  Defines a feature with a string.
+
+  ## Sessions
+
+  This macro will automatically start a single session using the currently configured capabilities and is passed to the feature via the `:sessions` key in the context.
+
+  ```
+  feature "test with a single session", %{sessions: [session]} do
+    # ...
+  end
+  ```
+
+  If you would like to start multiple sessions, assign the `@sessions` attribute to the number of sessions that the feature should start.
+
+  ```
+  @sessions 2
+  feature "test with a two sessions", %{sessions: [session_1, sessions_2]} do
+    # ...
+  end
+  ```
+
+  If you need to change the capabilities sent to the session for a specific feature, you can assign `@sessions` to a list of keyword lists of the options to be passed to `Wallaby.start_session/1`. This will start the number of sessions equal to the size of the list.
+
+  ```
+  @sessions [
+    [capabilities: %{}]
+  ]
+  feature "test with different capabilities", %{sessions: [session]} do
+    # ...
+  end
+  ```
+
+  ## Screenshots
+  
+  If you have configured `screenshot_on_failure` to be true, any any exceptions raised during the feature will trigger a screenshot to be taken.
+  """
   defmacro feature(test_name, context \\ quote(do: _), contents) do
     contents =
       quote do

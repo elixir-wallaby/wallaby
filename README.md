@@ -223,53 +223,18 @@ config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
 
 ### Writing tests
 
-It's easiest to add Wallaby to your test suite by creating a new case template (in case of an umbrella app, take care to adjust `YourApp` appropriately):
-
-```elixir
-defmodule YourApp.FeatureCase do
-  use ExUnit.CaseTemplate
-
-  using do
-    quote do
-      use Wallaby.DSL
-
-      alias YourApp.Repo
-      import Ecto
-      import Ecto.Changeset
-      import Ecto.Query
-
-      import YourApp.Router.Helpers
-    end
-  end
-
-  setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(YourApp.Repo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(YourApp.Repo, {:shared, self()})
-    end
-
-    metadata = Phoenix.Ecto.SQL.Sandbox.metadata_for(YourApp.Repo, self())
-    {:ok, session} = Wallaby.start_session(metadata: metadata)
-    {:ok, session: session}
-  end
-end
-```
-
-Then you can write tests like so:
+It's easiest to add Wallaby to your test suite by creating the included `Wallaby.FeatureCase` test template
 
 ```elixir
 defmodule YourApp.UserListTest do
-  use YourApp.FeatureCase, async: true
+  use Wallaby.FeatureCase, async: true
 
-  import Wallaby.Query, only: [css: 2]
-
-  test "users have names", %{session: session} do
+  feature "users have names", %{sessions: [session]} do
     session
     |> visit("/users")
-    |> find(css(".user", count: 3))
+    |> find(Query.css(".user", count: 3))
     |> List.first()
-    |> assert_has(css(".user-name", text: "Chris"))
+    |> assert_has(Query.css(".user-name", text: "Chris"))
   end
 end
 ```
@@ -574,7 +539,7 @@ Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimen
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
 
-To get started and setup the project, make sure you've got Elixir 1.5+ installed and then:
+To get started and setup the project, make sure you've got Elixir 1.7+ installed and then:
 
 ```
 $ mix deps.get
