@@ -5,7 +5,7 @@ defmodule Wallaby.FeatureCase do
   This module will automatically call `use Wallaby.DSL`.
 
   If you are using Ecto, please configure your `otp_app`.
-  
+
   ```
   config :wallaby, otp_app: :your_app
   ```
@@ -128,7 +128,7 @@ defmodule Wallaby.FeatureCase do
   ```
 
   ## Screenshots
-  
+
   If you have configured `screenshot_on_failure` to be true, any any exceptions raised during the feature will trigger a screenshot to be taken.
   """
   defmacro feature(test_name, context \\ quote(do: _), contents) do
