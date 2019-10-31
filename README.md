@@ -82,7 +82,7 @@ Then ensure that Wallaby is started in your `test_helper.exs`:
 
 ### Phoenix
 
-If you're testing a Phoenix application with Ecto 2 and a database that supports sandbox mode then you can enable concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` plug to your `Endpoint`.
+If you're testing a Phoenix application with Ecto 2 or 3 and a database that supports sandbox mode then you can enable concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` plug to your `Endpoint`.
 It's important that this is at the top of `endpoint.ex` before any other plugs.
 
 ```elixir
@@ -155,7 +155,7 @@ This method is less error prone but it will cause a delay when starting your tes
 
 #### Umbrella Apps
 
-If you're testing an umbrella application containing a Phoenix application for the web interface (`MyWebApp`) and a separate persistence application (`MyPersistenceApp`) using Ecto 2 with a database that supports sandbox mode, then you can use the same setup as above, with a few tweaks.
+If you're testing an umbrella application containing a Phoenix application for the web interface (`MyWebApp`) and a separate persistence application (`MyPersistenceApp`) using Ecto 2 or 3 with a database that supports sandbox mode, then you can use the same setup as above, with a few tweaks.
 
 ```elixir
 # my_web_app/lib/endpoint.ex
