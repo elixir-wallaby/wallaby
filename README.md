@@ -147,7 +147,7 @@ The second solution is to add a new alias to your mix config that recompiles ass
   ]
 
   defp compile_assets(_) do
-    Mix.shell().cmd("(cd assets && ./node_modules/webpack/bin/webpack.js --mode development)",
+    Mix.shell().cmd("./assets/node_modules/webpack/bin/webpack.js --mode development",
       quiet: true
     )
   end
