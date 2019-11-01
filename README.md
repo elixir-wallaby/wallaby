@@ -122,7 +122,7 @@ Assets are not re-compiled when you run `mix test`.
 This can lead to confusion if you've made changes in javascript or css but tests are still failing.
 There are two common ways to avoid this confusion.
 
-The first solution is to run `brunch watch` from the assets directory.
+The first solution is to run `webpack --mode development --watch` from the assets directory.
 This will ensure that assets get recompiled after any changes.
 
 The second solution is to add a new alias to your mix config that recompiles assets for you:
@@ -147,7 +147,9 @@ The second solution is to add a new alias to your mix config that recompiles ass
   ]
 
   defp compile_assets(_) do
-    Mix.shell.cmd("assets/node_modules/brunch/bin/brunch build assets/")
+    Mix.shell().cmd("(cd assets && ./node_modules/webpack/bin/webpack.js --mode development)",
+      quiet: true
+    )
   end
 ```
 
