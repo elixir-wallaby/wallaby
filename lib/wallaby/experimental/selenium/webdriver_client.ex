@@ -29,7 +29,9 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   """
   @spec delete_session(Session.t() | Element.t()) :: {:ok, map}
   def delete_session(session) do
-    request(:delete, session.session_url, %{})
+      request(:delete, session.session_url, %{})
+  rescue
+    _ -> {:ok, %{}}
   end
 
   @doc """
@@ -515,7 +517,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClient do
   end
 
   @doc """
-  Sends a list of key strokes to active element
+  Sends a list of key strokes to active element.
   """
   @spec send_keys(Session.t(), [String.t() | atom]) :: {:ok, nil}
   def send_keys(%Session{} = session, keys) when is_list(keys) do

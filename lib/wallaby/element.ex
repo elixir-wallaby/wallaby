@@ -151,7 +151,9 @@ defmodule Wallaby.Element do
   end
 
   @doc """
-  Returns the text from the element.
+  Gets the element's text value.
+
+  If the element is not visible, the return value will be `""`.
   """
   @spec text(t) :: String.t()
 

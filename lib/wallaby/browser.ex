@@ -681,6 +681,8 @@ defmodule Wallaby.Browser do
 
   @doc """
   Gets the Element's text value.
+
+  If the element is not visible, the return value will be `""`.
   """
   @spec text(parent) :: String.t()
   @spec text(parent, Query.t()) :: String.t()

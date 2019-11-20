@@ -82,5 +82,23 @@ defmodule Wallaby.HTTPClientTest do
         Client.request(:post, bypass_url(bypass, "/my_url"))
       end
     end
+
+    test "raises a runtime error when the request returns a generic error", %{bypass: bypass} do
+      expected_message = "The session could not be created"
+
+      Bypass.expect bypass, fn conn ->
+        send_resp(conn, 200, ~s<{
+          "sessionId": "abc123",
+          "value": {
+            "error": "An error",
+            "message": "#{expected_message}"
+          }
+        }>)
+      end
+
+      assert_raise RuntimeError, expected_message, fn ->
+        Client.request(:post, bypass_url(bypass, "/my_url"))
+      end
+    end
   end
 end

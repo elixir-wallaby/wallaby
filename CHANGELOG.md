@@ -1,4 +1,17 @@
-## 0.23.0 (pending)
+# Changelog
+
+## Master
+
+### Improvements
+
+- Enables the ability to set capabilities by passing them as an option and using application configuration.
+- Implements default capabilities for Selenium.
+
+#### Breaking
+
+- Moves configuration options for using chrome headlessly, the chrome binary, and the chromedriver binary to the `:chromedriver` key in the `:wallaby` application config.
+
+## 0.23.0 (2019-08-14)
 
 ### Improvements
 
