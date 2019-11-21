@@ -13,8 +13,8 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
 
     test "creates a new server state that's not running" do
       assert %ServerState{
-        workspace_path: "/tmp",
-      } = ServerState.new("/tmp")
+               workspace_path: "/tmp"
+             } = ServerState.new("/tmp")
     end
 
     test "creates a new server state with a prefilled port_number" do
@@ -24,8 +24,7 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
     end
 
     test "allows overriding the port number" do
-      assert %ServerState{port_number: 8080} =
-        build_server_state(port_number: 8080)
+      assert %ServerState{port_number: 8080} = build_server_state(port_number: 8080)
     end
 
     test "defaults to reading phantom_path from env" do
@@ -55,54 +54,57 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
 
   describe "external_command/1" do
     test "with no phantom_args" do
-      state = build_server_state(
-        phantom_path: "phantomjs",
-        port_number: 8000
-      )
+      state =
+        build_server_state(
+          phantom_path: "phantomjs",
+          port_number: 8000
+        )
 
       assert %ExternalCommand{
-        executable: "phantomjs",
-        args: [
-          "--webdriver=8000",
-          "--local-storage-path=#{ServerState.local_storage_path(state)}"
-        ]
-      } == ServerState.external_command(state)
+               executable: "phantomjs",
+               args: [
+                 "--webdriver=8000",
+                 "--local-storage-path=#{ServerState.local_storage_path(state)}"
+               ]
+             } == ServerState.external_command(state)
     end
 
     test "with phantom_args as a list" do
-      state = build_server_state(
-        phantom_path: "phantomjs",
-        port_number: 8000,
-        phantom_args: ["--debug"]
-      )
+      state =
+        build_server_state(
+          phantom_path: "phantomjs",
+          port_number: 8000,
+          phantom_args: ["--debug"]
+        )
 
       assert %ExternalCommand{
-        executable: "phantomjs",
-        args: [
-          "--webdriver=8000",
-          "--local-storage-path=#{ServerState.local_storage_path(state)}",
-          "--debug"
-        ]
-      } == ServerState.external_command(state)
+               executable: "phantomjs",
+               args: [
+                 "--webdriver=8000",
+                 "--local-storage-path=#{ServerState.local_storage_path(state)}",
+                 "--debug"
+               ]
+             } == ServerState.external_command(state)
     end
 
     test "with phantom_args as a string" do
-      state = build_server_state(
-        phantom_path: "phantomjs",
-        port_number: 8000,
-        local_storage_path: "/srv/wallaby",
-        phantom_args: "--debug --hello=world"
-      )
+      state =
+        build_server_state(
+          phantom_path: "phantomjs",
+          port_number: 8000,
+          local_storage_path: "/srv/wallaby",
+          phantom_args: "--debug --hello=world"
+        )
 
       assert %ExternalCommand{
-        executable: "phantomjs",
-        args: [
-          "--webdriver=8000",
-          "--local-storage-path=#{ServerState.local_storage_path(state)}",
-          "--debug",
-          "--hello=world",
-        ]
-      } == ServerState.external_command(state)
+               executable: "phantomjs",
+               args: [
+                 "--webdriver=8000",
+                 "--local-storage-path=#{ServerState.local_storage_path(state)}",
+                 "--debug",
+                 "--hello=world"
+               ]
+             } == ServerState.external_command(state)
     end
   end
 
@@ -111,7 +113,7 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
       state = ServerState.new("/tmp/wallaby")
 
       assert "/tmp/wallaby/local_storage" ==
-        ServerState.local_storage_path(state)
+               ServerState.local_storage_path(state)
     end
   end
 
@@ -120,7 +122,7 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
       state = ServerState.new("/tmp/wallaby")
 
       assert '/tmp/wallaby/wrapper' ==
-        ServerState.wrapper_script_path(state)
+               ServerState.wrapper_script_path(state)
     end
   end
 

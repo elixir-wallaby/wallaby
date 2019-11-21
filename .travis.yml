@@ -92,6 +92,7 @@ script:
   - mix coveralls.safe_travis
   - if [ -z ${WALLABY_DRIVER} ]; then mix dialyzer --halt-exit-status; fi # only run dialyzer for the env without drivers
   - mix credo --strict
+  - mix format --check-formatted
 
 after_script:
   - mix deps.get --only docs

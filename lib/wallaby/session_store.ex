@@ -22,11 +22,12 @@ defmodule Wallaby.SessionStore do
   end
 
   def handle_call({:demonitor, session}, _from, %{refs: refs} = state) do
-    case Enum.find(refs, fn({_, value}) -> value.id == session.id end) do
+    case Enum.find(refs, fn {_, value} -> value.id == session.id end) do
       {ref, _} ->
         {_, refs} = Map.pop(refs, ref)
         true = Process.demonitor(ref)
         {:reply, :ok, %{state | refs: refs}}
+
       nil ->
         {:reply, :ok, state}
     end
@@ -39,7 +40,7 @@ defmodule Wallaby.SessionStore do
   end
 
   def terminate(_reason, %{refs: refs}) do
-    Enum.each(refs, fn({_ref, session}) -> close_session(session) end)
+    Enum.each(refs, fn {_ref, session} -> close_session(session) end)
   end
 
   defp close_session(session) do

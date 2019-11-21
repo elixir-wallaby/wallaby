@@ -71,6 +71,7 @@ defmodule Wallaby.QueryTest do
         conditions: [minimum: 1, maximum: 3],
         result: [%{}, %{}]
       }
+
       assert Query.matches_count?(query, 2)
 
       query = %Query{conditions: [minimum: 1, maximum: 1], result: [%{}]}

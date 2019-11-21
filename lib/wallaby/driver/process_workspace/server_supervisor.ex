@@ -5,12 +5,12 @@ defmodule Wallaby.Driver.ProcessWorkspace.ServerSupervisor do
 
   alias Wallaby.Driver.ProcessWorkspace.Server
 
-  @spec start_link :: Supervisor.on_start
+  @spec start_link :: Supervisor.on_start()
   def start_link do
     Supervisor.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  @spec start_server(pid, String.t) :: Supervisor.on_start_child
+  @spec start_server(pid, String.t()) :: Supervisor.on_start_child()
   def start_server(process_pid, workspace_path) do
     Supervisor.start_child(__MODULE__, [process_pid, workspace_path])
   end

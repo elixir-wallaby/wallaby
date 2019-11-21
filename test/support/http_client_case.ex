@@ -14,13 +14,14 @@ defmodule Wallaby.HttpClientCase do
   Starts a bypass session and inserts it into the test session
   """
   def start_bypass(_) do
-    {:ok, bypass: Bypass.open}
+    {:ok, bypass: Bypass.open()}
   end
 
   @doc """
   Builds a url from the current bypass session
   """
   def bypass_url(bypass), do: "http://localhost:#{bypass.port}"
+
   def bypass_url(bypass, path) do
     "#{bypass_url(bypass)}#{path}"
   end

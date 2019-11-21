@@ -6,7 +6,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
   alias Wallaby.Experimental.Chrome
 
   def start_link do
-    GenServer.start_link(__MODULE__, :ok, [name: __MODULE__])
+    GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
   def stop do
@@ -50,18 +50,20 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     Path.absname("priv/run_command.sh", Application.app_dir(:wallaby))
   end
 
-  defp args(chromedriver, port), do: [
+  defp args(chromedriver, port),
+    do: [
       chromedriver,
       "--log-level=OFF",
-      "--port=#{port}",
+      "--port=#{port}"
     ]
 
-  defp port_opts(chromedriver, tcp_port), do: [
-    :binary,
-    :stream,
-    :use_stdio,
-    :stderr_to_stdout,
-    :exit_status,
-    args: args(chromedriver, tcp_port),
-  ]
+  defp port_opts(chromedriver, tcp_port),
+    do: [
+      :binary,
+      :stream,
+      :use_stdio,
+      :stderr_to_stdout,
+      :exit_status,
+      args: args(chromedriver, tcp_port)
+    ]
 end
