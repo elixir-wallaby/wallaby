@@ -8,21 +8,21 @@ defmodule Wallaby.Phantom.LoggerTest do
     test "removes line numbers from the end of INFO logs" do
       fun = fn ->
         build_log("test (:)")
-        |> Logger.parse_log
+        |> Logger.parse_log()
       end
 
       assert capture_io(fun) == "test\n"
 
       fun = fn ->
         build_log("test (undefined:undefined)")
-        |> Logger.parse_log
+        |> Logger.parse_log()
       end
 
       assert capture_io(fun) == "test\n"
 
       fun = fn ->
         build_log("test (1:3) (:)")
-        |> Logger.parse_log
+        |> Logger.parse_log()
       end
 
       assert capture_io(fun) == "test (1:3)\n"
@@ -34,7 +34,7 @@ defmodule Wallaby.Phantom.LoggerTest do
       fun = fn ->
         "test log"
         |> build_log()
-        |> Logger.parse_log
+        |> Logger.parse_log()
       end
 
       assert capture_io(fun) == ""

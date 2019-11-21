@@ -51,7 +51,7 @@ matrix:
     env: WALLABY_DRIVER=selenium
   - elixir: 1.9.1
     otp_release: 22.0.7
-    env: ""
+    env: "WALLABY_CHECK_FORMATTING=true"
   - elixir: 1.9.1
     otp_release: 22.0.7
     env: WALLABY_DRIVER=phantom
@@ -92,6 +92,7 @@ script:
   - mix coveralls.safe_travis
   - if [ -z ${WALLABY_DRIVER} ]; then mix dialyzer --halt-exit-status; fi # only run dialyzer for the env without drivers
   - mix credo --strict
+  - if [ ${WALLABY_CHECK_FORMATTING} == 'true' ]; then mix format --check-formatted; fi
 
 after_script:
   - mix deps.get --only docs

@@ -48,17 +48,21 @@ defmodule Wallaby.Phantom do
   def validate do
     cond do
       configured_phantom_js()
-      |> Path.expand
-      |> System.find_executable ->
+      |> Path.expand()
+      |> System.find_executable() ->
         :ok
+
       System.find_executable("phantomjs") ->
         :ok
+
       true ->
-        exception = DependencyError.exception """
-        Wallaby can't find phantomjs. Make sure you have phantomjs installed
-        and included in your path, or that your `config :wallaby, :phantomjs`
-        setting points to a valid phantomjs executable.
-        """
+        exception =
+          DependencyError.exception("""
+          Wallaby can't find phantomjs. Make sure you have phantomjs installed
+          and included in your path, or that your `config :wallaby, :phantomjs`
+          setting points to a valid phantomjs executable.
+          """)
+
         {:error, exception}
     end
   end
@@ -66,7 +70,7 @@ defmodule Wallaby.Phantom do
   def init(:ok) do
     children = [
       :poolboy.child_spec(@pool_name, poolboy_config(), []),
-      worker(Wallaby.Driver.LogStore, [[]]),
+      worker(Wallaby.Driver.LogStore, [[]])
     ]
 
     supervise(children, strategy: :one_for_one)
@@ -90,7 +94,7 @@ defmodule Wallaby.Phantom do
       cssSelectorsEnabled: true,
       browserName: "phantomjs",
       nativeEvents: false,
-      platform: "ANY",
+      platform: "ANY"
     }
   end
 
@@ -102,8 +106,7 @@ defmodule Wallaby.Phantom do
 
   @doc false
   def end_session(%Wallaby.Session{server: server} = session) do
-    Driver.execute_script(session, "localStorage.clear()", [],
-                          check_logs: false)
+    Driver.execute_script(session, "localStorage.clear()", [], check_logs: false)
     Driver.delete(session)
     :poolboy.checkin(Wallaby.ServerPool, server)
   end
@@ -179,14 +182,16 @@ defmodule Wallaby.Phantom do
 
   @doc false
   def user_agent_capability(nil), do: %{}
+
   def user_agent_capability(ua) do
     %{"phantomjs.page.settings.userAgent" => ua}
   end
 
   @doc false
   def custom_headers_capability(nil), do: %{}
+
   def custom_headers_capability(ch) do
-    Enum.reduce(ch, %{}, fn ({k, v}, acc) ->
+    Enum.reduce(ch, %{}, fn {k, v}, acc ->
       Map.merge(acc, %{"phantomjs.page.customHeaders.#{k}" => v})
     end)
   end
@@ -197,10 +202,12 @@ defmodule Wallaby.Phantom do
   end
 
   defp poolboy_config do
-    [name: {:local, @pool_name},
-     worker_module: Wallaby.Phantom.Server,
-     size: pool_size(),
-     max_overflow: 0]
+    [
+      name: {:local, @pool_name},
+      worker_module: Wallaby.Phantom.Server,
+      size: pool_size(),
+      max_overflow: 0
+    ]
   end
 
   defp default_pool_size do

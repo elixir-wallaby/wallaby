@@ -9,9 +9,11 @@ defmodule Wallaby.Metadata do
   @regex ~r{#{@prefix} \((.*?)\)}
 
   def append(user_agent, nil), do: user_agent
+
   def append(user_agent, metadata) when is_map(metadata) or is_list(metadata) do
     append(user_agent, format(metadata))
   end
+
   def append(user_agent, metadata) when is_binary(metadata) do
     "#{user_agent}/#{metadata}"
   end
@@ -22,8 +24,9 @@ defmodule Wallaby.Metadata do
   def format(metadata) do
     encoded =
       {:v1, metadata}
-      |> :erlang.term_to_binary
-      |> Base.url_encode64
+      |> :erlang.term_to_binary()
+      |> Base.url_encode64()
+
     "#{@prefix} (#{encoded})"
   end
 
@@ -31,21 +34,21 @@ defmodule Wallaby.Metadata do
     ua =
       str
       |> String.split("/")
-      |> List.last
+      |> List.last()
 
     case Regex.run(@regex, ua) do
       [_, metadata] -> parse(metadata)
-      _             -> %{}
+      _ -> %{}
     end
   end
 
   def parse(encoded_metadata) do
     encoded_metadata
-    |> Base.url_decode64!
-    |> :erlang.binary_to_term
+    |> Base.url_decode64!()
+    |> :erlang.binary_to_term()
     |> case do
-        {:v1, metadata} -> metadata
-        _               -> raise Wallaby.BadMetadataError, message: "#{encoded_metadata} is not valid"
-      end
+      {:v1, metadata} -> metadata
+      _ -> raise Wallaby.BadMetadataError, message: "#{encoded_metadata} is not valid"
+    end
   end
 end

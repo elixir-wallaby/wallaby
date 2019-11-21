@@ -8,32 +8,32 @@ defmodule Wallaby.BrowserTest do
   alias Wallaby.Session
 
   defmodule TestDriver do
-
     def start_link() do
       Agent.start_link(fn -> [] end, name: __MODULE__)
     end
 
     def visit(%Session{} = session, path) do
-      Agent.update(__MODULE__, fn (visits) ->
+      Agent.update(__MODULE__, fn visits ->
         [path | visits]
       end)
+
       session
     end
 
     def assert_visited(url) do
       unless Enum.member?(visits(), url) do
         raise ExUnit.AssertionError,
-          """
-          #{inspect url} was not visited.
+              """
+              #{inspect(url)} was not visited.
 
-          Visited urls:
-          #{visits() |> Enum.map(&"  #{inspect &1}") |> Enum.join("\n")}
-          """
+              Visited urls:
+              #{visits() |> Enum.map(&"  #{inspect(&1)}") |> Enum.join("\n")}
+              """
       end
     end
 
     defp visits do
-      Agent.get(__MODULE__, fn (visits) -> visits end)
+      Agent.get(__MODULE__, fn visits -> visits end)
     end
   end
 
@@ -129,11 +129,11 @@ defmodule Wallaby.BrowserTest do
 
       run_query = fn ->
         Agent.get_and_update(agent, fn initial ->
-            {initial, {:ok, []}}
+          {initial, {:ok, []}}
         end)
       end
 
-      assert Browser.retry run_query
+      assert Browser.retry(run_query)
     end
 
     test "it retries until time runs out" do
