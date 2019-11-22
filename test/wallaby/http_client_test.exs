@@ -13,7 +13,7 @@ defmodule Wallaby.HTTPClientTest do
         assert get_req_header(conn, "accept") == ["application/json"]
         assert get_req_header(conn, "content-type") == ["application/json"]
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "abc123",
           "status": 0,
           "value": null
@@ -25,7 +25,7 @@ defmodule Wallaby.HTTPClientTest do
 
     test "with a 200 status response", %{bypass: bypass} do
       Bypass.expect(bypass, fn conn ->
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "abc123",
           "status": 0,
           "value": null
@@ -43,7 +43,7 @@ defmodule Wallaby.HTTPClientTest do
 
     test "with a 500 response and StaleElementReferenceException", %{bypass: bypass} do
       Bypass.expect(bypass, fn conn ->
-        send_resp(conn, 500, ~s<{
+        send_json_resp(conn, 500, ~s<{
           "sessionId": "abc123",
           "status": 10,
           "value": {
@@ -59,7 +59,7 @@ defmodule Wallaby.HTTPClientTest do
       expected_message = "message from an obsure error"
 
       Bypass.expect(bypass, fn conn ->
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "abc123",
           "status": 13,
           "value": {
@@ -86,7 +86,7 @@ defmodule Wallaby.HTTPClientTest do
       expected_message = "The session could not be created"
 
       Bypass.expect(bypass, fn conn ->
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "abc123",
           "value": {
             "error": "An error",
