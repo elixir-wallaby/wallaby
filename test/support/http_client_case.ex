@@ -1,6 +1,8 @@
 defmodule Wallaby.HttpClientCase do
   use ExUnit.CaseTemplate
 
+  import Plug.Conn
+
   using do
     quote do
       import Plug.Conn
@@ -32,5 +34,15 @@ defmodule Wallaby.HttpClientCase do
   def parse_body(conn) do
     opts = Plug.Parsers.init(parsers: [:urlencoded, :json], json_decoder: Jason)
     Plug.Parsers.call(conn, opts)
+  end
+
+  @doc """
+  Sends a response with the json content type
+  """
+  @spec send_json_resp(Conn.t(), Conn.status(), Conn.body()) :: Conn.t()
+  def send_json_resp(conn, status_code, body) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(status_code, body)
   end
 end

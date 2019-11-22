@@ -21,7 +21,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert "/session" == conn.request_path
         assert %{"desiredCapabilities" => capabilities} == conn.body_params
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{new_session_id}",
           "status": 0,
           "value": {
@@ -44,7 +44,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert "DELETE" == conn.method
         assert "/session/#{session.id}" == conn.request_path
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -72,7 +72,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/elements"
         assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": [{"ELEMENT": "#{element_id}"}]
@@ -101,7 +101,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/element/#{parent_element.id}/elements"
         assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": [{"ELEMENT": "#{element_id}"}]
@@ -129,7 +129,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/elements"
         assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": [{"#{@web_element_identifier}": "#{element_id}"}]
@@ -159,7 +159,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/value"
         assert conn.body_params == %{"value" => [value]}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": null
@@ -175,7 +175,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       value = "hello world"
 
       handle_request(bypass, fn conn ->
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0
         }>)
@@ -202,7 +202,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       value = "hello world"
 
       handle_request(bypass, fn conn ->
-        send_resp(conn, 500, ~s<{
+        send_json_resp(conn, 500, ~s<{
           "sessionId": "#{session.id}",
           "status": null,
           "value": {
@@ -224,7 +224,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/clear"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": null
@@ -242,7 +242,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/clear"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0
         }>)
@@ -273,7 +273,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/clear"
 
-        send_resp(conn, 500, ~s<{
+        send_json_resp(conn, 500, ~s<{
           "sessionId": "#{session.id}",
           "status": null,
           "value": {
@@ -295,7 +295,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/click"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -315,7 +315,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/text"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": ""
@@ -335,7 +335,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/title"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": "#{page_title}"
@@ -358,7 +358,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path ==
                  "/session/#{session.id}/element/#{element.id}/attribute/#{attribute_name}"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": "password"
@@ -379,7 +379,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/url"
         assert conn.body_params == %{"url" => url}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -399,7 +399,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/url"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": "#{url}"
@@ -419,7 +419,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/url"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": "#{url}"
@@ -439,7 +439,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/selected"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": true
@@ -459,7 +459,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/displayed"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": true
@@ -477,7 +477,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/displayed"
 
-        send_resp(conn, 500, ~s<{
+        send_json_resp(conn, 500, ~s<{
           "sessionId": "#{session.id}",
           "status": 10,
           "value": {
@@ -499,7 +499,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/size"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": "not quite sure"
@@ -519,7 +519,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/rect"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": "not quite sure"
@@ -539,7 +539,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/screenshot"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": "#{Base.encode64(screenshot_data)}"
@@ -558,7 +558,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/cookie"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": [{"domain": "localhost"}]
@@ -580,7 +580,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/cookie"
         assert conn.body_params == %{"cookie" => %{"name" => key, "value" => value}}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": []
@@ -602,7 +602,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/window/current/size"
         assert conn.body_params == %{"height" => height, "width" => width}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -621,7 +621,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/window/current/size"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {
@@ -646,7 +646,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/window/current/position"
         assert conn.body_params == %{"x" => x_coordinate, "y" => y_coordinate}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -665,7 +665,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/window/current/position"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {
@@ -687,7 +687,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/window/current/maximize"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -707,7 +707,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/execute"
         assert conn.body_params == %{"script" => "localStorage.clear()", "args" => [2, "a"]}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": null
@@ -728,7 +728,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/keys"
         assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!()
 
-        resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": null
@@ -748,7 +748,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/element/#{element.id}/value"
         assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!()
 
-        resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": null
@@ -768,7 +768,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/log"
         assert conn.body_params == %{"type" => "browser"}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": []
@@ -788,7 +788,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/source"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": "#{page_source}"
@@ -807,7 +807,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/window_handles"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": ["some-window-handle", "other-window-handle"]
@@ -826,7 +826,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "GET"
         assert conn.request_path == "/session/#{session.id}/window_handle"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": "my-window-handle"
@@ -847,7 +847,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/window"
         assert conn.body_params == %{"name" => window_handle_id, "handle" => window_handle_id}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -866,7 +866,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "DELETE"
         assert conn.request_path == "/session/#{session.id}/window"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -893,7 +893,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
                  }
                }
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -914,7 +914,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/frame"
         assert conn.body_params == %{"id" => frame_id}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -933,7 +933,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/frame"
         assert conn.body_params == %{"id" => frame_id}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -952,7 +952,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/frame/parent"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -973,7 +973,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/moveto"
         assert conn.body_params == %{"element" => element.id}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -994,7 +994,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/moveto"
         assert conn.body_params == %{"xoffset" => x_offset, "yoffset" => y_offset}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -1021,7 +1021,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
                  "yoffset" => y_offset
                }
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -1041,7 +1041,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/click"
         assert conn.body_params == %{"button" => 0}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -1060,7 +1060,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.method == "POST"
         assert conn.request_path == "/session/#{session.id}/doubleclick"
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -1080,7 +1080,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/buttondown"
         assert conn.body_params == %{"button" => 0}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
@@ -1100,7 +1100,7 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         assert conn.request_path == "/session/#{session.id}/buttonup"
         assert conn.body_params == %{"button" => 0}
 
-        send_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
           "sessionId": "#{session.id}",
           "status": 0,
           "value": {}
