@@ -13,7 +13,7 @@ jobs:
     - uses: actions/setup-elixir@v1.0.0
       with:
         otp-version: 21.x
-        elixir-version: 1.9.x
+        elixir-version: 1.7.x
     - uses: actions/cache@v1
       id: cache
       with:
@@ -26,7 +26,7 @@ jobs:
         MIX_ENV: docs
       run: mix deps.get
 
-    - name: Run Formatter
+    - name: Run Inch
       env:
         MIX_ENV: docs
       run: mix inch.report
