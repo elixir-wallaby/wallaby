@@ -1,0 +1,133 @@
+name: CI
+on: 
+  pull_request:
+  push:
+    branches: master
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    name: Linting (${{matrix.elixir}}/${{matrix.otp}})
+
+    strategy:
+      matrix:
+        otp: [21.x]
+        elixir: [1.7.x, 1.8.x, 1.9.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-elixir@v1.0.0
+      with:
+        otp-version: ${{matrix.otp}}
+        elixir-version: ${{matrix.elixir}}
+
+    - name: Install Dependencies
+      run: mix deps.get
+
+    - name: Run Credo
+      run: mix credo --strict
+
+    - name: Run Dialyzer
+      run: mix dialyzer --halt-exit-status
+
+  unit_tests:
+    runs-on: ubuntu-latest
+    name: Unit Tests (${{matrix.elixir}}/${{matrix.otp}})
+
+    strategy:
+      matrix:
+        otp: [21.x]
+        elixir: [1.7.x, 1.8.x, 1.9.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-elixir@v1.0.0
+      with:
+        otp-version: ${{matrix.otp}}
+        elixir-version: ${{matrix.elixir}}
+
+    - name: Install Dependencies
+      run: mix deps.get
+
+    - name: Run Tests
+      run: mix test
+
+
+  chromedriver:
+    runs-on: ubuntu-latest
+    name: ChromeDriver (${{matrix.elixir}}/${{matrix.otp}})
+    strategy:
+      matrix:
+        otp: [21.x]
+        elixir: [1.7.x, 1.8.x, 1.9.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-elixir@v1.0.0
+      with:
+        otp-version: ${{matrix.otp}}
+        elixir-version: ${{matrix.elixir}}
+    - uses: nanasess/setup-chromedriver@master
+      with:
+        chromedriver-version: '78.0.3904.70'
+
+    - name: Install Dependencies
+      run: mix deps.get
+
+    - name: Run Tests
+      env:
+        WALLABY_DRIVER: chrome
+      run: mix coveralls.safe_travis
+
+  selenium:
+    runs-on: ubuntu-latest
+    name: Selenium (${{matrix.elixir}}/${{matrix.otp}})
+    strategy:
+      matrix:
+        otp: [21.x]
+        elixir: [1.7.x, 1.8.x, 1.9.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-elixir@v1.0.0
+      with:
+        otp-version: ${{matrix.otp}}
+        elixir-version: ${{matrix.elixir}}
+    - uses: elixir-wallaby/setup-selenium@master
+
+    - name: Install Dependencies
+      run: mix deps.get
+
+    - name: Run Tests
+      env:
+        WALLABY_DRIVER: selenium
+      run: |
+        java -jar "$HOME/selenium.jar" > /dev/null 2>&1 &
+
+        mix coveralls.safe_travis
+
+  phantomjs:
+    runs-on: ubuntu-latest
+    name: PhantomJS (${{matrix.elixir}}/${{matrix.otp}})
+    strategy:
+      matrix:
+        otp: [21.x]
+        elixir: [1.7.x, 1.8.x, 1.9.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-elixir@v1.0.0
+      with:
+        otp-version: ${{matrix.otp}}
+        elixir-version: ${{matrix.elixir}}
+
+    - name: Install PhantomJS
+      run: npm -g install phantomjs-prebuilt
+
+    - name: Install Dependencies
+      run: mix deps.get
+
+    - name: Run Tests
+      env:
+        WALLABY_DRIVER: phantom
+      run: mix coveralls.safe_travis
