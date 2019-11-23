@@ -22,15 +22,22 @@ jobs:
         elixir-version: ${{matrix.elixir}}
 
     - uses: actions/cache@v1
-      id: cache
+      id: deps-cache
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
         restore-keys: |
           ${{ runner.os }}-mix-
 
+    - uses: actions/cache@v1
+      with:
+        path: _build
+        key: ${{ runner.os }}-v1-dialyzer-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+        restore-keys: |
+          ${{ runner.os }}-v1-dialyzer-
+
     - name: Install Dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
+      if: steps.deps-cache.outputs.cache-hit != 'true'
       run: mix deps.get
 
     - name: Run Credo
