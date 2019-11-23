@@ -161,8 +161,8 @@ jobs:
         wget -c -nc --retry-connrefused --tries=0 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O $HOME/phantomjs-2.1.1-linux-x86_64.tar.bz2
 
         sudo tar xvjf $HOME/phantomjs-2.1.1-linux-x86_64.tar.bz2
-        sudo mv $HOME/phantomjs-2.1.1-linux-x86_64.tar.bz2 /usr/local/share
-        sudo ls -sf /usr/local/share/phantomjs-2.1.1-linux-x86_64.tar.bz2/bin/phantomjs /usr/local/bin
+        sudo mv $HOME/phantomjs-2.1.1-linux-x86_64 /usr/local/share
+        sudo ls -sf /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin
 
     - uses: actions/cache@v1
       id: cache
