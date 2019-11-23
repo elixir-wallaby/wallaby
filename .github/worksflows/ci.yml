@@ -21,7 +21,16 @@ jobs:
         otp-version: ${{matrix.otp}}
         elixir-version: ${{matrix.elixir}}
 
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+        restore-keys: |
+          ${{ runner.os }}-mix-
+
     - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
       run: mix deps.get
 
     - name: Run Credo
@@ -46,12 +55,20 @@ jobs:
         otp-version: ${{matrix.otp}}
         elixir-version: ${{matrix.elixir}}
 
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+        restore-keys: |
+          ${{ runner.os }}-mix-
+
     - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
       run: mix deps.get
 
     - name: Run Tests
       run: mix test
-
 
   chromedriver:
     runs-on: ubuntu-latest
@@ -71,7 +88,16 @@ jobs:
       with:
         chromedriver-version: '78.0.3904.70'
 
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+        restore-keys: |
+          ${{ runner.os }}-mix-
+
     - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
       run: mix deps.get
 
     - name: Run Tests
@@ -95,7 +121,16 @@ jobs:
         elixir-version: ${{matrix.elixir}}
     - uses: elixir-wallaby/setup-selenium@master
 
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+        restore-keys: |
+          ${{ runner.os }}-mix-
+
     - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
       run: mix deps.get
 
     - name: Run Tests
@@ -124,7 +159,16 @@ jobs:
     - name: Install PhantomJS
       run: npm -g install phantomjs-prebuilt
 
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+        restore-keys: |
+          ${{ runner.os }}-mix-
+
     - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
       run: mix deps.get
 
     - name: Run Tests
