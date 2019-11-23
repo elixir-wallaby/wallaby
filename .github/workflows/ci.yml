@@ -156,9 +156,6 @@ jobs:
         otp-version: ${{matrix.otp}}
         elixir-version: ${{matrix.elixir}}
 
-    - name: Install PhantomJS
-      run: sudo npm -g install phantomjs-prebuilt
-
     - uses: actions/cache@v1
       id: cache
       with:
