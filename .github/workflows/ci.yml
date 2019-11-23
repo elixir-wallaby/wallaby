@@ -32,7 +32,7 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: _build
-        key: ${{ runner.os }}-v1-dialyzer-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+        key: ${{ runner.os }}-v1-dialyzer-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
         restore-keys: |
           ${{ runner.os }}-v1-dialyzer-
 
