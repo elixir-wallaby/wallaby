@@ -26,15 +26,11 @@ jobs:
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-        restore-keys: |
-          ${{ runner.os }}-mix-
 
     - uses: actions/cache@v1
       with:
         path: _build
         key: ${{ runner.os }}-v1-dialyzer-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-        restore-keys: |
-          ${{ runner.os }}-v1-dialyzer-
 
     - name: Install Dependencies
       if: steps.deps-cache.outputs.cache-hit != 'true'
@@ -67,8 +63,6 @@ jobs:
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-        restore-keys: |
-          ${{ runner.os }}-mix-
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
@@ -100,8 +94,6 @@ jobs:
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-        restore-keys: |
-          ${{ runner.os }}-mix-
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
@@ -133,8 +125,6 @@ jobs:
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-        restore-keys: |
-          ${{ runner.os }}-mix-
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
@@ -168,8 +158,6 @@ jobs:
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-        restore-keys: |
-          ${{ runner.os }}-mix-
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'

@@ -19,8 +19,6 @@ jobs:
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-        restore-keys: |
-          ${{ runner.os }}-mix-
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
