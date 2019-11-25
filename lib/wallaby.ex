@@ -36,8 +36,8 @@ defmodule Wallaby do
     children = [
       supervisor(Wallaby.Driver.ProcessWorkspace.ServerSupervisor, []),
       supervisor(driver(), [[name: Wallaby.Driver.Supervisor]]),
-      :hackney_pool.child_spec(:wallaby_pool, [timeout: 15_000, max_connections: 4]),
-      worker(Wallaby.SessionStore, []),
+      :hackney_pool.child_spec(:wallaby_pool, timeout: 15_000, max_connections: 4),
+      worker(Wallaby.SessionStore, [])
     ]
 
     opts = [strategy: :one_for_one, name: Wallaby.Supervisor]
@@ -78,21 +78,21 @@ defmodule Wallaby do
   end
   ```
   """
-  @spec start_session([start_session_opts]) :: {:ok, Session.t} | {:error, reason}
+  @spec start_session([start_session_opts]) :: {:ok, Session.t()} | {:error, reason}
   def start_session(opts \\ []) do
     with {:ok, session} <- driver().start_session(opts),
          :ok <- SessionStore.monitor(session),
-      do: {:ok, session}
+         do: {:ok, session}
   end
 
   @doc """
   Ends a browser session.
   """
-  @spec end_session(Session.t) :: :ok | {:error, reason}
+  @spec end_session(Session.t()) :: :ok | {:error, reason}
   def end_session(%Session{driver: driver} = session) do
     with :ok <- SessionStore.demonitor(session),
          :ok <- driver.end_session(session),
-      do: :ok
+         do: :ok
   end
 
   @doc false
@@ -119,10 +119,13 @@ defmodule Wallaby do
     case System.get_env("WALLABY_DRIVER") do
       "chrome" ->
         Wallaby.Experimental.Chrome
+
       "selenium" ->
         Wallaby.Experimental.Selenium
+
       "phantom" ->
         Wallaby.Phantom
+
       _ ->
         Application.get_env(:wallaby, :driver, Wallaby.Phantom)
     end

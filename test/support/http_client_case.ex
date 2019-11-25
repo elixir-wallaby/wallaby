@@ -1,6 +1,8 @@
 defmodule Wallaby.HttpClientCase do
   use ExUnit.CaseTemplate
 
+  import Plug.Conn
+
   using do
     quote do
       import Plug.Conn
@@ -14,13 +16,14 @@ defmodule Wallaby.HttpClientCase do
   Starts a bypass session and inserts it into the test session
   """
   def start_bypass(_) do
-    {:ok, bypass: Bypass.open}
+    {:ok, bypass: Bypass.open()}
   end
 
   @doc """
   Builds a url from the current bypass session
   """
   def bypass_url(bypass), do: "http://localhost:#{bypass.port}"
+
   def bypass_url(bypass, path) do
     "#{bypass_url(bypass)}#{path}"
   end
@@ -31,5 +34,15 @@ defmodule Wallaby.HttpClientCase do
   def parse_body(conn) do
     opts = Plug.Parsers.init(parsers: [:urlencoded, :json], json_decoder: Jason)
     Plug.Parsers.call(conn, opts)
+  end
+
+  @doc """
+  Sends a response with the json content type
+  """
+  @spec send_json_resp(Conn.t(), Conn.status(), Conn.body()) :: Conn.t()
+  def send_json_resp(conn, status_code, body) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(status_code, body)
   end
 end

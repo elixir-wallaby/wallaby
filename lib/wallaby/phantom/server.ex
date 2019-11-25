@@ -9,9 +9,9 @@ defmodule Wallaby.Phantom.Server do
   @type os_pid :: non_neg_integer
 
   @type start_link_opt ::
-    {:phantom_path, String.t}
+          {:phantom_path, String.t()}
 
-  @spec start_link([start_link_opt]) :: GenServer.on_start
+  @spec start_link([start_link_opt]) :: GenServer.on_start()
   def start_link(args \\ []) do
     GenServer.start_link(__MODULE__, args)
   end
@@ -49,6 +49,7 @@ defmodule Wallaby.Phantom.Server do
     case workspace_path |> ServerState.new(args) |> start_phantom() do
       {:ok, server_state} ->
         {:ok, server_state}
+
       {:error, reason} ->
         {:stop, reason}
     end
@@ -59,7 +60,11 @@ defmodule Wallaby.Phantom.Server do
     {:reply, ServerState.base_url(state), state}
   end
 
-  def handle_call(:get_wrapper_os_pid, _, %ServerState{wrapper_script_os_pid: wrapper_script_os_pid} = state) do
+  def handle_call(
+        :get_wrapper_os_pid,
+        _,
+        %ServerState{wrapper_script_os_pid: wrapper_script_os_pid} = state
+      ) do
     {:reply, wrapper_script_os_pid, state}
   end
 
@@ -72,8 +77,7 @@ defmodule Wallaby.Phantom.Server do
   end
 
   def handle_call(:clear_local_storage, _from, state) do
-    result =
-      state |> ServerState.local_storage_path |> File.rm_rf
+    result = state |> ServerState.local_storage_path() |> File.rm_rf()
 
     {:reply, result, state}
   end
@@ -82,19 +86,24 @@ defmodule Wallaby.Phantom.Server do
   def handle_info({port, {:data, _output}}, %ServerState{wrapper_script_port: port} = state) do
     {:noreply, state}
   end
+
   def handle_info({port, {:exit_status, status}}, %ServerState{wrapper_script_port: port} = state) do
     {:stop, {:exit_status, status}, state}
   end
+
   def handle_info(_, state), do: {:noreply, state}
 
   @impl GenServer
-  def terminate(_reason, %ServerState{wrapper_script_port: wrapper_script_port, wrapper_script_os_pid: wrapper_script_os_pid}) do
+  def terminate(_reason, %ServerState{
+        wrapper_script_port: wrapper_script_port,
+        wrapper_script_os_pid: wrapper_script_os_pid
+      }) do
     Port.close(wrapper_script_port)
     wait_for_stop(wrapper_script_os_pid)
   end
 
-  @spec start_phantom(ServerState.t) ::
-    {:ok, ServerState.t} | {:error, StartTask.error_reason}
+  @spec start_phantom(ServerState.t()) ::
+          {:ok, ServerState.t()} | {:error, StartTask.error_reason()}
   defp start_phantom(%ServerState{} = state) do
     state |> StartTask.async() |> Task.await()
   end

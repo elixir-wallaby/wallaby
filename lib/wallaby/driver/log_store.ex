@@ -6,7 +6,7 @@ defmodule Wallaby.Driver.LogStore do
   def start_link(opts) do
     opts = Keyword.put_new(opts, :name, __MODULE__)
 
-    Agent.start_link(fn -> Map.new end, opts)
+    Agent.start_link(fn -> Map.new() end, opts)
   end
 
   @doc """
@@ -19,12 +19,12 @@ defmodule Wallaby.Driver.LogStore do
   end
 
   def append_logs(session, logs, log_store) when is_binary(session) do
-    Agent.get_and_update log_store, fn(map) ->
-      Map.get_and_update map, session, fn
-        nil      -> unique_logs([], logs)
+    Agent.get_and_update(log_store, fn map ->
+      Map.get_and_update(map, session, fn
+        nil -> unique_logs([], logs)
         old_logs -> unique_logs(old_logs, logs)
-      end
-    end
+      end)
+    end)
   end
 
   def get_logs(session, log_store \\ __MODULE__) when is_binary(session) do
@@ -32,7 +32,7 @@ defmodule Wallaby.Driver.LogStore do
   end
 
   defp unique_logs(old_logs, new_logs) do
-    union = (new_logs -- old_logs)
+    union = new_logs -- old_logs
     {union, old_logs ++ union}
   end
 end

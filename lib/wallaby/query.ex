@@ -87,42 +87,45 @@ defmodule Wallaby.Query do
             conditions: [],
             result: []
 
-  @type method :: :css
-                | :xpath
-                | :link
-                | :button
-                | :fillable_field
-                | :checkbox
-                | :radio_button
-                | :option
-                | :select
-                | :file_field
-  @type attribute_key_value_pair :: {String.t, String.t}
-  @type selector :: String.t
-                  | :attribute_key_value_pair
-  @type html_validation :: :bad_label
-                         | :button_type
-                         | nil
+  @type method ::
+          :css
+          | :xpath
+          | :link
+          | :button
+          | :fillable_field
+          | :checkbox
+          | :radio_button
+          | :option
+          | :select
+          | :file_field
+  @type attribute_key_value_pair :: {String.t(), String.t()}
+  @type selector ::
+          String.t()
+          | :attribute_key_value_pair
+  @type html_validation ::
+          :bad_label
+          | :button_type
+          | nil
   @type conditions :: [
-    count: non_neg_integer,
-    text: String.t,
-    visible: boolean() | :any,
-    selected: boolean() | :any,
-    minimum: non_neg_integer,
-    at: pos_integer
-  ]
-  @type result :: list(Element.t)
+          count: non_neg_integer,
+          text: String.t(),
+          visible: boolean() | :any,
+          selected: boolean() | :any,
+          minimum: non_neg_integer,
+          at: pos_integer
+        ]
+  @type result :: list(Element.t())
   @type opts :: nonempty_list()
 
   @type t :: %__MODULE__{
-    method: method(),
-    selector: selector(),
-    html_validation: html_validation(),
-    conditions: conditions(),
-    result: result(),
-  }
+          method: method(),
+          selector: selector(),
+          html_validation: html_validation(),
+          conditions: conditions(),
+          result: result()
+        }
 
-  @type compiled :: {:xpath | :css, String.t}
+  @type compiled :: {:xpath | :css, String.t()}
 
   @doc """
   Literally queries for the css selector you provide.
@@ -132,7 +135,7 @@ defmodule Wallaby.Query do
     %Query{
       method: :css,
       selector: selector,
-      conditions: build_conditions(opts),
+      conditions: build_conditions(opts)
     }
   end
 
@@ -218,7 +221,7 @@ defmodule Wallaby.Query do
       method: :fillable_field,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :bad_label,
+      html_validation: :bad_label
     }
   end
 
@@ -232,7 +235,7 @@ defmodule Wallaby.Query do
       method: :fillable_field,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :bad_label,
+      html_validation: :bad_label
     }
   end
 
@@ -246,7 +249,7 @@ defmodule Wallaby.Query do
       method: :radio_button,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :bad_label,
+      html_validation: :bad_label
     }
   end
 
@@ -260,7 +263,7 @@ defmodule Wallaby.Query do
       method: :checkbox,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :bad_label,
+      html_validation: :bad_label
     }
   end
 
@@ -273,7 +276,7 @@ defmodule Wallaby.Query do
       method: :select,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :bad_label,
+      html_validation: :bad_label
     }
   end
 
@@ -285,7 +288,7 @@ defmodule Wallaby.Query do
       method: :option,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :bad_label,
+      html_validation: :bad_label
     }
   end
 
@@ -299,7 +302,7 @@ defmodule Wallaby.Query do
       method: :button,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :button_type,
+      html_validation: :button_type
     }
   end
 
@@ -312,7 +315,7 @@ defmodule Wallaby.Query do
       method: :link,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :bad_label,
+      html_validation: :bad_label
     }
   end
 
@@ -325,7 +328,7 @@ defmodule Wallaby.Query do
       method: :file_field,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :bad_label,
+      html_validation: :bad_label
     }
   end
 
@@ -395,8 +398,10 @@ defmodule Wallaby.Query do
     cond do
       query.conditions[:minimum] > query.conditions[:maximum] ->
         {:error, :min_max}
-      (Query.visible?(query) != true) && Query.inner_text(query) ->
+
+      Query.visible?(query) != true && Query.inner_text(query) ->
         {:error, :cannot_set_text_with_invisible_elements}
+
       true ->
         {:ok, query}
     end
@@ -415,14 +420,25 @@ defmodule Wallaby.Query do
   def compile(%{method: :xpath, selector: selector}), do: {:xpath, selector}
   def compile(%{method: :link, selector: selector}), do: {:xpath, XPath.link(selector)}
   def compile(%{method: :button, selector: selector}), do: {:xpath, XPath.button(selector)}
-  def compile(%{method: :fillable_field, selector: selector}), do: {:xpath, XPath.fillable_field(selector)}
+
+  def compile(%{method: :fillable_field, selector: selector}),
+    do: {:xpath, XPath.fillable_field(selector)}
+
   def compile(%{method: :checkbox, selector: selector}), do: {:xpath, XPath.checkbox(selector)}
-  def compile(%{method: :radio_button, selector: selector}), do: {:xpath, XPath.radio_button(selector)}
+
+  def compile(%{method: :radio_button, selector: selector}),
+    do: {:xpath, XPath.radio_button(selector)}
+
   def compile(%{method: :option, selector: selector}), do: {:xpath, XPath.option(selector)}
   def compile(%{method: :select, selector: selector}), do: {:xpath, XPath.select(selector)}
-  def compile(%{method: :file_field, selector: selector}), do: {:xpath, XPath.file_field(selector)}
+
+  def compile(%{method: :file_field, selector: selector}),
+    do: {:xpath, XPath.file_field(selector)}
+
   def compile(%{method: :text, selector: selector}), do: {:xpath, XPath.text(selector)}
-  def compile(%{method: :attribute, selector: {name, value}}), do: {:xpath, XPath.attribute(name, value)}
+
+  def compile(%{method: :attribute, selector: {name, value}}),
+    do: {:xpath, XPath.attribute(name, value)}
 
   def visible?(%Query{conditions: conditions}) do
     Keyword.get(conditions, :visible)
@@ -454,7 +470,7 @@ defmodule Wallaby.Query do
   end
 
   def specific_element_requested(query) do
-      count(query) == 1 || at_number(query) != :all
+    count(query) == 1 || at_number(query) != :all
   end
 
   def matches_count?(%{conditions: conditions}, count) do
@@ -467,7 +483,7 @@ defmodule Wallaby.Query do
 
       true ->
         !(conditions[:minimum] && conditions[:minimum] > count) &&
-        !(conditions[:maximum] && conditions[:maximum] < count)
+          !(conditions[:maximum] && conditions[:maximum] < count)
     end
   end
 

@@ -11,11 +11,12 @@ defmodule Wallaby.SettingsTestHelpers do
   def ensure_setting_is_reset(app, setting) do
     orig_result = Application.fetch_env(app, setting)
 
-    on_exit fn -> reset_env(orig_result, app, setting) end
+    on_exit(fn -> reset_env(orig_result, app, setting) end)
   end
 
   defp reset_env({:ok, orig}, app, setting) do
     Application.put_env(app, setting, orig)
   end
+
   defp reset_env(:error, app, setting), do: Application.delete_env(app, setting)
 end

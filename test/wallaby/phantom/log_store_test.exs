@@ -3,9 +3,9 @@ defmodule Wallaby.Driver.LogStoreTest do
 
   alias Wallaby.Driver.LogStore
 
-  @l1 %{"level" => "INFO", "message" => "l1 (:)", "timestamp" => 1470795015152}
-  @l2 %{"level" => "INFO", "message" => "l2 (:)", "timestamp" => 1470795015290}
-  @l3 %{"level" => "WARNING", "message" => "l3 (:)", "timestamp" => 1470795015345}
+  @l1 %{"level" => "INFO", "message" => "l1 (:)", "timestamp" => 1_470_795_015_152}
+  @l2 %{"level" => "INFO", "message" => "l2 (:)", "timestamp" => 1_470_795_015_290}
+  @l3 %{"level" => "WARNING", "message" => "l3 (:)", "timestamp" => 1_470_795_015_345}
 
   @session "123abc"
 

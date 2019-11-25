@@ -43,8 +43,7 @@ defmodule Wallaby.Phantom.ServerTest do
   test "does not start when the unable to start phantom" do
     Process.flag(:trap_exit, true)
 
-    assert {:error, {:crashed, _}} =
-      Server.start_link(phantom_path: "doesnotexist")
+    assert {:error, {:crashed, _}} = Server.start_link(phantom_path: "doesnotexist")
   end
 
   test "crashes when the wrapper script is killed" do
@@ -87,6 +86,7 @@ defmodule Wallaby.Phantom.ServerTest do
     case System.cmd("kill", ["-0", to_string(os_pid)], stderr_to_stdout: true) do
       {_, 0} ->
         true
+
       _ ->
         false
     end

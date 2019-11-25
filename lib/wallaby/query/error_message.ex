@@ -6,14 +6,16 @@ defmodule Wallaby.Query.ErrorMessage do
   @doc """
   Compose an error message based on the error method and query information
   """
-  @spec message(Query.t, any()) :: String.t
+  @spec message(Query.t(), any()) :: String.t()
 
   def message(%Query{} = query, :not_found) do
     "Expected to find #{found_error_message(query)}"
   end
+
   def message(%Query{} = query, :found) do
     "Expected not to find #{found_error_message(query)}"
   end
+
   def message(%{method: method, selector: selector}, :label_with_no_for) do
     """
     The text '#{selector}' matched a label but the label has no 'for'
@@ -23,6 +25,7 @@ defmodule Wallaby.Query.ErrorMessage do
     appropriate label.
     """
   end
+
   def message(%{method: method, selector: selector}, {:label_does_not_find_field, for_text}) do
     """
     The text '#{selector}' matched a label but the label's 'for' attribute
@@ -31,6 +34,7 @@ defmodule Wallaby.Query.ErrorMessage do
     Make sure that id on your #{method(method)} is `id="#{for_text}"`.
     """
   end
+
   def message(%{selector: selector}, :button_with_bad_type) do
     """
     The text '#{selector}' matched a button but the button has an invalid 'type' attribute.
@@ -38,6 +42,7 @@ defmodule Wallaby.Query.ErrorMessage do
     You can fix this by including `type="[submit|reset|button|image]"` on the appropriate button.
     """
   end
+
   def message(_, :cannot_set_text_with_invisible_elements) do
     """
     Cannot set the `text` filter when `visible` is set to `false`.
@@ -47,22 +52,28 @@ defmodule Wallaby.Query.ErrorMessage do
     can't apply both filters correctly.
     """
   end
+
   def message(_, {:at_number, query}) do
-#   The query is invalid. the 'at' number requested is not within the results list (1-#{size}).
+    #   The query is invalid. the 'at' number requested is not within the results list (1-#{size}).
     """
-    The element at index #{Query.at_number(query)} is not available because #{result_count(query.result)} #{method(query)} #{result_expectation(query.result)}
+    The element at index #{Query.at_number(query)} is not available because #{
+      result_count(query.result)
+    } #{method(query)} #{result_expectation(query.result)}
     """
   end
+
   def message(_, :min_max) do
     """
     The query is invalid. Cannot set the minimum greater than the maximum.
     """
   end
+
   def message(%{method: method, selector: selector}, :invalid_selector) do
     """
     The #{method} '#{selector}' is not a valid query.
     """
   end
+
   def message(_, :unexpected_alert) do
     """
     There was an unexpected alert.
@@ -78,18 +89,23 @@ defmodule Wallaby.Query.ErrorMessage do
 
   defp found_error_message(query) do
     """
-    #{expected_count(query)}, #{visibility_and_selection(query)} #{method(query)} #{selector(query)} but #{result_count(query.result)}, #{visibility_and_selection(query)} #{short_method(query.method, Enum.count(query.result))} #{result_expectation(query.result)}.
+    #{expected_count(query)}, #{visibility_and_selection(query)} #{method(query)} #{
+      selector(query)
+    } but #{result_count(query.result)}, #{visibility_and_selection(query)} #{
+      short_method(query.method, Enum.count(query.result))
+    } #{result_expectation(query.result)}.
     """
   end
 
   @doc """
   Extracts the selector from the query
   """
-  @spec selector(Query.t) :: String.t
+  @spec selector(Query.t()) :: String.t()
 
   def selector(%Query{selector: {name, value}}) do
     "'#{name}' with value '#{value}'"
   end
+
   def selector(%Query{selector: selector}) do
     "'#{selector}'"
   end
@@ -98,12 +114,13 @@ defmodule Wallaby.Query.ErrorMessage do
   Extracts the selector method from the selector and converts it into a human
   readable format
   """
-  @spec method(Query.t) :: String.t
-  @spec method({atom(), boolean()}) :: String.t
+  @spec method(Query.t()) :: String.t()
+  @spec method({atom(), boolean()}) :: String.t()
 
   def method(%Query{conditions: conditions} = query) do
     method(query.method, conditions[:count] > 1)
   end
+
   def method(_), do: "element"
 
   def method(:css, true), do: "elements that matched the css"
@@ -142,9 +159,9 @@ defmodule Wallaby.Query.ErrorMessage do
   def method(:attribute, true), do: "elements with the attribute"
   def method(:attribute, false), do: "element with the attribute"
 
-  def short_method(:css, count) when count > 1,  do: "elements"
+  def short_method(:css, count) when count > 1, do: "elements"
   def short_method(:css, count) when count == 0, do: "elements"
-  def short_method(:css, _),                 do: "element"
+  def short_method(:css, _), do: "element"
 
   def short_method(:xpath, count) when count == 1, do: "element"
   def short_method(:xpath, _), do: "elements"
@@ -154,27 +171,28 @@ defmodule Wallaby.Query.ErrorMessage do
   @doc """
   Generates failure conditions based on query conditions.
   """
-  @spec conditions(Keyword.t) :: list(String.t)
+  @spec conditions(Keyword.t()) :: list(String.t())
 
   def conditions(opts) do
     opts
     |> Keyword.delete(:visible)
     |> Keyword.delete(:count)
     |> Enum.map(&condition/1)
-    |> Enum.reject(& &1 == nil)
+    |> Enum.reject(&(&1 == nil))
   end
 
   @doc """
   Converts a condition into a human readable failure message.
   """
-  @spec condition({atom(), String.t}) :: String.t | nil
+  @spec condition({atom(), String.t()}) :: String.t() | nil
 
   def condition({:text, text}) when is_binary(text) do
     "text: '#{text}'"
   end
+
   def condition(_), do: nil
 
-  @spec visibility_and_selection(Query.t) :: String.t
+  @spec visibility_and_selection(Query.t()) :: String.t()
   defp visibility_and_selection(query) do
     case Query.selected?(query) do
       true -> "#{visibility(query)}, selected"
@@ -186,7 +204,7 @@ defmodule Wallaby.Query.ErrorMessage do
   @doc """
   Converts the visibilty attribute into a human readable form.
   """
-  @spec visibility(Query.t) :: String.t
+  @spec visibility(Query.t()) :: String.t()
 
   def visibility(query) do
     case Query.visible?(query) do
@@ -215,7 +233,8 @@ defmodule Wallaby.Query.ErrorMessage do
       conditions[:maximum] && Enum.count(query.result) > conditions[:maximum] ->
         "no more then #{conditions[:maximum]}"
 
-      true -> ""
+      true ->
+        ""
     end
   end
 
