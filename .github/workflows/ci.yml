@@ -78,7 +78,7 @@ jobs:
       run: mix coveralls.json
 
     - name: Upload results to CodeCov
-      run: bash <(curl -s https://codecov.io/bash) -F UnitTests -e ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
+      run: bash <(curl -s https://codecov.io/bash) -F UnitTest -e ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
 
   chromedriver:
     runs-on: ubuntu-latest
