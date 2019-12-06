@@ -10,8 +10,8 @@ defmodule Wallaby.Integration.Browser.AllTest do
 
     test "returns all of the elements matching the query", %{page: page} do
       assert page
-      |> all(Query.css("li"))
-      |> Enum.count == 3
+             |> all(Query.css("li"))
+             |> Enum.count() == 3
     end
   end
 end

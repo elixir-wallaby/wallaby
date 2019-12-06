@@ -13,12 +13,12 @@ defmodule Wallaby.Integration.Browser.SendKeysToActiveElementTest do
       |> send_keys(["Chris", :tab, "c@keathley.io"])
 
       assert page
-      |> find(Query.text_field("Name"))
-      |> has_value?("Chris")
+             |> find(Query.text_field("Name"))
+             |> has_value?("Chris")
 
       assert page
-      |> find(Query.text_field("email"))
-      |> has_value?("c@keathley.io")
+             |> find(Query.text_field("email"))
+             |> has_value?("c@keathley.io")
     end
   end
 end

@@ -37,7 +37,7 @@ defmodule Wallaby.Integration.Browser.FindTest do
         |> all(css(".user"))
 
       assert Enum.count(users) == 3
-      assert List.first(users) |> Element.text == "Chris"
+      assert List.first(users) |> Element.text() == "Chris"
     end
 
     test "throws a not found error if the element could not be found", %{page: page} do
@@ -48,13 +48,13 @@ defmodule Wallaby.Integration.Browser.FindTest do
 
     test "throws a not found error if the xpath could not be found", %{page: page} do
       assert_raise Wallaby.QueryError, ~r/Expected (.*) xpath '\/\/test-element'/, fn ->
-        find page, Query.xpath("//test-element")
+        find(page, Query.xpath("//test-element"))
       end
     end
 
     test "ambiguous queries raise an exception", %{page: page} do
       assert_raise Wallaby.QueryError, ~r/Expected (.*) 1(.*) but 5/, fn ->
-        find page, Query.css(".user")
+        find(page, Query.css(".user"))
       end
     end
 
@@ -73,7 +73,7 @@ defmodule Wallaby.Integration.Browser.FindTest do
       end
 
       assert find(session, Query.css("#visible", count: :any))
-      |> length == 1
+             |> length == 1
     end
 
     test "finds invisible elements", %{page: page} do
@@ -103,18 +103,18 @@ defmodule Wallaby.Integration.Browser.FindTest do
 
     test "returns the element as the argument to the callback", %{page: page} do
       page
-      |> find(Query.css("h1"), & assert has_text?(&1, "Page 1") )
+      |> find(Query.css("h1"), &assert(has_text?(&1, "Page 1")))
     end
 
     test "returns the parent", %{page: page} do
       assert page
-      |> find(Query.css("h1"), fn(_) -> nil end) == page
+             |> find(Query.css("h1"), fn _ -> nil end) == page
     end
 
     test "returns all the elements found with the query", %{page: page} do
-      assert find page, Query.css(".user", count: 5), fn(elements) ->
-         assert Enum.count(elements) == 5
-      end
+      assert find(page, Query.css(".user", count: 5), fn elements ->
+               assert Enum.count(elements) == 5
+             end)
     end
   end
 

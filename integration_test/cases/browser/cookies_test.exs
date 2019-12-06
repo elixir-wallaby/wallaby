@@ -8,7 +8,7 @@ defmodule Wallaby.Integration.Browser.CookiesTest do
       list =
         session
         |> visit("/")
-        |> Browser.cookies
+        |> Browser.cookies()
 
       assert list == []
     end
@@ -21,7 +21,7 @@ defmodule Wallaby.Integration.Browser.CookiesTest do
         |> visit("/")
         |> Browser.set_cookie("api_token", "abc123")
         |> visit("/")
-        |> Browser.cookies
+        |> Browser.cookies()
         |> hd()
 
       assert cookie["name"] == "api_token"

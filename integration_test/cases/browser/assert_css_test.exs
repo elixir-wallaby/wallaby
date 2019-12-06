@@ -19,7 +19,7 @@ defmodule Wallaby.Integration.Browser.AssertCssTest do
 
   test "has_no_css/2 raises error if the css is found", %{session: session} do
     refute session
-    |> visit("nesting.html")
-    |> has_no_css?(".user")
+           |> visit("nesting.html")
+           |> has_no_css?(".user")
   end
 end

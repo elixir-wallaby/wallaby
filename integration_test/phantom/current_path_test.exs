@@ -14,7 +14,7 @@ defmodule Wallaby.Integration.Phantom.CurrentPathTest do
   describe "current_path/1" do
     test "returns the current path", %{page: page} do
       assert page
-      |> Driver.current_path() == {:ok, "/index.html"}
+             |> Driver.current_path() == {:ok, "/index.html"}
     end
   end
 
