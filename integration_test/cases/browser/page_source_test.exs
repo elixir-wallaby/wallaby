@@ -11,7 +11,7 @@ defmodule Wallaby.Integration.Browser.PageSourceTest do
     actual_html =
       "integration_test/support/pages/index.html"
       |> Path.absname()
-      |> File.read!
+      |> File.read!()
       |> clean_up_html
 
     # Firefox inserts a <!doctype html> so you can't do an exact comparison
@@ -21,6 +21,6 @@ defmodule Wallaby.Integration.Browser.PageSourceTest do
   def clean_up_html(string) do
     string
     |> String.replace(~r/\s+/, "")
-    |> String.downcase
+    |> String.downcase()
   end
 end

@@ -22,14 +22,14 @@ defmodule Wallaby.Integration.Browser.ButtonDownTest do
 
   defp button_down_test(page, button, expected_log_prefix) do
     refute page
-             |> visible?(Query.text("#{expected_log_prefix} Down"))
+           |> visible?(Query.text("#{expected_log_prefix} Down"))
 
-      assert page
-             |> hover(Query.text("Button 1"))
-             |> button_down(button)
-             |> visible?(Query.text("#{expected_log_prefix} Down"))
+    assert page
+           |> hover(Query.text("Button 1"))
+           |> button_down(button)
+           |> visible?(Query.text("#{expected_log_prefix} Down"))
 
-      refute page
-             |> visible?(Query.text("#{expected_log_prefix} Up"))
+    refute page
+           |> visible?(Query.text("#{expected_log_prefix} Up"))
   end
 end

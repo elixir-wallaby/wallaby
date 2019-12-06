@@ -17,6 +17,7 @@ defmodule Wallaby.Integration.Phantom.JSErrorsTest do
       session
       |> visit("/logs.html")
     end
+
     assert capture_io(fun) == "Capture console logs\n"
   end
 
