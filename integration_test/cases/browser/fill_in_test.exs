@@ -14,8 +14,8 @@ defmodule Wallaby.Integration.Browser.FillInTest do
     |> fill_in(Query.text_field("name"), with: "Chris")
 
     assert page
-    |> find(Query.text_field("name"))
-    |> has_value?("Chris")
+           |> find(Query.text_field("name"))
+           |> has_value?("Chris")
   end
 
   test "filling in input by id", %{page: page} do
@@ -40,6 +40,7 @@ defmodule Wallaby.Integration.Browser.FillInTest do
     assert page
            |> find(Query.css("#name_field"))
            |> has_value?("Alex")
+
     assert page
            |> find(Query.css("#email_field"))
            |> has_value?("alex@example.com")

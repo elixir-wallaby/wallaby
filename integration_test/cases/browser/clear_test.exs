@@ -23,9 +23,9 @@ defmodule Wallaby.Integration.Browser.ClearTest do
 
     test "works with queries", %{page: page} do
       assert page
-      |> fill_in(Query.text_field("name_field"), with: "test")
-      |> clear(Query.text_field("name_field"))
-      |> text(Query.text_field("name_field")) == ""
+             |> fill_in(Query.text_field("name_field"), with: "test")
+             |> clear(Query.text_field("name_field"))
+             |> text(Query.text_field("name_field")) == ""
     end
   end
 end

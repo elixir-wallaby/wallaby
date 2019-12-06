@@ -12,14 +12,14 @@ defmodule Wallaby.Integration.Element.SendKeysTest do
     test "sends keys to the specified element", %{page: page} do
       page
       |> click(@email_field)
-      |> find(@name_field, fn(element) ->
+      |> find(@name_field, fn element ->
         assert element
-        |> Element.send_keys("Chris")
-        |> Element.value == "Chris"
+               |> Element.send_keys("Chris")
+               |> Element.value() == "Chris"
       end)
-      |> find(@email_field, fn(email) ->
+      |> find(@email_field, fn email ->
         assert email
-        |> Element.value == ""
+               |> Element.value() == ""
       end)
     end
   end

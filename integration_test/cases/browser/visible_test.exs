@@ -7,12 +7,12 @@ defmodule Wallaby.Integration.Browser.VisibleTest do
     test "determines if the element is visible to the user", %{page: page} do
       page
       |> find(Query.css("#visible"))
-      |> Element.visible?
+      |> Element.visible?()
       |> assert
 
       page
       |> find(Query.css("#invisible", visible: false))
-      |> Element.visible?
+      |> Element.visible?()
       |> refute
     end
 
@@ -28,10 +28,10 @@ defmodule Wallaby.Integration.Browser.VisibleTest do
 
     test "returns a boolean", %{page: page} do
       assert page
-      |> visible?(Query.css("#visible")) == true
+             |> visible?(Query.css("#visible")) == true
 
       assert page
-      |> visible?(Query.css("#invisible")) == false
+             |> visible?(Query.css("#invisible")) == false
     end
   end
 

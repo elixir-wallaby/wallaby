@@ -8,9 +8,10 @@ defmodule Wallaby.Integration.Browser.AssertRefuteHasTest do
   @wrong_exact_found_query Query.css(".user", count: 5)
   describe "assert_has/2" do
     test "passes if the query is present on the page", %{session: session} do
-      return = session
-               |> visit("nesting.html")
-               |> assert_has(@found_query)
+      return =
+        session
+        |> visit("nesting.html")
+        |> assert_has(@found_query)
 
       assert %Wallaby.Session{} = return
     end
@@ -34,9 +35,10 @@ defmodule Wallaby.Integration.Browser.AssertRefuteHasTest do
 
   describe "refute_has/2" do
     test "passes if the query is not found on the page", %{session: session} do
-      return = session
-               |> visit("nesting.html")
-               |> refute_has(@not_found_query)
+      return =
+        session
+        |> visit("nesting.html")
+        |> refute_has(@not_found_query)
 
       assert %Wallaby.Session{} = return
     end
