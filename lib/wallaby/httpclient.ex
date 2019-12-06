@@ -1,6 +1,8 @@
 defmodule Wallaby.HTTPClient do
   @moduledoc false
 
+  alias Wallaby.Query
+
   @type method :: :post | :get | :delete
   @type url :: String.t()
   @type params :: map | String.t()
@@ -131,6 +133,7 @@ defmodule Wallaby.HTTPClient do
     [{"Accept", "application/json"}, {"Content-Type", "application/json"}]
   end
 
+  @spec to_params(Query.compiled()) :: map
   def to_params({:xpath, xpath}) do
     %{using: "xpath", value: xpath}
   end
