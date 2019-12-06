@@ -2,7 +2,7 @@
 ============
 [![Actions Status](https://github.com/elixir-wallaby/wallaby/workflows/CI/badge.svg)](https://github.com/elixir-wallaby/wallaby/actions)
 [![Hex pm](https://img.shields.io/hexpm/v/wallaby.svg?style=flat)](https://hex.pm/packages/wallaby)
-[![Coverage Status](https://coveralls.io/repos/github/keathley/wallaby/badge.svg?branch=master)](https://coveralls.io/github/keathley/wallaby?branch=master)
+[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/master/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
 [![Inline docs](http://inch-ci.org/github/keathley/wallaby.svg)](http://inch-ci.org/github/keathley/wallaby)
 
 Wallaby helps you test your web applications by simulating realistic user interactions.
