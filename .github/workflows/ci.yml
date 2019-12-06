@@ -78,7 +78,7 @@ jobs:
       run: mix coveralls.json
 
     - name: Upload results to CodeCov
-      run: bash <(curl -s https://codecov.io/bash) -F unittest -e ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
+      run: bash <(curl -s https://codecov.io/bash) -F UnitTests -e ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
 
   chromedriver:
     runs-on: ubuntu-latest
@@ -119,7 +119,7 @@ jobs:
       run: mix coveralls.json
 
     - name: Upload results to CodeCov
-      run: bash <(curl -s https://codecov.io/bash) -F integration_test -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
+      run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
 
   selenium:
     runs-on: ubuntu-latest
@@ -161,7 +161,7 @@ jobs:
         mix coveralls.json
 
     - name: Upload results to CodeCov
-      run: bash <(curl -s https://codecov.io/bash) -F integration_test -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
+      run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
 
   phantomjs:
     runs-on: ubuntu-latest
@@ -199,4 +199,4 @@ jobs:
       run: mix coveralls.json
 
     - name: Upload results to CodeCov
-      run: bash <(curl -s https://codecov.io/bash) -F integration_test -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
+      run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
