@@ -1,6 +1,9 @@
 name: CI
 on: [push, pull_request]
 
+env:
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
 jobs:
   linting:
     runs-on: ubuntu-latest
@@ -50,6 +53,10 @@ jobs:
         elixir: [1.7.x, 1.8.x, 1.9.x]
       fail-fast: false
 
+    env:
+      ELIXIR_VERSION: ${{ matrix.elixir }}
+      OTP_VERSION: ${{ matrix.otp }}
+
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-elixir@v1.0.0
@@ -68,16 +75,25 @@ jobs:
       run: mix deps.get
 
     - name: Run Tests
-      run: mix test
+      run: mix coveralls.json
+
+    - name: Upload results to CodeCov
+      run: bash <(curl -s https://codecov.io/bash) -F UnitTest -e ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
 
   chromedriver:
     runs-on: ubuntu-latest
     name: ChromeDriver (${{matrix.elixir}}/${{matrix.otp}})
+
     strategy:
       matrix:
         otp: [21.x]
         elixir: [1.7.x, 1.8.x, 1.9.x]
       fail-fast: false
+
+    env:
+      WALLABY_DRIVER: chrome
+      ELIXIR_VERSION: ${{ matrix.elixir }}
+      OTP_VERSION: ${{ matrix.otp }}
 
     steps:
     - uses: actions/checkout@v1
@@ -100,18 +116,25 @@ jobs:
       run: mix deps.get
 
     - name: Run Tests
-      env:
-        WALLABY_DRIVER: chrome
-      run: mix coveralls.safe_travis
+      run: mix coveralls.json
+
+    - name: Upload results to CodeCov
+      run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
 
   selenium:
     runs-on: ubuntu-latest
     name: Selenium (${{matrix.elixir}}/${{matrix.otp}})
+
     strategy:
       matrix:
         otp: [21.x]
         elixir: [1.7.x, 1.8.x, 1.9.x]
       fail-fast: false
+
+    env:
+      WALLABY_DRIVER: selenium
+      ELIXIR_VERSION: ${{ matrix.elixir }}
+      OTP_VERSION: ${{ matrix.otp }}
 
     steps:
     - uses: actions/checkout@v1
@@ -132,21 +155,28 @@ jobs:
       run: mix deps.get
 
     - name: Run Tests
-      env:
-        WALLABY_DRIVER: selenium
       run: |
         java -jar "$HOME/selenium.jar" > /dev/null 2>&1 &
 
-        mix coveralls.safe_travis
+        mix coveralls.json
+
+    - name: Upload results to CodeCov
+      run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
 
   phantomjs:
     runs-on: ubuntu-latest
     name: PhantomJS (${{matrix.elixir}}/${{matrix.otp}})
+
     strategy:
       matrix:
         otp: [21.x]
         elixir: [1.7.x, 1.8.x, 1.9.x]
       fail-fast: false
+
+    env:
+      WALLABY_DRIVER: phantom
+      ELIXIR_VERSION: ${{ matrix.elixir }}
+      OTP_VERSION: ${{ matrix.otp }}
 
     steps:
     - uses: actions/checkout@v1
@@ -166,6 +196,7 @@ jobs:
       run: mix deps.get
 
     - name: Run Tests
-      env:
-        WALLABY_DRIVER: phantom
-      run: mix coveralls.safe_travis
+      run: mix coveralls.json
+
+    - name: Upload results to CodeCov
+      run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
