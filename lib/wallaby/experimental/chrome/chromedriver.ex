@@ -5,6 +5,9 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
   alias Wallaby.Driver.Utils
   alias Wallaby.Experimental.Chrome
 
+  @external_resource "priv/run_command.sh"
+  @run_script_contents File.read!("priv/run_command.sh")
+
   def start_link do
     GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
   end
@@ -40,18 +43,22 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
   @dialyzer {:nowarn_function, start_chromedriver: 1}
   defp start_chromedriver(tcp_port) do
     with {:ok, chromedriver} <- Chrome.find_chromedriver_executable() do
-      Port.open({:spawn_executable, wrapper_script()}, port_opts(chromedriver, tcp_port))
+      port =
+        Port.open(
+          {:spawn_executable, System.find_executable("sh")},
+          port_opts(chromedriver, tcp_port)
+        )
+
+      Port.command(port, @run_script_contents)
+      port
     else
       {:error, _message} -> {:error, :no_chromedriver}
     end
   end
 
-  defp wrapper_script do
-    Path.absname("priv/run_command.sh", Application.app_dir(:wallaby))
-  end
-
   defp args(chromedriver, port),
     do: [
+      "-s",
       chromedriver,
       "--log-level=OFF",
       "--port=#{port}"
