@@ -41,15 +41,12 @@ defmodule Wallaby.Phantom.DriverTest do
     test "sends a delete request to Session.session_url", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      Bypass.expect(bypass, fn conn ->
-        assert "DELETE" == conn.method
-        assert "/session/#{session.id}" == conn.request_path
-
+      Bypass.expect(bypass, "DELETE", "/session/#{session.id}", fn conn ->
         send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+            "sessionId": "#{session.id}",
+            "status": 0,
+            "value": {}
+          }>)
       end)
 
       assert {:ok, response} = Driver.delete(session)
@@ -68,16 +65,17 @@ defmodule Wallaby.Phantom.DriverTest do
       element_id = ":wdc:1491326583887"
       query = ".blue" |> Query.css() |> Query.compile()
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" && conn.request_path == "/session/#{session.id}/elements" do
-          assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("POST", "/session/#{session.id}/elements", fn conn ->
+        conn = parse_body(conn)
+        assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
 
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": [{"ELEMENT": "#{element_id}"}]
-          }>)
-        end
+        send_json_resp(conn, 200, ~s<{
+              "sessionId": "#{session.id}",
+              "status": 0,
+              "value": [{"ELEMENT": "#{element_id}"}]
+            }>)
       end)
 
       assert {:ok, [element]} = Driver.find_elements(session, query)
@@ -97,18 +95,23 @@ defmodule Wallaby.Phantom.DriverTest do
       element_id = ":wdc:1491326583887"
       query = ".blue" |> Query.css() |> Query.compile()
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" &&
-             conn.request_path == "/session/#{session.id}/element/#{parent_element.id}/elements" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "POST",
+        "/session/#{session.id}/element/#{parent_element.id}/elements",
+        fn conn ->
+          conn = parse_body(conn)
+
           assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
 
           send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": [{"ELEMENT": "#{element_id}"}]
-          }>)
+          "sessionId": "#{session.id}",
+          "status": 0,
+          "value": [{"ELEMENT": "#{element_id}"}]
+      }>)
         end
-      end)
+      )
 
       assert {:ok, [element]} = Driver.find_elements(parent_element, query)
 
@@ -128,9 +131,13 @@ defmodule Wallaby.Phantom.DriverTest do
       element = build_element_for_session(session)
       value = "hello world"
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/value" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/value",
+        fn conn ->
+          conn = parse_body(conn)
           assert conn.body_params == %{"value" => [value]}
 
           send_json_resp(conn, 200, ~s<{
@@ -139,7 +146,7 @@ defmodule Wallaby.Phantom.DriverTest do
             "value": null
           }>)
         end
-      end)
+      )
 
       assert {:ok, nil} = Driver.set_value(element, value)
     end
@@ -150,16 +157,19 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/clear" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/clear",
+        fn conn ->
           send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": null
           }>)
         end
-      end)
+      )
 
       assert {:ok, nil} = Driver.clear(element)
     end
@@ -170,16 +180,19 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/click" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/click",
+        fn conn ->
           send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": {}
           }>)
         end
-      end)
+      )
 
       assert {:ok, %{}} = Driver.click(element)
     end
@@ -190,16 +203,19 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/text" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/text",
+        fn conn ->
           send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": ""
           }>)
         end
-      end)
+      )
 
       assert {:ok, ""} = Driver.text(element)
     end
@@ -210,15 +226,19 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       page_title = "Wallaby rocks"
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" && conn.request_path == "/session/#{session.id}/title" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "GET",
+        "/session/#{session.id}/title",
+        fn conn ->
           send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": "#{page_title}"
           }>)
         end
-      end)
+      )
 
       assert {:ok, ^page_title} = Driver.page_title(session)
     end
@@ -230,17 +250,19 @@ defmodule Wallaby.Phantom.DriverTest do
       element = build_element_for_session(session)
       attribute_name = "name"
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" &&
-             conn.request_path ==
-               "/session/#{session.id}/element/#{element.id}/attribute/#{attribute_name}" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/attribute/#{attribute_name}",
+        fn conn ->
           send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": "password"
           }>)
         end
-      end)
+      )
 
       assert {:ok, "password"} = Driver.attribute(element, "name")
     end
@@ -251,8 +273,13 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       url = "http://www.google.com"
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" && conn.request_path == "/session/#{session.id}/url" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "POST",
+        "/session/#{session.id}/url",
+        fn conn ->
+          conn = parse_body(conn)
           assert conn.body_params == %{"url" => url}
 
           send_json_resp(conn, 200, ~s<{
@@ -261,7 +288,7 @@ defmodule Wallaby.Phantom.DriverTest do
             "value": {}
           }>)
         end
-      end)
+      )
 
       assert :ok = Driver.visit(session, url)
     end
@@ -270,13 +297,18 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       url = "http://www.google.com"
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" && conn.request_path == "/session/#{session.id}/url" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "POST",
+        "/session/#{session.id}/url",
+        fn conn ->
+          conn = parse_body(conn)
           assert conn.body_params == %{"url" => url}
 
           send_resp(conn, 204, "")
         end
-      end)
+      )
 
       assert :ok = Driver.visit(session, url)
     end
@@ -287,15 +319,19 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       url = "http://www.google.com"
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" && conn.request_path == "/session/#{session.id}/url" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "GET",
+        "/session/#{session.id}/url",
+        fn conn ->
           send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": "#{url}"
           }>)
         end
-      end)
+      )
 
       assert {:ok, ^url} = Driver.current_url(session)
     end
@@ -306,15 +342,19 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       url = "http://www.google.com/search"
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" && conn.request_path == "/session/#{session.id}/url" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "GET",
+        "/session/#{session.id}/url",
+        fn conn ->
           send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": "#{url}"
           }>)
         end
-      end)
+      )
 
       assert {:ok, "/search"} = Driver.current_path(session)
     end
@@ -325,16 +365,19 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/selected" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/selected",
+        fn conn ->
           send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": true
           }>)
         end
-      end)
+      )
 
       assert {:ok, true} = Driver.selected(element)
     end
@@ -345,16 +388,19 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/displayed" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/displayed",
+        fn conn ->
           send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": true
           }>)
         end
-      end)
+      )
 
       assert {:ok, true} = Driver.displayed(element)
     end
@@ -363,17 +409,16 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/displayed" do
-          send_json_resp(conn, 500, ~s<{
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("GET", "/session/#{session.id}/element/#{element.id}/displayed", fn conn ->
+        send_json_resp(conn, 500, ~s<{
             "sessionId": "#{session.id}",
             "status": 10,
             "value": {
               "class": "org.openqa.selenium.StaleElementReferenceException"
             }
           }>)
-        end
       end)
 
       assert {:error, :stale_reference} = Driver.displayed(element)
@@ -385,15 +430,14 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/displayed" do
-          send_json_resp(conn, 200, ~s<{
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("GET", "/session/#{session.id}/element/#{element.id}/displayed", fn conn ->
+        send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": true
           }>)
-        end
       end)
 
       assert true = Driver.displayed!(element)
@@ -403,17 +447,16 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/displayed" do
-          send_json_resp(conn, 500, ~s<{
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("GET", "/session/#{session.id}/element/#{element.id}/displayed", fn conn ->
+        send_json_resp(conn, 500, ~s<{
             "sessionId": "#{session.id}",
             "status": 10,
             "value": {
               "class": "org.openqa.selenium.StaleElementReferenceException"
             }
           }>)
-        end
       end)
 
       assert_raise StaleReferenceError, fn ->
@@ -427,15 +470,14 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/size" do
-          send_json_resp(conn, 200, ~s<{
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("GET", "/session/#{session.id}/element/#{element.id}/size", fn conn ->
+        send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": "not quite sure"
           }>)
-        end
       end)
 
       assert {:ok, "not quite sure"} = Driver.size(element)
@@ -447,15 +489,14 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/rect" do
-          send_json_resp(conn, 200, ~s<{
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("GET", "/session/#{session.id}/element/#{element.id}/rect", fn conn ->
+        send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": "not quite sure"
           }>)
-        end
       end)
 
       assert {:ok, "not quite sure"} = Driver.rect(element)
@@ -467,14 +508,14 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       screenshot_data = ":)"
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" && conn.request_path == "/session/#{session.id}/screenshot" do
-          send_json_resp(conn, 200, ~s<{
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("GET", "/session/#{session.id}/screenshot", fn conn ->
+        send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": "#{Base.encode64(screenshot_data)}"
           }>)
-        end
       end)
 
       assert ^screenshot_data = Driver.take_screenshot(session)
@@ -485,14 +526,14 @@ defmodule Wallaby.Phantom.DriverTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" && conn.request_path == "/session/#{session.id}/cookie" do
-          send_json_resp(conn, 200, ~s<{
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("GET", "/session/#{session.id}/cookie", fn conn ->
+        send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": [{"domain": "localhost"}]
           }>)
-        end
       end)
 
       assert {:ok, [%{"domain" => "localhost"}]} = Driver.cookies(session)
@@ -505,16 +546,17 @@ defmodule Wallaby.Phantom.DriverTest do
       key = "tester"
       value = "McTestington"
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" && conn.request_path == "/session/#{session.id}/cookie" do
-          assert conn.body_params == %{"cookie" => %{"name" => key, "value" => value}}
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("POST", "/session/#{session.id}/cookie", fn conn ->
+        conn = parse_body(conn)
+        assert conn.body_params == %{"cookie" => %{"name" => key, "value" => value}}
 
-          send_json_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": []
           }>)
-        end
       end)
 
       assert {:ok, []} = Driver.set_cookie(session, key, value)
@@ -527,9 +569,14 @@ defmodule Wallaby.Phantom.DriverTest do
       height = 600
       width = 400
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" &&
-             conn.request_path == "/session/#{session.id}/window/#{@window_handle_id}/size" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> expect_get_window_handle_request(session)
+      |> Bypass.expect(
+        "POST",
+        "/session/#{session.id}/window/#{@window_handle_id}/size",
+        fn conn ->
+          conn = parse_body(conn)
           assert conn.body_params == %{"height" => height, "width" => width}
 
           send_json_resp(conn, 200, ~s<{
@@ -538,7 +585,7 @@ defmodule Wallaby.Phantom.DriverTest do
             "value": {}
           }>)
         end
-      end)
+      )
 
       assert {:ok, %{}} = Driver.set_window_size(session, width, height)
     end
@@ -548,9 +595,14 @@ defmodule Wallaby.Phantom.DriverTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" &&
-             conn.request_path == "/session/#{session.id}/window/#{@window_handle_id}/size" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> expect_get_window_handle_request(session)
+      |> Bypass.expect(
+        "GET",
+        "/session/#{session.id}/window/#{@window_handle_id}/size",
+        fn conn ->
+          conn = parse_body(conn)
           send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
@@ -560,7 +612,7 @@ defmodule Wallaby.Phantom.DriverTest do
             }
           }>)
         end
-      end)
+      )
 
       assert {:ok, %{}} = Driver.get_window_size(session)
     end
@@ -570,9 +622,13 @@ defmodule Wallaby.Phantom.DriverTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" &&
-             conn.request_path == "/session/#{session.id}/execute" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "POST",
+        "/session/#{session.id}/execute",
+        fn conn ->
+          conn = parse_body(conn)
           assert conn.body_params == %{"script" => "localStorage.clear()", "args" => [2, "a"]}
 
           send_json_resp(conn, 200, ~s<{
@@ -581,7 +637,7 @@ defmodule Wallaby.Phantom.DriverTest do
             "value": null
           }>)
         end
-      end)
+      )
 
       assert {:ok, nil} = Driver.execute_script(session, "localStorage.clear()", [2, "a"])
     end
@@ -592,8 +648,13 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       keys = ["abc", :tab]
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" && conn.request_path == "/session/#{session.id}/keys" do
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect(
+        "POST",
+        "/session/#{session.id}/keys",
+        fn conn ->
+          conn = parse_body(conn)
           assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!()
 
           send_json_resp(conn, 200, ~s<{
@@ -602,7 +663,7 @@ defmodule Wallaby.Phantom.DriverTest do
             "value": null
           }>)
         end
-      end)
+      )
 
       assert {:ok, nil} = Driver.send_keys(session, keys)
     end
@@ -612,17 +673,17 @@ defmodule Wallaby.Phantom.DriverTest do
       element = build_element_for_session(session)
       keys = ["abc", :tab]
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "POST" &&
-             conn.request_path == "/session/#{session.id}/element/#{element.id}/value" do
-          assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!()
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("POST", "/session/#{session.id}/element/#{element.id}/value", fn conn ->
+        conn = parse_body(conn)
+        assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!()
 
-          send_json_resp(conn, 200, ~s<{
+        send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": null
           }>)
-        end
       end)
 
       assert {:ok, nil} = Driver.send_keys(element, keys)
@@ -633,10 +694,8 @@ defmodule Wallaby.Phantom.DriverTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      Bypass.expect(bypass, fn conn ->
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/log", fn conn ->
         conn = parse_body(conn)
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/log"
         assert conn.body_params == %{"type" => "browser"}
 
         send_json_resp(conn, 200, ~s<{
@@ -655,14 +714,14 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
       page_source = "<html></html>"
 
-      stub_backend(bypass, session, fn conn ->
-        if conn.method == "GET" && conn.request_path == "/session/#{session.id}/source" do
-          send_json_resp(conn, 200, ~s<{
+      bypass
+      |> expect_fetch_logs_request(session)
+      |> Bypass.expect("GET", "/session/#{session.id}/source", fn conn ->
+        send_json_resp(conn, 200, ~s<{
             "sessionId": "#{session.id}",
             "status": 0,
             "value": "#{page_source}"
           }>)
-        end
       end)
 
       assert {:ok, ^page_source} = Driver.page_source(session)
@@ -685,38 +744,27 @@ defmodule Wallaby.Phantom.DriverTest do
     }
   end
 
-  # Sets up bypass to run the given function and if no result is set, runs the
-  # default routes.
-  defp stub_backend(bypass, session, handle_fn) do
-    Bypass.expect(bypass, fn conn ->
-      conn = parse_body(conn)
-
-      case handle_fn.(conn) do
-        %Plug.Conn{state: :set} = conn -> conn
-        %Plug.Conn{state: :sent} = conn -> conn
-        _ -> handle_default_routes(conn, session)
-      end
+  defp expect_get_window_handle_request(bypass, session) do
+    Bypass.expect(bypass, "GET", "/session/#{session.id}/window_handle", fn conn ->
+      send_json_resp(conn, 200, ~s<{
+        "sessionId": "#{session.id}",
+        "status": 0,
+        "value": "#{@window_handle_id}"
+    }>)
     end)
+
+    bypass
   end
 
-  defp handle_default_routes(conn, session) do
-    cond do
-      conn.method == "POST" && conn.request_path == "/session/#{session.id}/log" ->
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": []
-        }>)
+  defp expect_fetch_logs_request(bypass, session) do
+    Bypass.expect(bypass, "POST", "/session/#{session.id}/log", fn conn ->
+      send_json_resp(conn, 200, ~s<{
+        "sessionId": "#{session.id}",
+        "status": 0,
+        "value": []
+    }>)
+    end)
 
-      conn.method == "GET" && conn.request_path == "/session/#{session.id}/window_handle" ->
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "#{@window_handle_id}"
-        }>)
-
-      true ->
-        refute true, "Unhandled request #{conn.method} #{conn.request_path}"
-    end
+    bypass
   end
 end
