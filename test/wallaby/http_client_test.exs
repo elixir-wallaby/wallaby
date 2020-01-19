@@ -13,11 +13,11 @@ defmodule Wallaby.HTTPClientTest do
         assert get_req_header(conn, "accept") == ["application/json"]
         assert get_req_header(conn, "content-type") == ["application/json"]
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "abc123",
-          "status": 0,
-          "value": null
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => "abc123",
+          "status" => 0,
+          "value" => nil
+        })
       end)
 
       assert {:ok, _} = Client.request(:post, bypass_url(bypass, "/my_url"), %{hello: "world"})
@@ -25,11 +25,11 @@ defmodule Wallaby.HTTPClientTest do
 
     test "with a 200 status response", %{bypass: bypass} do
       Bypass.expect(bypass, fn conn ->
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "abc123",
-          "status": 0,
-          "value": null
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => "abc123",
+          "status" => 0,
+          "value" => nil
+        })
       end)
 
       {:ok, response} = Client.request(:post, bypass_url(bypass, "/my_url"))
@@ -43,13 +43,13 @@ defmodule Wallaby.HTTPClientTest do
 
     test "with a 500 response and StaleElementReferenceException", %{bypass: bypass} do
       Bypass.expect(bypass, fn conn ->
-        send_json_resp(conn, 500, ~s<{
-          "sessionId": "abc123",
-          "status": 10,
-          "value": {
-            "class": "org.openqa.selenium.StaleElementReferenceException"
+        send_json_resp(conn, 500, %{
+          "sessionId" => "abc123",
+          "status" => 10,
+          "value" => %{
+            "class" => "org.openqa.selenium.StaleElementReferenceException"
           }
-        }>)
+        })
       end)
 
       assert {:error, :stale_reference} = Client.request(:post, bypass_url(bypass, "/my_url"))
@@ -59,13 +59,13 @@ defmodule Wallaby.HTTPClientTest do
       expected_message = "message from an obsure error"
 
       Bypass.expect(bypass, fn conn ->
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "abc123",
-          "status": 13,
-          "value": {
-            "message": "#{expected_message}"
+        send_json_resp(conn, 200, %{
+          "sessionId" => "abc123",
+          "status" => 13,
+          "value" => %{
+            "message" => "#{expected_message}"
           }
-        }>)
+        })
       end)
 
       assert {:error, ^expected_message} = Client.request(:post, bypass_url(bypass, "/my_url"))
@@ -86,13 +86,13 @@ defmodule Wallaby.HTTPClientTest do
       expected_message = "The session could not be created"
 
       Bypass.expect(bypass, fn conn ->
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "abc123",
-          "value": {
-            "error": "An error",
-            "message": "#{expected_message}"
+        send_json_resp(conn, 200, %{
+          "sessionId" => "abc123",
+          "value" => %{
+            "error" => "An error",
+            "message" => "#{expected_message}"
           }
-        }>)
+        })
       end)
 
       assert_raise RuntimeError, expected_message, fn ->
