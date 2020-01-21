@@ -22,14 +22,14 @@ defmodule Wallaby.Phantom.DriverTest do
         assert "/session" == conn.request_path
         assert %{"desiredCapabilities" => capabilities} == conn.body_params
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{new_session_id}",
-          "status": 0,
-          "value": {
-            "acceptSslCerts": false,
-            "browserName": "phantomjs"
+        send_json_resp(conn, 200, %{
+          "sessionId" => new_session_id,
+          "status" => 0,
+          "value" => %{
+            "acceptSslCerts" => false,
+            "browserName" => "phantomjs"
           }
-        }>)
+        })
       end)
 
       assert {:ok, response} = Driver.create_session(base_url, capabilities)
@@ -42,11 +42,11 @@ defmodule Wallaby.Phantom.DriverTest do
       session = build_session_for_bypass(bypass)
 
       Bypass.expect(bypass, "DELETE", "/session/#{session.id}", fn conn ->
-        send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": {}
-          }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, response} = Driver.delete(session)
@@ -71,11 +71,11 @@ defmodule Wallaby.Phantom.DriverTest do
         conn = parse_body(conn)
         assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
 
-        send_json_resp(conn, 200, ~s<{
-              "sessionId": "#{session.id}",
-              "status": 0,
-              "value": [{"ELEMENT": "#{element_id}"}]
-            }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => [%{"ELEMENT" => element_id}]
+        })
       end)
 
       assert {:ok, [element]} = Driver.find_elements(session, query)
@@ -105,11 +105,11 @@ defmodule Wallaby.Phantom.DriverTest do
 
           assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
 
-          send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": [{"ELEMENT": "#{element_id}"}]
-      }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => [%{"ELEMENT" => element_id}]
+          })
         end
       )
 
@@ -140,11 +140,11 @@ defmodule Wallaby.Phantom.DriverTest do
           conn = parse_body(conn)
           assert conn.body_params == %{"value" => [value]}
 
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": null
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => nil
+          })
         end
       )
 
@@ -163,11 +163,11 @@ defmodule Wallaby.Phantom.DriverTest do
         "POST",
         "/session/#{session.id}/element/#{element.id}/clear",
         fn conn ->
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": null
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => nil
+          })
         end
       )
 
@@ -186,11 +186,11 @@ defmodule Wallaby.Phantom.DriverTest do
         "POST",
         "/session/#{session.id}/element/#{element.id}/click",
         fn conn ->
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": {}
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => %{}
+          })
         end
       )
 
@@ -209,11 +209,11 @@ defmodule Wallaby.Phantom.DriverTest do
         "GET",
         "/session/#{session.id}/element/#{element.id}/text",
         fn conn ->
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": ""
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => ""
+          })
         end
       )
 
@@ -232,11 +232,11 @@ defmodule Wallaby.Phantom.DriverTest do
         "GET",
         "/session/#{session.id}/title",
         fn conn ->
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": "#{page_title}"
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => "#{page_title}"
+          })
         end
       )
 
@@ -256,11 +256,11 @@ defmodule Wallaby.Phantom.DriverTest do
         "GET",
         "/session/#{session.id}/element/#{element.id}/attribute/#{attribute_name}",
         fn conn ->
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": "password"
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => "password"
+          })
         end
       )
 
@@ -282,11 +282,11 @@ defmodule Wallaby.Phantom.DriverTest do
           conn = parse_body(conn)
           assert conn.body_params == %{"url" => url}
 
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": {}
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => %{}
+          })
         end
       )
 
@@ -325,11 +325,11 @@ defmodule Wallaby.Phantom.DriverTest do
         "GET",
         "/session/#{session.id}/url",
         fn conn ->
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": "#{url}"
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => "#{url}"
+          })
         end
       )
 
@@ -348,11 +348,11 @@ defmodule Wallaby.Phantom.DriverTest do
         "GET",
         "/session/#{session.id}/url",
         fn conn ->
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": "#{url}"
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => "#{url}"
+          })
         end
       )
 
@@ -371,11 +371,11 @@ defmodule Wallaby.Phantom.DriverTest do
         "GET",
         "/session/#{session.id}/element/#{element.id}/selected",
         fn conn ->
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": true
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => true
+          })
         end
       )
 
@@ -394,11 +394,11 @@ defmodule Wallaby.Phantom.DriverTest do
         "GET",
         "/session/#{session.id}/element/#{element.id}/displayed",
         fn conn ->
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": true
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => true
+          })
         end
       )
 
@@ -412,13 +412,13 @@ defmodule Wallaby.Phantom.DriverTest do
       bypass
       |> expect_fetch_logs_request(session)
       |> Bypass.expect("GET", "/session/#{session.id}/element/#{element.id}/displayed", fn conn ->
-        send_json_resp(conn, 500, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 10,
-            "value": {
-              "class": "org.openqa.selenium.StaleElementReferenceException"
-            }
-          }>)
+        send_json_resp(conn, 500, %{
+          "sessionId" => session.id,
+          "status" => 10,
+          "value" => %{
+            "class" => "org.openqa.selenium.StaleElementReferenceException"
+          }
+        })
       end)
 
       assert {:error, :stale_reference} = Driver.displayed(element)
@@ -433,11 +433,11 @@ defmodule Wallaby.Phantom.DriverTest do
       bypass
       |> expect_fetch_logs_request(session)
       |> Bypass.expect("GET", "/session/#{session.id}/element/#{element.id}/displayed", fn conn ->
-        send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": true
-          }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => true
+        })
       end)
 
       assert true = Driver.displayed!(element)
@@ -450,13 +450,13 @@ defmodule Wallaby.Phantom.DriverTest do
       bypass
       |> expect_fetch_logs_request(session)
       |> Bypass.expect("GET", "/session/#{session.id}/element/#{element.id}/displayed", fn conn ->
-        send_json_resp(conn, 500, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 10,
-            "value": {
-              "class": "org.openqa.selenium.StaleElementReferenceException"
-            }
-          }>)
+        send_json_resp(conn, 500, %{
+          "sessionId" => session.id,
+          "status" => 10,
+          "value" => %{
+            "class" => "org.openqa.selenium.StaleElementReferenceException"
+          }
+        })
       end)
 
       assert_raise StaleReferenceError, fn ->
@@ -473,11 +473,11 @@ defmodule Wallaby.Phantom.DriverTest do
       bypass
       |> expect_fetch_logs_request(session)
       |> Bypass.expect("GET", "/session/#{session.id}/element/#{element.id}/size", fn conn ->
-        send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": "not quite sure"
-          }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => "not quite sure"
+        })
       end)
 
       assert {:ok, "not quite sure"} = Driver.size(element)
@@ -492,11 +492,11 @@ defmodule Wallaby.Phantom.DriverTest do
       bypass
       |> expect_fetch_logs_request(session)
       |> Bypass.expect("GET", "/session/#{session.id}/element/#{element.id}/rect", fn conn ->
-        send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": "not quite sure"
-          }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => "not quite sure"
+        })
       end)
 
       assert {:ok, "not quite sure"} = Driver.rect(element)
@@ -511,11 +511,11 @@ defmodule Wallaby.Phantom.DriverTest do
       bypass
       |> expect_fetch_logs_request(session)
       |> Bypass.expect("GET", "/session/#{session.id}/screenshot", fn conn ->
-        send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": "#{Base.encode64(screenshot_data)}"
-          }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => "#{Base.encode64(screenshot_data)}"
+        })
       end)
 
       assert ^screenshot_data = Driver.take_screenshot(session)
@@ -529,11 +529,11 @@ defmodule Wallaby.Phantom.DriverTest do
       bypass
       |> expect_fetch_logs_request(session)
       |> Bypass.expect("GET", "/session/#{session.id}/cookie", fn conn ->
-        send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": [{"domain": "localhost"}]
-          }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => [%{"domain" => "localhost"}]
+        })
       end)
 
       assert {:ok, [%{"domain" => "localhost"}]} = Driver.cookies(session)
@@ -552,11 +552,11 @@ defmodule Wallaby.Phantom.DriverTest do
         conn = parse_body(conn)
         assert conn.body_params == %{"cookie" => %{"name" => key, "value" => value}}
 
-        send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": []
-          }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => []
+        })
       end)
 
       assert {:ok, []} = Driver.set_cookie(session, key, value)
@@ -579,11 +579,11 @@ defmodule Wallaby.Phantom.DriverTest do
           conn = parse_body(conn)
           assert conn.body_params == %{"height" => height, "width" => width}
 
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": {}
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => %{}
+          })
         end
       )
 
@@ -603,14 +603,15 @@ defmodule Wallaby.Phantom.DriverTest do
         "/session/#{session.id}/window/#{@window_handle_id}/size",
         fn conn ->
           conn = parse_body(conn)
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": {
-              "height": 600,
-              "width": 400
+
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => %{
+              "height" => 600,
+              "width" => 400
             }
-          }>)
+          })
         end
       )
 
@@ -631,11 +632,11 @@ defmodule Wallaby.Phantom.DriverTest do
           conn = parse_body(conn)
           assert conn.body_params == %{"script" => "localStorage.clear()", "args" => [2, "a"]}
 
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": null
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => nil
+          })
         end
       )
 
@@ -657,11 +658,11 @@ defmodule Wallaby.Phantom.DriverTest do
           conn = parse_body(conn)
           assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!()
 
-          send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": null
-          }>)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => nil
+          })
         end
       )
 
@@ -679,11 +680,11 @@ defmodule Wallaby.Phantom.DriverTest do
         conn = parse_body(conn)
         assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!()
 
-        send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": null
-          }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => nil
+        })
       end)
 
       assert {:ok, nil} = Driver.send_keys(element, keys)
@@ -698,11 +699,11 @@ defmodule Wallaby.Phantom.DriverTest do
         conn = parse_body(conn)
         assert conn.body_params == %{"type" => "browser"}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": []
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => []
+        })
       end)
 
       assert {:ok, []} = Driver.log(session)
@@ -717,11 +718,11 @@ defmodule Wallaby.Phantom.DriverTest do
       bypass
       |> expect_fetch_logs_request(session)
       |> Bypass.expect("GET", "/session/#{session.id}/source", fn conn ->
-        send_json_resp(conn, 200, ~s<{
-            "sessionId": "#{session.id}",
-            "status": 0,
-            "value": "#{page_source}"
-          }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => page_source
+        })
       end)
 
       assert {:ok, ^page_source} = Driver.page_source(session)
@@ -746,11 +747,11 @@ defmodule Wallaby.Phantom.DriverTest do
 
   defp expect_get_window_handle_request(bypass, session) do
     Bypass.expect(bypass, "GET", "/session/#{session.id}/window_handle", fn conn ->
-      send_json_resp(conn, 200, ~s<{
-        "sessionId": "#{session.id}",
-        "status": 0,
-        "value": "#{@window_handle_id}"
-    }>)
+      send_json_resp(conn, 200, %{
+        "sessionId" => session.id,
+        "status" => 0,
+        "value" => @window_handle_id
+      })
     end)
 
     bypass
@@ -758,11 +759,11 @@ defmodule Wallaby.Phantom.DriverTest do
 
   defp expect_fetch_logs_request(bypass, session) do
     Bypass.expect(bypass, "POST", "/session/#{session.id}/log", fn conn ->
-      send_json_resp(conn, 200, ~s<{
-        "sessionId": "#{session.id}",
-        "status": 0,
-        "value": []
-    }>)
+      send_json_resp(conn, 200, %{
+        "sessionId" => session.id,
+        "status" => 0,
+        "value" => []
+      })
     end)
 
     bypass
