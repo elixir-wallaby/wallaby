@@ -11,8 +11,17 @@ jobs:
 
     strategy:
       matrix:
-        otp: [21.x]
-        elixir: [1.7.x, 1.8.x, 1.9.x]
+        elixir: ["1.7.4", "1.8.2", "1.9.4"]
+        include:
+          - elixir: "1.9.4"
+            otp: "21.3.8.9"
+            check_formatting: true
+          - elixir: "1.8.2"
+            otp: "21.3.8.9"
+            check_formatting: false
+          - elixir: "1.7.4"
+            otp: "21.3.8.9"
+            check_formatting: false
       fail-fast: false
 
     steps:
@@ -42,7 +51,7 @@ jobs:
 
     - name: Check formatting
       run: mix format --check-formatted
-      if: matrix.elixir == '1.9.x'
+      if: matrix.check_formatting
 
     - name: Run Credo
       run: mix credo --strict
@@ -56,8 +65,14 @@ jobs:
 
     strategy:
       matrix:
-        otp: [21.x]
-        elixir: [1.7.x, 1.8.x, 1.9.x]
+        elixir: ["1.7.4", "1.8.2", "1.9.4"]
+        include:
+          - elixir: "1.9.4"
+            otp: "21.3.8.9"
+          - elixir: "1.8.2"
+            otp: "21.3.8.9"
+          - elixir: "1.7.4"
+            otp: "21.3.8.9"
       fail-fast: false
 
     env:
@@ -93,8 +108,14 @@ jobs:
 
     strategy:
       matrix:
-        otp: [21.x]
-        elixir: [1.7.x, 1.8.x, 1.9.x]
+        elixir: ["1.7.4", "1.8.2", "1.9.4"]
+        include:
+          - elixir: "1.9.4"
+            otp: "21.3.8.9"
+          - elixir: "1.8.2"
+            otp: "21.3.8.9"
+          - elixir: "1.7.4"
+            otp: "21.3.8.9"
       fail-fast: false
 
     env:
@@ -134,8 +155,14 @@ jobs:
 
     strategy:
       matrix:
-        otp: [21.x]
-        elixir: [1.7.x, 1.8.x, 1.9.x]
+        elixir: ["1.7.4", "1.8.2", "1.9.4"]
+        include:
+          - elixir: "1.9.4"
+            otp: "21.3.8.9"
+          - elixir: "1.8.2"
+            otp: "21.3.8.9"
+          - elixir: "1.7.4"
+            otp: "21.3.8.9"
       fail-fast: false
 
     env:
@@ -176,8 +203,14 @@ jobs:
 
     strategy:
       matrix:
-        otp: [21.x]
-        elixir: [1.7.x, 1.8.x, 1.9.x]
+        elixir: ["1.7.4", "1.8.2", "1.9.4"]
+        include:
+          - elixir: "1.9.4"
+            otp: "21.3.8.9"
+          - elixir: "1.8.2"
+            otp: "21.3.8.9"
+          - elixir: "1.7.4"
+            otp: "21.3.8.9"
       fail-fast: false
 
     env:
