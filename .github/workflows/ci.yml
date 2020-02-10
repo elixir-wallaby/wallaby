@@ -108,9 +108,6 @@ jobs:
       with:
         otp-version: ${{matrix.otp}}
         elixir-version: ${{matrix.elixir}}
-    - uses: nanasess/setup-chromedriver@master
-      with:
-        chromedriver-version: '78.0.3904.70'
 
     - uses: actions/cache@v1
       id: cache
@@ -149,7 +146,6 @@ jobs:
       with:
         otp-version: ${{matrix.otp}}
         elixir-version: ${{matrix.elixir}}
-    - uses: elixir-wallaby/setup-selenium@master
 
     - uses: actions/cache@v1
       id: cache
