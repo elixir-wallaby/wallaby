@@ -159,7 +159,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        java -jar "$HOME/selenium.jar" > /dev/null 2>&1 &
+        java -jar "$SELENIUM_JAR_PATH" > /dev/null 2>&1 &
 
         mix coveralls.json
 
