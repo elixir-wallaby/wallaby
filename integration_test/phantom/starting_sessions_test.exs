@@ -10,7 +10,7 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
 
   @moduletag :capture_log
 
-  setup [:stop_wallaby, :create_test_workspace]
+  setup [:restart_wallaby_on_exit!, :stop_wallaby, :create_test_workspace]
 
   test "works when phantomjs starts immediately", %{
     workspace_path: workspace_path

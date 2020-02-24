@@ -11,7 +11,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
 
   @moduletag :capture_log
 
-  setup [:stop_wallaby, :create_test_workspace]
+  setup [:restart_wallaby_on_exit!, :stop_wallaby, :create_test_workspace]
 
   test "works when chromedriver starts immediately", %{workspace_path: workspace_path} do
     {:ok, chromedriver_path} = Chrome.find_chromedriver_executable()
