@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: actions/setup-elixir@v1.0.0
       with:
         otp-version: ${{matrix.otp}}
@@ -65,7 +65,7 @@ jobs:
       OTP_VERSION: ${{ matrix.otp }}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: actions/setup-elixir@v1.0.0
       with:
         otp-version: ${{matrix.otp}}
@@ -103,14 +103,11 @@ jobs:
       OTP_VERSION: ${{ matrix.otp }}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: actions/setup-elixir@v1.0.0
       with:
         otp-version: ${{matrix.otp}}
         elixir-version: ${{matrix.elixir}}
-    - uses: nanasess/setup-chromedriver@master
-      with:
-        chromedriver-version: '78.0.3904.70'
 
     - uses: actions/cache@v1
       id: cache
@@ -144,12 +141,11 @@ jobs:
       OTP_VERSION: ${{ matrix.otp }}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: actions/setup-elixir@v1.0.0
       with:
         otp-version: ${{matrix.otp}}
         elixir-version: ${{matrix.elixir}}
-    - uses: elixir-wallaby/setup-selenium@master
 
     - uses: actions/cache@v1
       id: cache
@@ -163,7 +159,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        java -jar "$HOME/selenium.jar" > /dev/null 2>&1 &
+        java -jar "$SELENIUM_JAR_PATH" > /dev/null 2>&1 &
 
         mix coveralls.json
 
@@ -186,7 +182,7 @@ jobs:
       OTP_VERSION: ${{ matrix.otp }}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: actions/setup-elixir@v1.0.0
       with:
         otp-version: ${{matrix.otp}}
