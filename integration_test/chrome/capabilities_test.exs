@@ -1,13 +1,14 @@
 defmodule Wallaby.Integration.CapabilitiesTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   use Wallaby.DSL
+
+  import Wallaby.SettingsTestHelpers
+
   alias Wallaby.Integration.SessionCase
   alias Wallaby.Experimental.Selenium.WebdriverClient
 
   setup do
-    on_exit(fn ->
-      Application.delete_env(:wallaby, :chromedriver)
-    end)
+    ensure_setting_is_reset(:wallaby, :chromedriver)
   end
 
   describe "capabilities" do
