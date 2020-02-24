@@ -5,7 +5,6 @@ defmodule Wallaby.TestSupport.ApplicationControl do
 
   import ExUnit.Assertions, only: [flunk: 1]
   import ExUnit.Callbacks, only: [on_exit: 1]
-  import Wallaby.SettingsTestHelpers
 
   @doc """
   Stops the wallaby application and ensures its restarted

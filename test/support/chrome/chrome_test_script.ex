@@ -54,11 +54,7 @@ defmodule Wallaby.TestSupport.Chrome.ChromeTestScript do
     |> File.read()
     |> case do
       {:ok, contents} ->
-        contents
-        |> String.split("\n")
-        # Remove last line because echoing into a file automatically appends
-        # a newline and would make it look like an extra invocation
-        |> List.delete_at(-1)
+        String.split(contents, "\n", trim: true)
 
       {:error, :enoent} ->
         []
