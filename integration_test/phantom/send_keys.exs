@@ -5,8 +5,8 @@ defmodule Wallaby.Integration.Phantom.SendKeys do
 
   test "navigating with key presses", %{session: session} do
     session
-    |> IndexPage.visit
+    |> IndexPage.visit()
     |> send_keys([:tab, :enter])
-    |> Page1.ensure_page_loaded
+    |> Page1.ensure_page_loaded()
   end
 end

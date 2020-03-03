@@ -1,35 +1,36 @@
 # Common tests supported by all drivers
-Code.require_file "cases/browser_test.exs", __DIR__
-Code.require_file "cases/browser/all_test.exs", __DIR__
-Code.require_file "cases/browser/assert_css_test.exs", __DIR__
-Code.require_file "cases/browser/assert_refute_has_test.exs", __DIR__
-Code.require_file "cases/browser/assert_text_test.exs", __DIR__
-Code.require_file "cases/browser/attr_test.exs", __DIR__
-Code.require_file "cases/browser/clear_test.exs", __DIR__
-Code.require_file "cases/browser/click_button_test.exs", __DIR__
-Code.require_file "cases/browser/click_test.exs", __DIR__
-Code.require_file "cases/browser/cookies_test.exs", __DIR__
-Code.require_file "cases/browser/current_path_test.exs", __DIR__
-Code.require_file "cases/browser/dialog_test.exs", __DIR__
-Code.require_file "cases/browser/execute_script_test.exs", __DIR__
-Code.require_file "cases/browser/fill_in_test.exs", __DIR__
-Code.require_file "cases/browser/find_test.exs", __DIR__
-Code.require_file "cases/browser/has_css_test.exs", __DIR__
-Code.require_file "cases/browser/has_text_test.exs", __DIR__
-Code.require_file "cases/browser/has_value_test.exs", __DIR__
-Code.require_file "cases/browser/local_storage_test.exs", __DIR__
-Code.require_file "cases/browser/navigation_test.exs", __DIR__
-Code.require_file "cases/browser/page_source_test.exs", __DIR__
-Code.require_file "cases/browser/screenshot_test.exs", __DIR__
-Code.require_file "cases/browser/select_test.exs", __DIR__
-Code.require_file "cases/browser/set_value_test.exs", __DIR__
-Code.require_file "cases/browser/send_keys_test.exs", __DIR__
-Code.require_file "cases/browser/stale_nodes_test.exs", __DIR__
-Code.require_file "cases/browser/text_test.exs", __DIR__
-Code.require_file "cases/browser/title_test.exs", __DIR__
-Code.require_file "cases/browser/visible_test.exs", __DIR__
-Code.require_file "cases/browser/window_size_test.exs", __DIR__
-Code.require_file "cases/browser/feature_case_test.exs", __DIR__
-Code.require_file "cases/element/send_keys_test.exs", __DIR__
-Code.require_file "cases/query_test.exs", __DIR__
-Code.require_file "cases/wallaby_test.exs", __DIR__
+Code.require_file("cases/browser_test.exs", __DIR__)
+Code.require_file("cases/browser/all_test.exs", __DIR__)
+Code.require_file("cases/browser/assert_css_test.exs", __DIR__)
+Code.require_file("cases/browser/assert_refute_has_test.exs", __DIR__)
+Code.require_file("cases/browser/assert_text_test.exs", __DIR__)
+Code.require_file("cases/browser/attr_test.exs", __DIR__)
+Code.require_file("cases/browser/clear_test.exs", __DIR__)
+Code.require_file("cases/browser/click_button_test.exs", __DIR__)
+Code.require_file("cases/browser/click_test.exs", __DIR__)
+Code.require_file("cases/browser/cookies_test.exs", __DIR__)
+Code.require_file("cases/browser/current_path_test.exs", __DIR__)
+Code.require_file("cases/browser/dialog_test.exs", __DIR__)
+Code.require_file("cases/browser/execute_script_test.exs", __DIR__)
+Code.require_file("cases/browser/fill_in_test.exs", __DIR__)
+Code.require_file("cases/browser/find_test.exs", __DIR__)
+Code.require_file("cases/browser/has_css_test.exs", __DIR__)
+Code.require_file("cases/browser/has_text_test.exs", __DIR__)
+Code.require_file("cases/browser/has_value_test.exs", __DIR__)
+Code.require_file("cases/browser/invalid_selectors_test.exs", __DIR__)
+Code.require_file("cases/browser/local_storage_test.exs", __DIR__)
+Code.require_file("cases/browser/navigation_test.exs", __DIR__)
+Code.require_file("cases/browser/page_source_test.exs", __DIR__)
+Code.require_file("cases/browser/screenshot_test.exs", __DIR__)
+Code.require_file("cases/browser/select_test.exs", __DIR__)
+Code.require_file("cases/browser/set_value_test.exs", __DIR__)
+Code.require_file("cases/browser/send_keys_test.exs", __DIR__)
+Code.require_file("cases/browser/stale_nodes_test.exs", __DIR__)
+Code.require_file("cases/browser/text_test.exs", __DIR__)
+Code.require_file("cases/browser/title_test.exs", __DIR__)
+Code.require_file("cases/browser/visible_test.exs", __DIR__)
+Code.require_file("cases/browser/window_size_test.exs", __DIR__)
+Code.require_file("cases/browser/feature_case_test.exs", __DIR__)
+Code.require_file("cases/element/send_keys_test.exs", __DIR__)
+Code.require_file("cases/query_test.exs", __DIR__)
+Code.require_file("cases/wallaby_test.exs", __DIR__)

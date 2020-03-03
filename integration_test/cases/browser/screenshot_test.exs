@@ -28,11 +28,11 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
     assert Enum.count(element_screenshots) == 1
     assert Enum.count(parent_screenshots) == 1
 
-    Enum.each(element_screenshots ++ parent_screenshots, fn(path) ->
-      assert File.exists? path
+    Enum.each(element_screenshots ++ parent_screenshots, fn path ->
+      assert File.exists?(path)
     end)
 
-    File.rm_rf! "#{File.cwd!}/screenshots"
+    File.rm_rf!("#{File.cwd!()}/screenshots")
   end
 
   test "users can specify the screenshot directory", %{page: page} do
@@ -43,15 +43,15 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
       |> take_screenshot
       |> Map.get(:screenshots)
 
-    assert screenshots |> Enum.count == 1
+    assert screenshots |> Enum.count() == 1
 
-    Enum.each screenshots, fn(path) ->
+    Enum.each(screenshots, fn path ->
       assert path =~ ~r/^shots\/(.*)$/
-      assert File.exists? path
-    end
+      assert File.exists?(path)
+    end)
 
     Application.put_env(:wallaby, :screenshot_dir, nil)
-    File.rm_rf! "#{File.cwd!}/shots"
+    File.rm_rf!("#{File.cwd!()}/shots")
   end
 
   test "users can specify the screenshot name", %{page: page} do
@@ -65,7 +65,7 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
     assert screenshot_path == "shots/some_page.png"
 
     Application.put_env(:wallaby, :screenshot_dir, nil)
-    File.rm_rf! "#{File.cwd!}/shots"
+    File.rm_rf!("#{File.cwd!()}/shots")
   end
 
   test "filters out illegal characters in screenshot name", %{page: page} do

@@ -10,6 +10,7 @@ defmodule Wallaby.Integration.Browser.WindowHandlesTest do
 
     session
     |> click(Query.link("New tab"))
+
     :timer.sleep(500)
 
     handles = window_handles(session)
@@ -24,12 +25,15 @@ defmodule Wallaby.Integration.Browser.WindowHandlesTest do
     session
     |> focus_window(initial_handle)
     |> click(Query.link("New window"))
+
     :timer.sleep(500)
 
     handles2 = window_handles(session)
     assert length(handles2) == 3
 
-    new_window_handle = Enum.find(handles2, fn handle -> handle not in [initial_handle, new_tab_handle] end)
+    new_window_handle =
+      Enum.find(handles2, fn handle -> handle not in [initial_handle, new_tab_handle] end)
+
     focus_window(session, new_window_handle)
 
     assert new_window_handle == window_handle(session)
@@ -44,6 +48,7 @@ defmodule Wallaby.Integration.Browser.WindowHandlesTest do
 
     session
     |> click(Query.link("New tab"))
+
     :timer.sleep(500)
 
     new_tab_handle = Enum.find(window_handles(session), fn handle -> handle != initial_handle end)
@@ -57,9 +62,11 @@ defmodule Wallaby.Integration.Browser.WindowHandlesTest do
 
     session
     |> click(Query.link("New window"))
+
     :timer.sleep(500)
 
-    new_window_handle = Enum.find(window_handles(session), fn handle -> handle != initial_handle end)
+    new_window_handle =
+      Enum.find(window_handles(session), fn handle -> handle != initial_handle end)
 
     session
     |> focus_window(new_window_handle)

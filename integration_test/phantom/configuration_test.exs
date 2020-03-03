@@ -17,14 +17,15 @@ defmodule Wallaby.Integration.Phantom.ConfigurationTest do
   def ensure_settings_are_reset(_) do
     orig_js_errors = Application.fetch_env(:wallaby, :js_errors)
 
-    on_exit fn ->
+    on_exit(fn ->
       reset_setting(:wallaby, :js_errors, orig_js_errors)
-    end
+    end)
   end
 
   defp reset_setting(app, setting, {:ok, value}) do
     Application.put_env(app, setting, value)
   end
+
   defp reset_setting(app, setting, :error) do
     Application.delete_env(app, setting)
   end

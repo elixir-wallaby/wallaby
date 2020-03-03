@@ -16,19 +16,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
         "browser" => "chrome"
       }
 
-      handle_request(bypass, fn conn ->
-        assert "POST" == conn.method
-        assert "/session" == conn.request_path
+      Bypass.expect(bypass, "POST", "/session", fn conn ->
+        conn = parse_body(conn)
         assert %{"desiredCapabilities" => capabilities} == conn.body_params
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{new_session_id}",
-          "status": 0,
-          "value": {
-            "acceptSslCerts": false,
-            "browserName": "phantomjs"
+        send_json_resp(conn, 200, %{
+          "sessionId" => "#{new_session_id}",
+          "status" => 0,
+          "value" => %{
+            "acceptSslCerts" => false,
+            "browserName" => "phantomjs"
           }
-        }>)
+        })
       end)
 
       assert {:ok, response} = Client.create_session(base_url, capabilities)
@@ -40,15 +39,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends a delete request to Session.session_url", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert "DELETE" == conn.method
-        assert "/session/#{session.id}" == conn.request_path
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+      Bypass.expect(bypass, "DELETE", "/session/#{session.id}", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, response} = Client.delete_session(session)
@@ -67,16 +63,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       element_id = ":wdc:1491326583887"
       query = ".blue" |> Query.css() |> Query.compile()
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/elements"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/elements", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": [{"ELEMENT": "#{element_id}"}]
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => [%{"ELEMENT" => "#{element_id}"}]
+        })
       end)
 
       assert {:ok, [element]} = Client.find_elements(session, query)
@@ -96,17 +91,21 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       element_id = ":wdc:1491326583887"
       query = ".blue" |> Query.css() |> Query.compile()
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/element/#{parent_element.id}/elements"
-        assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{parent_element.id}/elements",
+        fn conn ->
+          conn = parse_body(conn)
+          assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": [{"ELEMENT": "#{element_id}"}]
-        }>)
-      end)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => [%{"ELEMENT" => "#{element_id}"}]
+          })
+        end
+      )
 
       assert {:ok, [element]} = Client.find_elements(parent_element, query)
 
@@ -124,16 +123,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       element_id = ":wdc:1491326583887"
       query = ".blue" |> Query.css() |> Query.compile()
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/elements"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/elements", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"using" => "css selector", "value" => ".blue"}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": [{"#{@web_element_identifier}": "#{element_id}"}]
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => [%{"#{@web_element_identifier}" => "#{element_id}"}]
+        })
       end)
 
       assert {:ok, [element]} = Client.find_elements(session, query)
@@ -154,17 +152,21 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       element = build_element_for_session(session)
       value = "hello world"
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/value"
-        assert conn.body_params == %{"value" => [value]}
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/value",
+        fn conn ->
+          conn = parse_body(conn)
+          assert conn.body_params == %{"value" => [value]}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": null
-        }>)
-      end)
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => nil
+          })
+        end
+      )
 
       assert {:ok, nil} = Client.set_value(element, value)
     end
@@ -174,12 +176,17 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       element = build_element_for_session(session)
       value = "hello world"
 
-      handle_request(bypass, fn conn ->
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/value",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0
+          })
+        end
+      )
 
       assert {:ok, nil} = Client.set_value(element, value)
     end
@@ -189,9 +196,14 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       element = build_element_for_session(session)
       value = "hello world"
 
-      handle_request(bypass, fn conn ->
-        send_resp(conn, 204, "")
-      end)
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/value",
+        fn conn ->
+          send_resp(conn, 204, "")
+        end
+      )
 
       assert {:ok, nil} = Client.set_value(element, value)
     end
@@ -201,15 +213,20 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       element = build_element_for_session(session)
       value = "hello world"
 
-      handle_request(bypass, fn conn ->
-        send_json_resp(conn, 500, ~s<{
-          "sessionId": "#{session.id}",
-          "status": null,
-          "value": {
-            "class": "org.openqa.selenium.StaleElementReferenceException"
-          }
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/value",
+        fn conn ->
+          send_json_resp(conn, 500, %{
+            "sessionId" => session.id,
+            "status" => nil,
+            "value" => %{
+              "class" => "org.openqa.selenium.StaleElementReferenceException"
+            }
+          })
+        end
+      )
 
       assert {:error, :stale_reference} = Client.set_value(element, value)
     end
@@ -220,16 +237,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/clear"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": null
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/clear",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => nil
+          })
+        end
+      )
 
       assert {:ok, nil} = Client.clear(element)
     end
@@ -238,15 +257,17 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/clear"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/clear",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0
+          })
+        end
+      )
 
       assert {:ok, nil} = Client.clear(element)
     end
@@ -255,12 +276,14 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/clear"
-
-        send_resp(conn, 204, "")
-      end)
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/clear",
+        fn conn ->
+          send_resp(conn, 204, "")
+        end
+      )
 
       assert {:ok, nil} = Client.clear(element)
     end
@@ -269,18 +292,20 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/clear"
-
-        send_json_resp(conn, 500, ~s<{
-          "sessionId": "#{session.id}",
-          "status": null,
-          "value": {
-            "class": "org.openqa.selenium.StaleElementReferenceException"
-          }
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/clear",
+        fn conn ->
+          send_json_resp(conn, 500, %{
+            "sessionId" => session.id,
+            "status" => nil,
+            "value" => %{
+              "class" => "org.openqa.selenium.StaleElementReferenceException"
+            }
+          })
+        end
+      )
 
       assert {:error, :stale_reference} = Client.clear(element)
     end
@@ -291,16 +316,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/click"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/click",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => %{}
+          })
+        end
+      )
 
       assert {:ok, %{}} = Client.click(element)
     end
@@ -311,16 +338,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/text"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": ""
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/text",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => ""
+          })
+        end
+      )
 
       assert {:ok, ""} = Client.text(element)
     end
@@ -331,16 +360,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       page_title = "Wallaby rocks"
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/title"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "#{page_title}"
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/title",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => "#{page_title}"
+          })
+        end
+      )
 
       assert {:ok, ^page_title} = Client.page_title(session)
     end
@@ -352,18 +383,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       element = build_element_for_session(session)
       attribute_name = "name"
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-
-        assert conn.request_path ==
-                 "/session/#{session.id}/element/#{element.id}/attribute/#{attribute_name}"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "password"
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/attribute/#{attribute_name}",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => "password"
+          })
+        end
+      )
 
       assert {:ok, "password"} = Client.attribute(element, "name")
     end
@@ -374,16 +405,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       url = "http://www.google.com"
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/url"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/url", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"url" => url}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert :ok = Client.visit(session, url)
@@ -395,15 +425,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       url = "http://www.google.com"
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/url"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "#{url}"
-        }>)
+      Bypass.expect(bypass, "GET", "/session/#{session.id}/url", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => "#{url}"
+        })
       end)
 
       assert {:ok, ^url} = Client.current_url(session)
@@ -415,15 +442,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       url = "http://www.google.com/search"
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/url"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "#{url}"
-        }>)
+      Bypass.expect(bypass, "GET", "/session/#{session.id}/url", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => "#{url}"
+        })
       end)
 
       assert {:ok, "/search"} = Client.current_path(session)
@@ -435,16 +459,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/selected"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": true
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/selected",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => true
+          })
+        end
+      )
 
       assert {:ok, true} = Client.selected(element)
     end
@@ -455,16 +481,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/displayed"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": true
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/displayed",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => true
+          })
+        end
+      )
 
       assert {:ok, true} = Client.displayed(element)
     end
@@ -473,18 +501,20 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/displayed"
-
-        send_json_resp(conn, 500, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 10,
-          "value": {
-            "class": "org.openqa.selenium.StaleElementReferenceException"
-          }
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/displayed",
+        fn conn ->
+          send_json_resp(conn, 500, %{
+            "sessionId" => session.id,
+            "status" => 10,
+            "value" => %{
+              "class" => "org.openqa.selenium.StaleElementReferenceException"
+            }
+          })
+        end
+      )
 
       assert {:error, :stale_reference} = Client.displayed(element)
     end
@@ -495,16 +525,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/size"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "not quite sure"
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/size",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => "not quite sure"
+          })
+        end
+      )
 
       assert {:ok, "not quite sure"} = Client.size(element)
     end
@@ -515,16 +547,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/rect"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "not quite sure"
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/rect",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => "not quite sure"
+          })
+        end
+      )
 
       assert {:ok, "not quite sure"} = Client.rect(element)
     end
@@ -535,16 +569,18 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       screenshot_data = ":)"
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/screenshot"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "#{Base.encode64(screenshot_data)}"
-        }>)
-      end)
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/screenshot",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => "#{Base.encode64(screenshot_data)}"
+          })
+        end
+      )
 
       assert ^screenshot_data = Client.take_screenshot(session)
     end
@@ -554,15 +590,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/cookie"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": [{"domain": "localhost"}]
-        }>)
+      Bypass.expect(bypass, "GET", "/session/#{session.id}/cookie", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => [%{"domain" => "localhost"}]
+        })
       end)
 
       assert {:ok, [%{"domain" => "localhost"}]} = Client.cookies(session)
@@ -575,16 +608,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       key = "tester"
       value = "McTestington"
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/cookie"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/cookie", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"cookie" => %{"name" => key, "value" => value}}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": []
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => []
+        })
       end)
 
       assert {:ok, []} = Client.set_cookie(session, key, value)
@@ -597,16 +629,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       height = 600
       width = 400
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/window/current/size"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/window/current/size", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"height" => height, "width" => width}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.set_window_size(session, width, height)
@@ -617,18 +648,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/window/current/size"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {
-            "height": 600,
-            "width": 400
+      Bypass.expect(bypass, "GET", "/session/#{session.id}/window/current/size", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{
+            "height" => 600,
+            "width" => 400
           }
-        }>)
+        })
       end)
 
       assert {:ok, %{"height" => 600, "width" => 400}} == Client.get_window_size(session)
@@ -641,16 +669,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       x_coordinate = 600
       y_coordinate = 400
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/window/current/position"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/window/current/position", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"x" => x_coordinate, "y" => y_coordinate}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.set_window_position(session, x_coordinate, y_coordinate)
@@ -661,18 +688,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/window/current/position"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {
-            "x": 600,
-            "y": 400
+      Bypass.expect(bypass, "GET", "/session/#{session.id}/window/current/position", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{
+            "x" => 600,
+            "y" => 400
           }
-        }>)
+        })
       end)
 
       assert {:ok, %{"x" => 600, "y" => 400}} == Client.get_window_position(session)
@@ -683,15 +707,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/window/current/maximize"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/window/current/maximize", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} == Client.maximize_window(session)
@@ -702,16 +723,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/execute"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/execute", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"script" => "localStorage.clear()", "args" => [2, "a"]}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": null
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => nil
+        })
       end)
 
       assert {:ok, nil} = Client.execute_script(session, "localStorage.clear()", [2, "a"])
@@ -723,16 +743,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       keys = ["abc", :tab]
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/keys"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/keys", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!()
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": null
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => nil
+        })
       end)
 
       assert {:ok, nil} = Client.send_keys(session, keys)
@@ -743,17 +762,22 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       element = build_element_for_session(session)
       keys = ["abc", :tab]
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/element/#{element.id}/value"
-        assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!()
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/element/#{element.id}/value",
+        fn conn ->
+          conn = parse_body(conn)
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": null
-        }>)
-      end)
+          assert conn.body_params == Wallaby.Helpers.KeyCodes.json(keys) |> Jason.decode!()
+
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => nil
+          })
+        end
+      )
 
       assert {:ok, nil} = Client.send_keys(element, keys)
     end
@@ -763,16 +787,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/log"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/log", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"type" => "browser"}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": []
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => []
+        })
       end)
 
       assert {:ok, []} = Client.log(session)
@@ -784,15 +807,14 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       page_source = "<html></html>"
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/source"
+      Bypass.expect(bypass, "GET", "/session/#{session.id}/source", fn conn ->
+        conn = parse_body(conn)
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "#{page_source}"
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => "#{page_source}"
+        })
       end)
 
       assert {:ok, ^page_source} = Client.page_source(session)
@@ -803,15 +825,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/window_handles"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": ["some-window-handle", "other-window-handle"]
-        }>)
+      Bypass.expect(bypass, "GET", "/session/#{session.id}/window_handles", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => ["some-window-handle", "other-window-handle"]
+        })
       end)
 
       assert {:ok, ["some-window-handle", "other-window-handle"]} = Client.window_handles(session)
@@ -822,15 +841,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "GET"
-        assert conn.request_path == "/session/#{session.id}/window_handle"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": "my-window-handle"
-        }>)
+      Bypass.expect(bypass, "GET", "/session/#{session.id}/window_handle", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => "my-window-handle"
+        })
       end)
 
       assert {:ok, "my-window-handle"} = Client.window_handle(session)
@@ -842,16 +858,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       window_handle_id = "my-window-handle"
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/window"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/window", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"name" => window_handle_id, "handle" => window_handle_id}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.focus_window(session, window_handle_id)
@@ -862,15 +877,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "DELETE"
-        assert conn.request_path == "/session/#{session.id}/window"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+      Bypass.expect(bypass, "DELETE", "/session/#{session.id}/window", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.close_window(session)
@@ -882,9 +894,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       frame_element = build_element_for_session(session, "frame-element-id")
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/frame"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/frame", fn conn ->
+        conn = parse_body(conn)
 
         assert conn.body_params == %{
                  "id" => %{
@@ -893,11 +904,11 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
                  }
                }
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.focus_frame(session, frame_element)
@@ -909,16 +920,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       frame_id = nil
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/frame"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/frame", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"id" => frame_id}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.focus_frame(session, frame_id)
@@ -928,16 +938,14 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       frame_id = 1
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/frame"
-        assert conn.body_params == %{"id" => frame_id}
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/frame", fn conn ->
+        conn = parse_body(conn)
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.focus_frame(session, frame_id)
@@ -948,15 +956,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/frame/parent"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/frame/parent", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.focus_parent_frame(session)
@@ -968,16 +973,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/moveto"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/moveto", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"element" => element.id}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.move_mouse_to(nil, element)
@@ -989,16 +993,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       {x_offset, y_offset} = {20, 30}
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/moveto"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/moveto", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"xoffset" => x_offset, "yoffset" => y_offset}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.move_mouse_to(session, nil, x_offset, y_offset)
@@ -1011,9 +1014,8 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
       element = build_element_for_session(session)
       {x_offset, y_offset} = {20, 30}
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/moveto"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/moveto", fn conn ->
+        conn = parse_body(conn)
 
         assert conn.body_params == %{
                  "element" => element.id,
@@ -1021,11 +1023,11 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
                  "yoffset" => y_offset
                }
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.move_mouse_to(nil, element, x_offset, y_offset)
@@ -1036,16 +1038,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/click"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/click", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"button" => 0}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.click(session, :left)
@@ -1056,15 +1057,12 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/doubleclick"
-
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/doubleclick", fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.double_click(session)
@@ -1075,16 +1073,15 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/buttondown"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/buttondown", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"button" => 0}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.button_down(session, :left)
@@ -1095,26 +1092,19 @@ defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
     test "sends the correct request to the server", %{bypass: bypass} do
       session = build_session_for_bypass(bypass)
 
-      handle_request(bypass, fn conn ->
-        assert conn.method == "POST"
-        assert conn.request_path == "/session/#{session.id}/buttonup"
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/buttonup", fn conn ->
+        conn = parse_body(conn)
         assert conn.body_params == %{"button" => 0}
 
-        send_json_resp(conn, 200, ~s<{
-          "sessionId": "#{session.id}",
-          "status": 0,
-          "value": {}
-        }>)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
       end)
 
       assert {:ok, %{}} = Client.button_up(session, :left)
     end
-  end
-
-  defp handle_request(bypass, handler_fn) do
-    Bypass.expect(bypass, fn conn ->
-      conn |> parse_body |> handler_fn.()
-    end)
   end
 
   defp build_session_for_bypass(bypass, session_id \\ "my-sample-session") do

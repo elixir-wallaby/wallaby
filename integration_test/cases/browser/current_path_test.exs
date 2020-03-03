@@ -3,7 +3,7 @@ defmodule Wallaby.Integration.Browser.CurrentPathTest do
 
   alias Wallaby.Integration.Pages.{IndexPage, Page1}
 
-  test "gets the current_url of the session", %{session: session}  do
+  test "gets the current_url of the session", %{session: session} do
     url =
       session
       |> IndexPage.visit()
@@ -14,7 +14,7 @@ defmodule Wallaby.Integration.Browser.CurrentPathTest do
     assert url == "http://localhost:#{URI.parse(url).port}/page_1.html"
   end
 
-  test "gets the current_path of the session", %{session: session}  do
+  test "gets the current_path of the session", %{session: session} do
     path =
       session
       |> IndexPage.visit()

@@ -10,6 +10,7 @@ defmodule Wallaby.Phantom.Driver do
   alias Wallaby.Phantom
   alias Wallaby.Phantom.Server
   alias Wallaby.Metadata
+  alias Wallaby.Query
   alias Wallaby.Session
   alias Wallaby.StaleReferenceError
 
@@ -74,8 +75,7 @@ defmodule Wallaby.Phantom.Driver do
   Finds an element on the page for a session. If an element is provided then
   the query will be scoped to within that element.
   """
-  # @spec find_elements(Locator.t, query) :: t
-
+  @spec find_elements(Session.t() | Element.t(), Query.compiled()) :: {:ok, [Element.t()]}
   def find_elements(parent, locator) do
     check_logs!(parent, fn ->
       with {:ok, resp} <- request(:post, parent.url <> "/elements", to_params(locator)),

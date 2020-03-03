@@ -29,12 +29,11 @@ defmodule Wallaby.Mixfile do
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.detail": :test,
-        "coveralls.post": :test,
         "coveralls.html": :test,
-        "coveralls.travis": :test,
-        "coveralls.safe_travis": :test,
+        "coveralls.json": :test,
         "test.all": :test,
-        "test.drivers": :test
+        "test.drivers": :test,
+        docs: :docs
       ],
       test_coverage: [tool: ExCoveralls],
       test_paths: test_paths(@selected_driver),

@@ -2,7 +2,7 @@
 ============
 [![Actions Status](https://github.com/elixir-wallaby/wallaby/workflows/CI/badge.svg)](https://github.com/elixir-wallaby/wallaby/actions)
 [![Hex pm](https://img.shields.io/hexpm/v/wallaby.svg?style=flat)](https://hex.pm/packages/wallaby)
-[![Coverage Status](https://coveralls.io/repos/github/keathley/wallaby/badge.svg?branch=master)](https://coveralls.io/github/keathley/wallaby?branch=master)
+[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/master/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
 [![Inline docs](http://inch-ci.org/github/keathley/wallaby.svg)](http://inch-ci.org/github/keathley/wallaby)
 
 Wallaby helps you test your web applications by simulating realistic user interactions.
@@ -523,7 +523,7 @@ Currently Wallaby provides experimental support for both headless chrome and sel
 Both of these drivers are still "experimental" because they don't support the full API yet and because the implementation is changing rapidly.
 But, if you would like to use them in your project here's what you'll need to do.
 
-Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Chrome.html#content) for further information about using the Chrome driver.
+Please refer to the [documentation](https://hexdocs.pm/wallaby/readme.html#headless-chrome) for further information about using the Chrome driver.
 
 ### Headless Chrome
 

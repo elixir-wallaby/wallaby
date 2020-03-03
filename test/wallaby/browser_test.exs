@@ -8,7 +8,9 @@ defmodule Wallaby.BrowserTest do
   alias Wallaby.Session
 
   defmodule TestDriver do
-    def start_link() do
+    use Agent
+
+    def start_link(_opts) do
       Agent.start_link(fn -> [] end, name: __MODULE__)
     end
 
@@ -40,7 +42,7 @@ defmodule Wallaby.BrowserTest do
   describe "visit/2" do
     setup do
       ensure_setting_is_reset(:wallaby, :base_url)
-      {:ok, _} = TestDriver.start_link()
+      start_supervised!(TestDriver)
       :ok
     end
 

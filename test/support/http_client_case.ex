@@ -39,10 +39,14 @@ defmodule Wallaby.HttpClientCase do
   @doc """
   Sends a response with the json content type
   """
-  @spec send_json_resp(Conn.t(), Conn.status(), Conn.body()) :: Conn.t()
-  def send_json_resp(conn, status_code, body) do
+  @spec send_json_resp(Conn.t(), Conn.status(), term) :: Conn.t()
+  def send_json_resp(conn, status_code, body) when is_binary(body) do
     conn
     |> put_resp_content_type("application/json")
     |> send_resp(status_code, body)
+  end
+
+  def send_json_resp(conn, status_code, body) do
+    send_json_resp(conn, status_code, Jason.encode!(body))
   end
 end

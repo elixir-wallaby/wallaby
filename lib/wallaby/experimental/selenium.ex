@@ -60,20 +60,13 @@ defmodule Wallaby.Experimental.Selenium do
   ```elixir
   Wallaby.start_session(
     remote_url: "http://selenium_url",
-    capabilities: %{browserName: "firefox"},
-    create_session_fn: fn url, capabilities ->
-      WebdriverClient.create_session(url, capabilities)
-    end
+    capabilities: %{browserName: "firefox"}
   )
   ```
   """
   @type start_session_opts ::
           {:remote_url, String.t()}
           | {:capabilities, map}
-          | {:create_session_fn, (String.t(), map -> {:ok, %{}})}
-
-  @typedoc false
-  @type end_session_opts :: {:end_session_fn, (Session.t() -> any)}
 
   @doc false
   def start_link(opts \\ []) do
@@ -94,11 +87,9 @@ defmodule Wallaby.Experimental.Selenium do
   @spec start_session([start_session_opts]) :: Wallaby.Driver.on_start_session() | no_return
   def start_session(opts \\ []) do
     base_url = Keyword.get(opts, :remote_url, "http://localhost:4444/wd/hub/")
-    create_session_fn = Keyword.get(opts, :create_session_fn, &WebdriverClient.create_session/2)
-
     capabilities = Keyword.get(opts, :capabilities, capabilities_from_config())
 
-    with {:ok, response} <- create_session_fn.(base_url, capabilities) do
+    with {:ok, response} <- WebdriverClient.create_session(base_url, capabilities) do
       id = response["sessionId"]
 
       session = %Wallaby.Session{
@@ -122,11 +113,9 @@ defmodule Wallaby.Experimental.Selenium do
   end
 
   @doc false
-  @spec end_session(Session.t(), [end_session_opts]) :: :ok
-  def end_session(session, opts \\ []) do
-    end_session_fn = Keyword.get(opts, :end_session_fn, &WebdriverClient.delete_session/1)
-
-    end_session_fn.(session)
+  @spec end_session(Session.t()) :: :ok
+  def end_session(session) do
+    WebdriverClient.delete_session(session)
     :ok
   end
 

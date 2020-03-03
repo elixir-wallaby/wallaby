@@ -1,65 +1,85 @@
 defmodule Wallaby.Experimental.SeleniumTest do
-  use ExUnit.Case, async: true
+  use Wallaby.HttpClientCase, async: true
 
   alias Wallaby.Experimental.Selenium
+  alias Wallaby.Session
+  alias Wallaby.TestSupport.JSONWireProtocolResponses
 
   describe "start_session/1" do
-    test "starts a selenium session with the default url" do
+    test "starts a selenium session with remote_url", %{bypass: bypass} do
+      remote_url = bypass_url(bypass, "/")
       session_id = "abc123"
-      test_pid = self()
 
-      create_session_fn = fn base_url, capabilities ->
-        send(test_pid, {:fn_called, [base_url, capabilities]})
+      Bypass.expect(bypass, "POST", "/session", fn conn ->
+        response = JSONWireProtocolResponses.start_session_response(session_id: session_id)
+        send_json_resp(conn, 200, response)
+      end)
 
-        {:ok, %{"sessionId" => session_id}}
-      end
-
-      {:ok, session} = Selenium.start_session(create_session_fn: create_session_fn)
+      assert {:ok, session} = Selenium.start_session(remote_url: remote_url)
 
       assert session == %Wallaby.Session{
-               session_url: "http://localhost:4444/wd/hub/session/#{session_id}",
-               url: "http://localhost:4444/wd/hub/session/#{session_id}",
+               session_url: remote_url |> URI.merge("session/#{session_id}") |> to_string(),
+               url: remote_url |> URI.merge("session/#{session_id}") |> to_string(),
                id: session_id,
                server: :none,
                driver: Wallaby.Experimental.Selenium
              }
-
-      assert_received {:fn_called, ["http://localhost:4444/wd/hub/", %{javascriptEnabled: true}]}
     end
 
-    # This is only here until we build a real error api for the user
-    test "returns an error response as is" do
-      create_session_fn = fn _, _ ->
-        {:error, %HTTPoison.Error{reason: :nxdomain}}
-      end
+    test "raises a RuntimeError on unknown domain" do
+      remote_url = "http://does.not.exist-asdf/"
 
-      assert {:error, %HTTPoison.Error{reason: :nxdomain}} =
-               Selenium.start_session(create_session_fn: create_session_fn)
+      assert_raise RuntimeError, ~r/:nxdomain/, fn ->
+        Selenium.start_session(remote_url: remote_url)
+      end
+    end
+
+    test "raises a RuntimeError when unable to connect", %{bypass: bypass} do
+      remote_url = bypass_url(bypass, "/")
+
+      Bypass.down(bypass)
+
+      assert_raise RuntimeError, ~r/:econnrefused/, fn ->
+        Selenium.start_session(remote_url: remote_url)
+      end
     end
   end
 
   describe "end_session/1" do
-    test "sends the end session" do
-      session = build_session()
-      test_pid = self()
+    test "returns :ok on success", %{bypass: bypass} do
+      %Session{id: session_id} =
+        session =
+        bypass
+        |> bypass_url("/")
+        |> build_session()
 
-      end_session_fn = fn session ->
-        send(test_pid, {:fn_called, session})
-        :ok
-      end
+      Bypass.expect_once(bypass, "DELETE", "/session/#{session_id}", fn conn ->
+        response = %{"sessionId" => session_id, "value" => nil, "status" => 0}
+        send_json_resp(conn, 200, response)
+      end)
 
-      assert :ok = Selenium.end_session(session, end_session_fn: end_session_fn)
+      assert :ok = Selenium.end_session(session)
+    end
 
-      assert_received {:fn_called, ^session}
+    test "returns :ok when unable to connect", %{bypass: bypass} do
+      session =
+        bypass
+        |> bypass_url("/")
+        |> build_session()
+
+      Bypass.down(bypass)
+
+      assert :ok = Selenium.end_session(session)
     end
   end
 
-  defp build_session do
+  defp build_session(remote_url) do
     session_id = random_string(24)
+    session_url = remote_url |> URI.merge("session/#{session_id}") |> to_string()
 
     %Wallaby.Session{
-      session_url: "http://localhost:4444/wd/hub/session/#{session_id}",
-      url: "http://localhost:4444/wd/hub/session/#{session_id}",
+      session_url: session_url,
+      url: session_url,
       id: session_id,
       driver: Wallaby.Experimental.Selenium
     }

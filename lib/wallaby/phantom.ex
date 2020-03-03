@@ -34,11 +34,10 @@ defmodule Wallaby.Phantom do
   use Supervisor
 
   alias Wallaby.Phantom.Driver
+  alias Wallaby.Phantom.ServerPool
   alias Wallaby.DependencyError
 
   @behaviour Wallaby.Driver
-
-  @pool_name Wallaby.ServerPool
 
   @doc false
   def start_link(opts \\ []) do
@@ -69,11 +68,11 @@ defmodule Wallaby.Phantom do
 
   def init(:ok) do
     children = [
-      :poolboy.child_spec(@pool_name, poolboy_config(), []),
-      worker(Wallaby.Driver.LogStore, [[]])
+      ServerPool,
+      Wallaby.Driver.LogStore
     ]
 
-    supervise(children, strategy: :one_for_one)
+    Supervisor.init(children, strategy: :one_for_one)
   end
 
   @doc false
@@ -100,7 +99,7 @@ defmodule Wallaby.Phantom do
 
   @doc false
   def start_session(opts) do
-    server = :poolboy.checkout(@pool_name, true, :infinity)
+    {:ok, server} = ServerPool.checkout()
     Wallaby.Phantom.Driver.create(server, opts)
   end
 
@@ -108,7 +107,7 @@ defmodule Wallaby.Phantom do
   def end_session(%Wallaby.Session{server: server} = session) do
     Driver.execute_script(session, "localStorage.clear()", [], check_logs: false)
     Driver.delete(session)
-    :poolboy.checkin(Wallaby.ServerPool, server)
+    ServerPool.check_in(server)
   end
 
   def blank_page?(session) do
@@ -194,24 +193,6 @@ defmodule Wallaby.Phantom do
     Enum.reduce(ch, %{}, fn {k, v}, acc ->
       Map.merge(acc, %{"phantomjs.page.customHeaders.#{k}" => v})
     end)
-  end
-
-  @doc false
-  def pool_size do
-    Application.get_env(:wallaby, :pool_size) || default_pool_size()
-  end
-
-  defp poolboy_config do
-    [
-      name: {:local, @pool_name},
-      worker_module: Wallaby.Phantom.Server,
-      size: pool_size(),
-      max_overflow: 0
-    ]
-  end
-
-  defp default_pool_size do
-    :erlang.system_info(:schedulers_online)
   end
 
   defp configured_phantom_js do
