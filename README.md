@@ -11,7 +11,7 @@ Here's an example test for a simple Todo application:
 
 ```elixir
 defmodule MyApp.Features.TodoTest do
-  use MyApp.FeatureCase, async: true
+  use MyApp.FeatureTest, async: true
 
   import Wallaby.Query, only: [css: 2, text_field: 1, button: 1]
 
@@ -30,7 +30,7 @@ Because Wallaby manages multiple browsers for you, its possible to test several 
 
 ```elixir
 defmodule MyApp.Features.MultipleUsersTest do
-  use MyApp.FeatureCase, async: true
+  use MyApp.FeatureTest, async: true
 
   import Wallaby.Query, only: [text_field: 1, button: 1, css: 2]
 
@@ -225,11 +225,11 @@ config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
 
 ### Writing tests
 
-It's easiest to add Wallaby to your test suite by creating the included `Wallaby.FeatureCase` test template
+It's easiest to add Wallaby to your test suite by creating the included `Wallaby.FeatureTest` test template
 
 ```elixir
 defmodule YourApp.UserListTest do
-  use Wallaby.FeatureCase, async: true
+  use Wallaby.FeatureTest, async: true
 
   feature "users have names", %{sessions: [session]} do
     session

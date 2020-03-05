@@ -1,6 +1,8 @@
 defmodule Wallaby.Integration.Browser.ScreenshotTest do
   use Wallaby.Integration.SessionCase, async: false
 
+  import Wallaby.SettingsTestHelpers
+
   setup %{session: session} do
     page =
       session
@@ -36,6 +38,7 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
   end
 
   test "users can specify the screenshot directory", %{page: page} do
+    ensure_setting_is_reset(:wallaby, :screenshot_dir)
     Application.put_env(:wallaby, :screenshot_dir, "shots")
 
     screenshots =
@@ -50,11 +53,11 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
       assert File.exists?(path)
     end)
 
-    Application.put_env(:wallaby, :screenshot_dir, nil)
     File.rm_rf!("#{File.cwd!()}/shots")
   end
 
   test "users can specify the screenshot name", %{page: page} do
+    ensure_setting_is_reset(:wallaby, :screenshot_dir)
     Application.put_env(:wallaby, :screenshot_dir, "shots")
 
     [screenshot_path] =
@@ -64,11 +67,11 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
 
     assert screenshot_path == "shots/some_page.png"
 
-    Application.put_env(:wallaby, :screenshot_dir, nil)
     File.rm_rf!("#{File.cwd!()}/shots")
   end
 
   test "filters out illegal characters in screenshot name", %{page: page} do
+    ensure_setting_is_reset(:wallaby, :screenshot_dir)
     Application.put_env(:wallaby, :screenshot_dir, "shots")
 
     [screenshot_path] =
@@ -78,7 +81,6 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
 
     assert screenshot_path == "shots/some_page.png"
 
-    Application.put_env(:wallaby, :screenshot_dir, nil)
-    File.rm_rf! "#{File.cwd!}/shots"
+    File.rm_rf!("#{File.cwd!()}/shots")
   end
 end

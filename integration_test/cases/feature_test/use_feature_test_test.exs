@@ -1,8 +1,16 @@
-defmodule Wallaby.Integration.Browser.FeatureCaseTest do
-  use Wallaby.FeatureCase, async: true
+defmodule Wallaby.Integration.Browser.UseFeatureTestTest do
+  use ExUnit.Case, async: true
+  use Wallaby.FeatureTest
 
-  alias Wallaby.Integration.Browser.FeatureCaseTest
+  alias Wallaby.Integration.Browser.UseFeatureTestTest
   alias Wallaby.Experimental.Selenium.WebdriverClient
+
+  setup do
+    Wallaby.SettingsTestHelpers.ensure_setting_is_reset(:wallaby, :screenshot_on_failure)
+    Application.put_env(:wallaby, :screenshot_on_failure, true)
+
+    :ok
+  end
 
   def create_session_fn(url, capabilities) do
     assert capabilities == %{test: "I'm a capability"}
@@ -21,6 +29,7 @@ defmodule Wallaby.Integration.Browser.FeatureCaseTest do
       assert Element.text(el) == "Page 1"
     end)
 
+
     session_2
     |> visit("/page_2.html")
     |> find(Query.css("body > h1"), fn el ->
@@ -38,13 +47,13 @@ defmodule Wallaby.Integration.Browser.FeatureCaseTest do
 
   @sessions [
     [
-      create_session_fn: &FeatureCaseTest.create_session_fn/2,
+      create_session_fn: &UseFeatureTestTest.create_session_fn/2,
       capabilities: %{
         test: "I'm a capability"
       }
     ]
   ]
-  feature "reads capabilities from session attribute", %{sessions: session} do
+  feature "reads capabilities from session attribute" do
     assert true
   end
 end
