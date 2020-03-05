@@ -14,7 +14,7 @@ defmodule Wallaby do
   * `:js_logger` - IO device where javascript console logs are written to. Defaults to :stdio. This option can also be set to a file or any other io device. You can disable javascript console logging by setting this to `nil`.
 
   ### PhantomJS related configuration
-  
+
   * `:pool_size` - Maximum amount of phantoms to run. The default is `:erlang.system_info(:schedulers_online) * 2`.
   * `:phantomjs` - The path to the phantomjs executable (defaults to "phantomjs")
   * `:phantomjs_args` - Any extra arguments that should be passed to phantomjs (defaults to "")

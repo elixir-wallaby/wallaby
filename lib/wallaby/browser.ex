@@ -225,16 +225,19 @@ defmodule Wallaby.Browser do
       screenshotable
       |> driver.take_screenshot
 
-    name = opts
-           |> Keyword.get(:name, :erlang.system_time())
-           |> to_string
-           |> remove_illegal_characters
+    name =
+      opts
+      |> Keyword.get(:name, :erlang.system_time())
+      |> to_string
+      |> remove_illegal_characters
+
     path = path_for_screenshot(name)
+
     try do
-      File.write! path, image_data
+      File.write!(path, image_data)
 
       if opts[:log] do
-        IO.puts "Screenshot taken, find it at file:///#{path}"
+        IO.puts("Screenshot taken, find it at file:///#{path}")
       end
 
       Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))

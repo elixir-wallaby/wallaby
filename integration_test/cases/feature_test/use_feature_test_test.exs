@@ -29,7 +29,6 @@ defmodule Wallaby.Integration.Browser.UseFeatureTestTest do
       assert Element.text(el) == "Page 1"
     end)
 
-
     session_2
     |> visit("/page_2.html")
     |> find(Query.css("body > h1"), fn el ->
