@@ -49,14 +49,14 @@ defmodule Wallaby.SessionStore do
     {:reply, sessions, state}
   end
 
-  def handle_info({:DOWN, ref, :process, _pid, reason}, %{refs: refs} = state) do
+  def handle_info({:DOWN, ref, :process, _pid, _reason}, %{refs: refs} = state) do
     {session, refs} = Map.pop(refs, ref)
     WebdriverClient.delete_session(session)
 
     {:noreply, %{state | refs: refs}}
   end
 
-  def terminate(reason, %{refs: refs}) do
+  def terminate(_reason, %{refs: refs}) do
     Enum.each(refs, fn {_ref, session} -> close_session(session) end)
   end
 
