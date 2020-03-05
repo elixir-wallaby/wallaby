@@ -54,6 +54,8 @@ defmodule Wallaby.Mixfile do
       {:jason, "~> 1.1"},
       {:httpoison, "~> 0.12 or ~> 1.0"},
       {:poolboy, "~> 1.5"},
+      {:web_driver_client,
+       github: "aaronrenner/web_driver_client", branch: "ar-pass-options-to-http-client"},
       {:dialyxir, "~> 0.5", only: :dev, runtime: false},
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
