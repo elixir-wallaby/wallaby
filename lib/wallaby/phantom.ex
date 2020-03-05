@@ -41,20 +41,17 @@ defmodule Wallaby.Phantom do
 
   @doc false
   def start_link(opts \\ []) do
-    Supervisor.start_link(__MODULE__, :ok, opts)
+    {:ok, phantomjs_path} = find_phantomjs_executable()
+
+    Supervisor.start_link(__MODULE__, %{phantomjs_path: phantomjs_path}, opts)
   end
 
   def validate do
-    cond do
-      configured_phantom_js()
-      |> Path.expand()
-      |> System.find_executable() ->
+    case find_phantomjs_executable() do
+      {:ok, _path} ->
         :ok
 
-      System.find_executable("phantomjs") ->
-        :ok
-
-      true ->
+      {:error, :not_found} ->
         exception =
           DependencyError.exception("""
           Wallaby can't find phantomjs. Make sure you have phantomjs installed
@@ -66,13 +63,32 @@ defmodule Wallaby.Phantom do
     end
   end
 
-  def init(:ok) do
+  def init(%{phantomjs_path: phantomjs_path}) do
     children = [
-      ServerPool,
+      {ServerPool, [phantomjs_path]},
       Wallaby.Driver.LogStore
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
+  end
+
+  @doc false
+  @spec find_phantomjs_executable :: {:ok, String.t()} | {:error, :not_found}
+  def find_phantomjs_executable do
+    phantom_path = Application.get_env(:wallaby, :phantomjs, "phantomjs")
+
+    result =
+      [Path.expand(phantom_path), phantom_path]
+      |> Enum.find(&System.find_executable/1)
+      |> case do
+        path when is_binary(path) ->
+          {:ok, path}
+
+        nil ->
+          {:error, :not_found}
+      end
+
+    result
   end
 
   @doc false
@@ -193,10 +209,6 @@ defmodule Wallaby.Phantom do
     Enum.reduce(ch, %{}, fn {k, v}, acc ->
       Map.merge(acc, %{"phantomjs.page.customHeaders.#{k}" => v})
     end)
-  end
-
-  defp configured_phantom_js do
-    Application.get_env(:wallaby, :phantomjs, "phantomjs")
   end
 
   def window_handle(_session), do: {:error, :not_supported}

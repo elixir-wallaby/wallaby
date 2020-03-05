@@ -6,6 +6,7 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
   import Wallaby.TestSupport.TestScriptUtils
   import Wallaby.TestSupport.TestWorkspace
 
+  alias Wallaby.Phantom
   alias Wallaby.TestSupport.Phantom.PhantomTestScript
 
   @moduletag :capture_log
@@ -144,5 +145,53 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
 
     assert ^desired_pool_size =
              test_script_path |> PhantomTestScript.get_invocations() |> length()
+  end
+
+  test "works with a path in the home directory" do
+    workspace_path = "~/.wallaby-tmp-#{random_string()}"
+    expanded_workspace_path = Path.expand(workspace_path)
+    :ok = File.mkdir_p!(expanded_workspace_path)
+    on_exit(fn -> File.rm_rf!(expanded_workspace_path) end)
+
+    pool_size = 1
+    {:ok, original_phantomjs_path} = Phantom.find_phantomjs_executable()
+
+    expanded_test_script_path =
+      original_phantomjs_path
+      |> PhantomTestScript.build_wrapper_script()
+      |> write_test_script!(expanded_workspace_path)
+
+    non_expanded_test_script_path =
+      Path.join(
+        workspace_path,
+        Path.basename(expanded_test_script_path)
+      )
+
+    ensure_setting_is_reset(:wallaby, :phantomjs)
+    Application.put_env(:wallaby, :phantomjs, non_expanded_test_script_path)
+
+    ensure_setting_is_reset(:wallaby, :pool_size)
+    Application.put_env(:wallaby, :pool_size, pool_size)
+
+    assert :ok = Application.start(:wallaby)
+
+    assert {:ok, session} = Wallaby.start_session()
+
+    assert expanded_test_script_path |> PhantomTestScript.get_invocations() |> length() ==
+             pool_size
+  end
+
+  test "fails to start when phantomjs path is configured incorrectly" do
+    ensure_setting_is_reset(:wallaby, :phantomjs)
+    Application.put_env(:wallaby, :phantomjs, "this-really-should-not-exist-#{random_string()}")
+
+    assert {:error, _} = Application.start(:wallaby)
+  end
+
+  defp random_string do
+    0x100000000
+    |> :rand.uniform()
+    |> Integer.to_string(36)
+    |> String.downcase()
   end
 end

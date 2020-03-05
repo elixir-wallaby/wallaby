@@ -8,8 +8,7 @@ defmodule Wallaby.Phantom.Server do
 
   @type os_pid :: non_neg_integer
 
-  @type start_link_opt ::
-          {:phantom_path, String.t()}
+  @type start_link_opt :: {:phantom_path, String.t()}
 
   @spec start_link([start_link_opt]) :: GenServer.on_start()
   def start_link(args \\ []) do
