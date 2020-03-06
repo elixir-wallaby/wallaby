@@ -7,14 +7,14 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
 
   describe "new/1" do
     setup do
-      ensure_setting_is_reset(:wallaby, :phantomjs)
       ensure_setting_is_reset(:wallaby, :phantomjs_args)
     end
 
     test "creates a new server state that's not running" do
       assert %ServerState{
-               workspace_path: "/tmp"
-             } = ServerState.new("/tmp")
+               workspace_path: "/tmp",
+               phantom_path: "my-phantom"
+             } = ServerState.new("/tmp", "my-phantom")
     end
 
     test "creates a new server state with a prefilled port_number" do
@@ -25,13 +25,6 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
 
     test "allows overriding the port number" do
       assert %ServerState{port_number: 8080} = build_server_state(port_number: 8080)
-    end
-
-    test "defaults to reading phantom_path from env" do
-      Application.put_env(:wallaby, :phantomjs, "test/path/phantomjs")
-      %ServerState{phantom_path: phantom_path} = build_server_state()
-
-      assert phantom_path == "test/path/phantomjs"
     end
 
     test "defaults to reading phantom_args from env" do
@@ -54,14 +47,10 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
 
   describe "external_command/1" do
     test "with no phantom_args" do
-      state =
-        build_server_state(
-          phantom_path: "phantomjs",
-          port_number: 8000
-        )
+      state = ServerState.new("/workspace", "my-phantomjs", port_number: 8000)
 
       assert %ExternalCommand{
-               executable: "phantomjs",
+               executable: "my-phantomjs",
                args: [
                  "--webdriver=8000",
                  "--local-storage-path=#{ServerState.local_storage_path(state)}"
@@ -71,11 +60,7 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
 
     test "with phantom_args as a list" do
       state =
-        build_server_state(
-          phantom_path: "phantomjs",
-          port_number: 8000,
-          phantom_args: ["--debug"]
-        )
+        ServerState.new("/workspace", "phantomjs", port_number: 8000, phantom_args: ["--debug"])
 
       assert %ExternalCommand{
                executable: "phantomjs",
@@ -89,10 +74,8 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
 
     test "with phantom_args as a string" do
       state =
-        build_server_state(
-          phantom_path: "phantomjs",
+        ServerState.new("/workspace", "phantomjs",
           port_number: 8000,
-          local_storage_path: "/srv/wallaby",
           phantom_args: "--debug --hello=world"
         )
 
@@ -110,23 +93,21 @@ defmodule Wallaby.Phantom.Server.ServerStateTest do
 
   describe "local_storage_path/1" do
     test "returns the workspace_path/local_storage" do
-      state = ServerState.new("/tmp/wallaby")
+      state = ServerState.new("/tmp/wallaby", "phantomjs")
 
-      assert "/tmp/wallaby/local_storage" ==
-               ServerState.local_storage_path(state)
+      assert "/tmp/wallaby/local_storage" == ServerState.local_storage_path(state)
     end
   end
 
   describe "wrapper_script_path/1" do
     test "returns the workspace_path/wrapper" do
-      state = ServerState.new("/tmp/wallaby")
+      state = ServerState.new("/tmp/wallaby", "phantomjs")
 
-      assert '/tmp/wallaby/wrapper' ==
-               ServerState.wrapper_script_path(state)
+      assert '/tmp/wallaby/wrapper' == ServerState.wrapper_script_path(state)
     end
   end
 
   defp build_server_state(params \\ []) do
-    ServerState.new("/tmp", params)
+    ServerState.new("/tmp", "/path/to/phantom", params)
   end
 end
