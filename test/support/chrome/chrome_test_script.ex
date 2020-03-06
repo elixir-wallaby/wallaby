@@ -51,6 +51,7 @@ defmodule Wallaby.TestSupport.Chrome.ChromeTestScript do
   def get_invocations(script_path) when is_binary(script_path) do
     script_path
     |> output_path()
+    |> Path.expand()
     |> File.read()
     |> case do
       {:ok, contents} ->

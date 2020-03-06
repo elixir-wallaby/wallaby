@@ -145,6 +145,7 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   @doc false
+  @spec validate() :: :ok | {:error, DependencyError.t()}
   def validate do
     with {:ok, executable} <- find_chromedriver_executable() do
       {version, 0} = System.cmd(executable, ["--version"])
@@ -158,31 +159,28 @@ defmodule Wallaby.Experimental.Chrome do
   end
 
   @doc false
+  @spec find_chromedriver_executable :: {:ok, String.t()} | {:error, DependencyError.t()}
   def find_chromedriver_executable do
-    with {:error, :not_found} <-
-           :wallaby
-           |> Application.get_env(:chromedriver, [])
-           |> Keyword.get(:path, "")
-           |> Path.expand()
-           |> do_find_chromedriver(),
-         {:error, :not_found} <- do_find_chromedriver("chromedriver") do
-      exception =
-        DependencyError.exception("""
-        Wallaby can't find chromedriver. Make sure you have chromedriver installed
-        and included in your path.
-        You can also provide a path using `config :wallaby, chromedriver: <path>`.
-        """)
+    chromedriver_path =
+      :wallaby
+      |> Application.get_env(:chromedriver, [])
+      |> Keyword.get(:path, "chromedriver")
 
-      {:error, exception}
-    end
-  end
-
-  defp do_find_chromedriver(executable) do
-    executable
-    |> System.find_executable()
+    [Path.expand(chromedriver_path), chromedriver_path]
+    |> Enum.find(&System.find_executable/1)
     |> case do
-      path when not is_nil(path) -> {:ok, path}
-      nil -> {:error, :not_found}
+      path when is_binary(path) ->
+        {:ok, path}
+
+      nil ->
+        exception =
+          DependencyError.exception("""
+          Wallaby can't find chromedriver. Make sure you have chromedriver installed
+          and included in your path.
+          You can also provide a path using `config :wallaby, chromedriver: <path>`.
+          """)
+
+        {:error, exception}
     end
   end
 

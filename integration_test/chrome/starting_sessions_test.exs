@@ -8,6 +8,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
 
   alias Wallaby.Experimental.Chrome
   alias Wallaby.TestSupport.Chrome.ChromeTestScript
+  alias Wallaby.TestSupport.TestWorkspace
 
   @moduletag :capture_log
 
@@ -83,5 +84,48 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
     Application.put_env(:wallaby, :chromedriver, path: test_script_path)
 
     assert :ok = Application.start(:wallaby)
+  end
+
+  test "works with a path in the home directory" do
+    test_script_path =
+      "~/.wallaby-tmp-#{random_string()}"
+      |> TestWorkspace.mkdir!()
+      |> write_chrome_wrapper_script!()
+
+    ensure_setting_is_reset(:wallaby, :chromedriver)
+    Application.put_env(:wallaby, :chromedriver, path: test_script_path)
+
+    assert :ok = Application.start(:wallaby)
+
+    assert {:ok, session} = Wallaby.start_session()
+
+    assert test_script_path |> ChromeTestScript.get_invocations() |> Enum.any?()
+  end
+
+  test "fails to start when chromedriver path is configured incorrectly" do
+    ensure_setting_is_reset(:wallaby, :chromedriver)
+
+    Application.put_env(
+      :wallaby,
+      :chromedriver,
+      path: "this-really-should-not-exist-#{random_string()}"
+    )
+
+    assert {:error, _} = Application.start(:wallaby)
+  end
+
+  defp write_chrome_wrapper_script!(base_dir, opts \\ []) do
+    {:ok, chromedriver_path} = Chrome.find_chromedriver_executable()
+
+    chromedriver_path
+    |> ChromeTestScript.build_wrapper_script(opts)
+    |> write_test_script!(base_dir)
+  end
+
+  defp random_string do
+    0x100000000
+    |> :rand.uniform()
+    |> Integer.to_string(36)
+    |> String.downcase()
   end
 end
