@@ -22,7 +22,7 @@ defmodule Wallaby.TestSupport.Phantom.PhantomTestScript do
 
     sleep #{startup_delay / 1000}
 
-    #{phantom_path} $@
+    exec #{phantom_path} $@
     """
   end
 

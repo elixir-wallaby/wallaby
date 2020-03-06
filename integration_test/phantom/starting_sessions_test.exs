@@ -27,6 +27,38 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
     assert {:ok, session} = Wallaby.start_session()
   end
 
+  test "works when phantomjs starts slowly" do
+    test_script_path =
+      TestWorkspace.mkdir!()
+      |> write_phantom_wrapper_script!(startup_delay: 2_000)
+
+    ensure_setting_is_reset(:wallaby, :phantomjs)
+    Application.put_env(:wallaby, :phantomjs, test_script_path)
+
+    assert :ok = Application.start(:wallaby)
+
+    assert {:ok, session} = Wallaby.start_session()
+  end
+
+  test "raises a RuntimeError if phantomjs isn't ready before startup timeout" do
+    test_script_path =
+      TestWorkspace.mkdir!()
+      |> write_phantom_wrapper_script!(startup_delay: 10_000)
+
+    ensure_setting_is_reset(:wallaby, :phantomjs)
+    Application.put_env(:wallaby, :phantomjs, test_script_path)
+
+    assert :ok = Application.start(:wallaby)
+
+    readiness_timeout = 500
+
+    assert_takes(readiness_timeout, 100, fn ->
+      assert_raise RuntimeError, ~r/timeout waiting for phantomjs to be ready/i, fn ->
+        Wallaby.start_session(readiness_timeout: readiness_timeout)
+      end
+    end)
+  end
+
   test "starts a session with default args when none are configured", %{
     workspace_path: workspace_path
   } do
@@ -153,6 +185,18 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
     Application.put_env(:wallaby, :phantomjs, "this-really-should-not-exist")
 
     assert {:error, _} = Application.start(:wallaby)
+  end
+
+  defp assert_takes(min_ms, max_additional_ms, fun)
+       when is_integer(min_ms) and is_integer(max_additional_ms) and is_function(fun, 0) do
+    duration_ms = :timer.tc(fun) |> elem(0) |> Kernel./(1000)
+    max_ms = min_ms + max_additional_ms
+
+    assert duration_ms >= min_ms && duration_ms <= max_ms, """
+    expected duration to be >= #{inspect(min_ms)} and <= #{inspect(max_ms)}
+
+    duration (ms): #{inspect(duration_ms)}
+    """
   end
 
   defp write_phantom_wrapper_script!(base_dir, opts \\ []) do

@@ -35,9 +35,12 @@ defmodule Wallaby.Phantom do
 
   alias Wallaby.Phantom.Driver
   alias Wallaby.Phantom.ServerPool
+  alias Wallaby.Phantom.Server
   alias Wallaby.DependencyError
 
   @behaviour Wallaby.Driver
+
+  @default_readiness_timeout 5_000
 
   @doc false
   def start_link(opts \\ []) do
@@ -110,10 +113,25 @@ defmodule Wallaby.Phantom do
     }
   end
 
+  @type start_session_opt :: {:readiness_timeout, timeout}
+
   @doc false
+  @spec start_session([start_session_opt]) :: Wallaby.Driver.on_start_session() | no_return
   def start_session(opts) do
     {:ok, server} = ServerPool.checkout()
+    readiness_timeout = Keyword.get(opts, :readiness_timeout, @default_readiness_timeout)
+
+    wait_until_ready!(server, readiness_timeout)
+
     Wallaby.Phantom.Driver.create(server, opts)
+  end
+
+  @spec wait_until_ready!(Server.server(), timeout) :: :ok | no_return
+  defp wait_until_ready!(server, timeout) do
+    case Server.wait_until_ready(server, timeout) do
+      :ok -> :ok
+      {:error, :timeout} -> raise "timeout waiting for phantomjs to be ready"
+    end
   end
 
   @doc false
