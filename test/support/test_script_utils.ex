@@ -50,8 +50,10 @@ defmodule Wallaby.TestSupport.TestScriptUtils do
     script_name = "test_script-#{random_string()}"
     script_path = Path.join([base_directory, script_name])
 
-    File.write!(script_path, script_contents)
-    File.chmod!(script_path, 0o755)
+    expanded_script_path = Path.expand(script_path)
+
+    File.write!(expanded_script_path, script_contents)
+    File.chmod!(expanded_script_path, 0o755)
 
     script_path
   end

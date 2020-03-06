@@ -8,15 +8,29 @@ defmodule Wallaby.TestSupport.TestWorkspace do
 
   alias Wallaby.Driver.TemporaryPath
 
+  @deprecated "Use mkdir!/0 inside test instead"
   def create_test_workspace(_) do
-    workspace_path = gen_tmp_path()
-    :ok = File.mkdir_p!(workspace_path)
-
-    on_exit(fn ->
-      File.rm_rf!(workspace_path)
-    end)
+    workspace_path = mkdir!()
 
     [workspace_path: workspace_path]
+  end
+
+  @doc """
+  Create a directory that will be removed
+  after the test exits.
+  """
+  @spec mkdir!(String.t()) :: String.t() | no_return
+  def mkdir!(path \\ gen_tmp_path()) do
+    :ok =
+      path
+      |> Path.expand()
+      |> File.mkdir_p!()
+
+    on_exit(fn ->
+      File.rm_rf!(path)
+    end)
+
+    path
   end
 
   defp gen_tmp_path do
