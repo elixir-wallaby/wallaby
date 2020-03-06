@@ -22,21 +22,11 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver do
     tcp_port = Utils.find_available_port()
     port = start_chromedriver(tcp_port)
 
-    Port.monitor(port)
-
     {:ok, %{running: false, port: port, base_url: "http://localhost:#{tcp_port}/"}}
   end
 
   def handle_call(:base_url, _from, %{base_url: base_url} = state) do
     {:reply, {:ok, base_url}, state}
-  end
-
-  def handle_info({:DOWN, _ref, :port, _object, _reason}, state) do
-    IO.inspect("###############################")
-    IO.inspect("#### Chromedriver crashed! ####")
-    IO.inspect("###############################")
-
-    {:noreply, state}
   end
 
   def handle_info(_msg, state) do
