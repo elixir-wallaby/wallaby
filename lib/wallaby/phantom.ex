@@ -77,18 +77,15 @@ defmodule Wallaby.Phantom do
   def find_phantomjs_executable do
     phantom_path = Application.get_env(:wallaby, :phantomjs, "phantomjs")
 
-    result =
-      [Path.expand(phantom_path), phantom_path]
-      |> Enum.find(&System.find_executable/1)
-      |> case do
-        path when is_binary(path) ->
-          {:ok, path}
+    [Path.expand(phantom_path), phantom_path]
+    |> Enum.find(&System.find_executable/1)
+    |> case do
+      path when is_binary(path) ->
+        {:ok, path}
 
-        nil ->
-          {:error, :not_found}
-      end
-
-    result
+      nil ->
+        {:error, :not_found}
+    end
   end
 
   @doc false
