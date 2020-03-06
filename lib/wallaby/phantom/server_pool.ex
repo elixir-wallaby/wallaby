@@ -3,9 +3,9 @@ defmodule Wallaby.Phantom.ServerPool do
 
   @instance __MODULE__
 
-  def child_spec(_) do
+  def child_spec([phantomjs_path]) when is_binary(phantomjs_path) do
     @instance
-    |> :poolboy.child_spec(poolboy_config(), [])
+    |> :poolboy.child_spec(poolboy_config(), phantom_path: phantomjs_path)
     |> from_deprecated_child_spec()
   end
 
