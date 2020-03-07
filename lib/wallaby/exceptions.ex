@@ -90,6 +90,10 @@ end
 defmodule Wallaby.DependencyError do
   defexception [:message]
 
+  @type t :: %__MODULE__{
+          message: String.t()
+        }
+
   def exception(msg) do
     %__MODULE__{message: msg}
   end
