@@ -1,16 +1,21 @@
 defmodule Wallaby.Phantom.ServerTest do
   use ExUnit.Case, async: true
 
+  alias Wallaby.Phantom
   alias Wallaby.Phantom.Server
 
   test "it can start a server" do
-    {:ok, server} = Server.start_link()
+    {:ok, phantomjs_path} = Phantom.find_phantomjs_executable()
+
+    {:ok, server} = Server.start_link(phantomjs_path)
+
     assert Server.get_base_url(server) =~ ~r"http://localhost:\d+/"
   end
 
   test "separate servers do not share local storage" do
-    {:ok, server} = Server.start_link()
-    {:ok, other_server} = Server.start_link()
+    {:ok, phantomjs_path} = Phantom.find_phantomjs_executable()
+    {:ok, server} = Server.start_link(phantomjs_path)
+    {:ok, other_server} = Server.start_link(phantomjs_path)
 
     local_storage = Server.get_local_storage_dir(server)
     other_local_storage = Server.get_local_storage_dir(other_server)
@@ -22,7 +27,9 @@ defmodule Wallaby.Phantom.ServerTest do
   end
 
   test "it clears local storage properly" do
-    {:ok, server} = Server.start_link()
+    {:ok, phantomjs_path} = Phantom.find_phantomjs_executable()
+
+    {:ok, server} = Server.start_link(phantomjs_path)
     local_storage = Server.get_local_storage_dir(server)
     assert File.exists?(local_storage)
 
@@ -31,7 +38,9 @@ defmodule Wallaby.Phantom.ServerTest do
   end
 
   test "it cleans up the local storage directory on stop" do
-    {:ok, server} = Server.start_link()
+    {:ok, phantomjs_path} = Phantom.find_phantomjs_executable()
+
+    {:ok, server} = Server.start_link(phantomjs_path)
     local_storage = Server.get_local_storage_dir(server)
     assert File.exists?(local_storage)
 
@@ -43,12 +52,13 @@ defmodule Wallaby.Phantom.ServerTest do
   test "does not start when the unable to start phantom" do
     Process.flag(:trap_exit, true)
 
-    assert {:error, {:crashed, _}} = Server.start_link(phantom_path: "doesnotexist")
+    assert {:error, {:crashed, _}} = Server.start_link("doesnotexist")
   end
 
   test "crashes when the wrapper script is killed" do
     Process.flag(:trap_exit, true)
-    {:ok, server} = Server.start_link()
+    {:ok, phantomjs_path} = Phantom.find_phantomjs_executable()
+    {:ok, server} = Server.start_link(phantomjs_path)
     os_pid = Server.get_wrapper_os_pid(server)
 
     kill_os_process(os_pid)
@@ -58,7 +68,8 @@ defmodule Wallaby.Phantom.ServerTest do
 
   test "crashes when phantom is killed" do
     Process.flag(:trap_exit, true)
-    {:ok, server} = Server.start_link()
+    {:ok, phantomjs_path} = Phantom.find_phantomjs_executable()
+    {:ok, server} = Server.start_link(phantomjs_path)
     os_pid = Server.get_os_pid(server)
 
     kill_os_process(os_pid)
@@ -67,7 +78,8 @@ defmodule Wallaby.Phantom.ServerTest do
   end
 
   test "shuts down wrapper and phantom when server is stopped" do
-    {:ok, server} = Server.start_link()
+    {:ok, phantomjs_path} = Phantom.find_phantomjs_executable()
+    {:ok, server} = Server.start_link(phantomjs_path)
     wrapper_os_pid = Server.get_wrapper_os_pid(server)
     os_pid = Server.get_os_pid(server)
 
