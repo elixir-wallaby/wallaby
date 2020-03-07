@@ -17,10 +17,7 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
   test "works when phantomjs starts immediately", %{
     workspace_path: workspace_path
   } do
-    test_script_path =
-      Wallaby.phantomjs_path()
-      |> PhantomTestScript.build_wrapper_script()
-      |> write_test_script!(workspace_path)
+    test_script_path = write_phantom_wrapper_script!(workspace_path)
 
     ensure_setting_is_reset(:wallaby, :phantomjs)
     Application.put_env(:wallaby, :phantomjs, test_script_path)
@@ -33,12 +30,8 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
   test "starts a session with default args when none are configured", %{
     workspace_path: workspace_path
   } do
-    original_phantomjs_path = Wallaby.phantomjs_path()
-
-    test_script_path =
-      original_phantomjs_path
-      |> PhantomTestScript.build_wrapper_script()
-      |> write_test_script!(workspace_path)
+    {:ok, original_phantomjs_path} = Phantom.find_phantomjs_executable()
+    test_script_path = write_phantom_wrapper_script!(workspace_path)
 
     ensure_setting_is_reset(:wallaby, :phantomjs)
     Application.put_env(:wallaby, :phantomjs, test_script_path)
@@ -64,12 +57,8 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
   end
 
   test "starts a session with the configured arguments", %{workspace_path: workspace_path} do
-    original_phantomjs_path = Wallaby.phantomjs_path()
-
-    test_script_path =
-      original_phantomjs_path
-      |> PhantomTestScript.build_wrapper_script()
-      |> write_test_script!(workspace_path)
+    {:ok, original_phantomjs_path} = Phantom.find_phantomjs_executable()
+    test_script_path = write_phantom_wrapper_script!(workspace_path)
 
     ensure_setting_is_reset(:wallaby, :phantomjs)
     Application.put_env(:wallaby, :phantomjs, test_script_path)
@@ -102,12 +91,7 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
   end
 
   test "starts one phantomjs instance per scheduler by default", %{workspace_path: workspace_path} do
-    original_phantomjs_path = Wallaby.phantomjs_path()
-
-    test_script_path =
-      original_phantomjs_path
-      |> PhantomTestScript.build_wrapper_script()
-      |> write_test_script!(workspace_path)
+    test_script_path = write_phantom_wrapper_script!(workspace_path)
 
     ensure_setting_is_reset(:wallaby, :phantomjs)
     Application.put_env(:wallaby, :phantomjs, test_script_path)
@@ -127,12 +111,7 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
     workspace_path: workspace_path
   } do
     desired_pool_size = 1
-    original_phantomjs_path = Wallaby.phantomjs_path()
-
-    test_script_path =
-      original_phantomjs_path
-      |> PhantomTestScript.build_wrapper_script()
-      |> write_test_script!(workspace_path)
+    test_script_path = write_phantom_wrapper_script!(workspace_path)
 
     ensure_setting_is_reset(:wallaby, :phantomjs)
     Application.put_env(:wallaby, :phantomjs, test_script_path)

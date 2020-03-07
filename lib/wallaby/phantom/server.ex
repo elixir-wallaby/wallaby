@@ -7,12 +7,19 @@ defmodule Wallaby.Phantom.Server do
   alias Wallaby.Phantom.Server.StartTask
 
   @type os_pid :: non_neg_integer
+  @type path :: String.t()
 
-  @type start_link_opt :: {:phantom_path, String.t()}
+  @spec start_link(path | Keyword.t()) :: GenServer.on_start()
+  def start_link(phantomjs_path) when is_binary(phantomjs_path) do
+    GenServer.start_link(__MODULE__, phantomjs_path)
+  end
 
-  @spec start_link([start_link_opt]) :: GenServer.on_start()
-  def start_link(args \\ []) do
-    GenServer.start_link(__MODULE__, args)
+  # Need to accept args as a keyword list a well, because poolboy's typespec
+  # does not allow a regular list of args
+  def start_link(args) when is_list(args) do
+    phantomjs_path = Keyword.fetch!(args, :phantomjs_path)
+
+    start_link(phantomjs_path)
   end
 
   def stop(server) do
@@ -42,10 +49,10 @@ defmodule Wallaby.Phantom.Server do
   end
 
   @impl GenServer
-  def init(args) do
+  def init(phantomjs_path) do
     {:ok, workspace_path} = ProcessWorkspace.create(self())
 
-    case workspace_path |> ServerState.new(args) |> start_phantom() do
+    case workspace_path |> ServerState.new(phantomjs_path) |> start_phantom() do
       {:ok, server_state} ->
         {:ok, server_state}
 

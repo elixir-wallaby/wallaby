@@ -28,19 +28,19 @@ defmodule Wallaby.Phantom.Server.ServerState do
     :phantom_os_pid
   ]
 
-  @type workspace_path :: String.t()
+  @type path :: String.t()
 
   @type new_opt ::
           {:port_number, port_number}
-          | {:phantom_path, String.t()}
           | {:phantom_args, [String.t()] | String.t()}
 
-  @spec new(workspace_path, [new_opt]) :: t
-  def new(workspace_path, params \\ []) do
+  @spec new(path, path, [new_opt]) :: t
+  def new(workspace_path, phantomjs_path, params \\ [])
+      when is_binary(workspace_path) and is_binary(phantomjs_path) do
     %__MODULE__{
       workspace_path: workspace_path,
       port_number: Keyword.get_lazy(params, :port_number, &Utils.find_available_port/0),
-      phantom_path: Keyword.get_lazy(params, :phantom_path, &Wallaby.phantomjs_path/0),
+      phantom_path: phantomjs_path,
       phantom_args:
         params
         |> Keyword.get_lazy(:phantom_args, &phantom_args_from_env/0)

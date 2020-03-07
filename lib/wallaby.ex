@@ -106,11 +106,6 @@ defmodule Wallaby do
     Application.get_env(:wallaby, :js_logger, :stdio)
   end
 
-  @doc false
-  def phantomjs_path do
-    Application.get_env(:wallaby, :phantomjs, "phantomjs")
-  end
-
   def driver do
     case System.get_env("WALLABY_DRIVER") do
       "chrome" ->
