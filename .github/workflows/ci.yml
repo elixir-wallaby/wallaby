@@ -6,8 +6,10 @@ env:
 
 jobs:
   linting:
-    runs-on: ubuntu-latest
     name: Linting (${{matrix.elixir}}/${{matrix.otp}})
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.repository != 'elixir-wallaby/wallaby')
 
     strategy:
       matrix:
@@ -51,8 +53,10 @@ jobs:
       run: mix dialyzer --halt-exit-status
 
   unit_tests:
-    runs-on: ubuntu-latest
     name: Unit Tests (${{matrix.elixir}}/${{matrix.otp}})
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.repository != 'elixir-wallaby/wallaby')
 
     strategy:
       matrix:
@@ -88,8 +92,10 @@ jobs:
       run: bash <(curl -s https://codecov.io/bash) -F UnitTest -e ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
 
   chromedriver:
-    runs-on: ubuntu-latest
     name: ChromeDriver (${{matrix.elixir}}/${{matrix.otp}})
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.repository != 'elixir-wallaby/wallaby')
 
     strategy:
       matrix:
@@ -126,8 +132,10 @@ jobs:
       run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
 
   selenium:
-    runs-on: ubuntu-latest
     name: Selenium (${{matrix.elixir}}/${{matrix.otp}})
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.repository != 'elixir-wallaby/wallaby')
 
     strategy:
       matrix:
@@ -167,8 +175,10 @@ jobs:
       run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
 
   phantomjs:
-    runs-on: ubuntu-latest
     name: PhantomJS (${{matrix.elixir}}/${{matrix.otp}})
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.repository != 'elixir-wallaby/wallaby')
 
     strategy:
       matrix:
