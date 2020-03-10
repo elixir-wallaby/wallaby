@@ -22,7 +22,7 @@ defmodule Wallaby.Experimental.SeleniumTest do
                url: remote_url |> URI.merge("session/#{session_id}") |> to_string(),
                id: session_id,
                server: :none,
-               driver: Wallaby.Experimental.Selenium,
+               driver: Wallaby.Experimental.Selenium
              }
     end
 
