@@ -1,4 +1,4 @@
-defmodule Wallaby.FeatureTest do
+defmodule Wallaby.Feature do
   @moduledoc """
   Helpers for writing features.
 
@@ -6,27 +6,12 @@ defmodule Wallaby.FeatureTest do
 
   ## use
 
-  This module will automatically call `use Wallaby.DSL`.
+  Calling this module with `use` will automatically call `use Wallaby.DSL`.
 
-  If you are using Ecto, please configure your `otp_app`.
+  When called with `use` and you are using Ecto, please configure your `otp_app`.
 
   ```
   config :wallaby, otp_app: :your_app
-  ```
-  ```
-  defmodule MyAppWeb.MyFeatureTest do
-    Use ExUnitCase, async: true
-    use Wallaby.Feature
-
-    feature "users can create todos", %{sessions: [session]} do
-      session
-      |> visit("/todos")
-      |> fill_in(Query.text_field("New Todo"), with: "Write my first Wallaby test")
-      |> click(Query.button("Save"))
-      |> assert_has(Query.css(".alert", text: "You created a todo"))
-      |> assert_has(Query.css(".todo-list > .todo", text: "Write my first Wallaby test"))
-    end
-  end
   ```
   """
 
@@ -35,7 +20,7 @@ defmodule Wallaby.FeatureTest do
       ExUnit.Case.register_attribute(__MODULE__, :sessions)
 
       use Wallaby.DSL
-      import Wallaby.FeatureTest
+      import Wallaby.Feature
 
       setup context do
         metadata =
@@ -53,6 +38,14 @@ defmodule Wallaby.FeatureTest do
           |> sessions_iterable()
           |> Enum.map(&start_session(&1, start_session_opts))
 
+        sessions |> build_setup_return()
+      end
+
+      defp build_setup_return([session] = sessions) when length(sessions) == 1 do
+        [session: session]
+      end
+
+      defp build_setup_return(sessions) do
         [sessions: sessions]
       end
 
@@ -92,25 +85,30 @@ defmodule Wallaby.FeatureTest do
 
       defp metadata_for_ecto_repos([]), do: Map.new()
 
-      defp metadata_for_ecto_repos(repos),
-        do: Phoenix.Ecto.SQL.Sandbox.metadata_for(repos, self())
+      defp metadata_for_ecto_repos(repos) do
+        Phoenix.Ecto.SQL.Sandbox.metadata_for(repos, self())
+      end
     end
   end
 
   @doc """
-  Defines a feature with a string.
+  Defines a feature with a message.
+
+  Adding `import Wallaby.Feature` to your test module will import the `Wallaby.Feature.feature/3` macro. This is a drop in replacement for the `ExUnit.Case.test/3` macro that you normally use.
+
+  Adding `use Wallaby.Feature` to your test module will act the same as `import Wallaby.Feature`, as well as configure your Ecto repos properly and pass a `Wallaby.Session` into the test context.
 
   ## Sessions
 
-  This macro will automatically start a single session using the currently configured capabilities and is passed to the feature via the `:sessions` key in the context.
+  When called with `use`, the `Wallaby.Feature.feature/3` macro will automatically start a single session using the currently configured capabilities and is passed to the feature via the `:session` key in the context.
 
   ```
-  feature "test with a single session", %{sessions: [session]} do
+  feature "test with a single session", %{session: session} do
     # ...
   end
   ```
 
-  If you would like to start multiple sessions, assign the `@sessions` attribute to the number of sessions that the feature should start.
+  If you would like to start multiple sessions, assign the `@sessions` attribute to the number of sessions that the feature should start, and they will be pass to the feature via the `:sessions` key in the context.
 
   ```
   @sessions 2
@@ -125,16 +123,34 @@ defmodule Wallaby.FeatureTest do
   @sessions [
     [capabilities: %{}]
   ]
-  feature "test with different capabilities", %{sessions: [session]} do
+  feature "test with different capabilities", %{session: session} do
     # ...
+  end
+  ```
+
+  If you don't wish to `use Wallaby.Feature` in your test module, you can add the following code to configure Ecto and create a session.
+
+  ```
+  setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(YourApp.Repo)
+
+    unless tags[:async] do
+      Ecto.Adapters.SQL.Sandbox.mode(YourApp.Repo, {:shared, self()})
+    end
+
+    metadata = Phoenix.Ecto.SQL.Sandbox.metadata_for(YourApp.Repo, self())
+    {:ok, session} = Wallaby.start_session(metadata: metadata)
+
+    {:ok, session: session}
   end
   ```
 
   ## Screenshots
 
-  If you have configured `screenshot_on_failure` to be true, any any exceptions raised during the feature will trigger a screenshot to be taken.
+  If you have configured `screenshot_on_failure` to be true, any exceptions raised during the feature will trigger a screenshot to be taken.
   """
-  defmacro feature(test_name, context \\ quote(do: _), contents) do
+
+  defmacro feature(message, context \\ quote(do: _), contents) do
     contents =
       quote do
         try do
@@ -143,7 +159,7 @@ defmodule Wallaby.FeatureTest do
         rescue
           e ->
             if Wallaby.screenshot_on_failure?() do
-              unquote(__MODULE__).take_screenshots_for_sessions(self(), unquote(test_name))
+              unquote(__MODULE__).take_screenshots_for_sessions(self(), unquote(message))
             end
 
             reraise(e, __STACKTRACE__)
@@ -153,8 +169,8 @@ defmodule Wallaby.FeatureTest do
     context = Macro.escape(context)
     contents = Macro.escape(contents, unquote: true)
 
-    quote bind_quoted: [context: context, contents: contents, test_name: test_name] do
-      name = ExUnit.Case.register_test(__ENV__, :feature, test_name, [:feature])
+    quote bind_quoted: [context: context, contents: contents, message: message] do
+      name = ExUnit.Case.register_test(__ENV__, :feature, message, [:feature])
 
       def unquote(name)(unquote(context)), do: unquote(contents)
     end

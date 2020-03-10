@@ -11,7 +11,7 @@ Here's an example test for a simple Todo application:
 
 ```elixir
 defmodule MyApp.Features.TodoTest do
-  use MyApp.FeatureTest, async: true
+  use MyApp.Feature, async: true
 
   import Wallaby.Query, only: [css: 2, text_field: 1, button: 1]
 
@@ -30,7 +30,7 @@ Because Wallaby manages multiple browsers for you, its possible to test several 
 
 ```elixir
 defmodule MyApp.Features.MultipleUsersTest do
-  use MyApp.FeatureTest, async: true
+  use MyApp.Feature, async: true
 
   import Wallaby.Query, only: [text_field: 1, button: 1, css: 2]
 
@@ -225,13 +225,14 @@ config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
 
 ### Writing tests
 
-It's easiest to add Wallaby to your test suite by creating the included `Wallaby.FeatureTest` test template
+It's easiest to add Wallaby to your test suite by using the `Wallaby.Feature` module.
 
 ```elixir
 defmodule YourApp.UserListTest do
-  use Wallaby.FeatureTest, async: true
+  use ExUnit.Case, async: true
+  use Wallaby.Feature
 
-  feature "users have names", %{sessions: [session]} do
+  feature "users have names", %{session: session} do
     session
     |> visit("/users")
     |> find(Query.css(".user", count: 3))
@@ -413,7 +414,7 @@ Application.put_env(:wallaby, :screenshot_dir, "/file/path")
 
 ### Automatic screenshots
 
-You can automatically take screenshots on an error:
+You can automatically take screenshots on an error when using the `Wallaby.Feature.feature/3` macro.
 
 ```elixir
 # config/test.exs

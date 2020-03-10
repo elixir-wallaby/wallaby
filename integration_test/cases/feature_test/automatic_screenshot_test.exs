@@ -1,13 +1,13 @@
-defmodule Wallaby.Integration.FeatureTest.AutomaticScreenshotTest do
+defmodule Wallaby.Integration.Feature.AutomaticScreenshotTest do
   use ExUnit.Case
 
   alias ExUnit.CaptureIO
 
-  describe "import FeatureTest" do
+  describe "import Feature" do
     test "feature takes a screenshot on failure for each open wallaby session" do
-      defmodule ImportFeatureTest.FailureWithMultipleSessionsTest do
+      defmodule ImportFeature.FailureWithMultipleSessionsTest do
         use ExUnit.Case
-        import Wallaby.FeatureTest
+        import Wallaby.Feature
 
         setup do
           Wallaby.SettingsTestHelpers.ensure_setting_is_reset(:wallaby, :screenshot_on_failure)
@@ -37,11 +37,11 @@ defmodule Wallaby.Integration.FeatureTest.AutomaticScreenshotTest do
     end
   end
 
-  describe "use FeatureTest" do
+  describe "use Feature" do
     test "feature takes a screenshot on failure for each open wallaby session" do
-      defmodule UseFeatureTest.FailureWithMultipleSessionsTest do
+      defmodule UseFeature.FailureWithMultipleSessionsTest do
         use ExUnit.Case
-        use Wallaby.FeatureTest
+        use Wallaby.Feature
 
         @sessions 2
         feature "fails", %{sessions: _sessions} do
