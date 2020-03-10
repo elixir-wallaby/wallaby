@@ -219,7 +219,8 @@ defmodule Wallaby.Experimental.Chrome do
         url: base_url <> "session/#{id}",
         id: id,
         driver: __MODULE__,
-        server: Chromedriver
+        server: Chromedriver,
+        capabilities: capabilities
       }
 
       if window_size = Keyword.get(opts, :window_size),

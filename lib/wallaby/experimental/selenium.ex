@@ -96,7 +96,8 @@ defmodule Wallaby.Experimental.Selenium do
         session_url: base_url <> "session/#{id}",
         url: base_url <> "session/#{id}",
         id: id,
-        driver: __MODULE__
+        driver: __MODULE__,
+        capabilities: capabilities
       }
 
       if window_size = Keyword.get(opts, :window_size),

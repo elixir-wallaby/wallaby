@@ -2,18 +2,6 @@ defmodule Wallaby.Integration.Browser.UseFeatureTest do
   use ExUnit.Case, async: true
   use Wallaby.Feature
 
-  alias Wallaby.Integration.Browser.UseFeatureTest
-  alias Wallaby.Experimental.Selenium.WebdriverClient
-
-  def create_session_fn(url, capabilities) do
-    assert capabilities == %{test: "I'm a capability"}
-
-    WebdriverClient.create_session(
-      url,
-      Wallaby.driver().default_capabilities()
-    )
-  end
-
   @sessions 2
   feature "multi session", %{sessions: [session_1, session_2]} do
     session_1
@@ -37,15 +25,13 @@ defmodule Wallaby.Integration.Browser.UseFeatureTest do
     end)
   end
 
-  @sessions [
-    [
-      create_session_fn: &UseFeatureTest.create_session_fn/2,
-      capabilities: %{
-        test: "I'm a capability"
-      }
-    ]
-  ]
-  feature "reads capabilities from session attribute" do
-    assert true
+  @expected_capabilities Map.put(
+                           Wallaby.driver().default_capabilities(),
+                           :test,
+                           "I'm a capability"
+                         )
+  @sessions [[capabilities: @expected_capabilities]]
+  feature "reads capabilities from session attribute", %{session: session} do
+    assert session.capabilities == @expected_capabilities
   end
 end
