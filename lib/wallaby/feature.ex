@@ -41,6 +41,7 @@ defmodule Wallaby.Feature do
     end
   end
 
+  @doc false
   def build_setup_return([session] = sessions) when length(sessions) == 1 do
     [session: session]
   end
@@ -49,10 +50,12 @@ defmodule Wallaby.Feature do
     [sessions: sessions]
   end
 
+  @doc false
   def sessions_iterable(nil), do: 1..1
   def sessions_iterable(count) when is_number(count), do: 1..count
   def sessions_iterable(capabilities) when is_list(capabilities), do: capabilities
 
+  @doc false
   def start_session(more_opts, start_session_opts) when is_list(more_opts) do
     {:ok, session} =
       start_session_opts
@@ -68,14 +71,18 @@ defmodule Wallaby.Feature do
     session
   end
 
+  @doc false
   def put_create_session_fn(opts, nil), do: opts
   def put_create_session_fn(opts, func), do: Keyword.put(opts, :create_session_fn, func)
 
   if @includes_ecto do
+    @doc false
     def otp_app(), do: Application.get_env(:wallaby, :otp_app)
+    @doc false
     def ecto_repos(nil), do: []
     def ecto_repos(otp_app), do: Application.get_env(otp_app, :ecto_repos, [])
 
+    @doc false
     def checkout_ecto_repos(repo, async) do
       :ok = Ecto.Adapters.SQL.Sandbox.checkout(repo)
 
@@ -84,6 +91,7 @@ defmodule Wallaby.Feature do
       repo
     end
 
+    @doc false
     def metadata_for_ecto_repos([]), do: Map.new()
 
     def metadata_for_ecto_repos(repos) do
@@ -91,6 +99,7 @@ defmodule Wallaby.Feature do
     end
   end
 
+  @doc false
   defmacro configure_ecto do
     if @includes_ecto do
       quote do
