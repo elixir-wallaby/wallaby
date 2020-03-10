@@ -17,7 +17,7 @@ defmodule Wallaby.Experimental.SeleniumTest do
 
       assert {:ok, session} = Selenium.start_session(remote_url: remote_url)
 
-      assert session = %Wallaby.Session{
+      assert session == %Wallaby.Session{
                session_url: remote_url |> URI.merge("session/#{session_id}") |> to_string(),
                url: remote_url |> URI.merge("session/#{session_id}") |> to_string(),
                id: session_id,
