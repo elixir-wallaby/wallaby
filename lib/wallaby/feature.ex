@@ -25,7 +25,7 @@ defmodule Wallaby.Feature do
       import Wallaby.Feature
 
       setup context do
-        metadata = configure_ecto()
+        metadata = configure_ecto(context[:async])
 
         start_session_opts =
           [metadata: metadata]
@@ -100,12 +100,12 @@ defmodule Wallaby.Feature do
   end
 
   @doc false
-  defmacro configure_ecto do
+  defmacro configure_ecto(async?) do
     if @includes_ecto do
       quote do
         otp_app()
         |> ecto_repos()
-        |> Enum.map(&checkout_ecto_repos(&1, context[:async]))
+        |> Enum.map(&checkout_ecto_repos(&1, unquote(async?)))
         |> metadata_for_ecto_repos()
       end
     else
