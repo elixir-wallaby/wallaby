@@ -9,7 +9,7 @@ jobs:
     name: Linting (${{matrix.elixir}}/${{matrix.otp}})
     runs-on: ubuntu-latest
 
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.repository != 'elixir-wallaby/wallaby')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
 
     strategy:
       matrix:
@@ -56,7 +56,7 @@ jobs:
     name: Unit Tests (${{matrix.elixir}}/${{matrix.otp}})
     runs-on: ubuntu-latest
 
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.repository != 'elixir-wallaby/wallaby')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
 
     strategy:
       matrix:
@@ -95,7 +95,7 @@ jobs:
     name: ChromeDriver (${{matrix.elixir}}/${{matrix.otp}})
     runs-on: ubuntu-latest
 
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.repository != 'elixir-wallaby/wallaby')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
 
     strategy:
       matrix:
@@ -135,7 +135,7 @@ jobs:
     name: Selenium (${{matrix.elixir}}/${{matrix.otp}})
     runs-on: ubuntu-latest
 
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.repository != 'elixir-wallaby/wallaby')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
 
     strategy:
       matrix:
@@ -178,7 +178,7 @@ jobs:
     name: PhantomJS (${{matrix.elixir}}/${{matrix.otp}})
     runs-on: ubuntu-latest
 
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.repository != 'elixir-wallaby/wallaby')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
 
     strategy:
       matrix:
