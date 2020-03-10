@@ -46,7 +46,8 @@ defmodule Wallaby.Phantom.Driver do
       url: base_url <> "session/#{id}",
       id: id,
       server: server,
-      driver: Phantom
+      driver: Phantom,
+      capabilities: capabilities
     }
 
     if window_size = Keyword.get(opts, :window_size),
