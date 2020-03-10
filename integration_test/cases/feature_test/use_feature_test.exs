@@ -31,7 +31,7 @@ defmodule Wallaby.Integration.Browser.UseFeatureTest do
                            "I'm a capability"
                          )
   @sessions [[capabilities: @expected_capabilities]]
-  feature "reads capabilities from session attribute", %{session: session} do
-    assert session.capabilities == @expected_capabilities
+  feature "reads capabilities from session attribute", %{session: %{capabilities: capabilities}} do
+    assert capabilities.test == @expected_capabilities.test
   end
 end
