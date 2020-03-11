@@ -20,7 +20,9 @@ defmodule Wallaby.TestSupport.Chrome.ChromeTestScript do
 
     echo "#{chromedriver_path} $@" >> "$0-output"
 
-    sleep #{startup_delay / 1000}
+    if [ "$1" != "--version" ]; then
+      sleep #{startup_delay / 1000}
+    fi
 
     #{chromedriver_path} $@
     """

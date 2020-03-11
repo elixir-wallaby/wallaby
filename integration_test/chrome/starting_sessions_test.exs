@@ -60,6 +60,34 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
     |> assert_no_remaining_switches()
   end
 
+  test "does not raise a connection refused error if chromedriver is slow to startup" do
+    test_script_path =
+      TestWorkspace.mkdir!()
+      |> write_chrome_wrapper_script!(startup_delay: :timer.seconds(1))
+
+    ensure_setting_is_reset(:wallaby, :chromedriver)
+    Application.put_env(:wallaby, :chromedriver, path: test_script_path)
+
+    assert :ok = Application.start(:wallaby)
+
+    assert {:ok, session} = Wallaby.start_session()
+  end
+
+  test "raises a RuntimeError if chromedriver isn't ready before the startup timeout" do
+    test_script_path =
+      TestWorkspace.mkdir!()
+      |> write_chrome_wrapper_script!(startup_delay: :timer.seconds(12))
+
+    ensure_setting_is_reset(:wallaby, :chromedriver)
+    Application.put_env(:wallaby, :chromedriver, path: test_script_path)
+
+    assert :ok = Application.start(:wallaby)
+
+    assert_raise RuntimeError, ~r/timeout waiting for chromedriver to be ready/i, fn ->
+      Wallaby.start_session(readiness_timeout: 500)
+    end
+  end
+
   test "application does not start when chromedriver version < 2.30", %{
     workspace_path: workspace_path
   } do

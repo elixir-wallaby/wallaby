@@ -106,6 +106,7 @@ defmodule Wallaby.Experimental.Chrome do
 
   @behaviour Wallaby.Driver
 
+  @default_readiness_timeout 5_000
   @chromedriver_version_regex ~r/^ChromeDriver (\d+)\.(\d+)/
 
   alias Wallaby.{DependencyError, Metadata}
@@ -124,9 +125,15 @@ defmodule Wallaby.Experimental.Chrome do
     end
   )
   ```
+
+  * `:capabilities` - capabilities to pass to chromedriver on session startup
+  * `create_session_fn` - Deprecated and to be removed
+  * `:readiness_timeout` - milliseconds to wait for chromedriver server to be ready
+    before raising a timeout error. (Default: #{@default_readiness_timeout})
   """
   @type start_session_opts ::
           {:capabilities, map}
+          | {:readiness_timeout, timeout()}
           | {:create_session_fn, (String.t(), map -> {:ok, %{}})}
 
   @doc false
@@ -137,11 +144,11 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   def init(:ok) do
     children = [
-      worker(Wallaby.Experimental.Chrome.Chromedriver, []),
-      worker(Wallaby.Driver.LogStore, [[]])
+      Wallaby.Driver.LogStore,
+      Wallaby.Experimental.Chrome.Chromedriver
     ]
 
-    supervise(children, strategy: :one_for_one)
+    Supervisor.init(children, strategy: :one_for_one)
   end
 
   @doc false
@@ -206,7 +213,9 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   @spec start_session([start_session_opts]) :: Wallaby.Driver.on_start_session() | no_return
   def start_session(opts \\ []) do
-    {:ok, base_url} = Chromedriver.base_url()
+    opts |> Keyword.get(:readiness_timeout, @default_readiness_timeout) |> wait_until_ready!()
+
+    base_url = Chromedriver.base_url()
     create_session_fn = Keyword.get(opts, :create_session_fn, &WebdriverClient.create_session/2)
 
     capabilities = Keyword.get(opts, :capabilities, capabilities_from_config(opts))
@@ -235,6 +244,14 @@ defmodule Wallaby.Experimental.Chrome do
     |> Keyword.get(:capabilities, default_capabilities(opts))
     |> put_headless_config()
     |> put_binary_config()
+  end
+
+  @spec wait_until_ready!(timeout) :: :ok | no_return
+  defp wait_until_ready!(timeout) do
+    case Chromedriver.wait_until_ready(timeout) do
+      :ok -> :ok
+      {:error, :timeout} -> raise "timeout waiting for chromedriver to be ready"
+    end
   end
 
   @doc false

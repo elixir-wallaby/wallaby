@@ -14,7 +14,7 @@ defmodule Wallaby.Mixfile do
     [
       app: :wallaby,
       version: @version,
-      elixir: "~> 1.5",
+      elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -54,6 +54,7 @@ defmodule Wallaby.Mixfile do
       {:jason, "~> 1.1"},
       {:httpoison, "~> 0.12 or ~> 1.0"},
       {:poolboy, "~> 1.5"},
+      {:web_driver_client, github: "aaronrenner/web_driver_client"},
       {:dialyxir, "~> 0.5", only: :dev, runtime: false},
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
