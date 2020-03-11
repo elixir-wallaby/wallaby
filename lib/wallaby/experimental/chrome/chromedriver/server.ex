@@ -57,11 +57,11 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.Server do
     startup_timeout = Keyword.get(opts, :startup_timeout, @default_startup_timeout)
     Process.send_after(self(), :ensure_readiness, startup_timeout)
 
-    {:ok, %State{chromedriver_path: chromedriver_path}, {:continue, nil}}
+    {:ok, %State{chromedriver_path: chromedriver_path}, {:continue, :start_chromedriver}}
   end
 
   @impl true
-  def handle_continue(_, state) do
+  def handle_continue(:start_chromedriver, state) do
     %State{chromedriver_path: chromedriver_path} = state
 
     port_number = Utils.find_available_port()
