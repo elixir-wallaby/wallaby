@@ -12,7 +12,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.Server do
     @type port_number :: non_neg_integer
 
     @type t :: %__MODULE__{
-            port_number: port_number,
+            port_number: port_number | nil,
             chromedriver_path: String.t(),
             ready?: boolean(),
             calls_awaiting_readiness: [GenServer.from()]
@@ -54,27 +54,25 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.Server do
 
   @impl true
   def init({chromedriver_path, opts}) do
-    port_number = Utils.find_available_port()
-
     startup_timeout = Keyword.get(opts, :startup_timeout, @default_startup_timeout)
     Process.send_after(self(), :ensure_readiness, startup_timeout)
 
-    send(self(), :start_chromedriver)
-
-    {:ok, %State{port_number: port_number, chromedriver_path: chromedriver_path}}
+    {:ok, %State{chromedriver_path: chromedriver_path}, {:continue, nil}}
   end
 
   @impl true
-  def handle_info(:start_chromedriver, state) do
-    %State{port_number: port_number, chromedriver_path: chromedriver_path} = state
+  def handle_continue(_, state) do
+    %State{chromedriver_path: chromedriver_path} = state
 
+    port_number = Utils.find_available_port()
     open_chromedriver_port(chromedriver_path, port_number)
 
     check_readiness_async(port_number)
 
-    {:noreply, state}
+    {:noreply, %State{state | port_number: port_number}}
   end
 
+  @impl true
   def handle_info(:ensure_readiness, %State{ready?: true} = state), do: {:noreply, state}
 
   def handle_info(:ensure_readiness, %State{ready?: false}) do
