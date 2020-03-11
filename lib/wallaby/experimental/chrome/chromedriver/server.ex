@@ -135,8 +135,7 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.Server do
 
   defp check_readiness_async(port_number) do
     process_to_notify = self()
-
-    base_url = "http://localhost:#{port_number}"
+    base_url = build_base_url(port_number)
 
     Task.start_link(fn ->
       ReadinessChecker.wait_until_ready(base_url)
