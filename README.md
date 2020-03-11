@@ -66,6 +66,12 @@ Read on to see what else Wallaby can do or check out the [Official Documentation
 
 ## Setup
 
+### Requirements
+
+Wallaby requires Elixir 1.7+ and OTP 21+.
+
+### Installation
+
 Add Wallaby to your list of dependencies in `mix.exs`:
 
 ```elixir
