@@ -1234,7 +1234,7 @@ defmodule Wallaby.Browser do
   end
 
   defp screenshot_dir do
-    Application.get_env(:wallaby, :screenshot_dir, "#{File.cwd!()}/screenshots") 
+    Application.get_env(:wallaby, :screenshot_dir, "#{File.cwd!()}/screenshots")
   end
 
   defp build_file_url(path) do
