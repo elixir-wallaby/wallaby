@@ -6,8 +6,6 @@ defmodule Wallaby.TestSupport.TestWorkspace do
 
   import ExUnit.Callbacks, only: [on_exit: 1]
 
-  alias Wallaby.Driver.TemporaryPath
-
   @deprecated "Use mkdir!/0 inside test instead"
   def create_test_workspace(_) do
     workspace_path = mkdir!()
@@ -16,30 +14,56 @@ defmodule Wallaby.TestSupport.TestWorkspace do
   end
 
   @doc """
-  Create a directory that will be removed
-  after the test exits.
+  Create a directory that will be removed after the test exits.
+
+  See `generate_temporary_path/1`
   """
   @spec mkdir!(String.t()) :: String.t() | no_return
-  def mkdir!(path \\ gen_tmp_path()) do
-    :ok =
-      path
-      |> Path.expand()
-      |> File.mkdir_p!()
+  def mkdir!(path \\ default_tmp_path()) do
+    path = generate_temporary_path(path)
+
+    :ok = path |> Path.expand() |> File.mkdir_p!()
+
+    path
+  end
+
+  @doc """
+  Generates a temporary path (without creating the directory)
+  that will be cleaned up after the test exits.
+
+  ## Placeholders
+
+  In order to not have filenames overlap, the following placeholders are supported
+  * `%{random_string}` - This placeholder is replaced with a random string
+  """
+  def generate_temporary_path(path \\ default_tmp_path()) do
+    path = replace_placeholders(path)
 
     on_exit(fn ->
-      File.rm_rf!(path)
+      path
+      |> Path.expand()
+      |> File.rm_rf!()
     end)
 
     path
   end
 
-  defp gen_tmp_path do
-    base_dir =
-      Path.join(
-        System.tmp_dir!(),
-        Application.get_env(:wallaby, :tmp_dir_prefix, "")
-      )
+  defp default_tmp_path do
+    Path.join([
+      System.tmp_dir!(),
+      Application.get_env(:wallaby, :tmp_dir_prefix, ""),
+      "test-workspace-%{random_string}"
+    ])
+  end
 
-    TemporaryPath.generate(base_dir)
+  defp replace_placeholders(path) do
+    String.replace(path, "%{random_string}", random_string())
+  end
+
+  defp random_string do
+    0x100000000
+    |> :rand.uniform()
+    |> Integer.to_string(36)
+    |> String.downcase()
   end
 end
