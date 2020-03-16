@@ -247,7 +247,7 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
       assert_file_exists(screenshot_path)
     end
   end
-  
+
   test "filters out illegal characters in screenshot name", %{page: page} do
     ensure_setting_is_reset(:wallaby, :screenshot_dir)
     Application.put_env(:wallaby, :screenshot_dir, "shots")
