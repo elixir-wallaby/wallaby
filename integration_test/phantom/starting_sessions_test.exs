@@ -129,7 +129,7 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
 
   test "works with a path in the home directory" do
     test_script_path =
-      "~/.wallaby-tmp-#{random_string()}"
+      "~/.wallaby-tmp-%{random_string}"
       |> TestWorkspace.mkdir!()
       |> write_phantom_wrapper_script!()
 
@@ -150,7 +150,7 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
 
   test "fails to start when phantomjs path is configured incorrectly" do
     ensure_setting_is_reset(:wallaby, :phantomjs)
-    Application.put_env(:wallaby, :phantomjs, "this-really-should-not-exist-#{random_string()}")
+    Application.put_env(:wallaby, :phantomjs, "this-really-should-not-exist")
 
     assert {:error, _} = Application.start(:wallaby)
   end
@@ -161,12 +161,5 @@ defmodule Wallaby.Integration.Phantom.StartingSessionsTest do
     original_phantomjs_path
     |> PhantomTestScript.build_wrapper_script(opts)
     |> write_test_script!(base_dir)
-  end
-
-  defp random_string do
-    0x100000000
-    |> :rand.uniform()
-    |> Integer.to_string(36)
-    |> String.downcase()
   end
 end

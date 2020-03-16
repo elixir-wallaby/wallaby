@@ -116,7 +116,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
 
   test "works with a path in the home directory" do
     test_script_path =
-      "~/.wallaby-tmp-#{random_string()}"
+      "~/.wallaby-tmp-%{random_string}"
       |> TestWorkspace.mkdir!()
       |> write_chrome_wrapper_script!()
 
@@ -136,7 +136,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
     Application.put_env(
       :wallaby,
       :chromedriver,
-      path: "this-really-should-not-exist-#{random_string()}"
+      path: "this-really-should-not-exist"
     )
 
     assert {:error, _} = Application.start(:wallaby)
@@ -148,12 +148,5 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
     chromedriver_path
     |> ChromeTestScript.build_wrapper_script(opts)
     |> write_test_script!(base_dir)
-  end
-
-  defp random_string do
-    0x100000000
-    |> :rand.uniform()
-    |> Integer.to_string(36)
-    |> String.downcase()
   end
 end

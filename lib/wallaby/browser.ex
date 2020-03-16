@@ -234,10 +234,10 @@ defmodule Wallaby.Browser do
     path = path_for_screenshot(name)
 
     try do
-      File.write!(path, image_data)
+      write_screenshot!(path, image_data)
 
       if opts[:log] do
-        IO.puts("Screenshot taken, find it at file:///#{path}")
+        IO.puts("Screenshot taken, find it at #{build_file_url(path)}")
       end
 
       Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
@@ -1223,11 +1223,23 @@ defmodule Wallaby.Browser do
   end
 
   defp path_for_screenshot(name) do
-    File.mkdir_p!(screenshot_dir())
     "#{screenshot_dir()}/#{name}.png"
   end
 
+  defp write_screenshot!(path, image_data) do
+    expanded_path = Path.expand(path)
+    :ok = expanded_path |> Path.dirname() |> File.mkdir_p!()
+
+    :ok = File.write!(expanded_path, image_data)
+
+    :ok
+  end
+
   defp screenshot_dir do
-    Application.get_env(:wallaby, :screenshot_dir) || "#{File.cwd!()}/screenshots"
+    Application.get_env(:wallaby, :screenshot_dir, "#{File.cwd!()}/screenshots")
+  end
+
+  defp build_file_url(path) do
+    "file://" <> (path |> Path.expand() |> URI.encode())
   end
 end
