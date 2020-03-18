@@ -21,14 +21,16 @@ defmodule Wallaby.Phantom.Server do
   defmodule State do
     @moduledoc false
 
+    @type os_pid :: non_neg_integer
     @type port_number :: non_neg_integer()
+
     @type t :: %__MODULE__{
             port_number: port_number | nil,
             phantomjs_path: String.t(),
             phantomjs_user_provided_args: [String.t()],
             wrapper_script_port: port | nil,
-            wrapper_script_os_pid: pid | nil,
-            phantomjs_os_pid: pid | nil,
+            wrapper_script_os_pid: os_pid | nil,
+            phantomjs_os_pid: os_pid | nil,
             workspace_path: String.t(),
             ready?: boolean,
             calls_awaiting_readiness: [GenServer.from()]
