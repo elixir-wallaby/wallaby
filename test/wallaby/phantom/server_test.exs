@@ -133,7 +133,7 @@ defmodule Wallaby.Phantom.ServerTest do
     {:ok, phantomjs_path} = Phantom.find_phantomjs_executable()
     {:ok, server} = Server.start_link(phantomjs_path)
     :ok = Server.wait_until_ready(server)
-    wrapper_script_os_pid = Server.get_wrapper_os_pid(server)
+    wrapper_script_os_pid = Server.get_wrapper_script_os_pid(server)
     os_pid = Server.get_os_pid(server)
 
     kill_os_process(wrapper_script_os_pid)
@@ -150,7 +150,7 @@ defmodule Wallaby.Phantom.ServerTest do
 
     :ok = Server.wait_until_ready(server)
 
-    wrapper_script_os_pid = Server.get_wrapper_os_pid(server)
+    wrapper_script_os_pid = Server.get_wrapper_script_os_pid(server)
     os_pid = Server.get_os_pid(server)
 
     kill_os_process(os_pid)
@@ -166,13 +166,13 @@ defmodule Wallaby.Phantom.ServerTest do
   test "shuts down wrapper and phantom when server is stopped" do
     {:ok, phantomjs_path} = Phantom.find_phantomjs_executable()
     {:ok, server} = Server.start_link(phantomjs_path)
-    wrapper_os_pid = Server.get_wrapper_os_pid(server)
+    wrapper_script_os_pid = Server.get_wrapper_script_os_pid(server)
     :ok = Server.wait_until_ready(server)
     os_pid = Server.get_os_pid(server)
 
     Server.stop(server)
 
-    refute os_process_running?(wrapper_os_pid)
+    refute os_process_running?(wrapper_script_os_pid)
     refute os_process_running?(os_pid)
   end
 

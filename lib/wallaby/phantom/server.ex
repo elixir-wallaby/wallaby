@@ -89,9 +89,9 @@ defmodule Wallaby.Phantom.Server do
     GenServer.call(server, :get_base_url)
   end
 
-  @spec get_wrapper_os_pid(server) :: os_pid
-  def get_wrapper_os_pid(server) do
-    GenServer.call(server, :get_wrapper_os_pid)
+  @spec get_wrapper_script_os_pid(server) :: os_pid
+  def get_wrapper_script_os_pid(server) do
+    GenServer.call(server, :get_wrapper_script_os_pid)
   end
 
   @spec get_os_pid(server) :: os_pid | nil
@@ -181,8 +181,12 @@ defmodule Wallaby.Phantom.Server do
     {:reply, build_base_url(port_number), state}
   end
 
-  def handle_call(:get_wrapper_os_pid, _, %State{wrapper_script_os_pid: wrapper_os_pid} = state) do
-    {:reply, wrapper_os_pid, state}
+  def handle_call(
+        :get_wrapper_script_os_pid,
+        _,
+        %State{wrapper_script_os_pid: wrapper_script_os_pid} = state
+      ) do
+    {:reply, wrapper_script_os_pid, state}
   end
 
   def handle_call(:get_os_pid, _, %State{phantomjs_os_pid: phantom_os_pid} = state) do
