@@ -233,11 +233,16 @@ defmodule Wallaby.Phantom.Server do
   @impl GenServer
   def terminate(_reason, %State{
         wrapper_script_port: wrapper_script_port,
-        wrapper_script_os_pid: wrapper_script_os_pid
+        wrapper_script_os_pid: wrapper_script_os_pid,
+        phantomjs_os_pid: phantomjs_os_pid
       })
       when is_port(wrapper_script_port) and is_integer(wrapper_script_os_pid) do
     Port.close(wrapper_script_port)
     wait_for_stop(wrapper_script_os_pid)
+
+    if phantomjs_os_pid do
+      wait_for_stop(phantomjs_os_pid)
+    end
   rescue
     ArgumentError ->
       :ok
@@ -245,11 +250,13 @@ defmodule Wallaby.Phantom.Server do
 
   def terminate(_reason, _state), do: :ok
 
-  @spec wait_for_stop(os_pid) :: nil
+  @spec wait_for_stop(os_pid) :: :ok
   defp wait_for_stop(os_pid) do
     if os_process_running?(os_pid) do
       Process.sleep(100)
       wait_for_stop(os_pid)
+    else
+      :ok
     end
   end
 

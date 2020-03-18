@@ -132,11 +132,15 @@ defmodule Wallaby.Phantom.ServerTest do
     Process.flag(:trap_exit, true)
     {:ok, phantomjs_path} = Phantom.find_phantomjs_executable()
     {:ok, server} = Server.start_link(phantomjs_path)
-    os_pid = Server.get_wrapper_os_pid(server)
+    :ok = Server.wait_until_ready(server)
+    wrapper_script_os_pid = Server.get_wrapper_os_pid(server)
+    os_pid = Server.get_os_pid(server)
 
-    kill_os_process(os_pid)
+    kill_os_process(wrapper_script_os_pid)
 
-    assert_receive {:EXIT, _, :normal}
+    assert_receive {:EXIT, ^server, {:exit_status, _}}
+    refute os_process_running?(wrapper_script_os_pid)
+    refute os_process_running?(os_pid)
   end
 
   test "crashes when phantom is killed" do
@@ -146,11 +150,17 @@ defmodule Wallaby.Phantom.ServerTest do
 
     :ok = Server.wait_until_ready(server)
 
+    wrapper_script_os_pid = Server.get_wrapper_os_pid(server)
     os_pid = Server.get_os_pid(server)
 
     kill_os_process(os_pid)
 
-    assert_receive {:EXIT, _, :normal}
+    assert_receive {:EXIT, ^server, {:exit_status, _}}
+
+    # Since the process isn't trapping exits, let things shut down async
+    Process.sleep(100)
+    refute os_process_running?(wrapper_script_os_pid)
+    refute os_process_running?(os_pid)
   end
 
   test "shuts down wrapper and phantom when server is stopped" do
