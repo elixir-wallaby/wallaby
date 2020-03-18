@@ -252,7 +252,7 @@ defmodule Wallaby.Phantom.Server do
   end
 
   @spec os_process_running?(os_pid) :: boolean
-  def os_process_running?(os_pid) do
+  defp os_process_running?(os_pid) do
     case System.cmd("kill", ["-0", to_string(os_pid)], stderr_to_stdout: true) do
       {_, 0} -> true
       _ -> false
@@ -322,7 +322,7 @@ defmodule Wallaby.Phantom.Server do
   end
 
   @spec keyword_pop!(keyword, atom) :: {term, keyword}
-  def keyword_pop!(keywords, key) when is_list(keywords) and is_atom(key) do
+  defp keyword_pop!(keywords, key) when is_list(keywords) and is_atom(key) do
     case Keyword.fetch(keywords, key) do
       {:ok, value} -> {value, Keyword.delete(keywords, key)}
       :error -> raise KeyError, key: key, term: keywords
