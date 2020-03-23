@@ -24,7 +24,7 @@ defmodule Wallaby.TestSupport.Chrome.ChromeTestScript do
       sleep #{startup_delay / 1000}
     fi
 
-    #{chromedriver_path} $@
+    exec #{chromedriver_path} $@
     """
   end
 

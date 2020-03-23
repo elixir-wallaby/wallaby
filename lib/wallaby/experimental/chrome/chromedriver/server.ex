@@ -7,18 +7,31 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.Server do
 
   defmodule State do
     @moduledoc false
-    defstruct [:port_number, :chromedriver_path, ready?: false, calls_awaiting_readiness: []]
+    defstruct [
+      :port_number,
+      :chromedriver_path,
+      :wrapper_script_port,
+      :wrapper_script_os_pid,
+      :chromedriver_os_pid,
+      ready?: false,
+      calls_awaiting_readiness: []
+    ]
 
+    @type os_pid :: non_neg_integer
     @type port_number :: non_neg_integer
 
     @type t :: %__MODULE__{
             port_number: port_number | nil,
             chromedriver_path: String.t(),
+            wrapper_script_port: port | nil,
+            wrapper_script_os_pid: os_pid | nil,
+            chromedriver_os_pid: os_pid | nil,
             ready?: boolean(),
             calls_awaiting_readiness: [GenServer.from()]
           }
   end
 
+  @type os_pid :: non_neg_integer
   @type server :: GenServer.server()
   @typep port_number :: non_neg_integer()
 
@@ -37,11 +50,26 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.Server do
     GenServer.start_link(__MODULE__, {chromedriver_path, opts}, start_opts)
   end
 
+  @spec stop(server) :: :ok
+  def stop(server) do
+    GenServer.stop(server)
+  end
+
   @spec get_base_url(server) :: String.t()
   def get_base_url(server) do
     server
     |> GenServer.call(:get_port_number)
     |> build_base_url()
+  end
+
+  @spec get_wrapper_script_os_pid(server) :: os_pid
+  def get_wrapper_script_os_pid(server) do
+    GenServer.call(server, :get_wrapper_script_os_pid)
+  end
+
+  @spec get_os_pid(server) :: os_pid | nil
+  def get_os_pid(server) do
+    GenServer.call(server, :get_os_pid)
   end
 
   @spec wait_until_ready(server, timeout()) :: :ok | {:error, :timeout}
@@ -65,11 +93,22 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.Server do
     %State{chromedriver_path: chromedriver_path} = state
 
     port_number = Utils.find_available_port()
-    open_chromedriver_port(chromedriver_path, port_number)
+    wrapper_script_port = open_chromedriver_port(chromedriver_path, port_number)
+
+    wrapper_script_os_pid =
+      wrapper_script_port
+      |> Port.info()
+      |> Keyword.fetch!(:os_pid)
 
     check_readiness_async(port_number)
 
-    {:noreply, %State{state | port_number: port_number}}
+    {:noreply,
+     %State{
+       state
+       | port_number: port_number,
+         wrapper_script_port: wrapper_script_port,
+         wrapper_script_os_pid: wrapper_script_os_pid
+     }}
   end
 
   @impl true
@@ -89,9 +128,31 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.Server do
     {:noreply, %State{state | calls_awaiting_readiness: [], ready?: true}}
   end
 
+  def handle_info({port, {:data, output}}, %State{wrapper_script_port: port} = state) do
+    case analyze_output(output) do
+      {:os_pid, os_pid} ->
+        {:noreply, %State{state | chromedriver_os_pid: os_pid}}
+
+      :unknown ->
+        {:noreply, state}
+    end
+  end
+
+  def handle_info({port, {:exit_status, status}}, %State{wrapper_script_port: port} = state) do
+    {:stop, {:exit_status, status}, state}
+  end
+
   @impl true
   def handle_call(:get_port_number, _from, %State{port_number: port_number} = state) do
     {:reply, port_number, state}
+  end
+
+  def handle_call(:get_wrapper_script_os_pid, _, %State{wrapper_script_os_pid: os_pid} = state) do
+    {:reply, os_pid, state}
+  end
+
+  def handle_call(:get_os_pid, _, %State{chromedriver_os_pid: chromedriver_os_pid} = state) do
+    {:reply, chromedriver_os_pid, state}
   end
 
   def handle_call(:wait_until_ready, _from, %State{ready?: true} = state) do
@@ -104,11 +165,22 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.Server do
   end
 
   @spec open_chromedriver_port(String.t(), port_number) :: port
-  def open_chromedriver_port(chromedriver_path, port_number) when is_binary(chromedriver_path) do
+  defp open_chromedriver_port(chromedriver_path, port_number) when is_binary(chromedriver_path) do
     Port.open(
       {:spawn_executable, to_charlist(wrapper_script())},
       port_opts(chromedriver_path, port_number)
     )
+  end
+
+  @spec analyze_output(String.t()) :: {:os_pid, os_pid} | :unknown
+  defp analyze_output(output) do
+    case Regex.run(~r{PID: (\d+)}, output) do
+      [_, os_pid] ->
+        {:os_pid, String.to_integer(os_pid)}
+
+      nil ->
+        :unknown
+    end
   end
 
   @spec wrapper_script :: String.t()

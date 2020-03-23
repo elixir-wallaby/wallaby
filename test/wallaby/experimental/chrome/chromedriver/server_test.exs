@@ -83,6 +83,62 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.ServerTest do
     assert initial_duration > subsequent_duration
   end
 
+  test "does not start when the unable to start chromedriver" do
+    Process.flag(:trap_exit, true)
+
+    {:ok, server} = Server.start_link("doesnotexist")
+
+    assert_receive {:EXIT, ^server, {:exit_status, 127}}, 500
+  end
+
+  test "crashes when the wrapper script is killed" do
+    Process.flag(:trap_exit, true)
+    {:ok, chromedriver_path} = Chrome.find_chromedriver_executable()
+    {:ok, server} = Server.start_link(chromedriver_path)
+    :ok = Server.wait_until_ready(server)
+    wrapper_script_os_pid = Server.get_wrapper_script_os_pid(server)
+    os_pid = Server.get_os_pid(server)
+
+    kill_os_process(wrapper_script_os_pid)
+
+    assert_receive {:EXIT, ^server, {:exit_status, _}}
+    refute os_process_running?(wrapper_script_os_pid)
+    refute os_process_running?(os_pid)
+  end
+
+  test "crashes when chromedriver is killed" do
+    Process.flag(:trap_exit, true)
+    {:ok, chromedriver_path} = Chrome.find_chromedriver_executable()
+    {:ok, server} = Server.start_link(chromedriver_path)
+
+    :ok = Server.wait_until_ready(server)
+
+    wrapper_script_os_pid = Server.get_wrapper_script_os_pid(server)
+    os_pid = Server.get_os_pid(server)
+
+    kill_os_process(os_pid)
+
+    assert_receive {:EXIT, ^server, {:exit_status, _}}
+
+    # Since the process isn't trapping exits, let things shut down async
+    Process.sleep(100)
+    refute os_process_running?(wrapper_script_os_pid)
+    refute os_process_running?(os_pid)
+  end
+
+  test "shuts down wrapper and chromedriver when server is stopped" do
+    {:ok, chromedriver_path} = Chrome.find_chromedriver_executable()
+    {:ok, server} = Server.start_link(chromedriver_path)
+    wrapper_script_os_pid = Server.get_wrapper_script_os_pid(server)
+    :ok = Server.wait_until_ready(server)
+    os_pid = Server.get_os_pid(server)
+
+    Server.stop(server)
+
+    refute os_process_running?(wrapper_script_os_pid)
+    refute os_process_running?(os_pid)
+  end
+
   defp write_chrome_wrapper_script!(base_dir, opts \\ []) do
     {:ok, chromedriver_path} = Chrome.find_chromedriver_executable()
 
@@ -99,6 +155,21 @@ defmodule Wallaby.Experimental.Chrome.Chromedriver.ServerTest do
   defp refute_webdriver_api_ready(base_url) when is_binary(base_url) do
     assert {:error, %WebDriverClient.ConnectionError{reason: :econnrefused}} =
              base_url |> build_webdriver_client_config() |> WebDriverClient.fetch_server_status()
+  end
+
+  defp kill_os_process(pid) when is_integer(pid) do
+    {_, 0} = System.cmd("kill", [to_string(pid)])
+    :ok
+  end
+
+  defp os_process_running?(os_pid) when is_integer(os_pid) do
+    case System.cmd("kill", ["-0", to_string(os_pid)], stderr_to_stdout: true) do
+      {_, 0} ->
+        true
+
+      _ ->
+        false
+    end
   end
 
   defp build_webdriver_client_config(base_url) when is_binary(base_url) do
