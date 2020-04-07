@@ -10,6 +10,10 @@ defmodule Wallaby.SessionStore do
 
   def demonitor(session), do: GenServer.call(__MODULE__, {:demonitor, session})
 
+  def list_sessions_for(owner_pid \\ self()) when is_pid(owner_pid) do
+    GenServer.call(__MODULE__, {:list_sessions, owner_pid})
+  end
+
   def init(:ok) do
     Process.flag(:trap_exit, true)
     {:ok, %{refs: %{}}}
@@ -17,12 +21,13 @@ defmodule Wallaby.SessionStore do
 
   def handle_call({:monitor, session}, {pid, _ref}, %{refs: refs} = state) do
     ref = Process.monitor(pid)
-    refs = Map.put(refs, ref, session)
+    refs = Map.put(refs, ref, {pid, session})
+
     {:reply, :ok, %{state | refs: refs}}
   end
 
   def handle_call({:demonitor, session}, _from, %{refs: refs} = state) do
-    case Enum.find(refs, fn {_, value} -> value.id == session.id end) do
+    case Enum.find(refs, fn {_, {_p, s}} -> s.id == session.id end) do
       {ref, _} ->
         {_, refs} = Map.pop(refs, ref)
         true = Process.demonitor(ref)
@@ -31,6 +36,16 @@ defmodule Wallaby.SessionStore do
       nil ->
         {:reply, :ok, state}
     end
+  end
+
+  def handle_call({:list_sessions, owner_pid}, _from, %{refs: refs} = state) do
+    sessions =
+      Enum.flat_map(refs, fn
+        {_ref, {^owner_pid, %Wallaby.Session{} = session}} -> [session]
+        _ -> []
+      end)
+
+    {:reply, sessions, state}
   end
 
   def handle_info({:DOWN, ref, :process, _pid, _reason}, %{refs: refs} = state) do

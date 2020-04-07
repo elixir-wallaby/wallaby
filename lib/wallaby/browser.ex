@@ -225,17 +225,31 @@ defmodule Wallaby.Browser do
       screenshotable
       |> driver.take_screenshot
 
-    name = opts |> Keyword.get(:name, :erlang.system_time()) |> to_string
+    name =
+      opts
+      |> Keyword.get(:name, :erlang.system_time())
+      |> to_string
+      |> remove_illegal_characters
+
     path = path_for_screenshot(name)
 
-    write_screenshot!(path, image_data)
+    try do
+      write_screenshot!(path, image_data)
 
-    if opts[:log] do
-      IO.puts("Screenshot taken, find it at #{build_file_url(path)}")
+      if opts[:log] do
+        IO.puts("Screenshot taken, find it at #{build_file_url(path)}")
+      end
+
+      Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
+    rescue
+      _ ->
+        IO.puts("\nFailed to make a screenshot")
+
+        screenshotable
     end
-
-    Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
   end
+
+  defp remove_illegal_characters(string), do: String.replace(string, ~r{<>:"/\\\?\*}, "")
 
   @doc """
   Gets the window handle of the currently focused window.
@@ -697,10 +711,6 @@ defmodule Wallaby.Browser do
       {:error, {:not_found, result}} ->
         query = %Query{query | result: result}
 
-        if Wallaby.screenshot_on_failure?() do
-          take_screenshot(parent, log: true)
-        end
-
         case validate_html(parent, query) do
           {:ok, _} ->
             raise Wallaby.QueryError, ErrorMessage.message(query, :not_found)
@@ -710,10 +720,6 @@ defmodule Wallaby.Browser do
         end
 
       {:error, e} ->
-        if Wallaby.screenshot_on_failure?() do
-          take_screenshot(parent, log: true)
-        end
-
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
     end
   end
@@ -851,10 +857,6 @@ defmodule Wallaby.Browser do
         parent
       else
         error ->
-          if Wallaby.screenshot_on_failure?() do
-            take_screenshot(parent, log: true)
-          end
-
           case error do
             {:error, {:not_found, results}} ->
               query = %Query{query | result: results}

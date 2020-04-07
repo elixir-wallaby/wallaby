@@ -127,43 +127,6 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
     assert_file_exists(path)
   end
 
-  test "automatically taking screenshots on failure", %{page: page} do
-    screenshots_path = TestWorkspace.generate_temporary_path()
-
-    ensure_setting_is_reset(:wallaby, :screenshot_dir)
-    Application.put_env(:wallaby, :screenshot_dir, screenshots_path)
-
-    ensure_setting_is_reset(:wallaby, :screenshot_on_failure)
-    Application.put_env(:wallaby, :screenshot_on_failure, false)
-
-    output =
-      capture_io(fn ->
-        assert_raise Wallaby.QueryError, fn ->
-          find(page, css(".some-selector"))
-        end
-      end)
-
-    assert [] = extract_screenshot_urls(output)
-
-    refute File.exists?(screenshots_path)
-
-    Application.put_env(:wallaby, :screenshot_on_failure, true)
-
-    output =
-      capture_io(fn ->
-        assert_raise Wallaby.QueryError, fn ->
-          find(page, css(".some-selector"))
-        end
-      end)
-
-    assert [screenshot_url] = extract_screenshot_urls(output)
-
-    path = path_from_file_url!(screenshot_url)
-    assert_path_type(path, :absolute)
-    assert_in_directory(path, screenshots_path)
-    assert_file_exists(path)
-  end
-
   describe "logging" do
     test "does not log by default", %{page: page} do
       screenshots_path = TestWorkspace.generate_temporary_path()
@@ -246,6 +209,20 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
       assert_in_directory(screenshot_path, screenshots_path)
       assert_file_exists(screenshot_path)
     end
+  end
+
+  test "filters out illegal characters in screenshot name", %{page: page} do
+    ensure_setting_is_reset(:wallaby, :screenshot_dir)
+    Application.put_env(:wallaby, :screenshot_dir, "shots")
+
+    [screenshot_path] =
+      page
+      |> take_screenshot(name: "some_page<>:\"/\\?*")
+      |> Map.get(:screenshots)
+
+    assert screenshot_path == "shots/some_page.png"
+
+    File.rm_rf!("#{File.cwd!()}/shots")
   end
 
   defp assert_path_type(path, expected_path_type)
