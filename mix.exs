@@ -36,7 +36,7 @@ defmodule Wallaby.Mixfile do
       ],
       test_coverage: [tool: ExCoveralls],
       test_paths: test_paths(@selected_driver),
-      dialyzer: [plt_add_apps: [:inets], ignore_warnings: "dialyzer.ignore_warnings"]
+      dialyzer: dialyzer()
     ]
   end
 
@@ -55,7 +55,7 @@ defmodule Wallaby.Mixfile do
       {:httpoison, "~> 0.12 or ~> 1.0"},
       {:poolboy, "~> 1.5"},
       {:web_driver_client, github: "aaronrenner/web_driver_client"},
-      {:dialyxir, "~> 0.5", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
       {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
@@ -83,6 +83,14 @@ defmodule Wallaby.Mixfile do
       source_url: "https://github.com/keathley/wallaby",
       main: "readme",
       logo: "guides/images/icon.png"
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_add_apps: [:inets],
+      ignore_warnings: ".dialyzer_ignore.exs",
+      list_unused_filters: true
     ]
   end
 
