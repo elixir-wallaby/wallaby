@@ -25,11 +25,7 @@ defmodule Wallaby.Integration.Feature.AutomaticScreenshotTest do
       end
 
       ExUnit.Server.modules_loaded()
-
-      configure_and_reload_on_exit(
-        formatters: [Wallaby.Feature.Formatter, ExUnit.CLIFormatter],
-        colors: [enabled: false]
-      )
+      configure_and_reload_on_exit(colors: [enabled: false])
 
       output =
         CaptureIO.capture_io(fn ->
@@ -57,11 +53,7 @@ defmodule Wallaby.Integration.Feature.AutomaticScreenshotTest do
       end
 
       ExUnit.Server.modules_loaded()
-
-      configure_and_reload_on_exit(
-        formatters: [Wallaby.Feature.Formatter, ExUnit.CLIFormatter],
-        colors: [enabled: false]
-      )
+      configure_and_reload_on_exit(colors: [enabled: false])
 
       output =
         CaptureIO.capture_io(fn ->
