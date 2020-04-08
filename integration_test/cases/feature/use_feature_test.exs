@@ -1,6 +1,7 @@
 defmodule Wallaby.Integration.Browser.UseFeatureTest do
   use ExUnit.Case, async: true
   use Wallaby.Feature
+  import Wallaby.SettingsTestHelpers
 
   @sessions 2
   feature "multi session", %{sessions: [session_1, session_2]} do
@@ -18,9 +19,13 @@ defmodule Wallaby.Integration.Browser.UseFeatureTest do
   end
 
   feature "single session", %{session: only_session} do
+    ensure_setting_is_reset(:wallaby, :screenshot_on_failure)
+    Application.put_env(:wallaby, :screenshot_on_failure, true)
+
     only_session
     |> visit("/page_1.html")
     |> find(Query.css("body > h1"), fn el ->
+      raise "boom"
       assert Element.text(el) == "Page 1"
     end)
   end

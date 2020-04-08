@@ -1,4 +1,9 @@
-ExUnit.configure(max_cases: 4, exclude: [pending: true])
+ExUnit.configure(
+  max_cases: 4,
+  exclude: [pending: true],
+  formatters: [ExUnit.CLIFormatter, Wallaby.Feature.Formatter]
+)
+
 ExUnit.start()
 
 # Load support files
