@@ -530,9 +530,11 @@ Currently Wallaby provides experimental support for both headless chrome and sel
 Both of these drivers are still "experimental" because they don't support the full API yet and because the implementation is changing rapidly.
 But, if you would like to use them in your project here's what you'll need to do.
 
-Please refer to the [documentation](https://hexdocs.pm/wallaby/readme.html#headless-chrome) for further information about using the Chrome driver.
+### Chromedriver
 
-### Headless Chrome
+Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Chrome.html#content) for further information about using Chromedriver.
+
+#### Headless Chrome
 
 In order to run headless chrome you'll need to have ChromeDriver >= 2.30 and chrome >= 60.
 Previous versions of both of these tools _may_ work, but several features will be buggy.
@@ -542,7 +544,7 @@ The bug should be fixed in ChromeDriver 2.31.
 
 ### Selenium
 
-Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Selenium.html#content) for further information about using the Selenium driver.
+Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Selenium.html#content) for further information about using Selenium.
 
 ## Contributing
 

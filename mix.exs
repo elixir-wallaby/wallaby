@@ -80,7 +80,7 @@ defmodule Wallaby.Mixfile do
     [
       extras: ["README.md"],
       source_ref: "v#{@version}",
-      source_url: "https://github.com/keathley/wallaby",
+      source_url: "https://github.com/elixir-wallaby/wallaby",
       main: "readme",
       logo: "guides/images/icon.png"
     ]
