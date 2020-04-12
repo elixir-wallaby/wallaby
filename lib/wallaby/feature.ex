@@ -6,7 +6,7 @@ defmodule Wallaby.Feature do
 
   You can `use` or `import` this module.
 
-  ## use
+  ## use Wallaby.Feature
 
   Calling this module with `use` will automatically call `use Wallaby.DSL`.
 
