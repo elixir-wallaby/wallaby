@@ -73,7 +73,7 @@ defmodule Wallaby.Integration.Feature.AutomaticScreenshotTest do
   end
 
   defp screenshot_taken_count(output) do
-    ~r/(Screenshot taken)/
+    ~r{- file:///}
     |> Regex.scan(output)
     |> length()
   end

@@ -1239,7 +1239,8 @@ defmodule Wallaby.Browser do
     Application.get_env(:wallaby, :screenshot_dir, "#{File.cwd!()}/screenshots")
   end
 
-  defp build_file_url(path) do
+  @doc false
+  def build_file_url(path) do
     "file://" <> (path |> Path.expand() |> URI.encode())
   end
 end

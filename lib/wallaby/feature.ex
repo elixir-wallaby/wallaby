@@ -202,15 +202,21 @@ defmodule Wallaby.Feature do
 
   @doc false
   def take_screenshots_for_sessions(pid, test_name) do
-    time = :erlang.system_time() |> to_string()
+    time = :erlang.system_time(:second) |> to_string()
     test_name = String.replace(test_name, " ", "_")
 
-    Wallaby.SessionStore.list_sessions_for(pid)
+    screenshot_paths = Wallaby.SessionStore.list_sessions_for(pid)
     |> Enum.with_index()
-    |> Enum.each(fn {s, i} ->
+    |> Enum.flat_map(fn {s, i} ->
       filename = time <> "_" <> test_name <> "(#{i + 1})"
 
-      Wallaby.Browser.take_screenshot(s, name: filename, log: true)
+      Wallaby.Browser.take_screenshot(s, name: filename).screenshots
     end)
+    |> Enum.map(&Wallaby.Browser.build_file_url/1)
+
+    IO.write("""
+
+      - #{Enum.join(screenshot_paths, "\n- ")}
+      """ |> String.trim_trailing()) 
   end
 end

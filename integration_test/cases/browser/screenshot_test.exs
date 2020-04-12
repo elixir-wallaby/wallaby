@@ -2,7 +2,6 @@ defmodule Wallaby.Integration.Browser.ScreenshotTest do
   use Wallaby.Integration.SessionCase, async: false
 
   import ExUnit.CaptureIO
-  import Wallaby.Query, only: [css: 1]
   import Wallaby.SettingsTestHelpers
 
   alias Wallaby.TestSupport.TestWorkspace
