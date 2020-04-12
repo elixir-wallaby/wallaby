@@ -6,7 +6,7 @@
 
 - Enables the ability to set capabilities by passing them as an option and using application configuration.
 - Implements default capabilities for Selenium.
-- Implements the `Wallaby.Feature` case template module.
+- Implements the `Wallaby.Feature` module.
 
 #### Breaking
 
