@@ -1,6 +1,4 @@
 defmodule Wallaby.Feature do
-  @includes_ecto Code.ensure_loaded?(Ecto.Adapters.SQL.Sandbox) &&
-                   Code.ensure_loaded?(Phoenix.Ecto.SQL.Sandbox)
   @moduledoc """
   Helpers for writing features.
 
@@ -16,6 +14,9 @@ defmodule Wallaby.Feature do
   config :wallaby, otp_app: :your_app
   ```
   """
+
+  @includes_ecto Code.ensure_loaded?(Ecto.Adapters.SQL.Sandbox) &&
+                   Code.ensure_loaded?(Phoenix.Ecto.SQL.Sandbox)
 
   defmacro __using__(_) do
     quote do
