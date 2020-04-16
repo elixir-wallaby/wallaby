@@ -228,7 +228,8 @@ defmodule Wallaby.Experimental.Chrome do
         url: base_url <> "session/#{id}",
         id: id,
         driver: __MODULE__,
-        server: Chromedriver
+        server: Chromedriver,
+        capabilities: capabilities
       }
 
       if window_size = Keyword.get(opts, :window_size),
@@ -401,7 +402,8 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   defdelegate log(session_or_element), to: WebdriverClient
 
-  defp default_capabilities(opts) do
+  @doc false
+  def default_capabilities(opts \\ []) do
     user_agent =
       Metadata.append(
         "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",

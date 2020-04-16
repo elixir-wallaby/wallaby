@@ -6,10 +6,12 @@
 
 - Enables the ability to set capabilities by passing them as an option and using application configuration.
 - Implements default capabilities for Selenium.
+- Implements the `Wallaby.Feature` module.
 
 #### Breaking
 
 - Moves configuration options for using chrome headlessly, the chrome binary, and the chromedriver binary to the `:chromedriver` key in the `:wallaby` application config.
+- Automatic screenshots will now only occur inside the `feature` macro.
 - Increases the minimum Elixir version to v1.7.
 - Increases the minimum Erlang version to v21.
 

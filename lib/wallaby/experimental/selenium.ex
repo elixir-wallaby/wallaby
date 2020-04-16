@@ -96,7 +96,8 @@ defmodule Wallaby.Experimental.Selenium do
         session_url: base_url <> "session/#{id}",
         url: base_url <> "session/#{id}",
         id: id,
-        driver: __MODULE__
+        driver: __MODULE__,
+        capabilities: capabilities
       }
 
       if window_size = Keyword.get(opts, :window_size),
@@ -295,7 +296,8 @@ defmodule Wallaby.Experimental.Selenium do
     WebdriverClient.send_keys(parent, keys)
   end
 
-  defp default_capabilities do
+  @doc false
+  def default_capabilities do
     %{
       javascriptEnabled: true,
       browserName: "firefox",

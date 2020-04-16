@@ -7,7 +7,8 @@ defmodule Wallaby.Mixfile do
   @maintainers [
     "Chris Keathley",
     "Tobias Pfeiffer",
-    "Aaron Renner"
+    "Aaron Renner",
+    "Mitchell Hanberg"
   ]
 
   def project do
@@ -31,8 +32,7 @@ defmodule Wallaby.Mixfile do
         "coveralls.html": :test,
         "coveralls.json": :test,
         "test.all": :test,
-        "test.drivers": :test,
-        docs: :docs
+        "test.drivers": :test
       ],
       test_coverage: [tool: ExCoveralls],
       test_paths: test_paths(@selected_driver),
@@ -61,8 +61,8 @@ defmodule Wallaby.Mixfile do
       {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
       {:bypass, "~> 1.0.0", only: :test},
       {:excoveralls, "~> 0.7", only: :test},
-      {:ex_doc, "~> 0.20", only: :docs},
-      {:inch_ex, "~> 2.0", only: :docs}
+      {:ex_doc, "~> 0.20", only: :dev},
+      {:inch_ex, "~> 2.0", only: :dev}
     ]
   end
 
