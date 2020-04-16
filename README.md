@@ -11,11 +11,12 @@ Here's an example test for a simple Todo application:
 
 ```elixir
 defmodule MyApp.Features.TodoTest do
-  use MyApp.Feature, async: true
+  use ExUnit.Case, async: true
+  use Wallaby.Feature
 
   import Wallaby.Query, only: [css: 2, text_field: 1, button: 1]
 
-  test "users can create todos", %{session: session} do
+  feature "users can create todos", %{session: session} do
     session
     |> visit("/todos")
     |> fill_in(text_field("New Todo"), with: "Write my first Wallaby test")
@@ -30,7 +31,8 @@ Because Wallaby manages multiple browsers for you, its possible to test several 
 
 ```elixir
 defmodule MyApp.Features.MultipleUsersTest do
-  use MyApp.Feature, async: true
+  use ExUnit.Case, async: true
+  use Wallaby.Feature
 
   import Wallaby.Query, only: [text_field: 1, button: 1, css: 2]
 
@@ -40,14 +42,13 @@ defmodule MyApp.Features.MultipleUsersTest do
 
   def message(msg), do: css(".messages > .message", text: msg)
 
-  test "That users can send messages to each other" do
-    {:ok, user1} = Wallaby.start_session
+  @sessions 2
+  feature "That users can send messages to each other", %{sessions: [user1, user2]} do
     user1
     |> visit(@page)
     |> fill_in(@message_field, with: "Hello there!")
     |> click(@share_button)
 
-    {:ok, user2} = Wallaby.start_session
     user2
     |> visit(@page)
     |> fill_in(@message_field, with: "Hello yourself")
