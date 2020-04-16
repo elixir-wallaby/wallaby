@@ -22,11 +22,7 @@ jobs:
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
-      env:
-        MIX_ENV: docs
       run: mix deps.get
 
     - name: Run Inch
-      env:
-        MIX_ENV: docs
       run: mix inch.report
