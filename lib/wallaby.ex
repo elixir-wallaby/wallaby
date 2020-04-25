@@ -6,12 +6,16 @@ defmodule Wallaby do
 
   Wallaby supports the following options:
 
-  * `:pool_size` - Maximum amount of phantoms to run. The default is `:erlang.system_info(:schedulers_online) * 2`.
+  * `:otp_app` - The name of your OTP application. This is used to check out your Ecto repos into the SQL Sandbox.
   * `:screenshot_dir` - The directory to store screenshots.
   * `:screenshot_on_failure` - if Wallaby should take screenshots on test failures (defaults to `false`).
   * `:max_wait_time` - The amount of time that Wallaby should wait to find an element on the page. (defaults to `3_000`)
   * `:js_errors` - if Wallaby should re-throw javascript errors in elixir (defaults to true).
   * `:js_logger` - IO device where javascript console logs are written to. Defaults to :stdio. This option can also be set to a file or any other io device. You can disable javascript console logging by setting this to `nil`.
+
+  ### PhantomJS related configuration
+
+  * `:pool_size` - Maximum amount of phantoms to run. The default is `:erlang.system_info(:schedulers_online) * 2`.
   * `:phantomjs` - The path to the phantomjs executable (defaults to "phantomjs")
   * `:phantomjs_args` - Any extra arguments that should be passed to phantomjs (defaults to "")
   """

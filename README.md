@@ -11,11 +11,12 @@ Here's an example test for a simple Todo application:
 
 ```elixir
 defmodule MyApp.Features.TodoTest do
-  use MyApp.FeatureCase, async: true
+  use ExUnit.Case, async: true
+  use Wallaby.Feature
 
   import Wallaby.Query, only: [css: 2, text_field: 1, button: 1]
 
-  test "users can create todos", %{session: session} do
+  feature "users can create todos", %{session: session} do
     session
     |> visit("/todos")
     |> fill_in(text_field("New Todo"), with: "Write my first Wallaby test")
@@ -30,7 +31,8 @@ Because Wallaby manages multiple browsers for you, its possible to test several 
 
 ```elixir
 defmodule MyApp.Features.MultipleUsersTest do
-  use MyApp.FeatureCase, async: true
+  use ExUnit.Case, async: true
+  use Wallaby.Feature
 
   import Wallaby.Query, only: [text_field: 1, button: 1, css: 2]
 
@@ -40,14 +42,13 @@ defmodule MyApp.Features.MultipleUsersTest do
 
   def message(msg), do: css(".messages > .message", text: msg)
 
-  test "That users can send messages to each other" do
-    {:ok, user1} = Wallaby.start_session
+  @sessions 2
+  feature "That users can send messages to each other", %{sessions: [user1, user2]} do
     user1
     |> visit(@page)
     |> fill_in(@message_field, with: "Hello there!")
     |> click(@share_button)
 
-    {:ok, user2} = Wallaby.start_session
     user2
     |> visit(@page)
     |> fill_in(@message_field, with: "Hello yourself")
@@ -76,7 +77,9 @@ Add Wallaby to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:wallaby, "~> 0.23.0", [runtime: false, only: :test]}]
+  [
+    {:wallaby, "~> 0.24.0", runtime: false, only: :test}
+  ]
 end
 ```
 
@@ -203,7 +206,7 @@ You will also want to add `phoenix_ecto` as a dependency to `MyWebApp`:
 
 def deps do
   [
-    {:wallaby, "~> 0.23", only: :test},
+    {:wallaby, "~> 0.24", only: :test, runtime: false},
     {:phoenix_ecto, "~> 3.0", only: :test}
   ]
 end
@@ -231,53 +234,19 @@ config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
 
 ### Writing tests
 
-It's easiest to add Wallaby to your test suite by creating a new case template (in case of an umbrella app, take care to adjust `YourApp` appropriately):
-
-```elixir
-defmodule YourApp.FeatureCase do
-  use ExUnit.CaseTemplate
-
-  using do
-    quote do
-      use Wallaby.DSL
-
-      alias YourApp.Repo
-      import Ecto
-      import Ecto.Changeset
-      import Ecto.Query
-
-      import YourApp.Router.Helpers
-    end
-  end
-
-  setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(YourApp.Repo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(YourApp.Repo, {:shared, self()})
-    end
-
-    metadata = Phoenix.Ecto.SQL.Sandbox.metadata_for(YourApp.Repo, self())
-    {:ok, session} = Wallaby.start_session(metadata: metadata)
-    {:ok, session: session}
-  end
-end
-```
-
-Then you can write tests like so:
+It's easiest to add Wallaby to your test suite by using the `Wallaby.Feature` module.
 
 ```elixir
 defmodule YourApp.UserListTest do
-  use YourApp.FeatureCase, async: true
+  use ExUnit.Case, async: true
+  use Wallaby.Feature
 
-  import Wallaby.Query, only: [css: 2]
-
-  test "users have names", %{session: session} do
+  feature "users have names", %{session: session} do
     session
     |> visit("/users")
-    |> find(css(".user", count: 3))
+    |> find(Query.css(".user", count: 3))
     |> List.first()
-    |> assert_has(css(".user-name", text: "Chris"))
+    |> assert_has(Query.css(".user-name", text: "Chris"))
   end
 end
 ```
@@ -454,7 +423,7 @@ Application.put_env(:wallaby, :screenshot_dir, "/file/path")
 
 ### Automatic screenshots
 
-You can automatically take screenshots on an error:
+You can automatically take screenshots on an error when using the `Wallaby.Feature.feature/3` macro.
 
 ```elixir
 # config/test.exs
@@ -564,9 +533,11 @@ Currently Wallaby provides experimental support for both headless chrome and sel
 Both of these drivers are still "experimental" because they don't support the full API yet and because the implementation is changing rapidly.
 But, if you would like to use them in your project here's what you'll need to do.
 
-Please refer to the [documentation](https://hexdocs.pm/wallaby/readme.html#headless-chrome) for further information about using the Chrome driver.
+### Chromedriver
 
-### Headless Chrome
+Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Chrome.html#content) for further information about using Chromedriver.
+
+#### Headless Chrome
 
 In order to run headless chrome you'll need to have ChromeDriver >= 2.30 and chrome >= 60.
 Previous versions of both of these tools _may_ work, but several features will be buggy.
@@ -576,13 +547,13 @@ The bug should be fixed in ChromeDriver 2.31.
 
 ### Selenium
 
-Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Selenium.html#content) for further information about using the Selenium driver.
+Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Selenium.html#content) for further information about using Selenium.
 
 ## Contributing
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
 
-To get started and setup the project, make sure you've got Elixir 1.5+ installed and then:
+To get started and setup the project, make sure you've got Elixir 1.7+ installed and then:
 
 ```
 $ mix deps.get
