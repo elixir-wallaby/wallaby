@@ -1,13 +1,14 @@
 defmodule Wallaby.Mixfile do
   use Mix.Project
 
-  @version "0.23.0"
+  @version "0.24.0"
   @drivers ~w(phantom selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers [
     "Chris Keathley",
     "Tobias Pfeiffer",
-    "Aaron Renner"
+    "Aaron Renner",
+    "Mitchell Hanberg"
   ]
 
   def project do
@@ -31,8 +32,7 @@ defmodule Wallaby.Mixfile do
         "coveralls.html": :test,
         "coveralls.json": :test,
         "test.all": :test,
-        "test.drivers": :test,
-        docs: :docs
+        "test.drivers": :test
       ],
       test_coverage: [tool: ExCoveralls],
       test_paths: test_paths(@selected_driver),
@@ -54,15 +54,15 @@ defmodule Wallaby.Mixfile do
       {:jason, "~> 1.1"},
       {:httpoison, "~> 0.12 or ~> 1.0"},
       {:poolboy, "~> 1.5"},
-      {:web_driver_client, github: "aaronrenner/web_driver_client"},
+      {:web_driver_client, "~> 0.1.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
       {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
       {:bypass, "~> 1.0.0", only: :test},
       {:excoveralls, "~> 0.7", only: :test},
-      {:ex_doc, "~> 0.20", only: :docs},
-      {:inch_ex, "~> 2.0", only: :docs}
+      {:ex_doc, "~> 0.20", only: :dev},
+      {:inch_ex, "~> 2.0", only: :dev}
     ]
   end
 
@@ -80,7 +80,7 @@ defmodule Wallaby.Mixfile do
     [
       extras: ["README.md"],
       source_ref: "v#{@version}",
-      source_url: "https://github.com/keathley/wallaby",
+      source_url: "https://github.com/elixir-wallaby/wallaby",
       main: "readme",
       logo: "guides/images/icon.png"
     ]
