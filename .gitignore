@@ -9,3 +9,5 @@ erl_crash.dump
 /doc
 /benchmarks/html
 /docs
+
+*.iml

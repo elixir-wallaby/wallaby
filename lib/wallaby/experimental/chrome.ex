@@ -111,6 +111,8 @@ defmodule Wallaby.Experimental.Chrome do
 
   alias Wallaby.{DependencyError, Metadata}
   alias Wallaby.Experimental.Chrome.{Chromedriver}
+  alias Wallaby.Experimental.Chrome.ServerPool
+  alias Wallaby.Experimental.Chrome.Chromedriver.Server
   alias Wallaby.Experimental.Selenium.WebdriverClient
   import Wallaby.Driver.LogChecker
 
@@ -145,7 +147,7 @@ defmodule Wallaby.Experimental.Chrome do
   def init(:ok) do
     children = [
       Wallaby.Driver.LogStore,
-      Wallaby.Experimental.Chrome.Chromedriver
+      Wallaby.Experimental.Chrome.ServerPool
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -213,9 +215,10 @@ defmodule Wallaby.Experimental.Chrome do
   @doc false
   @spec start_session([start_session_opts]) :: Wallaby.Driver.on_start_session() | no_return
   def start_session(opts \\ []) do
-    opts |> Keyword.get(:readiness_timeout, @default_readiness_timeout) |> wait_until_ready!()
+    {:ok, server} = ServerPool.checkout()
+    Server.wait_until_ready(server)
+    base_url = Server.get_base_url(server)
 
-    base_url = Chromedriver.base_url()
     create_session_fn = Keyword.get(opts, :create_session_fn, &WebdriverClient.create_session/2)
 
     capabilities = Keyword.get(opts, :capabilities, capabilities_from_config(opts))
@@ -228,7 +231,7 @@ defmodule Wallaby.Experimental.Chrome do
         url: base_url <> "session/#{id}",
         id: id,
         driver: __MODULE__,
-        server: Chromedriver,
+        server: server,
         capabilities: capabilities
       }
 
