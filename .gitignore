@@ -10,4 +10,5 @@ erl_crash.dump
 /benchmarks/html
 /docs
 
+# IntelliJ generated files
 *.iml
