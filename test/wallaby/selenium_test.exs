@@ -1,7 +1,7 @@
-defmodule Wallaby.Experimental.SeleniumTest do
+defmodule Wallaby.SeleniumTest do
   use Wallaby.HttpClientCase, async: true
 
-  alias Wallaby.Experimental.Selenium
+  alias Wallaby.Selenium
   alias Wallaby.Session
   alias Wallaby.TestSupport.JSONWireProtocolResponses
 
@@ -22,8 +22,8 @@ defmodule Wallaby.Experimental.SeleniumTest do
                url: remote_url |> URI.merge("session/#{session_id}") |> to_string(),
                id: session_id,
                server: :none,
-               capabilities: Wallaby.Experimental.Selenium.default_capabilities(),
-               driver: Wallaby.Experimental.Selenium
+               capabilities: Wallaby.Selenium.default_capabilities(),
+               driver: Wallaby.Selenium
              }
     end
 
@@ -82,7 +82,7 @@ defmodule Wallaby.Experimental.SeleniumTest do
       session_url: session_url,
       url: session_url,
       id: session_id,
-      driver: Wallaby.Experimental.Selenium
+      driver: Wallaby.Selenium
     }
   end
 

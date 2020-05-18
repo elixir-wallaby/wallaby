@@ -1,4 +1,4 @@
-defmodule Wallaby.Experimental.Chrome.Chromedriver.ReadinessChecker do
+defmodule Wallaby.Chrome.Chromedriver.ReadinessChecker do
   @moduledoc false
 
   alias WebDriverClient.Config

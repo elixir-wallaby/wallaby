@@ -5,7 +5,7 @@ defmodule Wallaby.Integration.CapabilitiesTest do
   import Wallaby.SettingsTestHelpers
 
   alias Wallaby.Integration.SessionCase
-  alias Wallaby.Experimental.Selenium.WebdriverClient
+  alias Wallaby.WebdriverClient
 
   setup do
     ensure_setting_is_reset(:wallaby, :chromedriver)

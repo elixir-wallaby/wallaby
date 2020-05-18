@@ -113,16 +113,20 @@ defmodule Wallaby do
   def driver do
     case System.get_env("WALLABY_DRIVER") do
       "chrome" ->
-        Wallaby.Experimental.Chrome
+        Wallaby.Chrome
 
       "selenium" ->
-        Wallaby.Experimental.Selenium
+        Wallaby.Selenium
 
       "phantom" ->
+        IO.warn(
+          "Wallaby.Phantom is deprecated, please use Wallaby.Chrome or Wallaby.Selenium instead."
+        )
+
         Wallaby.Phantom
 
       _ ->
-        Application.get_env(:wallaby, :driver, Wallaby.Phantom)
+        Application.get_env(:wallaby, :driver, Wallaby.Chrome)
     end
   end
 end

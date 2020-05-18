@@ -1,8 +1,8 @@
-defmodule Wallaby.Experimental.Chrome.Chromedriver do
+defmodule Wallaby.Chrome.Chromedriver do
   @moduledoc false
 
-  alias Wallaby.Experimental.Chrome
-  alias Wallaby.Experimental.Chrome.Chromedriver.Server
+  alias Wallaby.Chrome
+  alias Wallaby.Chrome.Chromedriver.Server
 
   @instance __MODULE__
 

@@ -1,12 +1,12 @@
-defmodule Wallaby.Experimental.Chrome.Chromedriver.ServerTest do
+defmodule Wallaby.Chrome.Chromedriver.ServerTest do
   use ExUnit.Case, async: true
 
   alias Wallaby.TestSupport.Chrome.ChromeTestScript
   alias Wallaby.TestSupport.TestScriptUtils
   alias Wallaby.TestSupport.TestWorkspace
 
-  alias Wallaby.Experimental.Chrome
-  alias Wallaby.Experimental.Chrome.Chromedriver.Server
+  alias Wallaby.Chrome
+  alias Wallaby.Chrome.Chromedriver.Server
 
   @moduletag :capture_log
 

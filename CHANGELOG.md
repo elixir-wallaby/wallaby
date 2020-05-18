@@ -2,6 +2,16 @@
 
 ## Master
 
+### Deprecations
+
+- Deprecated `Wallaby.Phantom`, please switch to `Wallaby.Chrome` or `Wallaby.Selenium`
+
+### Breaking
+
+- `Wallaby.Experimental.Chrome` renamed to `Wallaby.Chrome`.
+- `Wallaby.Experimental.Selenium` renamed to `Wallaby.Selenium`.
+- `Wallaby.Chrome` is now the default driver.
+
 ## 0.24.1 (2020-05-21)
 
 - Compatibility fix for ChromeDriver version >= 83. Fixes [#533](https://github.com/elixir-wallaby/wallaby/issues/533)
