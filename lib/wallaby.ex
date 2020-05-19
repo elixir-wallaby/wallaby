@@ -19,6 +19,13 @@ defmodule Wallaby do
   * `:phantomjs` - The path to the phantomjs executable (defaults to "phantomjs")
   * `:phantomjs_args` - Any extra arguments that should be passed to phantomjs (defaults to "")
   """
+
+  @drivers %{
+    "chrome" => Wallaby.Chrome,
+    "selenium" => Wallaby.Selenium,
+    "phantom" => Wallaby.Phantom
+  }
+
   use Application
 
   alias Wallaby.Session
@@ -111,22 +118,19 @@ defmodule Wallaby do
   end
 
   def driver do
-    case System.get_env("WALLABY_DRIVER") do
-      "chrome" ->
-        Wallaby.Chrome
-
-      "selenium" ->
-        Wallaby.Selenium
-
-      "phantom" ->
-        IO.warn(
-          "Wallaby.Phantom is deprecated, please use Wallaby.Chrome or Wallaby.Selenium instead."
-        )
-
-        Wallaby.Phantom
-
-      _ ->
+    driver =
+      Map.get(
+        @drivers,
+        System.get_env("WALLABY_DRIVER"),
         Application.get_env(:wallaby, :driver, Wallaby.Chrome)
+      )
+
+    if driver == Wallaby.Phantom do
+      IO.warn(
+        "Wallaby.Phantom is deprecated, please use Wallaby.Chrome or Wallaby.Selenium instead."
+      )
     end
+
+    driver
   end
 end
