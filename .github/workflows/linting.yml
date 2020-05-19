@@ -1,0 +1,53 @@
+name: Linting
+on: [push, pull_request]
+
+env:
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+jobs:
+  linting:
+    name: Linting (${{matrix.elixir}}/${{matrix.otp}})
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
+
+    strategy:
+      matrix:
+        otp: [21.x]
+        elixir: [1.7.x, 1.8.x, 1.9.x]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-elixir@v1.0.0
+      with:
+        otp-version: ${{matrix.otp}}
+        elixir-version: ${{matrix.elixir}}
+
+    - uses: actions/cache@v1
+      id: deps-cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+    - uses: actions/cache@v1
+      with:
+        path: _build
+        key: ${{ runner.os }}-v1-dialyzer-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+    - name: Install Dependencies
+      if: steps.deps-cache.outputs.cache-hit != 'true'
+      run: mix deps.get
+
+    - name: Compile
+      run: mix compile --force --warnings-as-errors
+
+    - name: Check formatting
+      run: mix format --check-formatted
+      if: matrix.elixir == '1.9.x'
+
+    - name: Run Credo
+      run: mix credo --strict
+
+    - name: Run Dialyzer
+      run: mix dialyzer --halt-exit-status
