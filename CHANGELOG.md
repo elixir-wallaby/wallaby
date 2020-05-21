@@ -2,6 +2,10 @@
 
 ## Master
 
+## 0.24.1 (2020-05-21)
+
+- Compatibility fix for ChromeDriver version >= 83. Fixes [#533](https://github.com/elixir-wallaby/wallaby/issues/533)
+
 ## 0.24.0 (2020-04-15)
 
 ### Improvements
