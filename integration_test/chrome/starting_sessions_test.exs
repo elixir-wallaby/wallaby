@@ -6,7 +6,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
   import Wallaby.TestSupport.TestScriptUtils
   import Wallaby.TestSupport.TestWorkspace
 
-  alias Wallaby.Experimental.Chrome
+  alias Wallaby.Chrome
   alias Wallaby.TestSupport.Chrome.ChromeTestScript
   alias Wallaby.TestSupport.TestWorkspace
 

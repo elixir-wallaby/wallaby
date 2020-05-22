@@ -1,10 +1,10 @@
-defmodule Wallaby.Experimental.Selenium.StartSessionConfigTest do
+defmodule Wallaby.Selenium.StartSessionConfigTest do
   use Wallaby.HttpClientCase, async: false
 
   # These tests modify the application environment so need
   # to be run with async: false
 
-  alias Wallaby.Experimental.Selenium
+  alias Wallaby.Selenium
   alias Wallaby.Session
   alias Wallaby.SettingsTestHelpers
   alias Wallaby.TestSupport.JSONWireProtocolResponses

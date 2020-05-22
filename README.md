@@ -83,6 +83,16 @@ def deps do
 end
 ```
 
+Configure the driver.
+
+```elixir
+# Chrome
+config :wallaby, driver: Wallaby.Chrome # default
+
+# Selenium
+config :wallaby, driver: Wallaby.Selenium
+```
+
 Then ensure that Wallaby is started in your `test_helper.exs`:
 
 ```elixir
@@ -210,26 +220,6 @@ def deps do
     {:phoenix_ecto, "~> 3.0", only: :test}
   ]
 end
-```
-
-### PhantomJS
-
-Wallaby requires PhantomJS. You can install PhantomJS through NPM or your package manager of choice:
-
-```
-$ npm install -g phantomjs-prebuilt
-```
-
-Wallaby will use whatever PhantomJS you have installed in your path. If you need to specify a specific PhantomJS you can pass the path in the configuration:
-
-```elixir
-config :wallaby, phantomjs: "some/path/to/phantomjs"
-```
-
-You can also pass arguments to PhantomJS through the `phantomjs_args` config setting, e.g.:
-
-```elixir
-config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
 ```
 
 ### Writing tests
@@ -494,7 +484,7 @@ Application.put_env(:wallaby, :js_logger, file)
 
 Logging can be disabled by setting `:js_logger` to `nil`.
 
-## Config
+## Configuration
 
 ### Adjusting timeouts
 
@@ -510,64 +500,34 @@ config :wallaby,
   hackney_options: [timeout: 5_000]
 ```
 
-### Drivers
-
-Wallaby works with PhantomJS out of the box. There is also experimental support for both headless chrome and selenium.
-The driver can be specified by setting the `driver` option in the wallaby config like so:
-
-```elixir
-# Chrome
-config :wallaby,
-  driver: Wallaby.Experimental.Chrome
-
-# Selenium
-config :wallaby,
-  driver: Wallaby.Experimental.Selenium
-```
-
-See below for more information on the experimental drivers.
-
-## Experimental Driver Support
-
-Currently Wallaby provides experimental support for both headless chrome and selenium.
-Both of these drivers are still "experimental" because they don't support the full API yet and because the implementation is changing rapidly.
-But, if you would like to use them in your project here's what you'll need to do.
-
-### Chromedriver
-
-Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Chrome.html#content) for further information about using Chromedriver.
-
-#### Headless Chrome
-
-In order to run headless chrome you'll need to have ChromeDriver >= 2.30 and chrome >= 60.
-Previous versions of both of these tools _may_ work, but several features will be buggy.
-If you want to setup chrome in a CI environment then you'll still need to install and run xvfb.
-This is due to a bug in ChromeDriver 2.30 that inhibits ChromeDriver from handling input text correctly.
-The bug should be fixed in ChromeDriver 2.31.
-
-### Selenium
-
-Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Selenium.html#content) for further information about using Selenium.
-
 ## Contributing
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
 
 To get started and setup the project, make sure you've got Elixir 1.7+ installed and then:
 
-```
-$ mix deps.get
-$ npm install -g phantomjs-prebuilt # unless you've already got PhantomJS installed
-$ mix test # Make sure the tests pass!
-```
+### Development Dependencies
 
-Besides running the unit tests above, it is recommended to run the driver
-integration tests too:
+Wallaby requires the following tools.
 
-```
-# Run only phantomjs integration tests
-$ WALLABY_DRIVER=phantom mix test
+- ChromeDriver
+- Google Chrome
+- GeckoDriver
+- Mozilla Firefox
+- selenium-server-standalone
 
-# Run all tests (unit and all drivers)
+
+```shell
+# Unit tests
+$ mix test
+
+# Integration tests for all drivers
+$ mix test.drivers
+
+# Integration tests for a specific driver
+$ WALLABY_DRIVER=chrome mix test
+$ WALLABY_DRIVER=selenium mix test
+
+# All tests
 $ mix test.all
 ```

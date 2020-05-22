@@ -2,7 +2,7 @@ defmodule Wallaby.SessionStore do
   @moduledoc false
   use GenServer
 
-  alias Wallaby.Experimental.Selenium.WebdriverClient
+  alias Wallaby.WebdriverClient
 
   def start_link, do: GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
 

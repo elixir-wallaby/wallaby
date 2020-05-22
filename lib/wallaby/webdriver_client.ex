@@ -1,4 +1,4 @@
-defmodule Wallaby.Experimental.Selenium.WebdriverClient do
+defmodule Wallaby.WebdriverClient do
   @moduledoc false
   # Client implementation for the WebDriver Wire Protocol
   # documented on https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol

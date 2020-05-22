@@ -1,4 +1,4 @@
-defmodule Wallaby.Experimental.Selenium do
+defmodule Wallaby.Selenium do
   @moduledoc """
   The Selenium driver uses [Selenium Server](https://github.com/SeleniumHQ/selenium) to power many types of browsers (Chrome, Firefox, Edge, etc).
 
@@ -52,7 +52,7 @@ defmodule Wallaby.Experimental.Selenium do
   @behaviour Wallaby.Driver
 
   alias Wallaby.{Driver, Element, Session}
-  alias Wallaby.Experimental.Selenium.WebdriverClient
+  alias Wallaby.WebdriverClient
 
   @typedoc """
   Options to pass to Wallaby.start_session/1

@@ -1,7 +1,7 @@
-defmodule Wallaby.Experimental.Chrome.LoggerTest do
+defmodule Wallaby.Chrome.LoggerTest do
   use ExUnit.Case, async: false
 
-  alias Wallaby.Experimental.Chrome.Logger
+  alias Wallaby.Chrome.Logger
   import ExUnit.CaptureIO
   alias Wallaby.SettingsTestHelpers
 

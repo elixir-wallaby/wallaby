@@ -1,9 +1,9 @@
-defmodule Wallaby.Experimental.Chrome.Chromedriver.Server do
+defmodule Wallaby.Chrome.Chromedriver.Server do
   @moduledoc false
   use GenServer
 
   alias Wallaby.Driver.Utils
-  alias Wallaby.Experimental.Chrome.Chromedriver.ReadinessChecker
+  alias Wallaby.Chrome.Chromedriver.ReadinessChecker
 
   defmodule State do
     @moduledoc false

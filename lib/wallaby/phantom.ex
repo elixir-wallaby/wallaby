@@ -30,6 +30,7 @@ defmodule Wallaby.Phantom do
   config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
   ```
   """
+  @moduledoc deprecated: "Please use Wallaby.Chrome or Wallaby.Selenium instead."
 
   use Supervisor
 
