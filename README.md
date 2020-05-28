@@ -78,7 +78,7 @@ Add Wallaby to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:wallaby, "~> 0.24.0", runtime: false, only: :test}
+    {:wallaby, "~> 0.25.0", runtime: false, only: :test}
   ]
 end
 ```
@@ -216,7 +216,7 @@ You will also want to add `phoenix_ecto` as a dependency to `MyWebApp`:
 
 def deps do
   [
-    {:wallaby, "~> 0.24", only: :test, runtime: false},
+    {:wallaby, "~> 0.25.0", only: :test, runtime: false},
     {:phoenix_ecto, "~> 3.0", only: :test}
   ]
 end

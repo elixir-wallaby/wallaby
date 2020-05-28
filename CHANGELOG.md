@@ -2,6 +2,8 @@
 
 ## Master
 
+## 0.25.0 (2020-05-27)
+
 ### Deprecations
 
 - Deprecated `Wallaby.Phantom`, please switch to `Wallaby.Chrome` or `Wallaby.Selenium`
