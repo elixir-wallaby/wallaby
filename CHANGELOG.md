@@ -2,6 +2,12 @@
 
 ## Master
 
+## 0.25.1 (2020-06-09)
+
+### Fixes
+
+- Add `ecto_sql` and `phoenix_ecto`
+
 ## 0.25.0 (2020-05-27)
 
 ### Deprecations
