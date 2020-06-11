@@ -90,7 +90,7 @@ defmodule Wallaby.Mixfile do
 
   defp dialyzer do
     [
-      plt_add_apps: [:inets],
+      plt_add_apps: [:inets, :phoenix_ecto, :ecto_sql],
       ignore_warnings: ".dialyzer_ignore.exs",
       list_unused_filters: true
     ]

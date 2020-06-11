@@ -26,7 +26,7 @@ defmodule Wallaby.Feature do
       import Wallaby.Feature
 
       setup context do
-        metadata = configure_ecto(context[:async])
+        metadata = configure_ecto(unquote(@includes_ecto), context[:async])
 
         start_session_opts =
           [metadata: metadata]
@@ -101,8 +101,8 @@ defmodule Wallaby.Feature do
   end
 
   @doc false
-  defmacro configure_ecto(async?) do
-    if @includes_ecto do
+  defmacro configure_ecto(includes_ecto?, async?) do
+    if includes_ecto? do
       quote do
         otp_app()
         |> ecto_repos()
@@ -208,9 +208,9 @@ defmodule Wallaby.Feature do
 
     screenshot_paths =
       Wallaby.SessionStore.list_sessions_for(pid)
-      |> Enum.with_index()
+      |> Enum.with_index(1)
       |> Enum.flat_map(fn {s, i} ->
-        filename = time <> "_" <> test_name <> "(#{i + 1})"
+        filename = time <> "_" <> test_name <> "(#{i})"
 
         Wallaby.Browser.take_screenshot(s, name: filename).screenshots
       end)
