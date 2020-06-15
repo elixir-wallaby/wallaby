@@ -12,7 +12,8 @@ defmodule Wallaby.Driver.ProcessWorkspace.Server do
   def init([process_pid, workspace_path]) do
     Process.flag(:trap_exit, true)
     ref = Process.monitor(process_pid)
-    File.mkdir(workspace_path)
+
+    File.mkdir_p!(workspace_path)
 
     {:ok, %{ref: ref, workspace_path: workspace_path}}
   end

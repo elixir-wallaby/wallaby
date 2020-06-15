@@ -14,6 +14,24 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
     def init([]), do: {:ok, []}
   end
 
+  defp now_in_milliseconds(), do: DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+  defp with_timeout(doer, timeout \\ 100),
+    do: with_timeout(doer, now_in_milliseconds(), timeout)
+
+  defp with_timeout(doer, start, timeout) do
+    doer.()
+  rescue
+    e ->
+      passed_timeout? = now_in_milliseconds() - start >= timeout
+
+      if passed_timeout? do
+        reraise e, __STACKTRACE__
+      else
+        with_timeout(doer, start, timeout)
+      end
+  end
+
   describe "create/2" do
     test "creates a workspace dir which is deleted after the process ends" do
       {:ok, test_server} = TestServer.start_link()
@@ -22,9 +40,10 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
       assert File.exists?(workspace_path)
 
       TestServer.stop(test_server)
-      Process.sleep(100)
 
-      refute File.exists?(workspace_path)
+      with_timeout(fn ->
+        refute File.exists?(workspace_path)
+      end)
     end
 
     test "when workspace already exists" do
@@ -36,9 +55,10 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
       assert File.exists?(workspace_path)
 
       TestServer.stop(test_server)
-      Process.sleep(100)
 
-      refute File.exists?(workspace_path)
+      with_timeout(fn ->
+        refute File.exists?(workspace_path)
+      end)
     end
 
     test "creates a workspace dir using tmp_dir_prefix setting" do
