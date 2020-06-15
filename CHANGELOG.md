@@ -2,6 +2,12 @@
 
 ## Master
 
+### Remove `Wallaby.Phantom`
+
+The PhantomJS driver was deprecated in v0.25.0 because it is no longer maintained and does not implement many modern browser features.
+
+Users are encouraged to switch to the `Wallaby.Chrome` driver, which is now the default. `Wallaby.Chrome` requires installing `chromedriver` as well as Google Chrome, both of which now come pre-installed on many CI platforms.
+
 ## 0.25.1 (2020-06-09)
 
 ### Fixes

@@ -25,7 +25,7 @@ defmodule Wallaby.WebdriverClientTest do
           "status" => 0,
           "value" => %{
             "acceptSslCerts" => false,
-            "browserName" => "phantomjs"
+            "browserName" => "chrome"
           }
         })
       end)

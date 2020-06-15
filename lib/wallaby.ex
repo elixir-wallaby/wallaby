@@ -12,18 +12,11 @@ defmodule Wallaby do
   * `:max_wait_time` - The amount of time that Wallaby should wait to find an element on the page. (defaults to `3_000`)
   * `:js_errors` - if Wallaby should re-throw javascript errors in elixir (defaults to true).
   * `:js_logger` - IO device where javascript console logs are written to. Defaults to :stdio. This option can also be set to a file or any other io device. You can disable javascript console logging by setting this to `nil`.
-
-  ### PhantomJS related configuration
-
-  * `:pool_size` - Maximum amount of phantoms to run. The default is `:erlang.system_info(:schedulers_online) * 2`.
-  * `:phantomjs` - The path to the phantomjs executable (defaults to "phantomjs")
-  * `:phantomjs_args` - Any extra arguments that should be passed to phantomjs (defaults to "")
   """
 
   @drivers %{
     "chrome" => Wallaby.Chrome,
-    "selenium" => Wallaby.Selenium,
-    "phantom" => Wallaby.Phantom
+    "selenium" => Wallaby.Selenium
   }
 
   use Application
@@ -118,19 +111,10 @@ defmodule Wallaby do
   end
 
   def driver do
-    driver =
-      Map.get(
-        @drivers,
-        System.get_env("WALLABY_DRIVER"),
-        Application.get_env(:wallaby, :driver, Wallaby.Chrome)
-      )
-
-    if driver == Wallaby.Phantom do
-      IO.warn(
-        "Wallaby.Phantom is deprecated, please use Wallaby.Chrome or Wallaby.Selenium instead."
-      )
-    end
-
-    driver
+    Map.get(
+      @drivers,
+      System.get_env("WALLABY_DRIVER"),
+      Application.get_env(:wallaby, :driver, Wallaby.Chrome)
+    )
   end
 end
