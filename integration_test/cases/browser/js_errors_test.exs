@@ -1,4 +1,4 @@
-defmodule Wallaby.Integration.Phantom.JSErrorsTest do
+defmodule Wallaby.Integration.JSErrorsTest do
   use Wallaby.Integration.SessionCase, async: true
 
   import ExUnit.CaptureIO

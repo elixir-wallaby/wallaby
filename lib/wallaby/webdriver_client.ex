@@ -292,9 +292,6 @@ defmodule Wallaby.WebdriverClient do
 
   @doc """
   Checks if the element is being displayed.
-
-  This is based on what is available in phantom and doesn't match the current
-  specification.
   """
   @spec displayed(Element.t()) :: {:ok, boolean} | {:error, :stale_reference}
   def displayed(element) do
@@ -305,8 +302,6 @@ defmodule Wallaby.WebdriverClient do
 
   @doc """
   Gets the size of a element.
-
-  This is non-standard and only works in Phantom.
   """
   @spec size(Element.t()) :: {:ok, any}
   def size(element) do
@@ -317,8 +312,6 @@ defmodule Wallaby.WebdriverClient do
 
   @doc """
   Gets the height, width, x, and y position of an Element.
-
-  This is based on the standard but currently is un-supported by Phantom.
   """
   @spec rect(Element.t()) :: {:ok, any}
   def rect(element) do
