@@ -2,6 +2,8 @@
 
 ## Master
 
+## 0.26.0 (2020-06-15)
+
 ### Remove `Wallaby.Phantom`
 
 The PhantomJS driver was deprecated in v0.25.0 because it is no longer maintained and does not implement many modern browser features.
