@@ -3,6 +3,14 @@ defmodule Wallaby.Driver.ProcessWorkspace.Server do
 
   use GenServer
 
+  def child_spec([process_pid, workspace_path]) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, [process_pid, workspace_path]},
+      restart: :transient
+    }
+  end
+
   @spec start_link(pid, String.t()) :: GenServer.on_start()
   def start_link(process_pid, workspace_path) do
     GenServer.start_link(__MODULE__, [process_pid, workspace_path])
@@ -12,7 +20,8 @@ defmodule Wallaby.Driver.ProcessWorkspace.Server do
   def init([process_pid, workspace_path]) do
     Process.flag(:trap_exit, true)
     ref = Process.monitor(process_pid)
-    File.mkdir(workspace_path)
+
+    File.mkdir_p!(workspace_path)
 
     {:ok, %{ref: ref, workspace_path: workspace_path}}
   end
