@@ -12,11 +12,7 @@ defmodule Wallaby.Driver.ProcessWorkspace.ServerSupervisor do
 
   @spec start_server(pid, String.t()) :: DynamicSupervisor.on_start_child()
   def start_server(process_pid, workspace_path) do
-    DynamicSupervisor.start_child(__MODULE__, %{
-      id: Server,
-      start: {Server, :start_link, [process_pid, workspace_path]},
-      restart: :transient
-    })
+    DynamicSupervisor.start_child(__MODULE__, {Server, [process_pid, workspace_path]})
   end
 
   @impl DynamicSupervisor
