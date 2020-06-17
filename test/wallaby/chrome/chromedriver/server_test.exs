@@ -4,6 +4,7 @@ defmodule Wallaby.Chrome.Chromedriver.ServerTest do
   alias Wallaby.TestSupport.Chrome.ChromeTestScript
   alias Wallaby.TestSupport.TestScriptUtils
   alias Wallaby.TestSupport.TestWorkspace
+  alias Wallaby.TestSupport.Utils
 
   alias Wallaby.Chrome
   alias Wallaby.Chrome.Chromedriver.Server
@@ -102,8 +103,11 @@ defmodule Wallaby.Chrome.Chromedriver.ServerTest do
     kill_os_process(wrapper_script_os_pid)
 
     assert_receive {:EXIT, ^server, {:exit_status, _}}
-    refute os_process_running?(wrapper_script_os_pid)
-    refute os_process_running?(os_pid)
+
+    Utils.attempt_with_timeout(fn ->
+      refute os_process_running?(wrapper_script_os_pid)
+      refute os_process_running?(os_pid)
+    end)
   end
 
   test "crashes when chromedriver is killed" do
@@ -120,10 +124,10 @@ defmodule Wallaby.Chrome.Chromedriver.ServerTest do
 
     assert_receive {:EXIT, ^server, {:exit_status, _}}
 
-    # Since the process isn't trapping exits, let things shut down async
-    Process.sleep(100)
-    refute os_process_running?(wrapper_script_os_pid)
-    refute os_process_running?(os_pid)
+    Utils.attempt_with_timeout(fn ->
+      refute os_process_running?(wrapper_script_os_pid)
+      refute os_process_running?(os_pid)
+    end)
   end
 
   test "shuts down wrapper and chromedriver when server is stopped" do
@@ -135,8 +139,10 @@ defmodule Wallaby.Chrome.Chromedriver.ServerTest do
 
     Server.stop(server)
 
-    refute os_process_running?(wrapper_script_os_pid)
-    refute os_process_running?(os_pid)
+    Utils.attempt_with_timeout(fn ->
+      refute os_process_running?(wrapper_script_os_pid)
+      refute os_process_running?(os_pid)
+    end)
   end
 
   defp write_chrome_wrapper_script!(base_dir, opts \\ []) do
