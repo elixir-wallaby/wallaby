@@ -141,7 +141,7 @@ defmodule Wallaby.Browser do
   state. However, if this error does continue to occur it will cause wallaby to
   loop forever (or until the test is killed by exunit).
   """
-  @opaque sync_result :: {:ok, any()} | {:error, any()}
+  @type sync_result :: {:ok, any()} | {:error, any()}
   @spec retry((() -> sync_result), timeout) :: sync_result()
 
   def retry(f, start_time \\ current_time()) do
