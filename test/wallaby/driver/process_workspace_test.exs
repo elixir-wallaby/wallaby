@@ -3,6 +3,7 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
 
   alias Wallaby.Driver.ProcessWorkspace
   alias Wallaby.Driver.TemporaryPath
+  alias Wallaby.TestSupport.Utils
 
   defmodule TestServer do
     use GenServer
@@ -23,7 +24,7 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
 
       TestServer.stop(test_server)
 
-      with_timeout(fn ->
+      Utils.attempt_with_timeout(fn ->
         refute File.exists?(workspace_path)
       end)
     end
@@ -38,7 +39,7 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
 
       TestServer.stop(test_server)
 
-      with_timeout(fn ->
+      Utils.attempt_with_timeout(fn ->
         refute File.exists?(workspace_path)
       end)
     end
@@ -62,23 +63,5 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
       )
 
     TemporaryPath.generate(base_dir)
-  end
-
-  defp now_in_milliseconds(), do: DateTime.utc_now() |> DateTime.to_unix(:millisecond)
-
-  defp with_timeout(doer, timeout \\ 100),
-    do: with_timeout(doer, now_in_milliseconds(), timeout)
-
-  defp with_timeout(doer, start, timeout) do
-    doer.()
-  rescue
-    e ->
-      passed_timeout? = now_in_milliseconds() - start >= timeout
-
-      if passed_timeout? do
-        reraise e, __STACKTRACE__
-      else
-        with_timeout(doer, start, timeout)
-      end
   end
 end
