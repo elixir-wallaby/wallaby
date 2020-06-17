@@ -2,6 +2,8 @@
 
 ## Master
 
+## 0.26.1 (2020-06-17)
+
 ### Fixes
 
 - Change Wallaby.Browser.sync_result from `@opaque` to `@type` Fixes [#540](https://github.com/elixir-wallaby/wallaby/issues/540)
