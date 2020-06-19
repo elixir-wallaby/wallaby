@@ -108,9 +108,9 @@ defmodule Wallaby.Query do
           | :button_type
           | nil
   @type conditions :: [
-          count: integer,
-          minimum: integer,
-          maximum: integer,
+          count: non_neg_integer,
+          minimum: non_neg_integer,
+          maximum: non_neg_integer,
           text: String.t() | nil,
           visible: boolean() | :any,
           selected: boolean() | :any,
