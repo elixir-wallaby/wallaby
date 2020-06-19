@@ -98,24 +98,26 @@ defmodule Wallaby.Query do
           | :option
           | :select
           | :file_field
+          | :attribute
   @type attribute_key_value_pair :: {String.t(), String.t()}
   @type selector ::
           String.t()
-          | :attribute_key_value_pair
+          | attribute_key_value_pair()
   @type html_validation ::
           :bad_label
           | :button_type
           | nil
   @type conditions :: [
-          count: non_neg_integer,
-          text: String.t(),
+          count: integer,
+          minimum: integer,
+          maximum: integer,
+          text: String.t() | nil,
           visible: boolean() | :any,
           selected: boolean() | :any,
-          minimum: non_neg_integer,
-          at: pos_integer
+          at: integer | :all
         ]
   @type result :: list(Element.t())
-  @type opts :: nonempty_list()
+  @type opts :: list()
 
   @type t :: %__MODULE__{
           method: method(),
