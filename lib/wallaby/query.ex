@@ -114,7 +114,7 @@ defmodule Wallaby.Query do
           text: String.t() | nil,
           visible: boolean() | :any,
           selected: boolean() | :any,
-          at: integer | :all
+          at: non_neg_integer | :all
         ]
   @type result :: list(Element.t())
   @type opts :: list()
