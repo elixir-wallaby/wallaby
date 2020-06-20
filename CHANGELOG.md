@@ -2,6 +2,12 @@
 
 ## Master
 
+## 0.26.2 (2020-06-19)
+
+### Fixes
+
+- Improve `Query.t()` specification to fix dialyzer warnings. Fixes [#542](https://github.com/elixir-wallaby/wallaby/issues/542)
+
 ## 0.26.1 (2020-06-17)
 
 ### Fixes
