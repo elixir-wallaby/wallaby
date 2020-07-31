@@ -1,7 +1,7 @@
 defmodule Wallaby.SessionStoreTest do
   @moduledoc false
   use ExUnit.Case
-  alias Wallaby.{Session, SessionStore}
+  alias Wallaby.SessionStore
 
   describe "monitor/1" do
     test "adds session to list of active sessions" do
