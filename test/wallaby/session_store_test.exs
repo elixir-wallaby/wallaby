@@ -13,7 +13,7 @@ defmodule Wallaby.SessionStoreTest do
   end
 
   describe "demonitor/1" do
-    test "adds session to list of active sessions" do
+    test "removes session from list of active sessions" do
       {:ok, session} = Wallaby.driver().start_session([])
       :ok = SessionStore.monitor(session)
       :ok = SessionStore.demonitor(session)
