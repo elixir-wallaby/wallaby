@@ -39,11 +39,11 @@ defmodule Wallaby.SessionStore do
   def handle_call({:demonitor, session}, _from, _state) do
     result =
       :ets.select(:session_store, [
-        {{{:"$1", :"$2", :"$3"}, :"$4"}, [{:==, :"$2", session.id}], [{{:"$1", :"$3", :"$4"}}]}
-        ])
+        {{{:"$1", :"$2", :"$3"}, :_}, [{:==, :"$2", session.id}], [{{:"$1", :"$3"}}]}
+      ])
 
     case result do
-      [{ref, pid, _session}] ->
+      [{ref, pid}] ->
         true = Process.demonitor(ref)
         :ets.delete(:session_store, {ref, session.id, pid})
 
@@ -56,7 +56,9 @@ defmodule Wallaby.SessionStore do
 
   def handle_info({:DOWN, ref, :process, pid, _reason}, _state) do
     [session] =
-      :ets.select(:session_store, [{{{:"$1", :"$2", :"$3"}, :"$4"}, [{:==, :"$1", ref}], [:"$4"]}])
+      :ets.select(:session_store, [
+        {{{:"$1", :_, :_}, :"$4"}, [{:==, :"$1", ref}], [:"$4"]}
+      ])
 
     WebdriverClient.delete_session(session)
 
