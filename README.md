@@ -93,6 +93,12 @@ config :wallaby, driver: Wallaby.Chrome # default
 config :wallaby, driver: Wallaby.Selenium
 ```
 
+When calling `use Wallaby.Feature` and using Ecto, please configure your `otp_app`.
+
+```
+config :wallaby, otp_app: :your_app
+```
+
 Then ensure that Wallaby is started in your `test_helper.exs`:
 
 ```elixir
