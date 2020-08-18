@@ -2,6 +2,10 @@
 
 ## Main
 
+### Breaking
+
+- `Browser.assert_text/2` and `Browser.assert_text/3` now return the parent instead of `true` when the text was found.
+
 ## 0.27.0 (2020-12-4)
 
 ### Breaking
