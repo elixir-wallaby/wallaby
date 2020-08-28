@@ -172,7 +172,7 @@ defmodule Wallaby.Browser do
 
       page
       |> fill_in(Query.text_field("name"), with: "Chris")
-      |> fill_in(Query.css("#password_field", with: "secret42"))
+      |> fill_in(Query.css("#password_field"), with: "secret42")
 
   ### Note
 
