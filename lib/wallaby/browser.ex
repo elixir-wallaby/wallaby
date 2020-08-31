@@ -123,7 +123,6 @@ defmodule Wallaby.Browser do
   @type parent ::
           element
           | session
-  @type locator :: String.t()
   @type opts :: Query.opts()
 
   @default_max_wait_time 3_000
@@ -705,7 +704,7 @@ defmodule Wallaby.Browser do
   """
   @spec find(parent, Query.t(), (Element.t() -> any())) :: parent
   @spec find(parent, Query.t()) :: Element.t() | [Element.t()]
-  @spec find(parent, locator) :: Element.t() | [Element.t()]
+  @spec find(parent, String.t()) :: Element.t() | [Element.t()]
 
   def find(parent, %Query{} = query, callback) when is_function(callback) do
     results = find(parent, query)
@@ -796,7 +795,7 @@ defmodule Wallaby.Browser do
   @doc """
   Matches the Element's content with the provided text
   """
-  @spec has_text?(Element.t(), String.t()) :: boolean()
+  @spec has_text?(parent, String.t()) :: boolean()
   @spec has_text?(parent, Query.t(), String.t()) :: boolean()
 
   def has_text?(parent, query, text) do
@@ -833,7 +832,7 @@ defmodule Wallaby.Browser do
   @doc """
   Matches the Element's content with the provided text and raises if not found
   """
-  @spec assert_text(Element.t(), String.t()) :: boolean()
+  @spec assert_text(parent, String.t()) :: boolean()
   @spec assert_text(parent, Query.t(), String.t()) :: boolean()
 
   def assert_text(parent, query, text) when is_binary(text) do
@@ -922,7 +921,7 @@ defmodule Wallaby.Browser do
   Searches for CSS on the page.
   """
   @spec has_css?(parent, Query.t(), String.t()) :: boolean()
-  @spec has_css?(parent, locator) :: boolean()
+  @spec has_css?(parent, String.t()) :: boolean()
 
   def has_css?(parent, query, css) when is_binary(css) do
     parent
@@ -940,7 +939,7 @@ defmodule Wallaby.Browser do
   Searches for css that should not be on the page
   """
   @spec has_no_css?(parent, Query.t(), String.t()) :: boolean()
-  @spec has_no_css?(parent, locator) :: boolean()
+  @spec has_no_css?(parent, String.t()) :: boolean()
 
   def has_no_css?(parent, query, css) when is_binary(css) do
     parent
