@@ -202,8 +202,9 @@ defmodule Wallaby.Browser do
   Attaches a file to a file input. Input elements are looked up by id, label text,
   or name.
 
-  When dealing with a remote Selenium server, the file must be uploaded to the
-  remote Selenium server, else attaching a file fails.
+  When dealing with Selenium server (especially a remote instance), the file
+  must be uploaded to Selenium via `send_keys` recognizing a local file,
+  else attaching a file fails.
   """
   @spec attach_file(parent, Query.t(), path: String.t()) :: parent
   def attach_file(parent, query, path: path) do
