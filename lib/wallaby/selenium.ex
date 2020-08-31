@@ -295,9 +295,8 @@ defmodule Wallaby.Selenium do
   Simulates typing into an element.
 
   When sending keys to an element and `keys` is identified as
-  a local file, and we determine we are communicating with a
-  remote Selenium server, the local file is uploaded to the
-  remote Selenium server, providing a file path which is then
+  a local file, the local file is uploaded to the
+  Selenium server, returning a file path which is then
   set to the file input we are interacting with.
 
   We then call the `WebdriverClient.send_keys/2` to set the
