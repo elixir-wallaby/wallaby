@@ -211,7 +211,7 @@ defmodule Wallaby.Browser do
       true ->
         # local/remote selenium will only properly attach
         # & upload a local file with `send_keys`
-        send_keys(parent, query, [path])
+        send_keys(parent, query, List.wrap(path))
 
       false ->
         # retain existing chrome compatibility

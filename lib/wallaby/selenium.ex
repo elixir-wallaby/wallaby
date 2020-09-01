@@ -52,6 +52,7 @@ defmodule Wallaby.Selenium do
   @behaviour Wallaby.Driver
 
   alias Wallaby.{Driver, Element, Session}
+  alias Wallaby.Helpers.KeyCodes
   alias Wallaby.WebdriverClient
 
   @typedoc """
@@ -306,12 +307,12 @@ defmodule Wallaby.Selenium do
   def send_keys(%Session{} = session, keys), do: WebdriverClient.send_keys(session, keys)
 
   def send_keys(%Element{} = element, keys) do
-    maybe_file = IO.iodata_to_binary(keys)
-
     keys =
-      case is_local_file?(keys) do
+      case Enum.all?(keys, &is_local_file?(&1)) do
         true ->
-          upload_file(element, maybe_file)
+          keys
+          |> Enum.map(fn key -> upload_file(element, key) end)
+          |> Enum.intersperse("\n")
 
         false ->
           keys
@@ -353,7 +354,15 @@ defmodule Wallaby.Selenium do
   end
 
   defp is_local_file?(file) do
-    File.exists?(file)
+    file
+    |> keys_to_binary()
+    |> File.exists?()
+  end
+
+  defp keys_to_binary(keys) do
+    keys
+    |> KeyCodes.chars()
+    |> IO.iodata_to_binary()
   end
 
   # Makes an uploadable file for JSONWireProtocol
@@ -377,7 +386,7 @@ defmodule Wallaby.Selenium do
     endpoint = element.session_url <> "/file"
 
     with {:ok, response} <- Wallaby.HTTPClient.request(:post, endpoint, %{file: zip64}) do
-      [Map.fetch!(response, "value")]
+      Map.fetch!(response, "value")
     end
   end
 end

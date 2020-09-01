@@ -8,7 +8,6 @@ defmodule Wallaby.Helpers.KeyCodes do
   Encode a list of key codes to a usable json representation.
   """
   @spec json(list(atom)) :: String.t()
-
   def json(keys) when is_list(keys) do
     unicode =
       keys
@@ -17,6 +16,20 @@ defmodule Wallaby.Helpers.KeyCodes do
       |> Enum.join(",")
 
     "{\"value\": [#{unicode}]}"
+  end
+
+  @doc """
+  Ensures a list of keys are in binary
+  form to check for local files.
+  """
+  @spec chars(list() | binary()) :: [binary()]
+  def chars(keys) do
+    keys
+    |> List.wrap()
+    |> Enum.map(fn
+      a when is_atom(a) -> code(a)
+      s -> s
+    end)
   end
 
   defp split_strings(x) when is_binary(x), do: String.graphemes(x)
