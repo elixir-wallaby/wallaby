@@ -59,7 +59,7 @@ defmodule Wallaby.Mixfile do
       {:web_driver_client, "~> 0.1.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:credo, "~> 1.4.1", only: [:dev, :test], runtime: false},
-      {:bypass, "~> 2.0.0", only: :test},
+      {:bypass, "~> 1.0.0", only: :test},
       {:excoveralls, "~> 0.7", only: :test},
       {:ex_doc, "~> 0.20", only: :dev},
       {:inch_ex, "~> 2.0", only: :dev},
