@@ -13,39 +13,36 @@ defmodule Wallaby do
   * `:js_errors` - if Wallaby should re-throw javascript errors in elixir (defaults to true).
   * `:js_logger` - IO device where javascript console logs are written to. Defaults to :stdio. This option can also be set to a file or any other io device. You can disable javascript console logging by setting this to `nil`.
   """
+  use Application
+
+  alias Wallaby.Session
+  alias Wallaby.SessionStore
+
+  @type reason :: any
+  @type start_session_opts :: {atom, any}
 
   @drivers %{
     "chrome" => Wallaby.Chrome,
     "selenium" => Wallaby.Selenium
   }
 
-  use Application
-
-  alias Wallaby.Session
-  alias Wallaby.SessionStore
-
   @doc false
   def start(_type, _args) do
-    import Supervisor.Spec, warn: false
-
     case driver().validate() do
       :ok -> :ok
       {:error, exception} -> raise exception
     end
 
     children = [
-      supervisor(Wallaby.Driver.ProcessWorkspace.ServerSupervisor, []),
-      supervisor(driver(), [[name: Wallaby.Driver.Supervisor]]),
+      Wallaby.Driver.ProcessWorkspace.ServerSupervisor,
+      {driver(), [[name: Wallaby.Driver.Supervisor]]},
       :hackney_pool.child_spec(:wallaby_pool, timeout: 15_000, max_connections: 4),
-      worker(Wallaby.SessionStore, [])
+      Wallaby.SessionStore
     ]
 
     opts = [strategy: :one_for_one, name: Wallaby.Supervisor]
     Supervisor.start_link(children, opts)
   end
-
-  @type reason :: any
-  @type start_session_opts :: {atom, any}
 
   @doc """
   Starts a browser session.

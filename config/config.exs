@@ -1,6 +1,7 @@
 use Mix.Config
 
 config :wallaby,
+  driver: Wallaby.Selenium,
   max_wait_time: 5000,
   pool_size: 3,
   js_logger: :stdio,

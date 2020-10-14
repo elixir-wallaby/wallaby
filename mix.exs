@@ -1,7 +1,8 @@
 defmodule Wallaby.Mixfile do
+  @moduledoc false
   use Mix.Project
 
-  @version "0.26.2"
+  @version "0.26.3"
   @drivers ~w(selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers [
@@ -15,7 +16,7 @@ defmodule Wallaby.Mixfile do
     [
       app: :wallaby,
       version: @version,
-      elixir: "~> 1.7",
+      elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -25,7 +26,7 @@ defmodule Wallaby.Mixfile do
       docs: docs(),
 
       # Custom testing
-      aliases: ["test.all": ["test", "test.drivers"], "test.drivers": &test_drivers/1],
+      aliases: aliases(),
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.detail": :test,
@@ -52,13 +53,12 @@ defmodule Wallaby.Mixfile do
   defp deps do
     [
       {:jason, "~> 1.1"},
-      {:httpoison, "~> 0.12 or ~> 1.0"},
+      {:hackney, "~> 1.16.0"},
+      {:httpoison, "~> 1.7.0"},
       {:poolboy, "~> 1.5"},
       {:web_driver_client, "~> 0.1.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
-      {:benchee, "~> 0.9", only: :dev},
-      {:benchee_html, "~> 0.3", only: :dev},
-      {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.4.1", only: [:dev, :test], runtime: false},
       {:bypass, "~> 1.0.0", only: :test},
       {:excoveralls, "~> 0.7", only: :test},
       {:ex_doc, "~> 0.20", only: :dev},
@@ -93,6 +93,20 @@ defmodule Wallaby.Mixfile do
       plt_add_apps: [:inets, :phoenix_ecto, :ecto_sql],
       ignore_warnings: ".dialyzer_ignore.exs",
       list_unused_filters: true
+    ]
+  end
+
+  defp aliases do
+    [
+      "test.all": ["test", "test.drivers"],
+      "test.drivers": &test_drivers/1,
+      lint: [
+        "compile --warnings-as-errors --force",
+        "format --check-formatted",
+        "credo",
+        "test",
+        "dialyzer"
+      ]
     ]
   end
 

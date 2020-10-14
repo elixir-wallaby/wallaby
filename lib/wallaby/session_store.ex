@@ -4,7 +4,7 @@ defmodule Wallaby.SessionStore do
 
   alias Wallaby.WebdriverClient
 
-  def start_link, do: GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
+  def start_link(_arg), do: GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
 
   def monitor(session) do
     GenServer.call(__MODULE__, {:monitor, session}, 10_000)
