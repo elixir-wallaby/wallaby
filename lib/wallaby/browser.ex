@@ -632,7 +632,7 @@ defmodule Wallaby.Browser do
   """
   @spec touch_down(parent, integer, integer) :: session
 
-  def touch_down(parent, x, y) do
+  def touch_down(parent, x, y) when is_integer(x) and is_integer(y) do
     case parent.driver.touch_down(parent, nil, x, y) do
       {:ok, _} ->
         parent
