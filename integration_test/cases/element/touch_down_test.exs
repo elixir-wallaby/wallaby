@@ -20,7 +20,8 @@ defmodule Wallaby.Integration.Element.TouchDownTest do
       assert page |> find(Query.css("#log-count-touches")) |> Element.text() == "1"
     end
 
-    test "touches and holds given element on the point moved by given offset from its top-left corner", %{page: page} do
+    test "touches and holds given element on the point moved by given offset from its top-left corner",
+         %{page: page} do
       element = find(page, Query.text("Touch me!"))
 
       assert visible?(page, Query.text("Start", count: 0))

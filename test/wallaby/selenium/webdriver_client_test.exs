@@ -1137,10 +1137,10 @@ defmodule Wallaby.WebdriverClientTest do
         "/session/#{session.id}/element/#{element.id}/location",
         fn conn ->
           send_json_resp(conn, 200, %{
-          "sessionId" => session.id,
-          "status" => 0,
-          "value" => %{"x" => 50, "y" => 20}
-        })
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => %{"x" => 50, "y" => 20}
+          })
         end
       )
 
@@ -1150,11 +1150,12 @@ defmodule Wallaby.WebdriverClientTest do
         "/session/#{session.id}/touch/down",
         fn conn ->
           conn = parse_body(conn)
+
           send_json_resp(conn, 200, %{
-          "sessionId" => session.id,
-          "status" => 0,
-          "value" => %{}
-        })
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => %{}
+          })
         end
       )
 
@@ -1247,6 +1248,7 @@ defmodule Wallaby.WebdriverClientTest do
 
       Bypass.expect(bypass, "GET", "/session/#{session.id}/element/#{element.id}/size", fn conn ->
         conn = parse_body(conn)
+
         send_json_resp(conn, 200, %{
           "sessionId" => session.id,
           "status" => 0,
@@ -1263,14 +1265,20 @@ defmodule Wallaby.WebdriverClientTest do
       session = build_session_for_bypass(bypass)
       element = build_element_for_session(session)
 
-      Bypass.expect(bypass, "GET", "/session/#{session.id}/element/#{element.id}/location", fn conn ->
-        conn = parse_body(conn)
-        send_json_resp(conn, 200, %{
-          "sessionId" => session.id,
-          "status" => 0,
-          "value" => %{"x" => 50, "y" => 20}
-        })
-      end)
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/location",
+        fn conn ->
+          conn = parse_body(conn)
+
+          send_json_resp(conn, 200, %{
+            "sessionId" => session.id,
+            "status" => 0,
+            "value" => %{"x" => 50, "y" => 20}
+          })
+        end
+      )
 
       assert {:ok, {50, 20}} = Client.element_location(element)
     end
