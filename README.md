@@ -1,8 +1,8 @@
 ![Wallaby](https://i.imgur.com/eQ1tlI3.png)
 ============
-[![Build Status](https://travis-ci.org/keathley/wallaby.svg?branch=master)](https://travis-ci.org/keathley/wallaby)
+[![Actions Status](https://github.com/elixir-wallaby/wallaby/workflows/CI/badge.svg)](https://github.com/elixir-wallaby/wallaby/actions)
 [![Hex pm](https://img.shields.io/hexpm/v/wallaby.svg?style=flat)](https://hex.pm/packages/wallaby)
-[![Coverage Status](https://coveralls.io/repos/github/keathley/wallaby/badge.svg?branch=master)](https://coveralls.io/github/keathley/wallaby?branch=master)
+[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/master/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
 [![Inline docs](http://inch-ci.org/github/keathley/wallaby.svg)](http://inch-ci.org/github/keathley/wallaby)
 
 Wallaby helps you test your web applications by simulating realistic user interactions.
@@ -11,11 +11,12 @@ Here's an example test for a simple Todo application:
 
 ```elixir
 defmodule MyApp.Features.TodoTest do
-  use MyApp.FeatureCase, async: true
+  use ExUnit.Case, async: true
+  use Wallaby.Feature
 
   import Wallaby.Query, only: [css: 2, text_field: 1, button: 1]
 
-  test "users can create todos", %{session: session} do
+  feature "users can create todos", %{session: session} do
     session
     |> visit("/todos")
     |> fill_in(text_field("New Todo"), with: "Write my first Wallaby test")
@@ -30,7 +31,8 @@ Because Wallaby manages multiple browsers for you, its possible to test several 
 
 ```elixir
 defmodule MyApp.Features.MultipleUsersTest do
-  use MyApp.FeatureCase, async: true
+  use ExUnit.Case, async: true
+  use Wallaby.Feature
 
   import Wallaby.Query, only: [text_field: 1, button: 1, css: 2]
 
@@ -40,14 +42,13 @@ defmodule MyApp.Features.MultipleUsersTest do
 
   def message(msg), do: css(".messages > .message", text: msg)
 
-  test "That users can send messages to each other" do
-    {:ok, user1} = Wallaby.start_session
+  @sessions 2
+  feature "That users can send messages to each other", %{sessions: [user1, user2]} do
     user1
     |> visit(@page)
     |> fill_in(@message_field, with: "Hello there!")
     |> click(@share_button)
 
-    {:ok, user2} = Wallaby.start_session
     user2
     |> visit(@page)
     |> fill_in(@message_field, with: "Hello yourself")
@@ -66,12 +67,36 @@ Read on to see what else Wallaby can do or check out the [Official Documentation
 
 ## Setup
 
+### Requirements
+
+Wallaby requires Elixir 1.7+ and OTP 21+.
+
+### Installation
+
 Add Wallaby to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:wallaby, "~> 0.23.0", [runtime: false, only: :test]}]
+  [
+    {:wallaby, "~> 0.26.0", runtime: false, only: :test}
+  ]
 end
+```
+
+Configure the driver.
+
+```elixir
+# Chrome
+config :wallaby, driver: Wallaby.Chrome # default
+
+# Selenium
+config :wallaby, driver: Wallaby.Selenium
+```
+
+When calling `use Wallaby.Feature` and using Ecto, please configure your `otp_app`.
+
+```
+config :wallaby, otp_app: :your_app
 ```
 
 Then ensure that Wallaby is started in your `test_helper.exs`:
@@ -82,7 +107,7 @@ Then ensure that Wallaby is started in your `test_helper.exs`:
 
 ### Phoenix
 
-If you're testing a Phoenix application with Ecto 2 or 3 and a database that supports sandbox mode then you can enable concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` plug to your `Endpoint`.
+If you're testing a Phoenix application with Ecto and a database that supports sandbox mode, you can enable concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` plug to your `Endpoint`.
 It's important that this is at the top of `endpoint.ex` before any other plugs.
 
 ```elixir
@@ -147,7 +172,7 @@ The second solution is to add a new alias to your mix config that recompiles ass
   ]
 
   defp compile_assets(_) do
-    Mix.shell().cmd("./assets/node_modules/webpack/bin/webpack.js --mode development",
+    Mix.shell().cmd("cd assets && ./node_modules/.bin/webpack --mode development",
       quiet: true
     )
   end
@@ -197,81 +222,27 @@ You will also want to add `phoenix_ecto` as a dependency to `MyWebApp`:
 
 def deps do
   [
-    {:wallaby, "~> 0.23", only: :test},
+    {:wallaby, "~> 0.26.0", only: :test, runtime: false},
     {:phoenix_ecto, "~> 3.0", only: :test}
   ]
 end
 ```
 
-### PhantomJS
-
-Wallaby requires PhantomJS. You can install PhantomJS through NPM or your package manager of choice:
-
-```
-$ npm install -g phantomjs-prebuilt
-```
-
-Wallaby will use whatever PhantomJS you have installed in your path. If you need to specify a specific PhantomJS you can pass the path in the configuration:
-
-```elixir
-config :wallaby, phantomjs: "some/path/to/phantomjs"
-```
-
-You can also pass arguments to PhantomJS through the `phantomjs_args` config setting, e.g.:
-
-```elixir
-config :wallaby, phantomjs_args: "--webdriver-logfile=phantomjs.log"
-```
-
 ### Writing tests
 
-It's easiest to add Wallaby to your test suite by creating a new case template (in case of an umbrella app, take care to adjust `YourApp` appropriately):
-
-```elixir
-defmodule YourApp.FeatureCase do
-  use ExUnit.CaseTemplate
-
-  using do
-    quote do
-      use Wallaby.DSL
-
-      alias YourApp.Repo
-      import Ecto
-      import Ecto.Changeset
-      import Ecto.Query
-
-      import YourApp.Router.Helpers
-    end
-  end
-
-  setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(YourApp.Repo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(YourApp.Repo, {:shared, self()})
-    end
-
-    metadata = Phoenix.Ecto.SQL.Sandbox.metadata_for(YourApp.Repo, self())
-    {:ok, session} = Wallaby.start_session(metadata: metadata)
-    {:ok, session: session}
-  end
-end
-```
-
-Then you can write tests like so:
+It's easiest to add Wallaby to your test suite by using the `Wallaby.Feature` module.
 
 ```elixir
 defmodule YourApp.UserListTest do
-  use YourApp.FeatureCase, async: true
+  use ExUnit.Case, async: true
+  use Wallaby.Feature
 
-  import Wallaby.Query, only: [css: 2]
-
-  test "users have names", %{session: session} do
+  feature "users have names", %{session: session} do
     session
     |> visit("/users")
-    |> find(css(".user", count: 3))
+    |> find(Query.css(".user", count: 3))
     |> List.first()
-    |> assert_has(css(".user-name", text: "Chris"))
+    |> assert_has(Query.css(".user-name", text: "Chris"))
   end
 end
 ```
@@ -448,7 +419,7 @@ Application.put_env(:wallaby, :screenshot_dir, "/file/path")
 
 ### Automatic screenshots
 
-You can automatically take screenshots on an error:
+You can automatically take screenshots on an error when using the `Wallaby.Feature.feature/3` macro.
 
 ```elixir
 # config/test.exs
@@ -519,7 +490,7 @@ Application.put_env(:wallaby, :js_logger, file)
 
 Logging can be disabled by setting `:js_logger` to `nil`.
 
-## Config
+## Configuration
 
 ### Adjusting timeouts
 
@@ -535,62 +506,34 @@ config :wallaby,
   hackney_options: [timeout: 5_000]
 ```
 
-### Drivers
-
-Wallaby works with PhantomJS out of the box. There is also experimental support for both headless chrome and selenium.
-The driver can be specified by setting the `driver` option in the wallaby config like so:
-
-```elixir
-# Chrome
-config :wallaby,
-  driver: Wallaby.Experimental.Chrome
-
-# Selenium
-config :wallaby,
-  driver: Wallaby.Experimental.Selenium
-```
-
-See below for more information on the experimental drivers.
-
-## Experimental Driver Support
-
-Currently Wallaby provides experimental support for both headless chrome and selenium.
-Both of these drivers are still "experimental" because they don't support the full API yet and because the implementation is changing rapidly.
-But, if you would like to use them in your project here's what you'll need to do.
-
-Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Chrome.html#content) for further information about using the Chrome driver.
-
-### Headless Chrome
-
-In order to run headless chrome you'll need to have ChromeDriver >= 2.30 and chrome >= 60.
-Previous versions of both of these tools _may_ work, but several features will be buggy.
-If you want to setup chrome in a CI environment then you'll still need to install and run xvfb.
-This is due to a bug in ChromeDriver 2.30 that inhibits ChromeDriver from handling input text correctly.
-The bug should be fixed in ChromeDriver 2.31.
-
-### Selenium
-
-Please refer to the [documentation](https://hexdocs.pm/wallaby/Wallaby.Experimental.Selenium.html#content) for further information about using the Selenium driver.
-
 ## Contributing
 
 Wallaby is a community project. PRs and Issues are greatly welcome.
 
-To get started and setup the project, make sure you've got Elixir 1.5+ installed and then:
+To get started and setup the project, make sure you've got Elixir 1.7+ installed and then:
 
-```
-$ mix deps.get
-$ npm install -g phantomjs-prebuilt # unless you've already got PhantomJS installed
-$ mix test # Make sure the tests pass!
-```
+### Development Dependencies
 
-Besides running the unit tests above, it is recommended to run the driver
-integration tests too:
+Wallaby requires the following tools.
 
-```
-# Run only phantomjs integration tests
-$ WALLABY_DRIVER=phantom mix test
+- ChromeDriver
+- Google Chrome
+- GeckoDriver
+- Mozilla Firefox
+- selenium-server-standalone
 
-# Run all tests (unit and all drivers)
+
+```shell
+# Unit tests
+$ mix test
+
+# Integration tests for all drivers
+$ mix test.drivers
+
+# Integration tests for a specific driver
+$ WALLABY_DRIVER=chrome mix test
+$ WALLABY_DRIVER=selenium mix test
+
+# All tests
 $ mix test.all
 ```

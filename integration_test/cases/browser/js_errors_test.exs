@@ -1,4 +1,4 @@
-defmodule Wallaby.Integration.Phantom.JSErrorsTest do
+defmodule Wallaby.Integration.JSErrorsTest do
   use Wallaby.Integration.SessionCase, async: true
 
   import ExUnit.CaptureIO
@@ -17,6 +17,7 @@ defmodule Wallaby.Integration.Phantom.JSErrorsTest do
       session
       |> visit("/logs.html")
     end
+
     assert capture_io(fun) == "Capture console logs\n"
   end
 

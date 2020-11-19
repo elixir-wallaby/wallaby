@@ -114,8 +114,8 @@ defmodule Wallaby.Browser do
 
   @type t :: any()
 
-  @opaque session :: Session.t()
-  @opaque element :: Element.t()
+  @typep session :: Session.t()
+  @typep element :: Element.t()
   @opaque queryable ::
             Query.t()
             | Element.t()
@@ -123,7 +123,6 @@ defmodule Wallaby.Browser do
   @type parent ::
           element
           | session
-  @type locator :: String.t()
   @type opts :: Query.opts()
 
   @default_max_wait_time 3_000
@@ -141,7 +140,7 @@ defmodule Wallaby.Browser do
   state. However, if this error does continue to occur it will cause wallaby to
   loop forever (or until the test is killed by exunit).
   """
-  @opaque sync_result :: {:ok, any()} | {:error, any()}
+  @type sync_result :: {:ok, any()} | {:error, any()}
   @spec retry((() -> sync_result), timeout) :: sync_result()
 
   def retry(f, start_time \\ current_time()) do
@@ -173,7 +172,7 @@ defmodule Wallaby.Browser do
 
       page
       |> fill_in(Query.text_field("name"), with: "Chris")
-      |> fill_in(Query.css("#password_field", with: "secret42"))
+      |> fill_in(Query.css("#password_field"), with: "secret42")
 
   ### Note
 
@@ -225,16 +224,31 @@ defmodule Wallaby.Browser do
       screenshotable
       |> driver.take_screenshot
 
-    name = opts |> Keyword.get(:name, :erlang.system_time()) |> to_string
+    name =
+      opts
+      |> Keyword.get(:name, :erlang.system_time())
+      |> to_string
+      |> remove_illegal_characters
+
     path = path_for_screenshot(name)
-    File.write!(path, image_data)
 
-    if opts[:log] do
-      IO.puts("Screenshot taken, find it at file:///#{path}")
+    try do
+      write_screenshot!(path, image_data)
+
+      if opts[:log] do
+        IO.puts("Screenshot taken, find it at #{build_file_url(path)}")
+      end
+
+      Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
+    rescue
+      _ ->
+        IO.puts("\nFailed to make a screenshot")
+
+        screenshotable
     end
-
-    Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
   end
+
+  defp remove_illegal_characters(string), do: String.replace(string, ~r{<>:"/\\\?\*}, "")
 
   @doc """
   Gets the window handle of the currently focused window.
@@ -745,7 +759,7 @@ defmodule Wallaby.Browser do
   """
   @spec find(parent, Query.t(), (Element.t() -> any())) :: parent
   @spec find(parent, Query.t()) :: Element.t() | [Element.t()]
-  @spec find(parent, locator) :: Element.t() | [Element.t()]
+  @spec find(parent, String.t()) :: Element.t() | [Element.t()]
 
   def find(parent, %Query{} = query, callback) when is_function(callback) do
     results = find(parent, query)
@@ -762,10 +776,6 @@ defmodule Wallaby.Browser do
       {:error, {:not_found, result}} ->
         query = %Query{query | result: result}
 
-        if Wallaby.screenshot_on_failure?() do
-          take_screenshot(parent, log: true)
-        end
-
         case validate_html(parent, query) do
           {:ok, _} ->
             raise Wallaby.QueryError, ErrorMessage.message(query, :not_found)
@@ -775,10 +785,6 @@ defmodule Wallaby.Browser do
         end
 
       {:error, e} ->
-        if Wallaby.screenshot_on_failure?() do
-          take_screenshot(parent, log: true)
-        end
-
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
     end
   end
@@ -844,7 +850,7 @@ defmodule Wallaby.Browser do
   @doc """
   Matches the Element's content with the provided text
   """
-  @spec has_text?(Element.t(), String.t()) :: boolean()
+  @spec has_text?(parent, String.t()) :: boolean()
   @spec has_text?(parent, Query.t(), String.t()) :: boolean()
 
   def has_text?(parent, query, text) do
@@ -881,7 +887,7 @@ defmodule Wallaby.Browser do
   @doc """
   Matches the Element's content with the provided text and raises if not found
   """
-  @spec assert_text(Element.t(), String.t()) :: boolean()
+  @spec assert_text(parent, String.t()) :: boolean()
   @spec assert_text(parent, Query.t(), String.t()) :: boolean()
 
   def assert_text(parent, query, text) when is_binary(text) do
@@ -916,10 +922,6 @@ defmodule Wallaby.Browser do
         parent
       else
         error ->
-          if Wallaby.screenshot_on_failure?() do
-            take_screenshot(parent, log: true)
-          end
-
           case error do
             {:error, {:not_found, results}} ->
               query = %Query{query | result: results}
@@ -974,7 +976,7 @@ defmodule Wallaby.Browser do
   Searches for CSS on the page.
   """
   @spec has_css?(parent, Query.t(), String.t()) :: boolean()
-  @spec has_css?(parent, locator) :: boolean()
+  @spec has_css?(parent, String.t()) :: boolean()
 
   def has_css?(parent, query, css) when is_binary(css) do
     parent
@@ -992,7 +994,7 @@ defmodule Wallaby.Browser do
   Searches for css that should not be on the page
   """
   @spec has_no_css?(parent, Query.t(), String.t()) :: boolean()
-  @spec has_no_css?(parent, locator) :: boolean()
+  @spec has_no_css?(parent, String.t()) :: boolean()
 
   def has_no_css?(parent, query, css) when is_binary(css) do
     parent
@@ -1286,11 +1288,24 @@ defmodule Wallaby.Browser do
   end
 
   defp path_for_screenshot(name) do
-    File.mkdir_p!(screenshot_dir())
     "#{screenshot_dir()}/#{name}.png"
   end
 
+  defp write_screenshot!(path, image_data) do
+    expanded_path = Path.expand(path)
+    :ok = expanded_path |> Path.dirname() |> File.mkdir_p!()
+
+    :ok = File.write!(expanded_path, image_data)
+
+    :ok
+  end
+
   defp screenshot_dir do
-    Application.get_env(:wallaby, :screenshot_dir) || "#{File.cwd!()}/screenshots"
+    Application.get_env(:wallaby, :screenshot_dir, "#{File.cwd!()}/screenshots")
+  end
+
+  @doc false
+  def build_file_url(path) do
+    "file://" <> (path |> Path.expand() |> URI.encode())
   end
 end

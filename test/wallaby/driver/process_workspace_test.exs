@@ -3,6 +3,7 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
 
   alias Wallaby.Driver.ProcessWorkspace
   alias Wallaby.Driver.TemporaryPath
+  alias Wallaby.TestSupport.Utils
 
   defmodule TestServer do
     use GenServer
@@ -22,24 +23,25 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
       assert File.exists?(workspace_path)
 
       TestServer.stop(test_server)
-      Process.sleep(100)
 
-      refute File.exists?(workspace_path)
+      Utils.attempt_with_timeout(fn ->
+        refute File.exists?(workspace_path)
+      end)
     end
 
     test "when workspace already exists" do
       workspace_path = gen_tmp_path()
       File.mkdir(workspace_path)
       {:ok, test_server} = TestServer.start_link()
-      {:ok, ^workspace_path} =
-        ProcessWorkspace.create(test_server, workspace_path)
+      {:ok, ^workspace_path} = ProcessWorkspace.create(test_server, workspace_path)
 
       assert File.exists?(workspace_path)
 
       TestServer.stop(test_server)
-      Process.sleep(100)
 
-      refute File.exists?(workspace_path)
+      Utils.attempt_with_timeout(fn ->
+        refute File.exists?(workspace_path)
+      end)
     end
 
     test "creates a workspace dir using tmp_dir_prefix setting" do
@@ -47,8 +49,7 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
       {:ok, workspace_path} = ProcessWorkspace.create(test_server)
 
       expected_path_prefix =
-        Path.join(
-          System.tmp_dir!, Application.get_env(:wallaby, :tmp_dir_prefix, ""))
+        Path.join(System.tmp_dir!(), Application.get_env(:wallaby, :tmp_dir_prefix, ""))
 
       assert workspace_path =~ ~r(^#{expected_path_prefix})
     end
@@ -58,7 +59,8 @@ defmodule Wallaby.Driver.ProcessWorkspaceTest do
     base_dir =
       Path.join(
         System.tmp_dir!(),
-        Application.get_env(:wallaby, :tmp_dir_prefix, ""))
+        Application.get_env(:wallaby, :tmp_dir_prefix, "")
+      )
 
     TemporaryPath.generate(base_dir)
   end

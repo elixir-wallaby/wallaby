@@ -22,11 +22,11 @@ defmodule Wallaby.Integration.Browser.SelectTest do
         |> find(select("My Select"))
 
       assert select
-      |> selected?(option("Option 2")) == false
+             |> selected?(option("Option 2")) == false
 
       assert select
-      |> click(option("Option 2"))
-      |> selected?(option("Option 2")) == true
+             |> click(option("Option 2"))
+             |> selected?(option("Option 2")) == true
     end
   end
 
@@ -34,9 +34,9 @@ defmodule Wallaby.Integration.Browser.SelectTest do
     test "returns a boolean if the option is selected", %{page: page} do
       page
       |> find(select("My Select"))
-      |> find(option("Option 2"), & refute Element.selected?(&1))
+      |> find(option("Option 2"), &refute(Element.selected?(&1)))
       |> click(option("Option 2"))
-      |> find(option("Option 2"), & assert Element.selected?(&1))
+      |> find(option("Option 2"), &assert(Element.selected?(&1)))
     end
   end
 end

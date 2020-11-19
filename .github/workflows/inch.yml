@@ -1,0 +1,28 @@
+name: Inch CI
+on: 
+  push:
+    branches: master
+
+jobs:
+  inch:
+    runs-on: ubuntu-latest
+    name: Inch CI
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-elixir@v1.0.0
+      with:
+        otp-version: 21.x
+        elixir-version: 1.7.x
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+    - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: mix deps.get
+
+    - name: Run Inch
+      run: mix inch.report

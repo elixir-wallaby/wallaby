@@ -36,30 +36,30 @@ defmodule Wallaby.Integration.Browser.ButtonUpTest do
 
   defp button_up_test(page, button, expected_log_prefix) do
     refute page
-             |> visible?(Query.text("#{expected_log_prefix} Up"))
+           |> visible?(Query.text("#{expected_log_prefix} Up"))
 
-      assert page
-             |> hover(Query.text("Button 1"))
-             |> button_down(button)
-             |> button_up(button)
-             |> visible?(Query.text("#{expected_log_prefix} Up"))
+    assert page
+           |> hover(Query.text("Button 1"))
+           |> button_down(button)
+           |> button_up(button)
+           |> visible?(Query.text("#{expected_log_prefix} Up"))
 
-      refute page
-             |> visible?(Query.text("#{expected_log_prefix} Down"))
+    refute page
+           |> visible?(Query.text("#{expected_log_prefix} Down"))
   end
 
   defp move_cursor_then_button_up_test(page, button, expected_log_prefix) do
     refute page
-             |> visible?(Query.text("#{expected_log_prefix} Up"))
+           |> visible?(Query.text("#{expected_log_prefix} Up"))
 
-      assert page
-             |> hover(Query.text("Button 1"))
-             |> button_down(button)
-             |> hover(Query.text("Button 2"))
-             |> button_up(button)
-             |> visible?(Query.text("#{expected_log_prefix} Up"))
+    assert page
+           |> hover(Query.text("Button 1"))
+           |> button_down(button)
+           |> hover(Query.text("Button 2"))
+           |> button_up(button)
+           |> visible?(Query.text("#{expected_log_prefix} Up"))
 
-      refute page
-             |> visible?(Query.text("#{expected_log_prefix} Down"))
+    refute page
+           |> visible?(Query.text("#{expected_log_prefix} Down"))
   end
 end

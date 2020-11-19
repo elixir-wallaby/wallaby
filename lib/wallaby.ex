@@ -6,15 +6,19 @@ defmodule Wallaby do
 
   Wallaby supports the following options:
 
-  * `:pool_size` - Maximum amount of phantoms to run. The default is `:erlang.system_info(:schedulers_online) * 2`.
+  * `:otp_app` - The name of your OTP application. This is used to check out your Ecto repos into the SQL Sandbox.
   * `:screenshot_dir` - The directory to store screenshots.
   * `:screenshot_on_failure` - if Wallaby should take screenshots on test failures (defaults to `false`).
   * `:max_wait_time` - The amount of time that Wallaby should wait to find an element on the page. (defaults to `3_000`)
   * `:js_errors` - if Wallaby should re-throw javascript errors in elixir (defaults to true).
   * `:js_logger` - IO device where javascript console logs are written to. Defaults to :stdio. This option can also be set to a file or any other io device. You can disable javascript console logging by setting this to `nil`.
-  * `:phantomjs` - The path to the phantomjs executable (defaults to "phantomjs")
-  * `:phantomjs_args` - Any extra arguments that should be passed to phantomjs (defaults to "")
   """
+
+  @drivers %{
+    "chrome" => Wallaby.Chrome,
+    "selenium" => Wallaby.Selenium
+  }
+
   use Application
 
   alias Wallaby.Session
@@ -32,8 +36,8 @@ defmodule Wallaby do
     children = [
       supervisor(Wallaby.Driver.ProcessWorkspace.ServerSupervisor, []),
       supervisor(driver(), [[name: Wallaby.Driver.Supervisor]]),
-      :hackney_pool.child_spec(:wallaby_pool, [timeout: 15_000, max_connections: 4]),
-      worker(Wallaby.SessionStore, []),
+      :hackney_pool.child_spec(:wallaby_pool, timeout: 15_000, max_connections: 4),
+      worker(Wallaby.SessionStore, [])
     ]
 
     opts = [strategy: :one_for_one, name: Wallaby.Supervisor]
@@ -74,21 +78,21 @@ defmodule Wallaby do
   end
   ```
   """
-  @spec start_session([start_session_opts]) :: {:ok, Session.t} | {:error, reason}
+  @spec start_session([start_session_opts]) :: {:ok, Session.t()} | {:error, reason}
   def start_session(opts \\ []) do
     with {:ok, session} <- driver().start_session(opts),
          :ok <- SessionStore.monitor(session),
-      do: {:ok, session}
+         do: {:ok, session}
   end
 
   @doc """
   Ends a browser session.
   """
-  @spec end_session(Session.t) :: :ok | {:error, reason}
+  @spec end_session(Session.t()) :: :ok | {:error, reason}
   def end_session(%Session{driver: driver} = session) do
     with :ok <- SessionStore.demonitor(session),
          :ok <- driver.end_session(session),
-      do: :ok
+         do: :ok
   end
 
   @doc false
@@ -106,21 +110,11 @@ defmodule Wallaby do
     Application.get_env(:wallaby, :js_logger, :stdio)
   end
 
-  @doc false
-  def phantomjs_path do
-    Application.get_env(:wallaby, :phantomjs, "phantomjs")
-  end
-
   def driver do
-    case System.get_env("WALLABY_DRIVER") do
-      "chrome" ->
-        Wallaby.Experimental.Chrome
-      "selenium" ->
-        Wallaby.Experimental.Selenium
-      "phantom" ->
-        Wallaby.Phantom
-      _ ->
-        Application.get_env(:wallaby, :driver, Wallaby.Phantom)
-    end
+    Map.get(
+      @drivers,
+      System.get_env("WALLABY_DRIVER"),
+      Application.get_env(:wallaby, :driver, Wallaby.Chrome)
+    )
   end
 end
