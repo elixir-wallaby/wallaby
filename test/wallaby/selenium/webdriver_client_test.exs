@@ -1107,6 +1107,175 @@ defmodule Wallaby.WebdriverClientTest do
     end
   end
 
+  describe "touch_down/4" do
+    test "sends the correct request to the server when element is not specified", %{
+      bypass: bypass
+    } do
+      session = build_session_for_bypass(bypass)
+
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/touch/down", fn conn ->
+        conn = parse_body(conn)
+        assert conn.body_params == %{"x" => 50, "y" => 20}
+
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
+      end)
+
+      assert {:ok, %{}} = Client.touch_down(session, nil, 50, 20)
+    end
+
+    test "sends the correct request to the server when element is specified", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      Bypass.expect(
+        bypass,
+        "GET",
+        "/session/#{session.id}/element/#{element.id}/location",
+        fn conn ->
+          send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{"x" => 50, "y" => 20}
+        })
+        end
+      )
+
+      Bypass.expect(
+        bypass,
+        "POST",
+        "/session/#{session.id}/touch/down",
+        fn conn ->
+          conn = parse_body(conn)
+          send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
+        end
+      )
+
+      assert {:ok, %{}} = Client.touch_down(nil, element)
+    end
+  end
+
+  describe "touch_up/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/touch/up", fn conn ->
+        conn = parse_body(conn)
+        assert conn.body_params == %{"x" => 0, "y" => 0}
+
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
+      end)
+
+      assert {:ok, %{}} = Client.touch_up(session)
+    end
+  end
+
+  describe "tap/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/touch/click", fn conn ->
+        conn = parse_body(conn)
+        assert conn.body_params == %{"element" => element.id}
+
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
+      end)
+
+      assert {:ok, %{}} = Client.tap(element)
+    end
+  end
+
+  describe "touch_move/3" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/touch/move", fn conn ->
+        conn = parse_body(conn)
+        assert conn.body_params == %{"x" => 50, "y" => 40}
+
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
+      end)
+
+      assert {:ok, %{}} = Client.touch_move(session, 50, 40)
+    end
+  end
+
+  describe "touch_scroll/3" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      Bypass.expect(bypass, "POST", "/session/#{session.id}/touch/scroll", fn conn ->
+        conn = parse_body(conn)
+        assert conn.body_params == %{"element" => element.id, "xoffset" => 50, "yoffset" => 40}
+
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{}
+        })
+      end)
+
+      assert {:ok, %{}} = Client.touch_scroll(element, 50, 40)
+    end
+  end
+
+  describe "element_size/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      Bypass.expect(bypass, "GET", "/session/#{session.id}/element/#{element.id}/size", fn conn ->
+        conn = parse_body(conn)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{"width" => 10, "height" => 20}
+        })
+      end)
+
+      assert {:ok, {10, 20}} = Client.element_size(element)
+    end
+  end
+
+  describe "element_location/1" do
+    test "sends the correct request to the server", %{bypass: bypass} do
+      session = build_session_for_bypass(bypass)
+      element = build_element_for_session(session)
+
+      Bypass.expect(bypass, "GET", "/session/#{session.id}/element/#{element.id}/location", fn conn ->
+        conn = parse_body(conn)
+        send_json_resp(conn, 200, %{
+          "sessionId" => session.id,
+          "status" => 0,
+          "value" => %{"x" => 50, "y" => 20}
+        })
+      end)
+
+      assert {:ok, {50, 20}} = Client.element_location(element)
+    end
+  end
+
   defp build_session_for_bypass(bypass, session_id \\ "my-sample-session") do
     session_url = bypass_url(bypass, "/session/#{session_id}")
 
