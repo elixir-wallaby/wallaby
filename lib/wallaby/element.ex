@@ -269,7 +269,7 @@ defmodule Wallaby.Element do
   @doc """
   Returns tuple {width, height} with size of the given element.
   """
-  @spec size(Element.t()) :: Element.t()
+  @spec size(t) :: t
 
   def size(%__MODULE__{driver: driver} = element) do
     case driver.element_size(element) do
@@ -281,7 +281,7 @@ defmodule Wallaby.Element do
   @doc """
   Returns tuple {x, y} with coordinates of the left-top corner of given element.
   """
-  @spec location(Element.t()) :: Element.t()
+  @spec location(t) :: t
 
   def location(%__MODULE__{driver: driver} = element) do
     case driver.element_location(element) do
