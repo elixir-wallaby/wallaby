@@ -639,7 +639,7 @@ defmodule Wallaby.WebdriverClient do
   @doc """
   Returns tuple {width, height} with size of the given element.
   """
-  @spec element_size(Element.t()) :: {:ok, map}
+  @spec element_size(Element.t()) :: {:ok, tuple}
   def element_size(element) do
     with {:ok, resp} <- request(:get, "#{element.session_url}/element/#{element.id}/size"),
          {:ok, value} <- Map.fetch(resp, "value"),
@@ -649,7 +649,7 @@ defmodule Wallaby.WebdriverClient do
   @doc """
   Returns tuple {x, y} with coordinates of the top-left corner of given element.
   """
-  @spec element_location(Element.t()) :: {:ok, map}
+  @spec element_location(Element.t()) :: {:ok, tuple}
   def element_location(element) do
     with {:ok, resp} <- request(:get, "#{element.session_url}/element/#{element.id}/location"),
          {:ok, value} <- Map.fetch(resp, "value"),
