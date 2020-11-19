@@ -1,7 +1,7 @@
-defmodule Wallaby.Experimental.Selenium.WebdriverClientTest do
+defmodule Wallaby.WebdriverClientTest do
   use Wallaby.HttpClientCase, async: true
 
-  alias Wallaby.Experimental.Selenium.WebdriverClient, as: Client
+  alias Wallaby.WebdriverClient, as: Client
   alias Wallaby.{Element, Query, Session}
 
   @web_element_identifier "element-6066-11e4-a52e-4f735466cecf"

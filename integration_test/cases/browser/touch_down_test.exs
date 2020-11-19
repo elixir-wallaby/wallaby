@@ -46,6 +46,5 @@ defmodule Wallaby.Integration.Browser.TouchDownTest do
 
       assert visible?(page, Query.text("End", count: 0))
     end
-
   end
 end
