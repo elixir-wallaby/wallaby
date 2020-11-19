@@ -255,26 +255,6 @@ defmodule Wallaby.Selenium do
     WebdriverClient.move_mouse_to(session, nil, x_offset, y_offset)
   end
 
-  def touch_down(session, element, x_or_offset, y_or_offset) do
-    WebdriverClient.touch_down(session, element, x_or_offset, y_or_offset)
-  end
-
-  def touch_up(parent) do
-    WebdriverClient.touch_up(parent)
-  end
-
-  def tap(element) do
-    WebdriverClient.tap(element)
-  end
-
-  def touch_move(parent, x, y) do
-    WebdriverClient.touch_move(parent, x, y)
-  end
-
-  def touch_scroll(parent, x_offset, y_offset) do
-    WebdriverClient.touch_scroll(parent, x_offset, y_offset)
-  end
-
   @doc false
   def displayed(%Element{} = element) do
     WebdriverClient.displayed(element)
