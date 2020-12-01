@@ -142,7 +142,7 @@ defmodule Wallaby.HTTPClient do
 
   defp request_opts do
     Application.get_env(:wallaby, :hackney_options, hackney: [pool: :wallaby_pool])
-    |> Keyword.merge(timeout: 20_000)
+    |> Keyword.merge(timeout: 20_000, recv_timeout: 30_000)
   end
 
   defp headers do
