@@ -73,7 +73,7 @@ defmodule Wallaby.Mixfile do
       exclude_patterns: ["safe_travis.ex"],
       maintainers: @maintainers,
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/keathley/wallaby"}
+      links: %{"Github" => "https://github.com/pay-it-off/wallaby/"}
     ]
   end
 
@@ -81,7 +81,7 @@ defmodule Wallaby.Mixfile do
     [
       extras: ["README.md"],
       source_ref: "v#{@version}",
-      source_url: "https://github.com/elixir-wallaby/wallaby",
+      source_url: "https://github.com/pay-it-off/wallaby/",
       main: "readme",
       logo: "guides/images/icon.png"
     ]
