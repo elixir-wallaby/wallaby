@@ -2,14 +2,13 @@ defmodule Wallaby.Mixfile do
   @moduledoc false
   use Mix.Project
 
-  @version "0.26.3"
+  @version "0.1.2"
   @drivers ~w(selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers [
-    "Chris Keathley",
-    "Tobias Pfeiffer",
-    "Aaron Renner",
-    "Mitchell Hanberg"
+    "Bob Waycott",
+    "Brett Hazen",
+    "James Edward Gray II"
   ]
 
   def project do
