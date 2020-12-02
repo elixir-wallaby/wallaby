@@ -38,7 +38,9 @@ defmodule Wallaby.Chrome.Chromedriver.ReadinessChecker do
     )
   end
 
-  @default_httpoison_options [hackney: [pool: :wallaby_pool]]
+  # The following is only used for a status check in an external library.
+  # Our code uses `httpc` instead of `hackney`.
+  @default_httpoison_options [hackney: []]
 
   # The :hackney_options key in the environment is misnamed. These
   # are actually the options as they're passed to HTTPoison.

@@ -8,11 +8,12 @@ defmodule Wallaby.HTTPClient do
   @type params :: map | String.t()
   @type request_opts :: {:encode_json, boolean}
   @type response :: map
-  @type web_driver_error_reason :: :stale_reference | :invalid_selector | :unexpected_alert
+  @type web_driver_error_reason ::
+          :stale_reference
+          | :invalid_selector
+          | :unexpected_alert
 
   @status_obscured 13
-  # The maximum time we'll sleep is for 50ms
-  @max_jitter 50
 
   @doc """
   Sends a request to the webdriver API and parses the
@@ -20,7 +21,12 @@ defmodule Wallaby.HTTPClient do
   """
   @spec request(method, url, params, [request_opts]) ::
           {:ok, response}
-          | {:error, web_driver_error_reason | Jason.DecodeError.t() | String.t()}
+          | {
+              :error,
+              web_driver_error_reason
+              | Jason.DecodeError.t()
+              | String.t()
+            }
           | no_return
 
   def request(method, url, params \\ %{}, opts \\ [])
@@ -37,47 +43,59 @@ defmodule Wallaby.HTTPClient do
     make_request(method, url, Jason.encode!(params))
   end
 
-  defp make_request(method, url, body), do: make_request(method, url, body, 0, [])
-
-  @spec make_request(method, url, String.t() | map, non_neg_integer(), [String.t()]) ::
+  @spec make_request(method, url, String.t() | map) ::
           {:ok, response}
-          | {:error, web_driver_error_reason | Jason.DecodeError.t() | String.t()}
+          | {
+              :error,
+              web_driver_error_reason | Jason.DecodeError.t() | String.t()
+            }
           | no_return
-  defp make_request(_, _, _, 5, retry_reasons) do
-    ["Wallaby had an internal issue with HTTPoison:" | retry_reasons]
-    |> Enum.uniq()
-    |> Enum.join("\n")
-    |> raise
-  end
-
-  defp make_request(method, url, body, retry_count, retry_reasons) do
+  defp make_request(method, url, body) do
     method
-    |> HTTPoison.request(url, body, headers(), request_opts())
+    |> :httpc.request(
+      prep_request(method, url, headers(), content_type(), body),
+      httpc_http_options(),
+      httpc_options()
+    )
     |> handle_response
     |> case do
-      {:error, :httpoison, error} ->
-        :timer.sleep(jitter())
-        make_request(method, url, body, retry_count + 1, [inspect(error) | retry_reasons])
+      {:error, :httpc, error} ->
+        raise inspect(error)
 
       result ->
         result
     end
   end
 
-  @spec handle_response({:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}) ::
+  @spec handle_response(
+          {
+            :ok,
+            {
+              {charlist(), non_neg_integer(), charlist()},
+              [{charlist(), charlist()}, ...],
+              binary()
+            }
+          }
+          | {:error, term()}
+        ) ::
           {:ok, response}
-          | {:error, web_driver_error_reason | Jason.DecodeError.t() | String.t()}
-          | {:error, :httpoison, HTTPoison.Error.t()}
+          | {
+              :error,
+              web_driver_error_reason
+              | Jason.DecodeError.t()
+              | String.t()
+            }
+          | {:error, :httpc, term()}
           | no_return
   defp handle_response(resp) do
     case resp do
-      {:error, %HTTPoison.Error{} = error} ->
-        {:error, :httpoison, error}
+      {:error, error} ->
+        {:error, :httpc, error}
 
-      {:ok, %HTTPoison.Response{status_code: 204}} ->
+      {:ok, {{_http_version, 204, _status_text}, _headers, _body}} ->
         {:ok, %{"value" => nil}}
 
-      {:ok, %HTTPoison.Response{body: body}} ->
+      {:ok, {{_http_version, _status_code, _status_text}, _headers, body}} ->
         with {:ok, decoded} <- Jason.decode(body),
              {:ok, response} <- check_status(decoded),
              {:ok, validated} <- check_for_response_errors(response),
@@ -140,13 +158,52 @@ defmodule Wallaby.HTTPClient do
     end
   end
 
-  defp request_opts do
-    Application.get_env(:wallaby, :hackney_options, hackney: [pool: :wallaby_pool])
-    |> Keyword.merge(timeout: 20_000, recv_timeout: 30_000)
+  defp prep_request(method, url, headers, _content_type, body)
+       when method in ~w[delete get head option put trace]a and
+              body in ["", nil] do
+    {
+      String.to_charlist(url),
+      Enum.map(headers, fn {k, v} ->
+        {String.to_charlist(k), String.to_charlist(v)}
+      end)
+    }
+  end
+
+  defp prep_request(method, url, headers, content_type, body)
+       when method in ~w[delete patch post put]a do
+    {url, headers} = prep_request(:get, url, headers, content_type, nil)
+
+    {
+      url,
+      headers,
+      String.to_charlist(content_type),
+      body
+    }
   end
 
   defp headers do
-    [{"Accept", "application/json"}, {"Content-Type", "application/json"}]
+    [{"Accept", "application/json"}]
+  end
+
+  defp content_type do
+    "application/json"
+  end
+
+  defp httpc_http_options do
+    Application.get_env(
+      :wallaby,
+      :httpc_http_options,
+      connect_timeout: 20_000,
+      timeout: 30_000
+    )
+  end
+
+  defp httpc_options do
+    Application.get_env(
+      :wallaby,
+      :httpc_options,
+      body_format: :binary
+    )
   end
 
   @spec to_params(Query.compiled()) :: map
@@ -157,6 +214,4 @@ defmodule Wallaby.HTTPClient do
   def to_params({:css, css}) do
     %{using: "css selector", value: css}
   end
-
-  defp jitter, do: :rand.uniform(@max_jitter)
 end

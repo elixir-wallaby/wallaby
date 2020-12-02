@@ -8,7 +8,7 @@ defmodule Wallaby.SessionStoreTest do
       assert [] = SessionStore.list_sessions_for()
       {:ok, session} = Wallaby.driver().start_session([])
       :ok = SessionStore.monitor(session)
-      assert [session] = SessionStore.list_sessions_for()
+      assert [_session] = SessionStore.list_sessions_for()
     end
   end
 
