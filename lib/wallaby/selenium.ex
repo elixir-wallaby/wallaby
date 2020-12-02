@@ -90,7 +90,7 @@ defmodule Wallaby.Selenium do
     base_url = Keyword.get(opts, :remote_url, "http://localhost:4444/wd/hub/")
     capabilities = Keyword.get(opts, :capabilities, capabilities_from_config())
 
-    with {:ok, response} <- WebdriverClient.create_session(base_url, capabilities) do
+    with {:ok, response, _cookies} <- WebdriverClient.create_session(base_url, capabilities) do
       id = response["sessionId"]
 
       session = %Session{

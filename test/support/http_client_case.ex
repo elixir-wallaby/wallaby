@@ -39,14 +39,27 @@ defmodule Wallaby.HttpClientCase do
   @doc """
   Sends a response with the json content type
   """
-  @spec send_json_resp(Conn.t(), Conn.status(), term) :: Conn.t()
-  def send_json_resp(conn, status_code, body) when is_binary(body) do
+  @spec send_json_resp(Conn.t(), Conn.status(), term, [Keyword.t()]) :: Conn.t()
+  def send_json_resp(conn, status_code, body, cookies \\ [])
+
+  def send_json_resp(conn, status_code, body, cookies) when is_binary(body) do
     conn
     |> put_resp_content_type("application/json")
+    |> maybe_add_cookies(cookies)
     |> send_resp(status_code, body)
   end
 
-  def send_json_resp(conn, status_code, body) do
-    send_json_resp(conn, status_code, Jason.encode!(body))
+  def send_json_resp(conn, status_code, body, cookies) do
+    send_json_resp(conn, status_code, Jason.encode!(body), cookies)
+  end
+
+  defp maybe_add_cookies(conn, []), do: conn
+
+  defp maybe_add_cookies(conn, cookies) do
+    Enum.reduce(Keyword.keys(cookies), conn, fn key, acc ->
+      Plug.Conn.put_resp_cookie(acc, Atom.to_string(key), Keyword.fetch!(cookies, key),
+        http_only: false
+      )
+    end)
   end
 end

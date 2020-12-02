@@ -8,8 +8,18 @@ defmodule Wallaby.Session do
           server: pid | :none,
           screenshots: list,
           driver: module,
-          capabilities: map()
+          capabilities: map(),
+          cookies: [String.t()]
         }
 
-  defstruct [:id, :url, :session_url, :driver, :capabilities, server: :none, screenshots: []]
+  defstruct [
+    :id,
+    :url,
+    :session_url,
+    :driver,
+    :capabilities,
+    cookies: [],
+    server: :none,
+    screenshots: []
+  ]
 end

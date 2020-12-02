@@ -30,7 +30,7 @@ defmodule Wallaby.WebdriverClientTest do
         })
       end)
 
-      assert {:ok, response} = Client.create_session(base_url, capabilities)
+      assert {:ok, response, _c} = Client.create_session(base_url, capabilities)
       assert %{"sessionId" => ^new_session_id} = response
     end
   end
