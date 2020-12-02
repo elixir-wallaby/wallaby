@@ -30,12 +30,14 @@ defmodule Wallaby.HTTPClient do
     make_request(method, url, "", opts)
   end
 
-  def request(method, url, params, [{:encode_json, false} | opts]) do
-    make_request(method, url, params, opts)
-  end
-
   def request(method, url, params, opts) do
-    make_request(method, url, Jason.encode!(params), opts)
+    case Keyword.get(opts, :encode_json) do
+      false ->
+        make_request(method, url, params, opts)
+
+      _else ->
+        make_request(method, url, Jason.encode!(params), opts)
+    end
   end
 
   defp make_request(method, url, body, opts), do: make_request(method, url, body, opts, 0, [])
@@ -191,11 +193,12 @@ defmodule Wallaby.HTTPClient do
   defp jitter, do: :rand.uniform(@max_jitter)
 
   @spec inject_cookies(Keyword.t()) :: cookies()
-  defp inject_cookies([{:cookies, cookies} | _]) do
-    cookies
+  defp inject_cookies(opts) do
+    case Keyword.get(opts, :cookies) do
+      nil -> []
+      cookies -> cookies
+    end
   end
-
-  defp inject_cookies(_), do: []
 
   @spec parse_cookies([{String.t(), String.t()}]) :: cookies()
   defp parse_cookies(headers) do
