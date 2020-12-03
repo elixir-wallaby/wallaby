@@ -45,8 +45,6 @@ defmodule EventEmitter do
 
   use GenServer
 
-  @env Mix.env()
-
   @type event :: %{
     optional(:metadata) =>  map(),
     required(:name) => String.t()
@@ -69,7 +67,7 @@ defmodule EventEmitter do
   end
 
   defmacro emit(event) do
-    if @env == :test do
+    if Mix.env() == :test do
       quote do
         EventEmitter.emit_event(unquote(event))
       end
