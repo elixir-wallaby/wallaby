@@ -41,7 +41,7 @@ defmodule Wallaby.SessionStore do
     {:ok, %{ets_table: tid}}
   end
 
-  def handle_call({:monitor, session}, {pid, _ref}, _state) do
+  def handle_call({:monitor, session}, {pid, _ref}, state) do
     ref = Process.monitor(pid)
 
     :ets.insert(state.ets_table, {{ref, session.id, pid}, session})
