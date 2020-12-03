@@ -28,7 +28,7 @@ defmodule Wallaby.Element do
   alias Wallaby.InvalidSelectorError
   alias Wallaby.StaleReferenceError
 
-  defstruct [:url, :session_url, :parent, :id, :driver, screenshots: []]
+  defstruct [:url, :session_url, :parent, :id, :driver, cookies: [], screenshots: []]
 
   @type value ::
           String.t()
@@ -37,12 +37,14 @@ defmodule Wallaby.Element do
           | :unselected
   @type attr :: String.t()
   @type keys_to_send :: String.t() | list(atom | String.t())
+  @type cookies :: [String.t()]
   @type t :: %__MODULE__{
           session_url: String.t(),
           url: String.t(),
           id: String.t(),
           screenshots: list,
-          driver: module
+          driver: module,
+          cookies: cookies
         }
 
   @doc """

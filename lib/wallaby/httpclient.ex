@@ -6,7 +6,8 @@ defmodule Wallaby.HTTPClient do
   @type method :: :post | :get | :delete
   @type url :: String.t()
   @type params :: map | String.t()
-  @type request_opts :: {:encode_json, boolean}
+  @type cookies :: [String.t()] | []
+  @type request_opts :: [{:encode_json, boolean}, {:cookies, cookies}]
   @type response :: map
   @type web_driver_error_reason ::
           :stale_reference
@@ -19,7 +20,7 @@ defmodule Wallaby.HTTPClient do
   Sends a request to the webdriver API and parses the
   response.
   """
-  @spec request(method, url, params, [request_opts]) ::
+  @spec request(method, url, params, request_opts) ::
           {:ok, response}
           | {
               :error,
@@ -31,29 +32,33 @@ defmodule Wallaby.HTTPClient do
 
   def request(method, url, params \\ %{}, opts \\ [])
 
-  def request(method, url, params, _opts) when map_size(params) == 0 do
-    make_request(method, url, "")
+  def request(method, url, params, opts) when map_size(params) == 0 do
+    make_request(method, url, "", opts)
   end
 
-  def request(method, url, params, [{:encode_json, false} | _]) do
-    make_request(method, url, params)
+  def request(method, url, params, opts) do
+    case Keyword.get(opts, :encode_json) do
+      false ->
+        make_request(method, url, params, opts)
+
+      _else ->
+        make_request(method, url, Jason.encode!(params), opts)
+    end
   end
 
-  def request(method, url, params, _opts) do
-    make_request(method, url, Jason.encode!(params))
-  end
-
-  @spec make_request(method, url, String.t() | map) ::
-          {:ok, response}
+  @spec make_request(method, url, String.t() | map, request_opts) ::
+          {:ok, response, cookies}
           | {
               :error,
               web_driver_error_reason | Jason.DecodeError.t() | String.t()
             }
           | no_return
-  defp make_request(method, url, body) do
+  defp make_request(method, url, body, opts) do
+    req_cookies = inject_cookies(opts)
+
     method
     |> :httpc.request(
-      prep_request(method, url, headers(), content_type(), body),
+      prep_request(method, url, headers(req_cookies), content_type(), body),
       httpc_http_options(),
       httpc_options()
     )
@@ -78,7 +83,7 @@ defmodule Wallaby.HTTPClient do
           }
           | {:error, term()}
         ) ::
-          {:ok, response}
+          {:ok, response, cookies}
           | {
               :error,
               web_driver_error_reason
@@ -92,14 +97,14 @@ defmodule Wallaby.HTTPClient do
       {:error, error} ->
         {:error, :httpc, error}
 
-      {:ok, {{_http_version, 204, _status_text}, _headers, _body}} ->
-        {:ok, %{"value" => nil}}
+      {:ok, {{_http_version, 204, _status_text}, headers, _body}} ->
+        {:ok, %{"value" => nil}, parse_cookies(headers)}
 
-      {:ok, {{_http_version, _status_code, _status_text}, _headers, body}} ->
+      {:ok, {{_http_version, _status_code, _status_text}, headers, body}} ->
         with {:ok, decoded} <- Jason.decode(body),
              {:ok, response} <- check_status(decoded),
              {:ok, validated} <- check_for_response_errors(response),
-             do: {:ok, validated}
+             do: {:ok, validated, parse_cookies(headers)}
     end
   end
 
@@ -181,13 +186,13 @@ defmodule Wallaby.HTTPClient do
     }
   end
 
-  defp headers do
-    [{"Accept", "application/json"}]
+  defp headers([]), do: [{"Accept", "application/json"}]
+
+  defp headers(cookies) do
+    headers([]) ++ [{"Cookie", format_cookies(cookies)}]
   end
 
-  defp content_type do
-    "application/json"
-  end
+  defp content_type, do: "application/json"
 
   defp httpc_http_options do
     Application.get_env(
@@ -214,4 +219,24 @@ defmodule Wallaby.HTTPClient do
   def to_params({:css, css}) do
     %{using: "css selector", value: css}
   end
+
+  @spec inject_cookies(Keyword.t()) :: cookies()
+  defp inject_cookies(opts) do
+    case Keyword.get(opts, :cookies) do
+      nil -> []
+      cookies -> cookies
+    end
+  end
+
+  @spec parse_cookies([{String.t(), String.t()}]) :: cookies()
+  defp parse_cookies(headers) do
+    headers
+    |> Enum.filter(fn {key, _value} ->
+      String.downcase(to_string(key)) == "set-cookie"
+    end)
+    |> Enum.map(fn {_key, value} -> to_string(value) end)
+  end
+
+  @spec format_cookies(cookies()) :: String.t()
+  defp format_cookies(cookies), do: Enum.join(cookies, "; ")
 end

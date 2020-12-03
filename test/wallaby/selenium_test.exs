@@ -82,7 +82,8 @@ defmodule Wallaby.SeleniumTest do
       session_url: session_url,
       url: session_url,
       id: session_id,
-      driver: Wallaby.Selenium
+      driver: Wallaby.Selenium,
+      cookies: []
     }
   end
 

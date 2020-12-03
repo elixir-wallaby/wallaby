@@ -134,7 +134,7 @@ defmodule Wallaby.Chrome do
   @type start_session_opts ::
           {:capabilities, map}
           | {:readiness_timeout, timeout()}
-          | {:create_session_fn, (String.t(), map -> {:ok, %{}})}
+          | {:create_session_fn, (String.t(), map -> {:ok, %{}, []})}
 
   @doc false
   def start_link(opts \\ []) do
@@ -220,7 +220,7 @@ defmodule Wallaby.Chrome do
 
     capabilities = Keyword.get(opts, :capabilities, capabilities_from_config(opts))
 
-    with {:ok, response} <- create_session_fn.(base_url, capabilities) do
+    with {:ok, response, cookies} <- create_session_fn.(base_url, capabilities) do
       id = response["sessionId"]
 
       session = %Wallaby.Session{
@@ -229,7 +229,8 @@ defmodule Wallaby.Chrome do
         id: id,
         driver: __MODULE__,
         server: Chromedriver,
-        capabilities: capabilities
+        capabilities: capabilities,
+        cookies: cookies
       }
 
       if window_size = Keyword.get(opts, :window_size),

@@ -20,7 +20,7 @@ defmodule Wallaby.HTTPClientTest do
         })
       end)
 
-      assert {:ok, _} = Client.request(:post, bypass_url(bypass, "/my_url"), %{hello: "world"})
+      assert {:ok, _, _} = Client.request(:post, bypass_url(bypass, "/my_url"), %{hello: "world"})
     end
 
     test "with a 200 status response", %{bypass: bypass} do
@@ -32,7 +32,38 @@ defmodule Wallaby.HTTPClientTest do
         })
       end)
 
-      {:ok, response} = Client.request(:post, bypass_url(bypass, "/my_url"))
+      {:ok, response, _} = Client.request(:post, bypass_url(bypass, "/my_url"))
+
+      assert response == %{
+               "sessionId" => "abc123",
+               "status" => 0,
+               "value" => nil
+             }
+    end
+
+    test "with optional cookies", %{bypass: bypass} do
+      Bypass.expect(bypass, fn conn ->
+        send_json_resp(
+          conn,
+          200,
+          %{
+            "sessionId" => "abc123",
+            "status" => 0,
+            "value" => nil
+          },
+          one: "1",
+          two: "22",
+          three: "333"
+        )
+      end)
+
+      cookies = ["socks=1", "pants=2"]
+      expected = ["one=1; path=/", "two=22; path=/", "three=333; path=/"]
+
+      assert {:ok, response, actual} =
+               Client.request(:post, bypass_url(bypass, "/cookie_url"), %{}, cookies: cookies)
+
+      assert Enum.sort(expected) == Enum.sort(actual)
 
       assert response == %{
                "sessionId" => "abc123",
