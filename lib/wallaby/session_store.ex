@@ -83,8 +83,4 @@ defmodule Wallaby.SessionStore do
 
     {:noreply, state}
   end
-
-  defp delete_sessions({_, session}) do
-    WebdriverClient.delete_session(session)
-  end
 end
