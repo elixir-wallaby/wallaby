@@ -2,6 +2,8 @@
 
 ## Master
 
+- Correctly remove stopped sessions from the internal store. [#558](https://github.com/elixir-wallaby/wallaby/pull/558)
+
 ## 0.26.2 (2020-06-19)
 
 ### Fixes

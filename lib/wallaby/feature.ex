@@ -194,7 +194,7 @@ defmodule Wallaby.Feature do
       test_name = String.replace(test_name, " ", "_")
 
       screenshot_paths =
-        Wallaby.SessionStore.list_sessions_for(pid)
+        Wallaby.SessionStore.list_sessions_for(owner_pid: pid)
         |> Enum.with_index(1)
         |> Enum.flat_map(fn {s, i} ->
           filename = time <> "_" <> test_name <> "(#{i})"
