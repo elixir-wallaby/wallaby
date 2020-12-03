@@ -1,5 +1,5 @@
 defmodule EventEmitter do
-  @moduledoc  """
+  @moduledoc """
   This module offers telemetry style event emission for testing purposes.
 
   If you'd like to emit a message to the event stream, you can call `emit/1` from your implementation code. This is macro, and will not result in any AST injection when not being compiled in the test env.
@@ -46,9 +46,9 @@ defmodule EventEmitter do
   use GenServer
 
   @type event :: %{
-    optional(:metadata) =>  map(),
-    required(:name) => String.t()
-  }
+          optional(:metadata) => map(),
+          required(:name) => String.t()
+        }
 
   def emitter do
     quote do
@@ -104,7 +104,7 @@ defmodule EventEmitter do
   @impl GenServer
   def handle_cast({:event, event}, %{handlers: handlers} = state) do
     for h <- handlers do
-      send h, {:event, event}
+      send(h, {:event, event})
     end
 
     {:noreply, state}

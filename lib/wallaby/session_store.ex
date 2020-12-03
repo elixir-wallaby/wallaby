@@ -46,7 +46,7 @@ defmodule Wallaby.SessionStore do
 
     :ets.insert(state.ets_table, {{ref, session.id, pid}, session})
 
-    emit %{module: __MODULE__, name: :monitor, metadata: %{monitored_session: session}}
+    emit(%{module: __MODULE__, name: :monitor, metadata: %{monitored_session: session}})
 
     {:reply, :ok, state}
   end
@@ -79,7 +79,7 @@ defmodule Wallaby.SessionStore do
 
     :ets.delete(state.ets_table, {ref, session.id, pid})
 
-    emit %{module: __MODULE__, name: :DOWN, metadata: %{monitored_session: session}}
+    emit(%{module: __MODULE__, name: :DOWN, metadata: %{monitored_session: session}})
 
     {:noreply, state}
   end
