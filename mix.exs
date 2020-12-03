@@ -2,7 +2,7 @@ defmodule Wallaby.Mixfile do
   @moduledoc false
   use Mix.Project
 
-  @version "0.1.3"
+  @version "0.1.4"
   @drivers ~w(selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers [
@@ -41,7 +41,7 @@ defmodule Wallaby.Mixfile do
   end
 
   def application do
-    [extra_applications: [:logger], mod: {Wallaby, []}]
+    [extra_applications: [:logger, :inets, :ssl], mod: {Wallaby, []}]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
@@ -52,8 +52,6 @@ defmodule Wallaby.Mixfile do
   defp deps do
     [
       {:jason, "~> 1.1"},
-      {:hackney, "~> 1.16.0"},
-      {:httpoison, "~> 1.7.0"},
       {:poolboy, "~> 1.5"},
       {:web_driver_client, "~> 0.1.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},

@@ -51,17 +51,19 @@ defmodule Wallaby.HTTPClientTest do
             "status" => 0,
             "value" => nil
           },
-          one: "一",
-          two: "二",
-          three: "三"
+          one: "1",
+          two: "22",
+          three: "333"
         )
       end)
 
       cookies = ["socks=1", "pants=2"]
-      expected = ["one=一; path=/", "three=三; path=/", "two=二; path=/"]
+      expected = ["one=1", "two=22", "three=333"]
 
-      assert {:ok, response, ^expected} =
+      assert {:ok, response, actual} =
                Client.request(:post, bypass_url(bypass, "/cookie_url"), %{}, cookies: cookies)
+
+      assert Enum.sort(expected) == Enum.sort(actual)
 
       assert response == %{
                "sessionId" => "abc123",
@@ -100,9 +102,9 @@ defmodule Wallaby.HTTPClientTest do
       assert {:error, ^expected_message} = Client.request(:post, bypass_url(bypass, "/my_url"))
     end
 
-    test "includes the original HTTPoison error when there is one", %{bypass: bypass} do
+    test "includes the original httpc error when there is one", %{bypass: bypass} do
       expected_message =
-        "Wallaby had an internal issue with HTTPoison:\n%HTTPoison.Error{id: nil, reason: :econnrefused}"
+        ~r"\{:failed_connect, \[\{:to_address, \{'localhost', \d+\}\}, \{:inet, \[:inet\], :econnrefused\}\]\}"
 
       Bypass.down(bypass)
 
