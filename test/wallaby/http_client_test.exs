@@ -58,7 +58,7 @@ defmodule Wallaby.HTTPClientTest do
       end)
 
       cookies = ["socks=1", "pants=2"]
-      expected = ["one=1; path=/", "two=22; path=/", "three=333; path=/"]
+      expected = ["one=1", "two=22", "three=333"]
 
       assert {:ok, response, actual} =
                Client.request(:post, bypass_url(bypass, "/cookie_url"), %{}, cookies: cookies)

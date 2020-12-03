@@ -234,7 +234,9 @@ defmodule Wallaby.HTTPClient do
     |> Enum.filter(fn {key, _value} ->
       String.downcase(to_string(key)) == "set-cookie"
     end)
-    |> Enum.map(fn {_key, value} -> to_string(value) end)
+    |> Enum.map(fn {_key, value} ->
+      value |> to_string |> String.split(";", parts: 2) |> hd
+    end)
   end
 
   @spec format_cookies(cookies()) :: String.t()
