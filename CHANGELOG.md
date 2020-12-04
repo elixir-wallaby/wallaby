@@ -2,6 +2,8 @@
 
 ## Main
 
+## 0.27.0 (2020-12-4)
+
 ### Breaking
 
 - Increases minimum Elixir version to 1.8
