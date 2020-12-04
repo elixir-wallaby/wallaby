@@ -78,8 +78,8 @@ defmodule Wallaby.Query do
   it to get all the details!
   """
   alias __MODULE__
-  alias Wallaby.Query.XPath
   alias Wallaby.Element
+  alias Wallaby.Query.XPath
 
   defstruct method: nil,
             selector: nil,

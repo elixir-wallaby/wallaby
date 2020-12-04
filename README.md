@@ -2,8 +2,7 @@
 ============
 [![Actions Status](https://github.com/elixir-wallaby/wallaby/workflows/CI/badge.svg)](https://github.com/elixir-wallaby/wallaby/actions)
 [![Hex pm](https://img.shields.io/hexpm/v/wallaby.svg?style=flat)](https://hex.pm/packages/wallaby)
-[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/master/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
-[![Inline docs](http://inch-ci.org/github/keathley/wallaby.svg)](http://inch-ci.org/github/keathley/wallaby)
+[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/main/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
 
 Wallaby helps you test your web applications by simulating realistic user interactions.
 By default it runs each test case concurrently and manages browsers for you.
@@ -69,7 +68,9 @@ Read on to see what else Wallaby can do or check out the [Official Documentation
 
 ### Requirements
 
-Wallaby requires Elixir 1.7+ and OTP 21+.
+Wallaby requires Elixir 1.8+ and OTP 21+.
+
+Wallaby also requires `bash` to be installed. Generally `bash` is widely available, but it does not come pre-installed on Alpine Linux.
 
 ### Installation
 
@@ -78,7 +79,7 @@ Add Wallaby to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:wallaby, "~> 0.26.0", runtime: false, only: :test}
+    {:wallaby, "~> 0.27.0", runtime: false, only: :test}
   ]
 end
 ```
@@ -222,7 +223,7 @@ You will also want to add `phoenix_ecto` as a dependency to `MyWebApp`:
 
 def deps do
   [
-    {:wallaby, "~> 0.26.0", only: :test, runtime: false},
+    {:wallaby, "~> 0.27.0", only: :test, runtime: false},
     {:phoenix_ecto, "~> 3.0", only: :test}
   ]
 end

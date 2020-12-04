@@ -1,6 +1,22 @@
 # Changelog
 
-## Master
+## Main
+
+### Breaking
+
+- `Browser.assert_text/2` and `Browser.assert_text/3` now return the parent instead of `true` when the text was found.
+
+## 0.27.0 (2020-12-4)
+
+### Breaking
+
+- Increases minimum Elixir version to 1.8
+
+### Fixes
+
+- Correctly remove stopped sessions from the internal store. [#558](https://github.com/elixir-wallaby/wallaby/pull/558)
+- Ensures all sessions are closed after the test suite is over.
+- Tests won't crash when side effects fail when calling the inspect protocol on an Element
 
 ## 0.26.2 (2020-06-19)
 

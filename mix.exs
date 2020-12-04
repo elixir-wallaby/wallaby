@@ -1,12 +1,10 @@
 defmodule Wallaby.Mixfile do
   use Mix.Project
 
-  @version "0.26.2"
+  @version "0.27.0"
   @drivers ~w(selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers [
-    "Chris Keathley",
-    "Tobias Pfeiffer",
     "Aaron Renner",
     "Mitchell Hanberg"
   ]
@@ -15,7 +13,7 @@ defmodule Wallaby.Mixfile do
     [
       app: :wallaby,
       version: @version,
-      elixir: "~> 1.7",
+      elixir: "~> 1.8",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -53,16 +51,14 @@ defmodule Wallaby.Mixfile do
     [
       {:jason, "~> 1.1"},
       {:httpoison, "~> 0.12 or ~> 1.0"},
-      {:poolboy, "~> 1.5"},
       {:web_driver_client, "~> 0.1.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
-      {:credo, "~> 0.9", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:bypass, "~> 1.0.0", only: :test},
       {:excoveralls, "~> 0.7", only: :test},
-      {:ex_doc, "~> 0.20", only: :dev},
-      {:inch_ex, "~> 2.0", only: :dev},
+      {:ex_doc, "~> 0.23", only: :dev},
       {:ecto_sql, ">= 3.0.0", optional: true},
       {:phoenix_ecto, ">= 3.0.0", optional: true}
     ]
@@ -71,10 +67,9 @@ defmodule Wallaby.Mixfile do
   defp package do
     [
       files: ["lib", "mix.exs", "README.md", "LICENSE.md", "priv"],
-      exclude_patterns: ["safe_travis.ex"],
       maintainers: @maintainers,
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/keathley/wallaby"}
+      links: %{"Github" => "https://github.com/elixir-wallaby/wallaby"}
     ]
   end
 
