@@ -1,6 +1,6 @@
 # Changelog
 
-## Master
+## Main
 
 ### Breaking
 

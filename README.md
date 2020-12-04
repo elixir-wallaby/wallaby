@@ -2,7 +2,7 @@
 ============
 [![Actions Status](https://github.com/elixir-wallaby/wallaby/workflows/CI/badge.svg)](https://github.com/elixir-wallaby/wallaby/actions)
 [![Hex pm](https://img.shields.io/hexpm/v/wallaby.svg?style=flat)](https://hex.pm/packages/wallaby)
-[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/master/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
+[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/main/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
 
 Wallaby helps you test your web applications by simulating realistic user interactions.
 By default it runs each test case concurrently and manages browsers for you.
