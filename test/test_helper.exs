@@ -1,4 +1,4 @@
 ExUnit.configure(exclude: [pending: true])
-ExUnit.start()
+EventEmitter.start_link([])
 
-Application.ensure_all_started(:bypass)
+ExUnit.start()
