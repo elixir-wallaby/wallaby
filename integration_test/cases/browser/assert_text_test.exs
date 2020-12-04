@@ -13,7 +13,7 @@ defmodule Wallaby.Integration.Browser.AssertTextTest do
     refute has_text?(element, "rain")
   end
 
-  test "assert_text/2 waits for presence of text and and returns true if found", %{
+  test "assert_text/2 waits for presence of text and and returns the parent if found", %{
     session: session
   } do
     element =
@@ -21,7 +21,7 @@ defmodule Wallaby.Integration.Browser.AssertTextTest do
       |> visit("wait.html")
       |> find(Query.css("#container"))
 
-    assert assert_text(element, "main")
+    assert element == assert_text(element, "main")
   end
 
   test "assert_text/2 will raise an exception for text not found", %{session: session} do
@@ -39,6 +39,6 @@ defmodule Wallaby.Integration.Browser.AssertTextTest do
     session
     |> Browser.visit("wait.html")
 
-    assert Browser.assert_text(session, "main")
+    assert session == Browser.assert_text(session, "main")
   end
 end

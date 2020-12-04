@@ -764,7 +764,25 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Matches the Element's content with the provided text
+  Matches the parent's content with the provided text.
+
+  Returns a boolean that indicates if the text was found.
+
+  ## Examples
+
+  ```
+  session
+  |> visit("/")
+  |> has_text?("Login")
+  ```
+
+  Example providing query:
+
+  ```
+  session
+  |> visit("/")
+  |> has_text?(Query.css(".login-button"), "Login")
+  ```
   """
   @spec has_text?(parent, String.t()) :: boolean()
   @spec has_text?(parent, Query.t(), String.t()) :: boolean()
@@ -800,10 +818,29 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Matches the Element's content with the provided text and raises if not found
+  Matches the Element's content with the provided text and raises if not found.
+
+  Returns the given `parent` if the assertion is correct so that it is easily
+  pipeable.
+
+  ## Examples
+
+  ```
+  session
+  |> visit("/")
+  |> assert_text("Login")
+  ```
+
+  Example providing query:
+
+  ```
+  session
+  |> visit("/")
+  |> assert_text(Query.css(".login-button"), "Login")
+  ```
   """
-  @spec assert_text(parent, String.t()) :: boolean()
-  @spec assert_text(parent, Query.t(), String.t()) :: boolean()
+  @spec assert_text(parent, String.t()) :: parent
+  @spec assert_text(parent, Query.t(), String.t()) :: parent
   def assert_text(parent, query, text) when is_binary(text) do
     parent
     |> find(query)
@@ -811,7 +848,11 @@ defmodule Wallaby.Browser do
   end
 
   def assert_text(parent, text) when is_binary(text) do
-    has_text?(parent, text) || raise ExpectationNotMetError, "Text '#{text}' was not found."
+    if has_text?(parent, text) do
+      parent
+    else
+      raise ExpectationNotMetError, "Text '#{text}' was not found."
+    end
   end
 
   @doc """
