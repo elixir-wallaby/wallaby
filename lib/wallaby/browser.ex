@@ -548,21 +548,16 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Clicks at the current mouse cursor position.
+  Clicks the mouse on the element returned by the query or at the current mouse cursor position.
   """
-  @spec click(parent, atom) :: parent
-
+  @spec click(parent, :left | :middle | :right) :: parent
+  @spec click(parent, Query.t()) :: parent
   def click(parent, button) when button in [:left, :middle, :right] do
     case parent.driver.click(parent, button) do
       {:ok, _} ->
         parent
     end
   end
-
-  @doc """
-  Clicks an element.
-  """
-  @spec click(parent, Query.t()) :: parent
 
   def click(parent, query) do
     parent
@@ -573,7 +568,6 @@ defmodule Wallaby.Browser do
   Double-clicks left mouse button at the current mouse coordinates.
   """
   @spec double_click(parent) :: parent
-
   def double_click(parent) do
     case parent.driver.double_click(parent) do
       {:ok, _} ->
@@ -585,7 +579,6 @@ defmodule Wallaby.Browser do
    Clicks and holds the given mouse button at the current mouse coordinates.
   """
   @spec button_down(parent, atom) :: parent
-
   def button_down(parent, button \\ :left) when button in [:left, :middle, :right] do
     case parent.driver.button_down(parent, button) do
       {:ok, _} ->
@@ -597,7 +590,6 @@ defmodule Wallaby.Browser do
    Releases given previously held mouse button.
   """
   @spec button_up(parent, atom) :: parent
-
   def button_up(parent, button \\ :left) when button in [:left, :middle, :right] do
     case parent.driver.button_up(parent, button) do
       {:ok, _} ->
@@ -609,7 +601,6 @@ defmodule Wallaby.Browser do
   Hovers over an element.
   """
   @spec hover(parent, Query.t()) :: parent
-
   def hover(parent, query) do
     parent
     |> find(query, &Element.hover/1)
@@ -619,7 +610,6 @@ defmodule Wallaby.Browser do
   Moves mouse by an offset relative to current cursor position.
   """
   @spec move_mouse_by(parent, integer, integer) :: parent
-
   def move_mouse_by(parent, x_offset, y_offset) do
     case parent.driver.move_mouse_by(parent, x_offset, y_offset) do
       {:ok, _} ->
@@ -634,7 +624,6 @@ defmodule Wallaby.Browser do
   """
   @spec text(parent) :: String.t()
   @spec text(parent, Query.t()) :: String.t()
-
   def text(parent, query) do
     parent
     |> find(query)
@@ -651,7 +640,6 @@ defmodule Wallaby.Browser do
   Gets the value of the elements attribute.
   """
   @spec attr(parent, Query.t(), String.t()) :: String.t() | nil
-
   def attr(parent, query, name) do
     parent
     |> find(query)
@@ -662,7 +650,6 @@ defmodule Wallaby.Browser do
   Checks if the element has been selected. Alias for checked?(element)
   """
   @spec selected?(parent, Query.t()) :: boolean()
-
   def selected?(parent, query) do
     parent
     |> find(query)
@@ -673,7 +660,6 @@ defmodule Wallaby.Browser do
   Checks if the element is visible on the page
   """
   @spec visible?(parent, Query.t()) :: boolean()
-
   def visible?(parent, query) do
     parent
     |> has?(query)
@@ -694,7 +680,6 @@ defmodule Wallaby.Browser do
   @spec find(parent, Query.t(), (Element.t() -> any())) :: parent
   @spec find(parent, Query.t()) :: Element.t() | [Element.t()]
   @spec find(parent, String.t()) :: Element.t() | [Element.t()]
-
   def find(parent, %Query{} = query, callback) when is_function(callback) do
     results = find(parent, query)
     callback.(results)
@@ -729,7 +714,6 @@ defmodule Wallaby.Browser do
   `find(session, css("element", count: nil, minimum: 0))`.
   """
   @spec all(parent, Query.t()) :: [Element.t()]
-
   def all(parent, %Query{} = query) do
     find(
       parent,
@@ -742,7 +726,6 @@ defmodule Wallaby.Browser do
   types of matchers.
   """
   @spec has?(parent, Query.t()) :: boolean()
-
   def has?(parent, query) do
     case execute_query(parent, query) do
       {:ok, _} -> true
@@ -755,7 +738,6 @@ defmodule Wallaby.Browser do
   """
   @spec has_value?(parent, Query.t(), any()) :: boolean()
   @spec has_value?(Element.t(), any()) :: boolean()
-
   def has_value?(parent, query, value) do
     parent
     |> find(query)
@@ -786,7 +768,6 @@ defmodule Wallaby.Browser do
   """
   @spec has_text?(parent, String.t()) :: boolean()
   @spec has_text?(parent, Query.t(), String.t()) :: boolean()
-
   def has_text?(parent, query, text) do
     parent
     |> find(query)
@@ -823,7 +804,6 @@ defmodule Wallaby.Browser do
   """
   @spec assert_text(parent, String.t()) :: boolean()
   @spec assert_text(parent, Query.t(), String.t()) :: boolean()
-
   def assert_text(parent, query, text) when is_binary(text) do
     parent
     |> find(query)
@@ -889,7 +869,6 @@ defmodule Wallaby.Browser do
       |> visit("/")
       |> refute_has(Query.css(".secret-admin-content"))
   """
-
   defmacro refute_has(parent, query) do
     quote do
       parent = unquote(parent)
@@ -911,7 +890,6 @@ defmodule Wallaby.Browser do
   """
   @spec has_css?(parent, Query.t(), String.t()) :: boolean()
   @spec has_css?(parent, String.t()) :: boolean()
-
   def has_css?(parent, query, css) when is_binary(css) do
     parent
     |> find(query)
@@ -929,7 +907,6 @@ defmodule Wallaby.Browser do
   """
   @spec has_no_css?(parent, Query.t(), String.t()) :: boolean()
   @spec has_no_css?(parent, String.t()) :: boolean()
-
   def has_no_css?(parent, query, css) when is_binary(css) do
     parent
     |> find(query)
@@ -947,7 +924,6 @@ defmodule Wallaby.Browser do
   Absolute paths do not use the base_url.
   """
   @spec visit(session, String.t()) :: session
-
   def visit(%Session{driver: driver} = session, path) do
     uri = URI.parse(path)
 

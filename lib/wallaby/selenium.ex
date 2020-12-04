@@ -74,8 +74,8 @@ defmodule Wallaby.Selenium do
   end
 
   @doc false
-  def init(:ok) do
-    supervise([], strategy: :one_for_one)
+  def init(_) do
+    Supervisor.init([], strategy: :one_for_one)
   end
 
   @doc false

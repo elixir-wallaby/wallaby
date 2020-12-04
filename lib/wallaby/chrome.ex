@@ -142,7 +142,7 @@ defmodule Wallaby.Chrome do
   end
 
   @doc false
-  def init(:ok) do
+  def init(_) do
     children = [
       Wallaby.Driver.LogStore,
       Wallaby.Chrome.Chromedriver
