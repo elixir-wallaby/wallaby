@@ -71,6 +71,8 @@ Read on to see what else Wallaby can do or check out the [Official Documentation
 
 Wallaby requires Elixir 1.8+ and OTP 21+.
 
+Wallaby also requires `bash` to be installed. Generally `bash` is widely available, but it does not come pre-installed on Alpine Linux.
+
 ### Installation
 
 Add Wallaby to your list of dependencies in `mix.exs`:
