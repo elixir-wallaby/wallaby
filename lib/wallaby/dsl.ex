@@ -28,9 +28,9 @@ defmodule Wallaby.DSL do
 
   defmacro __using__([]) do
     quote do
-      alias Wallaby.Query
       alias Wallaby.Browser
       alias Wallaby.Element
+      alias Wallaby.Query
       import Wallaby.Browser
       require Wallaby.Browser
     end

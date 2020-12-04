@@ -109,9 +109,9 @@ defmodule Wallaby.Chrome do
   @default_readiness_timeout 5_000
   @chromedriver_version_regex ~r/^ChromeDriver (\d+)\.(\d+)/
 
-  alias Wallaby.{DependencyError, Metadata}
-  alias Wallaby.Chrome.{Chromedriver}
+  alias Wallaby.Chrome.Chromedriver
   alias Wallaby.WebdriverClient
+  alias Wallaby.{DependencyError, Metadata}
   import Wallaby.Driver.LogChecker
 
   @typedoc """

@@ -18,7 +18,7 @@ defmodule Wallaby.SessionStoreTest do
       session = %Session{id: "foo"}
       :ok = SessionStore.monitor(session_store, session)
 
-      assert [session] = SessionStore.list_sessions_for(name: table)
+      assert [_] = SessionStore.list_sessions_for(name: table)
     end
 
     test "adds multiple sessions to store", %{session_store: session_store, table: table} do

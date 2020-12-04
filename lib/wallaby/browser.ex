@@ -106,9 +106,9 @@ defmodule Wallaby.Browser do
   alias Wallaby.CookieError
   alias Wallaby.Element
   alias Wallaby.ExpectationNotMetError
+  alias Wallaby.NoBaseUrlError
   alias Wallaby.Query
   alias Wallaby.Query.ErrorMessage
-  alias Wallaby.NoBaseUrlError
   alias Wallaby.Session
   alias Wallaby.StaleReferenceError
 
@@ -832,9 +832,10 @@ defmodule Wallaby.Browser do
       parent = unquote(parent)
       query = unquote(query)
 
-      with {:ok, _query_result} <- execute_query(parent, query) do
-        parent
-      else
+      case execute_query(parent, query) do
+        {:ok, _query_result} ->
+          parent
+
         error ->
           case error do
             {:error, {:not_found, results}} ->
