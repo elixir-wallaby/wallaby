@@ -31,7 +31,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
 
     assert :ok = Application.start(:wallaby)
 
-    assert {:ok, session} = Wallaby.start_session()
+    assert {:ok, _session} = Wallaby.start_session()
   end
 
   test "starting a session boots chromedriver with the default options", %{
@@ -49,7 +49,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
 
     assert :ok = Application.start(:wallaby)
 
-    assert {:ok, session} = Wallaby.start_session()
+    assert {:ok, _session} = Wallaby.start_session()
 
     assert [invocation] = ChromeTestScript.get_invocations(test_script_path) |> Enum.take(-1)
 
@@ -74,7 +74,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
 
     assert :ok = Application.start(:wallaby)
 
-    assert {:ok, session} = Wallaby.start_session()
+    assert {:ok, _session} = Wallaby.start_session()
   end
 
   test "raises a RuntimeError if chromedriver isn't ready before the startup timeout" do
@@ -129,7 +129,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
 
     assert :ok = Application.start(:wallaby)
 
-    assert {:ok, session} = Wallaby.start_session()
+    assert {:ok, _session} = Wallaby.start_session()
 
     assert test_script_path |> ChromeTestScript.get_invocations() |> Enum.any?()
   end
