@@ -36,7 +36,16 @@ defmodule Wallaby.SessionStore do
     Process.flag(:trap_exit, true)
     tid = :ets.new(name, opts)
 
-    {:ok, nil}
+    Application.ensure_all_started(:ex_unit)
+
+    ExUnit.after_suite(fn _ ->
+      try do
+        :ets.tab2list(tid)
+        |> Enum.each(&delete_sessions/1)
+      rescue
+        _ -> nil
+      end
+    end)
 
     {:ok, %{ets_table: tid}}
   end
@@ -82,5 +91,9 @@ defmodule Wallaby.SessionStore do
     emit(%{module: __MODULE__, name: :DOWN, metadata: %{monitored_session: session}})
 
     {:noreply, state}
+  end
+
+  defp delete_sessions({_, session}) do
+    WebdriverClient.delete_session(session)
   end
 end

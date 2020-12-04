@@ -69,7 +69,7 @@ Read on to see what else Wallaby can do or check out the [Official Documentation
 
 ### Requirements
 
-Wallaby requires Elixir 1.7+ and OTP 21+.
+Wallaby requires Elixir 1.8+ and OTP 21+.
 
 ### Installation
 

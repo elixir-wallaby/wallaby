@@ -2,7 +2,14 @@
 
 ## Master
 
+### Breaking
+
+- Increases minimum Elixir version to 1.8
+
+### Fixes
+
 - Correctly remove stopped sessions from the internal store. [#558](https://github.com/elixir-wallaby/wallaby/pull/558)
+- Ensures all sessions are closed after the test suite is over.
 
 ## 0.26.2 (2020-06-19)
 

@@ -13,7 +13,7 @@ jobs:
     - uses: actions/setup-elixir@v1.0.0
       with:
         otp-version: 21.x
-        elixir-version: 1.7.x
+        elixir-version: 1.8.x
     - uses: actions/cache@v1
       id: cache
       with:
