@@ -6,13 +6,6 @@ defmodule Wallaby.TestSupport.TestWorkspace do
 
   import ExUnit.Callbacks, only: [on_exit: 1]
 
-  @deprecated "Use mkdir!/0 inside test instead"
-  def create_test_workspace(_) do
-    workspace_path = mkdir!()
-
-    [workspace_path: workspace_path]
-  end
-
   @doc """
   Create a directory that will be removed after the test exits.
 
