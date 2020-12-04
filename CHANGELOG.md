@@ -10,6 +10,7 @@
 
 - Correctly remove stopped sessions from the internal store. [#558](https://github.com/elixir-wallaby/wallaby/pull/558)
 - Ensures all sessions are closed after the test suite is over.
+- Tests won't crash when side effects fail when calling the inspect protocol on an Element
 
 ## 0.26.2 (2020-06-19)
 
