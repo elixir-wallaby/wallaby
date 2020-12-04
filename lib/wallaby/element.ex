@@ -235,13 +235,20 @@ defimpl Inspect, for: Wallaby.Element do
   import Inspect.Algebra
 
   def inspect(element, opts) do
-    outer_html = Wallaby.Element.attr(element, "outerHTML")
+    additional_output =
+      try do
+        outer_html = Wallaby.Element.attr(element, "outerHTML")
 
-    concat([
-      Inspect.Any.inspect(element, opts),
-      "\n\n",
-      IO.ANSI.cyan() <> "outerHTML:\n\n" <> IO.ANSI.reset(),
-      IO.ANSI.yellow() <> outer_html <> IO.ANSI.reset()
-    ])
+        [
+          "\n\n",
+          IO.ANSI.cyan() <> "outerHTML:\n\n" <> IO.ANSI.reset(),
+          IO.ANSI.yellow() <> outer_html <> IO.ANSI.reset()
+        ]
+      rescue
+        _ ->
+          []
+      end
+
+    concat([Inspect.Any.inspect(element, opts)] ++ additional_output)
   end
 end

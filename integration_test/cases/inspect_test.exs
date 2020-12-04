@@ -35,7 +35,27 @@ defmodule Wallaby.Integration.InspectTest do
         end)
         |> String.replace(~r/\s/, "")
 
+      IO.puts(actual)
+
       assert actual =~ expected
+    end
+
+    test "doesn't fail when request to fetch outerHTML fails", %{session: session} do
+      actual =
+        capture_io(fn ->
+          element =
+            session
+            |> visit("/index.html")
+            |> find(Query.css("body"))
+
+          Wallaby.end_session(session)
+
+          element
+          |> IO.inspect()
+        end)
+        |> String.replace(~r/\s/, "")
+
+      refute actual =~ "outerHTML:"
     end
   end
 end
