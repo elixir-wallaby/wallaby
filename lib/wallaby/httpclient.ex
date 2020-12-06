@@ -56,7 +56,7 @@ defmodule Wallaby.HTTPClient do
     |> Finch.request(WallabyFinch)
     |> handle_response
     |> case do
-      {:error, :httpoison, error} ->
+      {:error, :finch, error} ->
         :timer.sleep(jitter())
         make_request(method, url, body, retry_count + 1, [inspect(error) | retry_reasons])
 
@@ -68,7 +68,7 @@ defmodule Wallaby.HTTPClient do
   @spec handle_response({:ok, Finch.Response.t()} | {:error, Mint.Types.error()}) ::
           {:ok, response}
           | {:error, web_driver_error_reason | Jason.DecodeError.t() | String.t()}
-          | {:error, :finch, Finch.Types.error()}
+          | {:error, :finch, Mint.Types.error()}
           | no_return
   defp handle_response(resp) do
     case resp do
