@@ -35,7 +35,7 @@ defmodule Wallaby do
 
     children = [
       {driver(), [name: Wallaby.Driver.Supervisor]},
-      :hackney_pool.child_spec(:wallaby_pool, timeout: 15_000, max_connections: 4),
+      {Finch, name: WallabyFinch},
       {Wallaby.SessionStore, [name: Wallaby.SessionStore]}
     ]
 

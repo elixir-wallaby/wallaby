@@ -50,7 +50,7 @@ defmodule Wallaby.Mixfile do
   defp deps do
     [
       {:jason, "~> 1.1"},
-      {:httpoison, "~> 0.12 or ~> 1.0"},
+      {:finch, "~> 0.5"},
       {:web_driver_client, "~> 0.1.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:benchee, "~> 0.9", only: :dev},

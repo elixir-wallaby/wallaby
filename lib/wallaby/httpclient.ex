@@ -44,7 +44,7 @@ defmodule Wallaby.HTTPClient do
           | {:error, web_driver_error_reason | Jason.DecodeError.t() | String.t()}
           | no_return
   defp make_request(_, _, _, 5, retry_reasons) do
-    ["Wallaby had an internal issue with HTTPoison:" | retry_reasons]
+    ["Wallaby had an internal issue with Finch:" | retry_reasons]
     |> Enum.uniq()
     |> Enum.join("\n")
     |> raise
@@ -52,7 +52,8 @@ defmodule Wallaby.HTTPClient do
 
   defp make_request(method, url, body, retry_count, retry_reasons) do
     method
-    |> HTTPoison.request(url, body, headers(), request_opts())
+    |> Finch.build(url, headers(), body)
+    |> Finch.request(WallabyFinch)
     |> handle_response
     |> case do
       {:error, :httpoison, error} ->
@@ -64,20 +65,23 @@ defmodule Wallaby.HTTPClient do
     end
   end
 
-  @spec handle_response({:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}) ::
+  @spec handle_response({:ok, Finch.Response.t()} | {:error, Mint.Types.error()}) ::
           {:ok, response}
           | {:error, web_driver_error_reason | Jason.DecodeError.t() | String.t()}
-          | {:error, :httpoison, HTTPoison.Error.t()}
+          | {:error, :finch, Finch.Types.error()}
           | no_return
   defp handle_response(resp) do
     case resp do
-      {:error, %HTTPoison.Error{} = error} ->
-        {:error, :httpoison, error}
+      {:error, %Mint.TransportError{} = error} ->
+        {:error, :finch, error}
 
-      {:ok, %HTTPoison.Response{status_code: 204}} ->
+      {:error, %Mint.HTTPError{} = error} ->
+        {:error, :finch, error}
+
+      {:ok, %Finch.Response{status: 204}} ->
         {:ok, %{"value" => nil}}
 
-      {:ok, %HTTPoison.Response{body: body}} ->
+      {:ok, %Finch.Response{body: body}} ->
         with {:ok, decoded} <- Jason.decode(body),
              {:ok, response} <- check_status(decoded),
              {:ok, validated} <- check_for_response_errors(response),
@@ -138,10 +142,6 @@ defmodule Wallaby.HTTPClient do
       _ ->
         {:ok, response}
     end
-  end
-
-  defp request_opts do
-    Application.get_env(:wallaby, :hackney_options, hackney: [pool: :wallaby_pool])
   end
 
   defp headers do
