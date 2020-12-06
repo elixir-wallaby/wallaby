@@ -136,7 +136,7 @@ defmodule Wallaby.Browser do
 
   It is possible that this function never halts. Whenever we experience a stale
   reference error we retry the query without checking to see if we've run over
-  our time. In practice we should eventually be able to query the dom in a stable
+  our time. In practice we should eventually be able to query the DOM in a stable
   state. However, if this error does continue to occur it will cause wallaby to
   loop forever (or until the test is killed by exunit).
   """
@@ -301,7 +301,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Sets the size of the currenty focused window.
+  Sets the size of the current focused window.
   """
   @spec resize_window(parent, pos_integer, pos_integer) :: parent
 
@@ -311,7 +311,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Maximizes the currenty focused window.
+  Maximizes the current focused window.
 
   For most browsers, this requires a window manager to be running.
   """
@@ -333,7 +333,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Sets the position of the currenty focused window.
+  Sets the position of the current focused window.
   """
   @spec move_window(parent, pos_integer, pos_integer) :: parent
 
@@ -403,7 +403,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Executes javascript synchronously, taking as arguments the script to execute,
+  Executes JavaScript synchronously, taking as arguments the script to execute,
   an optional list of arguments available in the script via `arguments`, and an
   optional callback function with the result of script execution as a parameter.
   """
@@ -432,7 +432,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Executes asynchronous javascript, taking as arguments the script to execute,
+  Executes asynchronous JavaScript, taking as arguments the script to execute,
   an optional list of arguments available in the script via `arguments`, and an
   optional callback function with the result of script execution as a parameter.
   """
@@ -666,7 +666,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Finds a specific DOM element on the page based on a css selector. Blocks until
+  Finds a specific DOM element on the page based on a CSS selector. Blocks until
   it either finds the element or until the max time is reached. By default only
   1 element is expected to match the query. If more elements are present then a
   count can be specified. Use `:any` to allow any number of elements to be present.
@@ -709,7 +709,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Finds all of the DOM elements that match the css selector. If no elements are
+  Finds all of the DOM elements that match the CSS selector. If no elements are
   found then an empty list is immediately returned. This is equivalent to calling
   `find(session, css("element", count: nil, minimum: 0))`.
   """
@@ -945,7 +945,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Searches for css that should not be on the page
+  Searches for CSS that should not be on the page
   """
   @spec has_no_css?(parent, Query.t(), String.t()) :: boolean()
   @spec has_no_css?(parent, String.t()) :: boolean()

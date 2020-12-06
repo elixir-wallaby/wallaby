@@ -38,7 +38,7 @@ defmodule Wallaby.JSError do
 
   def exception(js_error) do
     msg = """
-    There was an uncaught javascript error:
+    There was an uncaught JavaScript error:
 
     #{js_error}
     """
@@ -53,7 +53,7 @@ defmodule Wallaby.StaleReferenceError do
   def exception(_) do
     msg = """
     The element you are trying to reference is stale or no longer attached to the
-    DOM. The most likely reason is that it has been removed with Javascript.
+    DOM. The most likely reason is that it has been removed with JavaScript.
 
     You can typically solve this problem by using `find` to block until the DOM is in a
     stable state.

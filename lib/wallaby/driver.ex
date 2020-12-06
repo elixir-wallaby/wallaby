@@ -179,13 +179,13 @@ defmodule Wallaby.Driver do
               {:ok, [Element.t()]} | {:error, reason}
 
   @doc """
-  Invoked to execute javascript in the browser.
+  Invoked to execute JavaScript in the browser.
   """
   @callback execute_script(Session.t() | Element, String.t(), [any]) ::
               {:ok, any} | {:error, reason}
 
   @doc """
-  Invoked to execute asynchronous javascript in the browser.
+  Invoked to execute asynchronous JavaScript in the browser.
   """
   @callback execute_script_async(Session.t() | Element, String.t(), [any]) ::
               {:ok, any} | {:error, reason}

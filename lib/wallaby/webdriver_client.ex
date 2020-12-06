@@ -183,7 +183,7 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
-  Move the mouse by an offset of the specificed element.
+  Move the mouse by an offset of the specified element.
   If no element is specified, the move is relative to the current mouse cursor.
   If an element is provided but no offset, the mouse will be moved to the center of the element.
 
@@ -408,7 +408,7 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
-  Executes javascript synchronously, taking as arguments the script to execute,
+  Executes JavaScript synchronously, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
   @spec execute_script(Session.t() | Element.t(), String.t(), Keyword.t()) :: {:ok, any}
@@ -420,7 +420,7 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
-  Executes asynchronous javascript, taking as arguments the script to execute,
+  Executes asynchronous JavaScript, taking as arguments the script to execute,
   and optionally a list of arguments available in the script via `arguments`
   """
   @spec execute_script_async(Session.t() | Element.t(), String.t(), Keyword.t()) :: {:ok, any}
