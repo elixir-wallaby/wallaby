@@ -21,12 +21,7 @@ Benchee.run(%{
     find(session, id_css_query)
   end
 },
-time: 18,
-formatters: [
-  &Benchee.Formatters.HTML.output/1,
-  &Benchee.Formatters.Console.output/1
-],
-html: [file: "benchmarks/html/general.html"])
+time: 18)
 
 Wallaby.end_session(session)
 
