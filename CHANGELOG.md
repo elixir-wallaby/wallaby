@@ -6,6 +6,10 @@
 
 - `Browser.assert_text/2` and `Browser.assert_text/3` now return the parent instead of `true` when the text was found.
 
+### Fixes
+
+- File uploads when using local and remote selenium servers.
+
 ## 0.27.0 (2020-12-4)
 
 ### Breaking
