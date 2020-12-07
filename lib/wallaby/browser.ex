@@ -301,7 +301,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Sets the size of the current focused window.
+  Sets the size of the currently focused window.
   """
   @spec resize_window(parent, pos_integer, pos_integer) :: parent
 
