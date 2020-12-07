@@ -6,7 +6,6 @@
 [![Module Version](https://img.shields.io/hexpm/v/wallaby.svg)](https://hex.pm/packages/wallaby)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/wallaby/)
 [![License](https://img.shields.io/hexpm/l/wallaby.svg)](https://github.com/elixir-wallaby/wallaby/blob/master/LICENSE)
-[![Last Updated](https://img.shields.io/github/last-commit/elixir-wallaby/wallaby.svg)](https://github.com/elixir-wallaby/wallaby/commits/master)
 
 Wallaby helps you test your web applications by simulating realistic user interactions.
 By default it runs each test case concurrently and manages browsers for you.
