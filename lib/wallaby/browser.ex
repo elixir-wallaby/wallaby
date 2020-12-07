@@ -618,7 +618,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Touches screen at the given position.
+  Touches the screen at the given position.
   """
   @spec touch_down(parent, integer, integer) :: session
 
@@ -630,7 +630,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Touches and holds the element on its top-left corner plus optional offset.
+  Touches and holds the element on its top-left corner plus an optional offset.
   """
   @spec touch_down(parent, Query.t(), integer, integer) :: session
 
@@ -662,7 +662,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Moves touch pointer (finger, stylus etc.) on the screen to the point determinated by the given coordinates.
+  Moves the touch pointer (finger, stylus etc.) on the screen to the point determined by the given coordinates.
   """
   @spec touch_move(parent, non_neg_integer, non_neg_integer) :: parent
 

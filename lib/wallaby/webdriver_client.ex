@@ -217,7 +217,7 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
-  Touches screen at the given position.
+  Touches the screen at the given position.
   """
   @spec touch_down(parent | nil, Element.t() | nil, integer, integer) :: {:ok, map}
   def touch_down(session, element, x_or_offset \\ 0, y_or_offset \\ 0) do
@@ -266,7 +266,7 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
-  Moves touch pointer (finger, stylus etc.) on the screen to the point determinated by the given coordinates.
+  Moves the touch pointer (finger, stylus etc.) on the screen to the point determined by the given coordinates.
   """
   @spec touch_move(parent, non_neg_integer, non_neg_integer) :: {:ok, map}
   def touch_move(parent, x, y) do
@@ -637,7 +637,7 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
-  Returns tuple {width, height} with size of the given element.
+  Returns a tuple `{width, height}` with the size of the given element.
   """
   @spec element_size(Element.t()) :: {:ok, tuple}
   def element_size(element) do
@@ -647,7 +647,7 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
-  Returns tuple {x, y} with coordinates of the top-left corner of given element.
+  Returns a tuple `{x, y}` with the coordinates of the top-left corner of given element.
   """
   @spec element_location(Element.t()) :: {:ok, tuple}
   def element_location(element) do

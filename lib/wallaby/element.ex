@@ -115,7 +115,7 @@ defmodule Wallaby.Element do
   end
 
   @doc """
-  Touches and holds the element on its top-left corner plus optional offset.
+  Touches and holds the element on its top-left corner plus an optional offset.
   """
   @spec touch_down(t, integer, integer) :: t
 
@@ -267,7 +267,7 @@ defmodule Wallaby.Element do
   end
 
   @doc """
-  Returns tuple {width, height} with size of the given element.
+  Returns a tuple `{width, height}` with the size of the given element.
   """
   @spec size(t) :: t
 
@@ -279,7 +279,7 @@ defmodule Wallaby.Element do
   end
 
   @doc """
-  Returns tuple {x, y} with coordinates of the left-top corner of given element.
+  Returns a tuple `{x, y}` with the coordinates of the left-top corner of given element.
   """
   @spec location(t) :: t
 
