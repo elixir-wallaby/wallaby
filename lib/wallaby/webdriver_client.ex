@@ -512,7 +512,7 @@ defmodule Wallaby.WebdriverClient do
   @doc """
   Sends a list of key strokes to active element.
   """
-  @spec send_keys(Session.t(), [String.t() | atom]) :: {:ok, nil}
+  @spec send_keys(parent(), [String.t() | atom]) :: {:ok, any}
   def send_keys(%Session{} = session, keys) when is_list(keys) do
     with {:ok, resp} <-
            request(:post, "#{session.session_url}/keys", KeyCodes.json(keys), encode_json: false),
@@ -520,9 +520,9 @@ defmodule Wallaby.WebdriverClient do
          do: {:ok, value}
   end
 
-  def send_keys(parent, keys) when is_list(keys) do
+  def send_keys(%Element{} = element, keys) when is_list(keys) do
     with {:ok, resp} <-
-           request(:post, "#{parent.url}/value", KeyCodes.json(keys), encode_json: false),
+           request(:post, "#{element.url}/value", KeyCodes.json(keys), encode_json: false),
          {:ok, value} <- Map.fetch(resp, "value"),
          do: {:ok, value}
   end

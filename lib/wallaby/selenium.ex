@@ -52,6 +52,7 @@ defmodule Wallaby.Selenium do
   @behaviour Wallaby.Driver
 
   alias Wallaby.{Driver, Element, Session}
+  alias Wallaby.Helpers.KeyCodes
   alias Wallaby.WebdriverClient
 
   @typedoc """
@@ -92,7 +93,7 @@ defmodule Wallaby.Selenium do
     with {:ok, response} <- WebdriverClient.create_session(base_url, capabilities) do
       id = response["sessionId"]
 
-      session = %Wallaby.Session{
+      session = %Session{
         session_url: base_url <> "session/#{id}",
         url: base_url <> "session/#{id}",
         id: id,
@@ -291,9 +292,33 @@ defmodule Wallaby.Selenium do
     WebdriverClient.execute_script_async(parent, script, arguments)
   end
 
-  @doc false
-  def send_keys(parent, keys) do
-    WebdriverClient.send_keys(parent, keys)
+  @doc """
+  Simulates typing into an element.
+
+  When sending keys to an element and `keys` is identified as
+  a local file, the local file is uploaded to the
+  Selenium server, returning a file path which is then
+  set to the file input we are interacting with.
+
+  We then call the `WebdriverClient.send_keys/2` to set the
+  remote file path as the input's value.
+  """
+  @spec send_keys(Session.t() | Element.t(), list()) :: {:ok, any}
+  def send_keys(%Session{} = session, keys), do: WebdriverClient.send_keys(session, keys)
+
+  def send_keys(%Element{} = element, keys) do
+    keys =
+      case Enum.all?(keys, &is_local_file?(&1)) do
+        true ->
+          keys
+          |> Enum.map(fn key -> upload_file(element, key) end)
+          |> Enum.intersperse("\n")
+
+        false ->
+          keys
+      end
+
+    WebdriverClient.send_keys(element, keys)
   end
 
   def element_size(element) do
@@ -313,5 +338,63 @@ defmodule Wallaby.Selenium do
         args: ["-headless"]
       }
     }
+  end
+
+  # Create a zip file containing our local file
+  defp create_zipfile(zipfile, filename) do
+    {:ok, ^zipfile} =
+      :zip.create(
+        zipfile,
+        [String.to_charlist(Path.basename(filename))],
+        cwd: String.to_charlist(Path.dirname(filename))
+      )
+
+    zipfile
+  end
+
+  # Base64 encode the zipfile for transfer to remote Selenium
+  defp encode_zipfile(zipfile) do
+    File.open!(zipfile, [:read, :raw], fn f ->
+      f
+      |> IO.binread(:all)
+      |> Base.encode64()
+    end)
+  end
+
+  defp is_local_file?(file) do
+    file
+    |> keys_to_binary()
+    |> File.exists?()
+  end
+
+  defp keys_to_binary(keys) do
+    keys
+    |> KeyCodes.chars()
+    |> IO.iodata_to_binary()
+  end
+
+  # Makes an uploadable file for JSONWireProtocol
+  defp make_file(filename) do
+    System.tmp_dir!()
+    |> Path.join("#{random_filename()}.zip")
+    |> String.to_charlist()
+    |> create_zipfile(filename)
+    |> encode_zipfile()
+  end
+
+  # Generate a random filename
+  defp random_filename do
+    Base.encode32(:crypto.strong_rand_bytes(20))
+  end
+
+  # Uploads a local file to remote Selenium server
+  # Returns the remote file's uploaded location
+  defp upload_file(element, filename) do
+    zip64 = make_file(filename)
+    endpoint = element.session_url <> "/file"
+
+    with {:ok, response} <- Wallaby.HTTPClient.request(:post, endpoint, %{file: zip64}) do
+      Map.fetch!(response, "value")
+    end
   end
 end
