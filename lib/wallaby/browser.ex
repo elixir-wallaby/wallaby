@@ -311,7 +311,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Maximizes the current focused window.
+  Maximizes the currently focused window.
 
   For most browsers, this requires a window manager to be running.
   """
