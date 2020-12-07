@@ -5,7 +5,6 @@
 [![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/main/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
 [![Module Version](https://img.shields.io/hexpm/v/wallaby.svg)](https://hex.pm/packages/wallaby)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/wallaby/)
-[![Total Download](https://img.shields.io/hexpm/dt/wallaby.svg)](https://hex.pm/packages/wallaby)
 [![License](https://img.shields.io/hexpm/l/wallaby.svg)](https://github.com/elixir-wallaby/wallaby/blob/master/LICENSE)
 [![Last Updated](https://img.shields.io/github/last-commit/elixir-wallaby/wallaby.svg)](https://github.com/elixir-wallaby/wallaby/commits/master)
 
