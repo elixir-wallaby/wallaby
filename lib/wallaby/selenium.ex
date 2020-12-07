@@ -321,6 +321,14 @@ defmodule Wallaby.Selenium do
     WebdriverClient.send_keys(element, keys)
   end
 
+  def element_size(element) do
+    WebdriverClient.element_size(element)
+  end
+
+  def element_location(element) do
+    WebdriverClient.element_location(element)
+  end
+
   @doc false
   def default_capabilities do
     %{

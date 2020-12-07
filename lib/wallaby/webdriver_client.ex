@@ -217,6 +217,81 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
+  Touches the screen at the given position.
+  """
+  @spec touch_down(parent | nil, Element.t() | nil, integer, integer) :: {:ok, map}
+  def touch_down(session, element, x_or_offset \\ 0, y_or_offset \\ 0) do
+    session_url =
+      if is_nil(element) do
+        session.session_url
+      else
+        element.session_url
+      end
+
+    {x, y} =
+      if is_nil(element) do
+        {x_or_offset, y_or_offset}
+      else
+        {:ok, {x, y}} = element_location(element)
+        {x + x_or_offset, y + y_or_offset}
+      end
+
+    with {:ok, resp} <-
+           request(:post, "#{session_url}/touch/down", %{x: x, y: y}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
+  Stops touching the screen.
+  """
+  @spec touch_up(parent) :: {:ok, map}
+  def touch_up(parent) do
+    # in fact x and y (in request params) can be any coordinates not greater than page size
+    with {:ok, resp} <-
+           request(:post, "#{parent.session_url}/touch/up", %{x: 0, y: 0}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
+  Taps the element.
+  """
+  @spec tap(Element.t()) :: {:ok, map}
+  def tap(element) do
+    with {:ok, resp} <-
+           request(:post, "#{element.session_url}/touch/click", %{element: element.id}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
+  Moves the touch pointer (finger, stylus etc.) on the screen to the point determined by the given coordinates.
+  """
+  @spec touch_move(parent, non_neg_integer, non_neg_integer) :: {:ok, map}
+  def touch_move(parent, x, y) do
+    with {:ok, resp} <-
+           request(:post, "#{parent.session_url}/touch/move", %{x: x, y: y}),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
+  Scroll on the screen from the given element by the given offset using touch events.
+  """
+  @spec touch_scroll(Element.t(), integer, integer) :: {:ok, map}
+  def touch_scroll(element, x_offset, y_offset) do
+    with {:ok, resp} <-
+           request(:post, "#{element.session_url}/touch/scroll", %{
+             element: element.id,
+             xoffset: x_offset,
+             yoffset: y_offset
+           }),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, value}
+  end
+
+  @doc """
   Gets the text for an element.
   """
   @spec text(Element.t()) :: {:ok, String.t()}
@@ -559,6 +634,26 @@ defmodule Wallaby.WebdriverClient do
     with {:ok, resp} <- request(:post, "#{session.url}/frame/parent"),
          {:ok, value} <- Map.fetch(resp, "value"),
          do: {:ok, value}
+  end
+
+  @doc """
+  Returns a tuple `{width, height}` with the size of the given element.
+  """
+  @spec element_size(Element.t()) :: {:ok, tuple}
+  def element_size(element) do
+    with {:ok, resp} <- request(:get, "#{element.session_url}/element/#{element.id}/size"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, {value["width"], value["height"]}}
+  end
+
+  @doc """
+  Returns a tuple `{x, y}` with the coordinates of the top-left corner of given element.
+  """
+  @spec element_location(Element.t()) :: {:ok, tuple}
+  def element_location(element) do
+    with {:ok, resp} <- request(:get, "#{element.session_url}/element/#{element.id}/location"),
+         {:ok, value} <- Map.fetch(resp, "value"),
+         do: {:ok, {value["x"], value["y"]}}
   end
 
   @spec cast_as_element(Session.t() | Element.t(), map) :: Element.t()

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+  <body>
+    <style>
+      html,
+      body,
+      p {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+      }
+
+      body {
+        line-height: 1;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      #button {
+        width: 200px;
+        height: 100px;
+      }
+
+      #element-out-of-viewport {
+        margin-left: 1600px;
+        margin-top: 600px;
+      }
+    </style>
+
+    <p>Touch events</p>
+    <button id="button">Touch me!</button>
+    <p id="log-start"></p>
+    <p id="log-move"></p>
+    <p id="log-end"></p>
+    <p id="log-cancel"></p>
+    <p id="log-count-touches">0</p>
+    <p id="element-out-of-viewport">Hello there!</p>
+
+    <script>
+      let button = document.querySelector('#button');
+      let logStart = document.querySelector('#log-start');
+      let logMove = document.querySelector('#log-move');
+      let logEnd = document.querySelector('#log-end');
+      let logCancel = document.querySelector('#log-cancel');
+      let logCountTouches = document.querySelector('#log-count-touches');
+      let body = document.querySelector('body');
+
+      button.addEventListener('touchstart', process_touchstart, false);
+      button.addEventListener('touchmove', process_touchmove, false);
+      button.addEventListener('touchend', process_touchend, false);
+      body.addEventListener('touchstart', countTouches, false);
+      body.addEventListener('touchend', countTouches, false);
+
+      function process_touchstart(ev) {
+        logStart.textContent = 'Start ' + ev.touches[0].clientX + ' ' + + ev.touches[0].clientY;
+        countTouches(ev);
+      }
+
+      function process_touchmove(ev) {
+        logMove.textContent = 'Move ' + ev.touches[0].clientX + ' ' + + ev.touches[0].clientY;
+      }
+
+      function process_touchend(ev) {
+        logEnd.textContent = 'End';
+        countTouches(ev);
+      }
+
+      function countTouches(ev) {
+        logCountTouches.textContent = ev.targetTouches.length;
+      }
+    </script>
+  </body>
+</html>

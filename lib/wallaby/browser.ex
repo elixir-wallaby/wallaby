@@ -629,7 +629,73 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Gets the element's text value.
+  Touches the screen at the given position.
+  """
+  @spec touch_down(parent, integer, integer) :: session
+
+  def touch_down(parent, x, y) when is_integer(x) and is_integer(y) do
+    case parent.driver.touch_down(parent, nil, x, y) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
+  Touches and holds the element on its top-left corner plus an optional offset.
+  """
+  @spec touch_down(parent, Query.t(), integer, integer) :: session
+
+  def touch_down(parent, query, x_offset \\ 0, y_offset \\ 0) do
+    parent
+    |> find(query, &Element.touch_down(&1, x_offset, y_offset))
+  end
+
+  @doc """
+  Stops touching the screen.
+  """
+  @spec touch_up(parent) :: parent
+
+  def touch_up(parent) do
+    case parent.driver.touch_up(parent) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
+  Taps the element.
+  """
+  @spec tap(parent, Query.t()) :: session
+
+  def tap(parent, query) do
+    parent
+    |> find(query, &Element.tap/1)
+  end
+
+  @doc """
+  Moves the touch pointer (finger, stylus etc.) on the screen to the point determined by the given coordinates.
+  """
+  @spec touch_move(parent, non_neg_integer, non_neg_integer) :: parent
+
+  def touch_move(parent, x, y) do
+    case parent.driver.touch_move(parent, x, y) do
+      {:ok, _} ->
+        parent
+    end
+  end
+
+  @doc """
+  Scroll on the screen from the given element by the given offset using touch events.
+  """
+  @spec touch_scroll(parent, Query.t(), integer, integer) :: parent
+
+  def touch_scroll(parent, query, x, y) do
+    parent
+    |> find(query, &Element.touch_scroll(&1, x, y))
+  end
+
+  @doc """
+  Gets the Element's text value.
 
   If the element is not visible, the return value will be `""`.
   """

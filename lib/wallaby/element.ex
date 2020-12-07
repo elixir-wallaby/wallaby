@@ -115,6 +115,42 @@ defmodule Wallaby.Element do
   end
 
   @doc """
+  Touches and holds the element on its top-left corner plus an optional offset.
+  """
+  @spec touch_down(t, integer, integer) :: t
+
+  def touch_down(%__MODULE__{driver: driver} = element, x_offset \\ 0, y_offset \\ 0) do
+    case driver.touch_down(element, element, x_offset, y_offset) do
+      {:ok, _} ->
+        element
+    end
+  end
+
+  @doc """
+  Taps the element.
+  """
+  @spec tap(t) :: t
+
+  def tap(%__MODULE__{driver: driver} = element) do
+    case driver.tap(element) do
+      {:ok, _} ->
+        element
+    end
+  end
+
+  @doc """
+  Scroll on the screen from the given element by the given offset using touch events.
+  """
+  @spec touch_scroll(t, integer, integer) :: t
+
+  def touch_scroll(%__MODULE__{driver: driver} = element, x_offset, y_offset) do
+    case driver.touch_scroll(element, x_offset, y_offset) do
+      {:ok, _} ->
+        element
+    end
+  end
+
+  @doc """
   Gets the element's text value.
 
   If the element is not visible, the return value will be `""`.
@@ -228,6 +264,30 @@ defmodule Wallaby.Element do
 
   def value(element) do
     attr(element, "value")
+  end
+
+  @doc """
+  Returns a tuple `{width, height}` with the size of the given element.
+  """
+  @spec size(t) :: t
+
+  def size(%__MODULE__{driver: driver} = element) do
+    case driver.element_size(element) do
+      {:ok, value} ->
+        value
+    end
+  end
+
+  @doc """
+  Returns a tuple `{x, y}` with the coordinates of the left-top corner of given element.
+  """
+  @spec location(t) :: t
+
+  def location(%__MODULE__{driver: driver} = element) do
+    case driver.element_location(element) do
+      {:ok, value} ->
+        value
+    end
   end
 end
 
