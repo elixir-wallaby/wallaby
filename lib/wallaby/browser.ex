@@ -333,7 +333,7 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Sets the position of the current focused window.
+  Sets the position of the currently focused window.
   """
   @spec move_window(parent, pos_integer, pos_integer) :: parent
 
