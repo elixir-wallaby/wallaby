@@ -2,6 +2,8 @@
 
 ## Main
 
+## v0.28.0 (2020-12-8)
+
 ### Breaking
 
 - `Browser.assert_text/2` and `Browser.assert_text/3` now return the parent instead of `true` when the text was found.
@@ -9,6 +11,22 @@
 ### Fixes
 
 - File uploads when using local and remote selenium servers.
+
+### Improvements
+
+- Added support for touch events
+ - `Wallaby.Browser.touch_down/3`
+ - `Wallaby.Browser.touch_down/4`
+ - `Wallaby.Browser.touch_up/1`
+ - `Wallaby.Browser.tap/2`
+ - `Wallaby.Browser.touch_move/3`
+ - `Wallaby.Browser.touch_scroll/4`
+ - `Wallaby.Element.touch_down/3`
+ - `Wallaby.Element.touch_scroll/3`
+
+- Added support for getting Element size and location
+  - `Wallaby.Element.size/1`
+  - `Wallaby.Element.location/1`
 
 ## 0.27.0 (2020-12-4)
 

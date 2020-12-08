@@ -2,7 +2,7 @@ defmodule Wallaby.Mixfile do
   use Mix.Project
 
   @source_url "https://github.com/elixir-wallaby/wallaby"
-  @version "0.27.0"
+  @version "0.28.0"
   @drivers ~w(selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers [
