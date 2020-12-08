@@ -16,7 +16,7 @@ defmodule EventEmitter do
   end
   ```
 
-  If you'd like to await on a message emitted by implementation code, you can call `await/3` from your test codeafter registering a handler for your test process
+  If you'd like to await on a message emitted by implementation code, you can call `await/3` from your test code after registering a handler for your test process
 
   ```elixir
   defmodule TestMod do

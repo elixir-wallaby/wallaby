@@ -10,8 +10,8 @@ defmodule Wallaby do
   * `:screenshot_dir` - The directory to store screenshots.
   * `:screenshot_on_failure` - if Wallaby should take screenshots on test failures (defaults to `false`).
   * `:max_wait_time` - The amount of time that Wallaby should wait to find an element on the page. (defaults to `3_000`)
-  * `:js_errors` - if Wallaby should re-throw javascript errors in elixir (defaults to true).
-  * `:js_logger` - IO device where javascript console logs are written to. Defaults to :stdio. This option can also be set to a file or any other io device. You can disable javascript console logging by setting this to `nil`.
+  * `:js_errors` - if Wallaby should re-throw JavaScript errors in elixir (defaults to true).
+  * `:js_logger` - IO device where JavaScript console logs are written to. Defaults to :stdio. This option can also be set to a file or any other io device. You can disable JavaScript console logging by setting this to `nil`.
   """
 
   @drivers %{

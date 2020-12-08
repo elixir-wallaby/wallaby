@@ -202,7 +202,7 @@ defmodule Wallaby.Query.ErrorMessage do
   end
 
   @doc """
-  Converts the visibilty attribute into a human readable form.
+  Converts the visibility attribute into a human readable form.
   """
   @spec visibility(Query.t()) :: String.t()
 

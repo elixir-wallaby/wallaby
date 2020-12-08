@@ -14,7 +14,7 @@ defmodule Wallaby.Chrome do
 
   ### Headless
 
-  Chrome will run headlessly by default.
+  Chrome will run in headless mode by default.
   You can disable this behaviour using the following configuration.
 
   This will override the default capabilities and capabilities set with application configuration.

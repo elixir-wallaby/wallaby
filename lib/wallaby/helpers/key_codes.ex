@@ -5,7 +5,7 @@ defmodule Wallaby.Helpers.KeyCodes do
   # the wire.
 
   @doc """
-  Encode a list of key codes to a usable json representation.
+  Encode a list of key codes to a usable JSON representation.
   """
   @spec json(list(atom)) :: String.t()
   def json(keys) when is_list(keys) do

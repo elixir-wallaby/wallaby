@@ -1,6 +1,7 @@
 defmodule Wallaby.Mixfile do
   use Mix.Project
 
+  @source_url "https://github.com/elixir-wallaby/wallaby"
   @version "0.27.0"
   @drivers ~w(selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
@@ -69,7 +70,7 @@ defmodule Wallaby.Mixfile do
       files: ["lib", "mix.exs", "README.md", "LICENSE.md", "priv"],
       maintainers: @maintainers,
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/elixir-wallaby/wallaby"}
+      links: %{"Github" => @source_url}
     ]
   end
 
@@ -77,7 +78,7 @@ defmodule Wallaby.Mixfile do
     [
       extras: ["README.md"],
       source_ref: "v#{@version}",
-      source_url: "https://github.com/elixir-wallaby/wallaby",
+      source_url: @source_url,
       main: "readme",
       logo: "guides/images/icon.png"
     ]

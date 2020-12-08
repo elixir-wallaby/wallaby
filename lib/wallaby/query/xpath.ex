@@ -10,7 +10,8 @@ defmodule Wallaby.Query.XPath do
 
   @doc """
   XPath for links
-  this xpath is gracious ripped from capybara via
+
+  This xpath is gracious ripped from capybara via
   https://github.com/jnicklas/xpath/blob/master/lib/xpath/html.rb
   """
   def link(lnk) do

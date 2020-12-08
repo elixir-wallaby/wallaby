@@ -14,7 +14,7 @@ defmodule Wallaby.Query do
 
   There are several custom finders for locating form elements. Each of these allows
   finding by their name, id text, or label text. This allows for more robust querying
-  and decouples the query from presentation selectors like css classes.
+  and decouples the query from presentation selectors like CSS classes.
 
   ```
   Query.text_field("My Name")
@@ -68,7 +68,7 @@ defmodule Wallaby.Query do
   ## What does my query do?
 
   Wanna check out what exactly your query will do? Look no further than
-  `Wallaby.Query.compile/1` - it takes a query and returns the css or xpath
+  `Wallaby.Query.compile/1` - it takes a query and returns the CSS or xpath
   query that will be sent to the driver:
 
       iex> Wallaby.Query.compile Wallaby.Query.text("my text")
@@ -130,7 +130,7 @@ defmodule Wallaby.Query do
   @type compiled :: {:xpath | :css, String.t()}
 
   @doc """
-  Literally queries for the css selector you provide.
+  Literally queries for the CSS selector you provide.
   """
 
   def css(selector, opts \\ []) do
@@ -410,7 +410,7 @@ defmodule Wallaby.Query do
   end
 
   @doc """
-  Compiles a query into css or xpath so its ready to be sent to the driver
+  Compiles a query into CSS or xpath so its ready to be sent to the driver
 
       iex> Wallaby.Query.compile Wallaby.Query.text("my text")
       {:xpath, ".//*[contains(normalize-space(text()), \\"my text\\")]"}

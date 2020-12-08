@@ -1,8 +1,11 @@
 ![Wallaby](https://i.imgur.com/eQ1tlI3.png)
 ============
+
 [![Actions Status](https://github.com/elixir-wallaby/wallaby/workflows/CI/badge.svg)](https://github.com/elixir-wallaby/wallaby/actions)
-[![Hex pm](https://img.shields.io/hexpm/v/wallaby.svg?style=flat)](https://hex.pm/packages/wallaby)
 [![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/main/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
+[![Module Version](https://img.shields.io/hexpm/v/wallaby.svg)](https://hex.pm/packages/wallaby)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/wallaby/)
+[![License](https://img.shields.io/hexpm/l/wallaby.svg)](https://github.com/elixir-wallaby/wallaby/blob/master/LICENSE)
 
 Wallaby helps you test your web applications by simulating realistic user interactions.
 By default it runs each test case concurrently and manages browsers for you.
@@ -145,7 +148,7 @@ Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
 #### Assets
 
 Assets are not re-compiled when you run `mix test`.
-This can lead to confusion if you've made changes in javascript or css but tests are still failing.
+This can lead to confusion if you've made changes in JavaScript or CSS but tests are still failing.
 There are two common ways to avoid this confusion.
 
 The first solution is to run `webpack --mode development --watch` from the assets directory.
@@ -509,7 +512,7 @@ config :wallaby,
 
 ## Contributing
 
-Wallaby is a community project. PRs and Issues are greatly welcome.
+Wallaby is a community project. Pull Requests (PRs) and reporting issues are greatly welcome.
 
 To get started and setup the project, make sure you've got Elixir 1.7+ installed and then:
 
