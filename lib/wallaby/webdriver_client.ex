@@ -658,7 +658,8 @@ defmodule Wallaby.WebdriverClient do
   end
 
   # Pull the cookies from the element if the session is nil
-  @spec resolve_cookies(Session.t() | nil, Element.t()) :: cookies()
+  @spec resolve_cookies(Session.t() | nil, Element.t() | nil) :: cookies()
   defp resolve_cookies(nil, element), do: element.cookies
-  defp resolve_cookies(session, _), do: session.cookies
+  defp resolve_cookies(session, nil), do: session.cookies
+  defp resolve_cookies(_, _), do: []
 end

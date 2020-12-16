@@ -542,7 +542,6 @@ defmodule Wallaby.Browser do
     end
   end
 
-  @spec click(parent, Query.t()) :: parent
   def click(parent, query) do
     parent
     |> find(query, &Element.click/1)
