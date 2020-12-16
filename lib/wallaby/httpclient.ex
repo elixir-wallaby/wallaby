@@ -21,7 +21,7 @@ defmodule Wallaby.HTTPClient do
   response.
   """
   @spec request(method, url, params, request_opts) ::
-          {:ok, response}
+          {:ok, response, cookies()}
           | {
               :error,
               web_driver_error_reason
