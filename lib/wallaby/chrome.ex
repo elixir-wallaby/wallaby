@@ -184,7 +184,7 @@ defmodule Wallaby.Chrome do
           DependencyError.exception("""
           Wallaby can't find chromedriver. Make sure you have chromedriver installed
           and included in your path.
-          You can also provide a path using `config :wallaby, chromedriver: <path>`.
+          You can also provide a path using `config :wallaby, :chromedriver, path: <path>`.
           """)
 
         {:error, exception}
