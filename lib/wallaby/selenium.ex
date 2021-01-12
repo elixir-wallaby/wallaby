@@ -391,7 +391,7 @@ defmodule Wallaby.Selenium do
         Map.fetch!(response, "value")
 
       error ->
-        error
+        raise("Selenium Upload failed: #{inspect(error)}")
     end
   end
 end
