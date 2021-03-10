@@ -111,21 +111,21 @@ Then ensure that Wallaby is started in your `test_helper.exs`:
 
 ### Phoenix
 
-If you're testing a Phoenix application with Ecto and a database that supports sandbox mode, you can enable concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` plug to your `Endpoint`.
+If you're testing a Phoenix application with Ecto and a database that [supports sandbox mode](https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.Sandbox.html), you can enable concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` plug to your `Endpoint`.
 It's important that this is at the top of `endpoint.ex` before any other plugs.
 
 ```elixir
-# lib/endpoint.ex
+# lib/your_app_web/endpoint.ex
 
 defmodule YourApp.Endpoint do
   use Phoenix.Endpoint, otp_app: :your_app
 
-  if Application.get_env(:your_app, :sql_sandbox) do
-    plug Phoenix.Ecto.SQL.Sandbox
+  if sandbox = Application.get_env(:your_app, :sandbox) do
+    plug Phoenix.Ecto.SQL.Sandbox, sandbox: sandbox
   end
 ```
 
-Make sure Phoenix is set up to serve endpoints in tests and that the SQL sandbox is enabled:
+Make sure Phoenix is set up to serve endpoints in tests and that the sandbox is enabled:
 
 ```elixir
 # config/test.exs
@@ -133,10 +133,36 @@ Make sure Phoenix is set up to serve endpoints in tests and that the SQL sandbox
 config :your_app, YourApplication.Endpoint,
   server: true
 
-config :your_app, :sql_sandbox, true
+config :your_app, :sandbox, Ecto.Adapters.SQL.Sandbox
 ```
 
-Then in your `test_helper.exs` you can provide some configuration to Wallaby.
+This enables the database connection to be owned by the process that is running your test, but the connection is shared to the process receiving the HTTP requests from the browser, so that the same data is visible in both processes.
+
+If you have other resources that should be shared by both processes (e.g. expectations or stubs if using [Mox](https://hexdocs.pm/mox/Mox.html)), then you can define a custom sandbox module:
+
+```elixir
+# config/support/sandbox.ex
+
+defmodule YourApp.Sandbox do
+  def allow(repo, owner_pid, child_pid) do
+    # Delegate to the Ecto sandbox
+    Ecto.Adapters.SQL.Sandbox.allow(repo, owner_pid, child_pid)
+
+    # Add custom process-sharing configuration
+    Mox.allow(MyMock, owner_pid, child_pid)
+  end
+end
+```
+
+And update the test config to use your custom sandbox:
+
+```elixir
+# config/test.exs
+
+config :your_app, :sandbox, YourApp.Sandbox
+```
+
+Finally, in your `test_helper.exs` you can provide some configuration to Wallaby.
 At minimum, you need to specify a `:base_url`, so Wallaby knows how to resolve relative paths.
 
 ```elixir
