@@ -55,8 +55,6 @@ defmodule Wallaby.Mixfile do
       {:finch, "~> 0.6"},
       {:web_driver_client, "~> 0.1.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
-      {:benchee, "~> 0.9", only: :dev},
-      {:benchee_html, "~> 0.3", only: :dev},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:bypass, "~> 2.0", only: :test},
       {:excoveralls, "~> 0.7", only: :test},
