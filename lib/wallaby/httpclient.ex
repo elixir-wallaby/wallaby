@@ -141,9 +141,9 @@ defmodule Wallaby.HTTPClient do
     end
   end
 
-  defp request_opts do
-    Application.get_env(:wallaby, :hackney_options, hackney: [pool: :wallaby_pool])
-  end
+  # defp request_opts do
+  #   Application.get_env(:wallaby, :hackney_options, hackney: [pool: :wallaby_pool])
+  # end
 
   defp headers do
     [{"Accept", "application/json"}, {"Content-Type", "application/json"}]
