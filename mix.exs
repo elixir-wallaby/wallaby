@@ -51,13 +51,14 @@ defmodule Wallaby.Mixfile do
   defp deps do
     [
       {:jason, "~> 1.1"},
-      {:httpoison, "~> 0.12 or ~> 1.0"},
+      # {:httpoison, "~> 1.8"},
+      {:finch, "~> 0.6"},
       {:web_driver_client, "~> 0.1.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:bypass, "~> 1.0.0", only: :test},
+      {:bypass, "~> 2.0", only: :test},
       {:excoveralls, "~> 0.7", only: :test},
       {:ex_doc, "~> 0.23", only: :dev},
       {:ecto_sql, ">= 3.0.0", optional: true},

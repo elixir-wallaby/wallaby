@@ -44,18 +44,18 @@ defmodule Wallaby.HTTPClient do
           | {:error, web_driver_error_reason | Jason.DecodeError.t() | String.t()}
           | no_return
   defp make_request(_, _, _, 5, retry_reasons) do
-    ["Wallaby had an internal issue with HTTPoison:" | retry_reasons]
+    ["Wallaby had an internal issue with Finch:" | retry_reasons]
     |> Enum.uniq()
     |> Enum.join("\n")
-    |> raise
+    |> raise()
   end
 
   defp make_request(method, url, body, retry_count, retry_reasons) do
-    method
-    |> HTTPoison.request(url, body, headers(), request_opts())
-    |> handle_response
+    Finch.build(method, url, headers(), body)
+    |> Finch.request(WallabyFinch)
+    |> handle_response()
     |> case do
-      {:error, :httpoison, error} ->
+      {:error, :finch, error} ->
         :timer.sleep(jitter())
         make_request(method, url, body, retry_count + 1, [inspect(error) | retry_reasons])
 
@@ -64,24 +64,25 @@ defmodule Wallaby.HTTPClient do
     end
   end
 
-  @spec handle_response({:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}) ::
+  @spec handle_response({:ok, Finch.Response.t()} | {:error, Mint.Types.error()}) ::
           {:ok, response}
           | {:error, web_driver_error_reason | Jason.DecodeError.t() | String.t()}
-          | {:error, :httpoison, HTTPoison.Error.t()}
+          | {:error, :finch, Mint.Types.error()}
           | no_return
   defp handle_response(resp) do
     case resp do
-      {:error, %HTTPoison.Error{} = error} ->
-        {:error, :httpoison, error}
+      {:error, error} ->
+        {:error, :finch, error}
 
-      {:ok, %HTTPoison.Response{status_code: 204}} ->
+      {:ok, %Finch.Response{status: 204}} ->
         {:ok, %{"value" => nil}}
 
-      {:ok, %HTTPoison.Response{body: body}} ->
+      {:ok, %Finch.Response{body: body}} ->
         with {:ok, decoded} <- Jason.decode(body),
              {:ok, response} <- check_status(decoded),
-             {:ok, validated} <- check_for_response_errors(response),
-             do: {:ok, validated}
+             {:ok, validated} <- check_for_response_errors(response) do
+          {:ok, validated}
+        end
     end
   end
 
