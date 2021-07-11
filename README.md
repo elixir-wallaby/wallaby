@@ -117,7 +117,7 @@ It's important that this is at the top of `endpoint.ex` before any other plugs.
 ```elixir
 # lib/your_app_web/endpoint.ex
 
-defmodule YourApp.Endpoint do
+defmodule YourAppWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :your_app
 
   if sandbox = Application.get_env(:your_app, :sandbox) do
@@ -130,7 +130,7 @@ Make sure Phoenix is set up to serve endpoints in tests and that the sandbox is 
 ```elixir
 # config/test.exs
 
-config :your_app, YourApplication.Endpoint,
+config :your_app, YourAppWeb.Endpoint,
   server: true
 
 config :your_app, :sandbox, Ecto.Adapters.SQL.Sandbox
@@ -168,7 +168,7 @@ At minimum, you need to specify a `:base_url`, so Wallaby knows how to resolve r
 ```elixir
 # test/test_helper.exs
 
-Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
+Application.put_env(:wallaby, :base_url, YourAppWeb.Endpoint.url)
 ```
 
 #### Assets
