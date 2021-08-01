@@ -24,7 +24,13 @@ defmodule Wallaby.Selenium.StartSessionConfigTest do
                "desiredCapabilities" => %{
                  "browserName" => "firefox",
                  "javascriptEnabled" => true,
-                 "moz:firefoxOptions" => %{"args" => ["-headless"]}
+                 "moz:firefoxOptions" => %{
+                   "args" => ["-headless"],
+                   "prefs" => %{
+                     "general.useragent.override" =>
+                       "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+                   }
+                 }
                }
              }
 
