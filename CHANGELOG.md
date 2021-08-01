@@ -5,6 +5,7 @@
 ## v0.28.1 (2021-07-31)
 
 - Fix async tests when using selenium and the default capabilities.
+- Fixes the DependencyError message  in chrome.ex (#581)
 
 ## v0.28.0 (2020-12-8)
 
