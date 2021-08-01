@@ -51,9 +51,10 @@ defmodule Wallaby.Selenium do
 
   @behaviour Wallaby.Driver
 
-  alias Wallaby.{Driver, Element, Session}
   alias Wallaby.Helpers.KeyCodes
+  alias Wallaby.Metadata
   alias Wallaby.WebdriverClient
+  alias Wallaby.{Driver, Element, Session}
 
   @typedoc """
   Options to pass to Wallaby.start_session/1
@@ -88,9 +89,10 @@ defmodule Wallaby.Selenium do
   @spec start_session([start_session_opts]) :: Wallaby.Driver.on_start_session() | no_return
   def start_session(opts \\ []) do
     base_url = Keyword.get(opts, :remote_url, "http://localhost:4444/wd/hub/")
-    capabilities = Keyword.get(opts, :capabilities, capabilities_from_config())
+    create_session = Keyword.get(opts, :create_session_fn, &WebdriverClient.create_session/2)
+    capabilities = Keyword.get(opts, :capabilities, capabilities_from_config(opts))
 
-    with {:ok, response} <- WebdriverClient.create_session(base_url, capabilities) do
+    with {:ok, response} <- create_session.(base_url, capabilities) do
       id = response["sessionId"]
 
       session = %Session{
@@ -108,10 +110,10 @@ defmodule Wallaby.Selenium do
     end
   end
 
-  defp capabilities_from_config() do
+  defp capabilities_from_config(opts) do
     :wallaby
     |> Application.get_env(:selenium, [])
-    |> Keyword.get(:capabilities, default_capabilities())
+    |> Keyword.get(:capabilities, default_capabilities(opts))
   end
 
   @doc false
@@ -330,12 +332,21 @@ defmodule Wallaby.Selenium do
   end
 
   @doc false
-  def default_capabilities do
+  def default_capabilities(opts \\ []) do
+    user_agent =
+      Metadata.append(
+        "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
+        opts[:metadata]
+      )
+
     %{
       javascriptEnabled: true,
       browserName: "firefox",
       "moz:firefoxOptions": %{
-        args: ["-headless"]
+        args: ["-headless"],
+        prefs: %{
+          "general.useragent.override" => user_agent
+        }
       }
     }
   end
