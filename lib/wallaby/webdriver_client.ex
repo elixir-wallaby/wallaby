@@ -657,7 +657,7 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @spec cast_as_element(Session.t() | Element.t(), map) :: Element.t()
-  defp cast_as_element(parent, %{"ELEMENT" => id}) do
+  def cast_as_element(parent, %{"ELEMENT" => id}) do
     # In the Selenium WebDriver Protocol, the identifier is "ELEMENT":
     #  https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#webelement-json-object
     # In the new W3C protocol, the identifier is a specific constant:
@@ -668,7 +668,7 @@ defmodule Wallaby.WebdriverClient do
     cast_as_element(parent, %{@web_element_identifier => id})
   end
 
-  defp cast_as_element(parent, %{@web_element_identifier => id}) do
+  def cast_as_element(parent, %{@web_element_identifier => id}) do
     %Wallaby.Element{
       id: id,
       session_url: parent.session_url,

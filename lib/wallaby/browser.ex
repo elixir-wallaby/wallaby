@@ -111,6 +111,7 @@ defmodule Wallaby.Browser do
   alias Wallaby.Query.ErrorMessage
   alias Wallaby.Session
   alias Wallaby.StaleReferenceError
+  alias Wallaby.WebdriverClient
 
   @type t :: any()
 
@@ -796,6 +797,14 @@ defmodule Wallaby.Browser do
       parent,
       %Query{query | conditions: Keyword.merge(query.conditions, count: nil, minimum: 0)}
     )
+  end
+
+  def within_shadow_dom(parent, shadow_css_query, callback) do
+    execute_script(parent, """
+      return document.querySelector('#{shadow_css_query}').shadowRoot;
+    """, fn elem ->
+      WebdriverClient.cast_as_element(parent, elem) |> callback.()
+    end)
   end
 
   @doc """
