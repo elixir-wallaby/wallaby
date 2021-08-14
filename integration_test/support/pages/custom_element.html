@@ -1,8 +1,16 @@
 <html>
   <head>
     <script src="./my_element.js"></script>
+    <script src="./custom_event_throwing.js"></script>
   </head>
   <body>
     <my-element></my-element>
+    <custom-event-throwing></custom-event-throwing>
+    <div id="foo"></div>
+    <script>
+      document.querySelector('custom-event-throwing').addEventListener('custom', () => {
+        document.querySelector('#foo').innerHTML = 'bar';
+      });
+    </script>
   </body>
 </html>
