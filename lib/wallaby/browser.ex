@@ -800,11 +800,15 @@ defmodule Wallaby.Browser do
   end
 
   def within_shadow_dom(parent, shadow_css_query, callback) do
-    execute_script(parent, """
-      return document.querySelector('#{shadow_css_query}').shadowRoot;
-    """, fn elem ->
-      WebdriverClient.cast_as_element(parent, elem) |> callback.()
-    end)
+    execute_script(
+      parent,
+      """
+        return document.querySelector('#{shadow_css_query}').shadowRoot;
+      """,
+      fn elem ->
+        WebdriverClient.cast_as_element(parent, elem) |> callback.()
+      end
+    )
   end
 
   @doc """
