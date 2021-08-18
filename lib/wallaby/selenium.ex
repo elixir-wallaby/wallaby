@@ -386,7 +386,12 @@ defmodule Wallaby.Selenium do
     zip64 = make_file(filename)
     endpoint = element.session_url <> "/file"
 
-    case Wallaby.HTTPClient.request(:post, endpoint, %{file: zip64}) do
+    case Wallaby.HTTPClient.request(
+          :post,
+          endpoint,
+          %{file: zip64},
+          cookies: element.cookies
+        ) do
       {:ok, response, _cookies} ->
         Map.fetch!(response, "value")
 
