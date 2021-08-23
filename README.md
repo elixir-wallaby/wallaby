@@ -67,6 +67,10 @@ end
 
 Read on to see what else Wallaby can do or check out the [Official Documentation](https://hexdocs.pm/wallaby).
 
+## Sponsors
+
+![SmartLogic Logo](https://github.com/smartlogic/smartlogic.io/raw/main/images/brand-assets/smartlogic-logo-teal-400.png)
+
 ## Setup
 
 ### Requirements
