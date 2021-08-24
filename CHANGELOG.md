@@ -241,7 +241,7 @@ Other goodies include improved test helpers, a cookies API and handling for JS-d
 - Removed deprecated versions of `text`
 - Removed deprecated `click_link`
 - Removed deprecated `click_button`
-- Removed depreacted `choose`
+- Removed deprecated `choose`
 
 ### Features
 
