@@ -20,7 +20,7 @@ defmodule Wallaby.Integration.Browser.ButtonUpTest do
     end
   end
 
-  describe "button_down/2 releases previously held mouse button if cursor is moved from the position where the buton was pressed" do
+  describe "button_down/2 releases previously held mouse button if cursor is moved from the position where the button was pressed" do
     test "for left button", %{page: page} do
       move_cursor_then_button_up_test(page, :left, "Left")
     end

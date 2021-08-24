@@ -56,7 +56,7 @@ defmodule Wallaby.HTTPClientTest do
     end
 
     test "with an obscure status code", %{bypass: bypass} do
-      expected_message = "message from an obsure error"
+      expected_message = "message from an obscure error"
 
       Bypass.expect(bypass, fn conn ->
         send_json_resp(conn, 200, %{
