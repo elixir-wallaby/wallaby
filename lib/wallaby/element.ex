@@ -258,7 +258,7 @@ defmodule Wallaby.Element do
   end
 
   @doc """
-  Matches the Element's value with the provided value.
+  Returns the Element's value.
   """
   @spec value(t) :: String.t()
 
