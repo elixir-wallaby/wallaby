@@ -141,7 +141,7 @@ defmodule Wallaby.Browser do
   loop forever (or until the test is killed by exunit).
   """
   @type sync_result :: {:ok, any()} | {:error, any()}
-  @spec retry((() -> sync_result), timeout) :: sync_result()
+  @spec retry((() -> sync_result), integer()) :: sync_result()
 
   def retry(f, start_time \\ current_time()) do
     case f.() do
