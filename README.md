@@ -2,7 +2,7 @@
 ============
 
 [![Actions Status](https://github.com/elixir-wallaby/wallaby/workflows/CI/badge.svg)](https://github.com/elixir-wallaby/wallaby/actions)
-[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/main/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
+[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/main/graph/badge.svg?token=eaEe1AIM2e)](https://codecov.io/gh/elixir-wallaby/wallaby)
 [![Module Version](https://img.shields.io/hexpm/v/wallaby.svg)](https://hex.pm/packages/wallaby)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/wallaby/)
 [![License](https://img.shields.io/hexpm/l/wallaby.svg)](https://github.com/elixir-wallaby/wallaby/blob/master/LICENSE)
@@ -86,7 +86,7 @@ Add Wallaby to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:wallaby, "~> 0.28.0", runtime: false, only: :test}
+    {:wallaby, "~> 0.29.0", runtime: false, only: :test}
   ]
 end
 ```

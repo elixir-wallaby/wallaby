@@ -2,6 +2,11 @@
 
 ## Main
 
+## v0.29.0 (2021-09-14)
+
+- `has_css?/3` returns a boolean instead of raising. (#624)
+- Updates `web_driver_client` to v0.2.0 (#625)
+
 ## v0.28.1 (2021-07-31)
 
 - Fix async tests when using selenium and the default capabilities.
