@@ -1,12 +1,53 @@
 defmodule Wallaby.Helpers.KeyCodes do
-  @moduledoc false
+  @moduledoc """
+  Shortcuts for various keys.
 
-  # Helper utility for converting key atoms into key codes suitable to send over
-  # the wire.
-
-  @doc """
-  Encode a list of key codes to a usable JSON representation.
+  - :null
+  - :cancel
+  - :help
+  - :backspace
+  - :tab
+  - :clear
+  - :return
+  - :enter
+  - :shift
+  - :control
+  - :alt
+  - :pause
+  - :escape
+  - :space
+  - :pageup
+  - :pagedown
+  - :end
+  - :home
+  - :left_arrow
+  - :up_arrow
+  - :right_arrow
+  - :down_arrow
+  - :insert
+  - :delete
+  - :semicolon
+  - :equals
+  - :num0
+  - :num1
+  - :num2
+  - :num3
+  - :num4
+  - :num5
+  - :num6
+  - :num7
+  - :num8
+  - :num9
+  - :multiply
+  - :add
+  - :seperator
+  - :subtract
+  - :decimal
+  - :divide
+  - :command
   """
+
+  # Encode a list of key codes to a usable JSON representation.
   @spec json(list(atom)) :: String.t()
   def json(keys) when is_list(keys) do
     unicode =
@@ -18,10 +59,7 @@ defmodule Wallaby.Helpers.KeyCodes do
     "{\"value\": [#{unicode}]}"
   end
 
-  @doc """
-  Ensures a list of keys are in binary
-  form to check for local files.
-  """
+  # Ensures a list of keys are in binary form to check for local files.
   @spec chars(list() | binary()) :: [binary()]
   def chars(keys) do
     keys
