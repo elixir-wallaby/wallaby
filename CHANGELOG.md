@@ -2,6 +2,10 @@
 
 ## Main
 
+## v0.29.1 (2021-09-22)
+
+- Docs improvements #629
+
 ## v0.29.0 (2021-09-14)
 
 - `has_css?/3` returns a boolean instead of raising. (#624)
