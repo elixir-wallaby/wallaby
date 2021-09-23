@@ -1,5 +1,7 @@
 defmodule Wallaby.Session do
-  @moduledoc false
+  @moduledoc """
+  Struct containing details about the webdriver session.
+  """
 
   @type t :: %__MODULE__{
           id: String.t(),

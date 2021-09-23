@@ -1,4 +1,5 @@
 defmodule Wallaby.Browser do
+  # credo:disable-for-this-file Credo.Check.Readability.TrailingWhiteSpace
   @moduledoc """
   The Browser module is the entrypoint for interacting with a real browser.
 
@@ -262,94 +263,273 @@ defmodule Wallaby.Browser do
   defp remove_illegal_characters(string), do: String.replace(string, ~r{<>:"/\\\?\*}, "")
 
   @doc """
-  Gets the window handle of the currently focused window.
-  """
-  @spec window_handle(parent) :: String.t()
+  Gets the window handle of the current window.
 
+  The window is either an instance of a browser tab or another operating system window.
+  Getting the current window handle makes it easy to return to the window in case you
+  need to switch between them.
+
+  ## Usage
+
+  ```elixir
+  feature "can open a new tab and switch back to the original tab", %{session: session} do
+    handle =
+      session
+      |> visit("/home")
+      |> window_handle()
+
+    path =
+      session
+      # click a link that takes you to a new tab
+      |> click(Query.link("External Page"))
+      |> assert_text("Some text")
+      |> focus_window(handle)
+      |> current_path()
+
+    assert "/home" == path
+  end
+  ```
+  """
+  @spec window_handle(session :: Session.t()) :: String.t()
   def window_handle(%{driver: driver} = session) do
     {:ok, handle} = driver.window_handle(session)
+
     handle
   end
 
   @doc """
   Gets the window handles of all available windows.
-  """
-  @spec window_handles(parent) :: [String.t()]
 
+  The window is either an instance of a browser tab or another operating system window.
+
+  ## Usage
+
+  ```elixir
+  feature "can open new tabs for external links", %{session: session} do
+    handles =
+      session
+      |> visit("/home")
+      |> click(Query.link("External Page"))
+      |> click(Query.link("Another External Page"))
+      |> window_handles()
+
+    assert 3 == length(path)
+  end
+  ```
+  """
+  @spec window_handles(session :: Session.t()) :: [String.t()]
   def window_handles(%{driver: driver} = session) do
     {:ok, handles} = driver.window_handles(session)
+
     handles
   end
 
   @doc """
-  Changes the driver focus to the window identified by the handle.
-  """
-  @spec focus_window(parent, String.t()) :: parent
+  Focuses the window identified by the given handle.
 
+  The window is either an instance of a browser tab or another operating system window.
+
+  ## Usage
+
+  ```elixir
+  feature "can switch between different tabs", %{session: session} do
+    handle =
+      session
+      |> visit("/home")
+      |> window_handle()
+
+    path =
+      session
+      # click a link that takes you to a new tab
+      |> click(Query.link("External Page"))
+      |> assert_text("Some text")
+      |> focus_window(handle)
+      |> current_path()
+
+    assert "/home" == path
+  end
+  ```
+  """
+  @spec focus_window(session :: Session.t(), window_handle :: String.t()) :: parent
   def focus_window(%{driver: driver} = session, window_handle) do
     {:ok, _} = driver.focus_window(session, window_handle)
+
     session
   end
 
   @doc """
-  Closes the currently focused window.
-  """
-  @spec close_window(parent) :: parent
+  Closes the current window.
 
+  The window is either an instance of a browser tab or another operating system window.
+
+  ## Usage
+
+  ```elixir
+  feature "closing a window focuses the previously focused window", %{session: session} do
+    original_handle =
+      session
+      |> visit("/home")
+      |> window_handle()
+
+    new_handle =
+      session
+      # click a link that takes you to a new tab
+      |> click(Query.link("External Page"))
+      |> close_window()
+      |> window_handle()
+
+    assert original_handle == new_handle
+  end
+  ```
+  """
+  @spec close_window(session :: Session.t()) :: Session.t()
   def close_window(%{driver: driver} = session) do
     {:ok, _} = driver.close_window(session)
+
     session
   end
 
   @doc """
-  Gets the size of the currently focused window.
-  """
-  @spec window_size(parent) :: %{String.t() => pos_integer, String.t() => pos_integer}
+  Gets the size of the current window.
 
+  The window is either an instance of a browser tab or another operating system window.
+
+  This is useful for debugging responsive designs where the layout changes as the window size changes. The default window size is 1280x800.
+
+  ## Usage
+
+  ```elixir
+  feature "gets the size of the current window", %{session: session} do
+    %{"width" => width, "height" => height} =
+      session
+      |> visit("/home")
+      |> window_size()
+
+    assert width == 1280
+    assert height == 800
+  end
+  ```
+  """
+  @spec window_size(session :: Session.t()) :: %{
+          String.t() => pos_integer,
+          String.t() => pos_integer
+        }
   def window_size(%{driver: driver} = session) do
     {:ok, size} = driver.get_window_size(session)
+
     size
   end
 
   @doc """
-  Sets the size of the currently focused window.
-  """
-  @spec resize_window(parent, pos_integer, pos_integer) :: parent
+  Sets the size of the current window.
 
+  The window is either an instance of a browser tab or another operating system window.
+
+  ## Usage
+
+  ```elixir
+  feature "sets the size of the window to mobile dimensions", %{session: session} do
+    %{"width" => width, "height" => height} =
+      session
+      |> visit("/home")
+      |> resize_window(375, 667)
+      |> window_size()
+
+    assert width == 375
+    assert height == 667
+  end
+  ```
+  """
+  @spec resize_window(session :: Session.t(), width :: pos_integer(), height :: pos_integer()) ::
+          Session.t()
   def resize_window(%{driver: driver} = session, width, height) do
     {:ok, _} = driver.set_window_size(session, width, height)
+
     session
   end
 
   @doc """
-  Maximizes the currently focused window.
+  Maximizes the current window.
 
-  For most browsers, this requires a window manager to be running.
+  The window is either an instance of a browser tab or another operating system window.
+
+  For most browsers, this requires a graphical window manager to be running.
+
+  ## Usage
+
+  ```elixir
+  feature "maximizes the window to the full size of the display", %{session: session} do
+    %{"width" => width, "height" => height} =
+      session
+      |> visit("/home")
+      |> maximize_window()
+      |> window_size()
+
+    assert width == 1920
+    assert height == 1080
+  end
+  ```
   """
-  @spec maximize_window(parent) :: parent
-
+  @spec maximize_window(session :: Session.t()) :: Session.t()
   def maximize_window(%{driver: driver} = session) do
     {:ok, _} = driver.maximize_window(session)
+
     session
   end
 
   @doc """
-  Gets the position of the currently focused window.
-  """
-  @spec window_position(parent) :: %{String.t() => pos_integer, String.t() => pos_integer}
+  Gets the position of the current window.
 
+  The window is either an instance of a browser tab or another operating system window.
+
+  ## Usage
+
+  ```elixir
+  feature "gets the current display position of the window", %{session: session} do
+    %{"x" => x, "y" => y} =
+      session
+      |> visit("/home")
+      |> window_position()
+
+    assert x == 200
+    assert y == 200
+  end
+  ```
+  """
+  @spec window_position(session :: Session.t()) :: %{
+          String.t() => pos_integer,
+          String.t() => pos_integer
+        }
   def window_position(%{driver: driver} = session) do
     {:ok, position} = driver.get_window_position(session)
+
     position
   end
 
   @doc """
-  Sets the position of the currently focused window.
-  """
-  @spec move_window(parent, pos_integer, pos_integer) :: parent
+  Sets the position of the current window.
 
+  The window is either an instance of a browser tab or another operating system window.
+
+  ## Usage
+
+  ```elixir
+  feature "gets the current display position of the window", %{session: session} do
+    %{"x" => x, "y" => y} =
+      session
+      |> visit("/home")
+      |> move_window(500, 500)
+      |> window_position()
+
+    assert x == 500
+    assert y == 500
+  end
+  ```
+  """
+  @spec move_window(session :: Session.t(), x :: pos_integer(), y :: pos_integer()) :: Session.t()
   def move_window(%{driver: driver} = session, x, y) do
     {:ok, _} = driver.set_window_position(session, x, y)
+
     session
   end
 
@@ -357,7 +537,6 @@ defmodule Wallaby.Browser do
   Changes the driver focus to the frame found by query.
   """
   @spec focus_frame(parent, Query.t()) :: parent
-
   def focus_frame(%{driver: driver} = session, %Query{} = query) do
     session
     |> find(query, &driver.focus_frame(session, &1))
