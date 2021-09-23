@@ -67,7 +67,10 @@ defmodule Wallaby.Mixfile do
       files: ["lib", "mix.exs", "README.md", "LICENSE.md", "priv"],
       maintainers: @maintainers,
       licenses: ["MIT"],
-      links: %{"Github" => @source_url}
+      links: %{
+        "Github" => @source_url,
+        "Sponsor" => "https://github.com/sponsors/mhanberg"
+      }
     ]
   end
 
