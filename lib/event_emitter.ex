@@ -1,47 +1,46 @@
 defmodule EventEmitter do
-  @moduledoc """
-  This module offers telemetry style event emission for testing purposes.
+  @moduledoc false
+  # This module offers telemetry style event emission for testing purposes.
 
-  If you'd like to emit a message to the event stream, you can call `emit/1` from your implementation code. This is macro, and will not result in any AST injection when not being compiled in the test env.
+  # If you'd like to emit a message to the event stream, you can call `emit/1` from your implementation code. This is macro, and will not result in any AST injection when not being compiled in the test env.
 
-  ```elixir
-  defmodule ImplMod do
-    use EventEmitter, :emitter
+  # ```elixir
+  # defmodule ImplMod do
+  #   use EventEmitter, :emitter
 
-    def implementation do
-      # some logic
+  #   def implementation do
+  #     # some logic
 
-      emit %{name: :implementation, module: __MODULE__, metadata: %{unique_identifier: some_variable}}
-    end
-  end
-  ```
+  #     emit %{name: :implementation, module: __MODULE__, metadata: %{unique_identifier: some_variable}}
+  #   end
+  # end
+  # ```
 
-  If you'd like to await on a message emitted by implementation code, you can call `await/3` from your test code after registering a handler for your test process
+  # If you'd like to await on a message emitted by implementation code, you can call `await/3` from your test code after registering a handler for your test process
 
-  ```elixir
-  defmodule TestMod do
-    use EventEmitter, :receiver
+  # ```elixir
+  # defmodule TestMod do
+  #   use EventEmitter, :receiver
 
-    test "some test" do
-      EventEmitter.add_handler(self())
+  #   test "some test" do
+  #     EventEmitter.add_handler(self())
 
-      # some tricky asynchronous code
+  #     # some tricky asynchronous code
 
-      await :implementation, __MODULE__, %{unique_identifier: some_variable}
-    end
-  end
-  ```
+  #     await :implementation, __MODULE__, %{unique_identifier: some_variable}
+  #   end
+  # end
+  # ```
 
-  You can use EventEmitter by starting it in your test helper.
+  # You can use EventEmitter by starting it in your test helper.
 
-  ```elixir
-  # test_helper.exs
+  # ```elixir
+  # # test_helper.exs
 
-  EventEmitter.start_link([])
+  # EventEmitter.start_link([])
 
-  ExUnit.start()
-  ```
-  """
+  # ExUnit.start()
+  # ```
 
   use GenServer
 
