@@ -2,10 +2,19 @@
 
 ## Main
 
+## v0.29.1 (2021-09-22)
+
+- Docs improvements #629
+
+## v0.29.0 (2021-09-14)
+
+- `has_css?/3` returns a boolean instead of raising. (#624)
+- Updates `web_driver_client` to v0.2.0 (#625)
+
 ## v0.28.1 (2021-07-31)
 
 - Fix async tests when using selenium and the default capabilities.
-- Fixes the DependencyError message  in chrome.ex (#581)
+- Fixes the DependencyError message in chrome.ex (#581)
 
 ## v0.28.0 (2020-12-8)
 
@@ -241,7 +250,7 @@ Other goodies include improved test helpers, a cookies API and handling for JS-d
 - Removed deprecated versions of `text`
 - Removed deprecated `click_link`
 - Removed deprecated `click_button`
-- Removed depreacted `choose`
+- Removed deprecated `choose`
 
 ### Features
 

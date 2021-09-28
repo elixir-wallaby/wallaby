@@ -4,7 +4,7 @@ defmodule Wallaby.TestSupport.Utils do
   """
 
   @doc """
-  Repeatedly execute a closure, with a timeout. Useful for assertions that are relying on asyncronous operations.
+  Repeatedly execute a closure, with a timeout. Useful for assertions that are relying on asynchronous operations.
   """
   def attempt_with_timeout(doer, timeout \\ 100),
     do: attempt_with_timeout(doer, now_in_milliseconds(), timeout)

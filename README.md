@@ -2,7 +2,7 @@
 ============
 
 [![Actions Status](https://github.com/elixir-wallaby/wallaby/workflows/CI/badge.svg)](https://github.com/elixir-wallaby/wallaby/actions)
-[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/main/graph/badge.svg)](https://codecov.io/gh/elixir-wallaby/wallaby)
+[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/main/graph/badge.svg?token=eaEe1AIM2e)](https://codecov.io/gh/elixir-wallaby/wallaby)
 [![Module Version](https://img.shields.io/hexpm/v/wallaby.svg)](https://hex.pm/packages/wallaby)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/wallaby/)
 [![License](https://img.shields.io/hexpm/l/wallaby.svg)](https://github.com/elixir-wallaby/wallaby/blob/master/LICENSE)
@@ -67,6 +67,10 @@ end
 
 Read on to see what else Wallaby can do or check out the [Official Documentation](https://hexdocs.pm/wallaby).
 
+## Sponsors
+
+![SmartLogic Logo](https://github.com/smartlogic/smartlogic.io/raw/main/images/brand-assets/smartlogic-logo-teal-400.png)
+
 ## Setup
 
 ### Requirements
@@ -82,7 +86,7 @@ Add Wallaby to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:wallaby, "~> 0.28.0", runtime: false, only: :test}
+    {:wallaby, "~> 0.29.0", runtime: false, only: :test}
   ]
 end
 ```
@@ -117,7 +121,7 @@ It's important that this is at the top of `endpoint.ex` before any other plugs.
 ```elixir
 # lib/your_app_web/endpoint.ex
 
-defmodule YourApp.Endpoint do
+defmodule YourAppWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :your_app
 
   if sandbox = Application.get_env(:your_app, :sandbox) do
@@ -130,7 +134,7 @@ Make sure Phoenix is set up to serve endpoints in tests and that the sandbox is 
 ```elixir
 # config/test.exs
 
-config :your_app, YourApplication.Endpoint,
+config :your_app, YourAppWeb.Endpoint,
   server: true
 
 config :your_app, :sandbox, Ecto.Adapters.SQL.Sandbox
@@ -168,7 +172,7 @@ At minimum, you need to specify a `:base_url`, so Wallaby knows how to resolve r
 ```elixir
 # test/test_helper.exs
 
-Application.put_env(:wallaby, :base_url, YourApplication.Endpoint.url)
+Application.put_env(:wallaby, :base_url, YourAppWeb.Endpoint.url)
 ```
 
 #### Assets

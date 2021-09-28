@@ -2,13 +2,10 @@ defmodule Wallaby.Mixfile do
   use Mix.Project
 
   @source_url "https://github.com/elixir-wallaby/wallaby"
-  @version "0.28.1"
+  @version "0.29.1"
   @drivers ~w(selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
-  @maintainers [
-    "Aaron Renner",
-    "Mitchell Hanberg"
-  ]
+  @maintainers ["Mitchell Hanberg"]
 
   def project do
     [
@@ -52,7 +49,7 @@ defmodule Wallaby.Mixfile do
     [
       {:jason, "~> 1.1"},
       {:httpoison, "~> 0.12 or ~> 1.0"},
-      {:web_driver_client, "~> 0.1.0"},
+      {:web_driver_client, "~> 0.2.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
@@ -70,7 +67,10 @@ defmodule Wallaby.Mixfile do
       files: ["lib", "mix.exs", "README.md", "LICENSE.md", "priv"],
       maintainers: @maintainers,
       licenses: ["MIT"],
-      links: %{"Github" => @source_url}
+      links: %{
+        "Github" => @source_url,
+        "Sponsor" => "https://github.com/sponsors/mhanberg"
+      }
     ]
   end
 
