@@ -63,14 +63,6 @@ defmodule Wallaby.StaleReferenceError do
   end
 end
 
-defmodule Wallaby.InvalidSelectorError do
-  defexception [:message]
-
-  def exception(_) do
-    %__MODULE__{message: "Shit is broken and invalid yo"}
-  end
-end
-
 defmodule Wallaby.CookieError do
   defexception [:message]
 
