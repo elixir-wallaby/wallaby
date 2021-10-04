@@ -89,9 +89,9 @@ defmodule Wallaby.Query.ErrorMessage do
 
   defp found_error_message(query) do
     """
-    #{expected_count(query)}, #{visibility_and_selection(query)} #{method(query)} #{
+    #{expected_count(query)} #{visibility_and_selection(query)} #{method(query)} #{
       selector(query)
-    } but #{result_count(query.result)}, #{visibility_and_selection(query)} #{
+    } but #{result_count(query.result)} #{visibility_and_selection(query)} #{
       short_method(query.method, Enum.count(query.result))
     } #{result_expectation(query.result)}.
     """
