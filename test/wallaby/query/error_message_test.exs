@@ -50,14 +50,14 @@ defmodule Wallaby.Query.ErrorMessageTest do
     test "when the result is less then the minimum result" do
       message =
         Query.css(".test", minimum: 3, maximum: 5)
-        |> Map.put(:result, [1])
+        |> Map.put(:result, [1, 2])
         |> ErrorMessage.message(:not_found)
         |> format
 
       assert message ==
                format("""
                Expected to find at least 3 visible elements that matched the css
-               '.test' but only 1 visible element was found.
+               '.test' but only 2 visible elements were found.
                """)
     end
 
