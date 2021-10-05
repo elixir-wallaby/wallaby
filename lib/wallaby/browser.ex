@@ -1404,15 +1404,14 @@ defmodule Wallaby.Browser do
     label_query = Query.css("label", text: query.selector)
     labels = all(parent, label_query)
 
-    if Enum.count(labels) == 1 do
-      if Enum.any?(labels, &missing_for?(&1)) do
+    with [label] <- labels do
+      if missing_for?(label) do
         {:error, :label_with_no_for}
       else
-        label = List.first(labels)
         {:error, {:label_does_not_find_field, Element.attr(label, "for")}}
       end
     else
-      {:ok, query}
+      _ -> {:ok, query}
     end
   end
 
