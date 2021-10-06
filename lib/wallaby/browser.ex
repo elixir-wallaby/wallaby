@@ -1405,11 +1405,7 @@ defmodule Wallaby.Browser do
     labels = all(parent, label_query)
 
     with [label] <- labels do
-      if missing_for?(label) do
-        {:error, :label_with_no_for}
-      else
-        {:error, {:label_does_not_find_field, Element.attr(label, "for")}}
-      end
+      {:error, label_failure_reason(parent, label)}
     else
       _ -> {:ok, query}
     end
@@ -1417,8 +1413,15 @@ defmodule Wallaby.Browser do
 
   defp validate_html(_, query), do: {:ok, query}
 
-  defp missing_for?(element) do
-    Element.attr(element, "for") == nil
+  defp label_failure_reason(parent, label) do
+    for_id = Element.attr(label, "for")
+    if for_id == nil do
+      :label_with_no_for
+    else
+      id_query = Query.css("[id='#{for_id}']", count: :any)
+      nb_found_ids = Enum.count(all(parent, id_query))
+      {:label_does_not_find_field, for_id, nb_found_ids}
+    end
   end
 
   defp validate_visibility(query, elements) do
