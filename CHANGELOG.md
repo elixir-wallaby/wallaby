@@ -2,6 +2,8 @@
 
 ## Main
 
+- Fix `refute_has` when passed a query with an invalid selector.
+
 ## v0.29.1 (2021-09-22)
 
 - Docs improvements #629

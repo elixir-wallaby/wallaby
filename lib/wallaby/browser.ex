@@ -1207,6 +1207,10 @@ defmodule Wallaby.Browser do
       query = unquote(query)
 
       case execute_query(parent, query) do
+        {:error, :invalid_selector} ->
+          raise Wallaby.QueryError,
+                Query.ErrorMessage.message(query, :invalid_selector)
+
         {:error, _not_found} ->
           parent
 
