@@ -26,7 +26,9 @@ defmodule Wallaby.Query do
 
   All of the query operations accept the following options:
 
-    * `:count` - The number of elements that should be found (default: 1).
+    * `:count` - The number of elements that should be found, or :any for any number greater than 0 (default: 1 if no minimum nor maximum is specified, nil otherwise).
+    * `:minimum` - The minimum number of elements that should be found, or nil (default: nil).
+    * `:maximum` - The maximum number of elements that should be found, or nil (default: nil).
     * `:visible` - Determines if the query should return only visible elements (default: true).
     * `:selected` - Determines if the query should return only selected elements (default: :any for selected and unselected).
     * `:text` - Text that should be found inside the element (default: nil).
@@ -369,7 +371,8 @@ defmodule Wallaby.Query do
   end
 
   @doc """
-  Updates a query's `count` option.
+  Updates a query's `count` option to a specific number, or to `:any` for
+  any number greater than zero.
 
   ## Example
 
