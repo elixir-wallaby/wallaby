@@ -515,9 +515,9 @@ defmodule Wallaby.Query do
       Keyword.put(opts, :count, 1)
     else
       opts
-      |> Keyword.put_new(:count, opts[:count])
-      |> Keyword.put_new(:minimum, opts[:minimum])
-      |> Keyword.put_new(:maximum, opts[:maximum])
+      |> Keyword.put_new(:count, nil)
+      |> Keyword.put_new(:minimum, nil)
+      |> Keyword.put_new(:maximum, nil)
     end
   end
 
