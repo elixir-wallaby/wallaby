@@ -6,24 +6,24 @@ defmodule Wallaby.QueryTest do
 
   describe "default count" do
     test "the count defaults to 1 if no count is specified" do
-      conditions = Query.css(nil).conditions
-      assert conditions[:count] == 1
+      query = Query.css(nil)
+      assert Query.count(query) == 1
 
-      conditions = Query.css(nil, count: 1).conditions
-      assert conditions[:count] == 1
+      query = Query.css(nil, count: 1)
+      assert Query.count(query) == 1
 
-      conditions = Query.css(nil, count: 3).conditions
-      assert conditions[:count] == 3
+      query = Query.css(nil, count: 3)
+      assert Query.count(query) == 3
     end
 
     test "the count is nil if a minimum or maximum is set" do
-      conditions = Query.css(nil, minimum: 1).conditions
-      assert conditions[:count] == nil
-      assert conditions[:minimum] == 1
+      query = Query.css(nil, minimum: 1)
+      assert Query.count(query) == nil
+      assert query.conditions[:minimum] == 1
 
-      conditions = Query.css(nil, maximum: 1).conditions
-      assert conditions[:count] == nil
-      assert conditions[:maximum] == 1
+      query = Query.css(nil, maximum: 1)
+      assert Query.count(query) == nil
+      assert query.conditions[:maximum] == 1
     end
   end
 
@@ -169,12 +169,38 @@ defmodule Wallaby.QueryTest do
   end
 
   describe "at/2" do
-    test "sets at option in a query" do
+    test "sets at option in a query and count defaults to nil" do
       query =
         Query.css(".test")
         |> Query.at(3)
 
       assert Query.at_number(query) == 3
+      assert Query.count(query) == nil
+    end
+
+    test "maintains count if it was specified" do
+      query =
+        Query.css(".test", count: 1)
+        |> Query.at(0)
+
+      assert Query.at_number(query) == 0
+      assert Query.count(query) == 1
+    end
+  end
+
+  describe "at option" do
+    test "sets at option in a query and count defaults to nil" do
+      query = Query.css(".test", at: 3)
+
+      assert Query.at_number(query) == 3
+      assert Query.count(query) == nil
+    end
+
+    test "maintains count if it was specified" do
+      query = Query.css(".test", count: 1, at: 0)
+
+      assert Query.at_number(query) == 0
+      assert Query.count(query) == 1
     end
   end
 end
