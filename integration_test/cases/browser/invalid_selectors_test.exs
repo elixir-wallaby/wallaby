@@ -10,13 +10,13 @@ defmodule Wallaby.Integration.Browser.InvalidSelectorsTest do
       end
     end
 
-    test "assert_has returns an exception", %{session: session} do
+    test "assert_has raises an exception", %{session: session} do
       assert_raise Wallaby.QueryError, ~r/The css 'checkbox:foo' is not a valid query/, fn ->
         assert_has(session, css("checkbox:foo"))
       end
     end
 
-    test "refute_has returns an exception", %{session: session} do
+    test "refute_has raises an exception", %{session: session} do
       assert_raise Wallaby.QueryError, ~r/The css 'checkbox:foo' is not a valid query/, fn ->
         refute_has(session, css("checkbox:foo"))
       end

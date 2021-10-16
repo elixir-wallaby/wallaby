@@ -383,7 +383,7 @@ defmodule Wallaby.Query do
   # Exactly 2 elements
   Query.css(".names > li")
   |> Query.count(2)
-  
+
   # Any number of elements
   Query.css(".names > li")
   |> Query.count(:any)
