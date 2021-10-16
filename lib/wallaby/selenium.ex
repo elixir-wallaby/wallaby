@@ -181,10 +181,11 @@ defmodule Wallaby.Selenium do
 
   @doc false
   def current_path(%Session{} = session) do
-    with {:ok, url} <- WebdriverClient.current_url(session),
-         uri <- URI.parse(url),
-         {:ok, path} <- Map.fetch(uri, :path),
-         do: {:ok, path}
+    with {:ok, url} <- WebdriverClient.current_url(session) do
+      url
+      |> URI.parse()
+      |> Map.fetch(:path)
+    end
   end
 
   @doc false
