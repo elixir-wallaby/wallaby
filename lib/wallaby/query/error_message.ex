@@ -89,9 +89,9 @@ defmodule Wallaby.Query.ErrorMessage do
 
   defp found_error_message(query) do
     """
-    #{expected_count(query)}, #{visibility_and_selection(query)} #{method(query)} #{
+    #{expected_count(query)} #{visibility_and_selection(query)} #{method(query)} #{
       selector(query)
-    } but #{result_count(query.result)}, #{visibility_and_selection(query)} #{
+    } but #{result_adverb(query)}#{result_count(query.result)} #{visibility_and_selection(query)} #{
       short_method(query.method, Enum.count(query.result))
     } #{result_expectation(query.result)}.
     """
@@ -214,7 +214,13 @@ defmodule Wallaby.Query.ErrorMessage do
     end
   end
 
-  defp result_count([_]), do: "only 1"
+  defp result_adverb(query) do
+    conditions = query.conditions
+    min = conditions[:count] || conditions[:minimum]
+
+    if min && min > Enum.count(query.result) && query.result != [], do: "only "
+  end
+
   defp result_count(result), do: "#{Enum.count(result)}"
 
   defp times(1), do: "1 time"
