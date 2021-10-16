@@ -921,26 +921,29 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Finds one or more specific DOM element(s) on the page based on a CSS selector,
-  and returns them.
+  Finds and returns one or more DOM element(s) on the page based on the given query.
 
-  Blocks until it either finds the element(s) or until the max time is reached.
-  By default only 1 element is expected to match the query. If more elements
-  are present then a count can be specified. Use `count: :any` to allow any
-  number of elements to be present.
+  The query is scoped by the first argument, which is either the `%Session{}` or an
+  `%Element{}`.
 
-  By default only elements that would be visible to a real user on the page are
-  returned.
+  ## Example
 
-  Selections can be scoped by providing a Element as the locator for the query.
+  ```elixir
+  session
+  |> find(Query.css("#login-button"))
+  |> assert_text("Login")
 
-  ## Examples
+  buttons =
+    session
+    |> find(Query.css(".login-button", count: 2, text: "Login"))
+  ```
 
-      session
-      |> find(Query.css("#login-button"))
-      |> assert_text("Login")
+  ## Notes
 
-      find(session, Query.css(".login-button", count: 2, text: "Login"))
+  - Blocks until it finds the element(s) or the max time is reached.
+  - By default only 1 element is expected to match the query. If more elements are present then a count can be
+    specified. Use `count: :any` to allow any number of elements to be present.
+  - By default only elements that would be visible to a real user on the page are returned.
   """
   @spec find(parent, Query.t()) :: Element.t() | [Element.t()]
   def find(parent, %Query{} = query) do
@@ -966,12 +969,32 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Same as `find/2` but takes a callback function as its last argument.
+  Same as `find/2`, but takes a callback to enact side effects on the found element(s).
+
+  ## Example
+
+  ```elixir
+  session
+  |> find(Query.css("#login-button"), fn button ->
+    assert_text(button, "Login")
+  end)
+
+  session
+  |> find(Query.css(".login-button", count: 2, text: "Login"), fn buttons ->
+    assert 2 == length(buttons)
+  end)
+
+  ```
+
+  ## Notes
+
+  - Returns the first argument to make the function pipe-able.
   """
   @spec find(parent, Query.t(), (Element.t() -> any())) :: parent
   def find(parent, %Query{} = query, callback) when is_function(callback) do
     results = find(parent, query)
     callback.(results)
+
     parent
   end
 
