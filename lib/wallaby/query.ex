@@ -26,13 +26,14 @@ defmodule Wallaby.Query do
 
   All of the query operations accept the following options:
 
-    * `:count` - The number of elements that should be found, or :any for any number greater than 0 (default: 1 if no minimum nor maximum is specified, nil otherwise).
-    * `:minimum` - The minimum number of elements that should be found, or nil (default: nil).
-    * `:maximum` - The maximum number of elements that should be found, or nil (default: nil).
-    * `:visible` - Determines if the query should return only visible elements (default: true).
-    * `:selected` - Determines if the query should return only selected elements (default: :any for selected and unselected).
-    * `:text` - Text that should be found inside the element (default: nil).
-    * `:at` - The position number of the element to select if multiple elements satisfy the selection criteria. (:all for all elements)
+    - `:count` - The number of elements that should be found or `:any` (default: 1).
+        - If a `:minimum` or `:maximum` is specified, it defaults to `nil`.
+    - `:minimum` - The minimum number of elements that should be found, or `nil` (default: `nil`).
+    - `:maximum` - The maximum number of elements that should be found, or `nil` (default: `nil`).
+    - `:visible` - Determines if the query should return only visible elements (default: `true`).
+    - `:selected` - Determines if the query should return only selected elements (default: `:any`).
+    - `:text` - Text that should be found inside the element (default: `nil`).
+    - `:at` - The position (a number or `:all`) of the element to return if multiple elements satisfy the query. (default: `:all`)
 
   Query options can also be set via functions by the same names:
 
@@ -371,15 +372,22 @@ defmodule Wallaby.Query do
   end
 
   @doc """
-  Updates a query's `count` option to a specific number, or to `:any` for
-  any number greater than zero.
+  Updates a query's `count`.
+
+  The `count` specifies how many elements you expect to be present within the scope
+  of the query and can be any number greater than zero or `:any`.
 
   ## Example
 
-    ```
-    Query.css(".names > li")
-    |> Query.count(2)
-    ```
+  ```elixir
+  # Exactly 2 elements
+  Query.css(".names > li")
+  |> Query.count(2)
+  
+  # Any number of elements
+  Query.css(".names > li")
+  |> Query.count(:any)
+  ```
   """
   def count(query, value) do
     update_condition(query, :count, value)
