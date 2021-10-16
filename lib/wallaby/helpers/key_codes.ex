@@ -53,8 +53,7 @@ defmodule Wallaby.Helpers.KeyCodes do
     unicode =
       keys
       |> Enum.reduce([], fn x, acc -> acc ++ split_strings(x) end)
-      |> Enum.map(&"\"#{code(&1)}\"")
-      |> Enum.join(",")
+      |> Enum.map_join(",", &"\"#{code(&1)}\"")
 
     "{\"value\": [#{unicode}]}"
   end

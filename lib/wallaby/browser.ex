@@ -1,5 +1,4 @@
 defmodule Wallaby.Browser do
-  # credo:disable-for-this-file Credo.Check.Readability.TrailingWhiteSpace
   @moduledoc """
   The Browser module is the entrypoint for interacting with a real browser.
 

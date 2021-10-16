@@ -2,7 +2,9 @@ defmodule EventEmitter do
   @moduledoc false
   # This module offers telemetry style event emission for testing purposes.
 
-  # If you'd like to emit a message to the event stream, you can call `emit/1` from your implementation code. This is macro, and will not result in any AST injection when not being compiled in the test env.
+  # If you'd like to emit a message to the event stream, you can call `emit/1` from your
+  # implementation code. This is macro, and will not result in any AST injection when not being
+  # compiled in the test env.
 
   # ```elixir
   # defmodule ImplMod do
@@ -11,12 +13,17 @@ defmodule EventEmitter do
   #   def implementation do
   #     # some logic
 
-  #     emit %{name: :implementation, module: __MODULE__, metadata: %{unique_identifier: some_variable}}
+  #     emit %{
+  #       name: :implementation,
+  #       module: __MODULE__,
+  #       metadata: %{unique_identifier: some_variable}
+  #     }
   #   end
   # end
   # ```
 
-  # If you'd like to await on a message emitted by implementation code, you can call `await/3` from your test code after registering a handler for your test process
+  # If you'd like to await on a message emitted by implementation code, you can call `await/3` from
+  # your test code after registering a handler for your test process
 
   # ```elixir
   # defmodule TestMod do
