@@ -26,12 +26,30 @@ defmodule Wallaby.Query.ErrorMessage do
     """
   end
 
-  def message(%{method: method, selector: selector}, {:label_does_not_find_field, for_text}) do
+  def message(%{method: method, selector: selector}, {:label_does_not_find_field, for_text, 0}) do
     """
     The text '#{selector}' matched a label but the label's 'for' attribute
     doesn't match the id of any #{method(method)}.
 
     Make sure that id on your #{method(method)} is `id="#{for_text}"`.
+    """
+  end
+
+  def message(%{selector: selector}, {:label_does_not_find_field, for_text, 1}) do
+    """
+    The text '#{selector}' matched a label but the label's 'for' attribute
+    matches one element `id="#{for_text}"` of a different type than requested.
+
+    Make sure you are using the right query function (e.g. `checkbox` vs `radio_button`).
+    """
+  end
+
+  def message(%{selector: selector}, {:label_does_not_find_field, for_text, count}) do
+    """
+    The text '#{selector}' matched a label but the label's 'for' attribute
+    matches #{count} elements with `id="#{for_text}"`.
+
+    Make sure that ids are unique as mandated by HTML spec.
     """
   end
 
@@ -54,7 +72,7 @@ defmodule Wallaby.Query.ErrorMessage do
   end
 
   def message(_, {:at_number, query}) do
-    #   The query is invalid. the 'at' number requested is not within the results list (1-#{size}).
+    # The query is invalid. the 'at' number requested is not within the results list (1-#{size}).
     """
     The element at index #{Query.at_number(query)} is not available because #{
       result_count(query.result)
