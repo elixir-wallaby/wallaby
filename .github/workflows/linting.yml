@@ -6,23 +6,22 @@ env:
 
 jobs:
   linting:
-    name: Linting (${{matrix.elixir}}/${{matrix.otp}})
+    name: Linting (${{matrix.elixir-otp.elixir}}/${{matrix.elixir-otp.otp}})
     runs-on: ubuntu-latest
 
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
 
     strategy:
       matrix:
-        otp: [21.x]
-        elixir: [1.8.x, 1.9.x, 1.10.x, 1.11.x, 1.12.x]
+        elixir-otp: [{otp: 21.x, elixir: 1.8.x}, {otp: 21.x, elixir: 1.9.x}, {otp: 21.x, elixir: 1.10.x}, {otp: 21.x, elixir: 1.11.x}, {otp: 22.x, elixir: 1.12.x}]
       fail-fast: false
 
     steps:
     - uses: actions/checkout@v2
     - uses: erlef/setup-elixir@v1
       with:
-        otp-version: ${{matrix.otp}}
-        elixir-version: ${{matrix.elixir}}
+        otp-version: ${{matrix.elixir-otp.otp}}
+        elixir-version: ${{matrix.elixir-otp.elixir}}
 
     - uses: actions/cache@v1
       id: deps-cache
