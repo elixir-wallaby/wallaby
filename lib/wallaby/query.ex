@@ -502,11 +502,11 @@ defmodule Wallaby.Query do
 
   defp build_conditions(opts) do
     opts
-    |> add_visibility
-    |> add_text
-    |> add_count
-    |> add_selected
-    |> add_at
+    |> add_visibility()
+    |> add_text()
+    |> add_count()
+    |> add_selected()
+    |> add_at()
   end
 
   defp add_visibility(opts) do
@@ -526,9 +526,9 @@ defmodule Wallaby.Query do
       Keyword.put(opts, :count, 1)
     else
       opts
-      |> Keyword.put_new(:count, opts[:count])
-      |> Keyword.put_new(:minimum, opts[:minimum])
-      |> Keyword.put_new(:maximum, opts[:maximum])
+      |> Keyword.put_new(:count, nil)
+      |> Keyword.put_new(:minimum, nil)
+      |> Keyword.put_new(:maximum, nil)
     end
   end
 

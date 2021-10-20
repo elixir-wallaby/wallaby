@@ -1393,7 +1393,7 @@ defmodule Wallaby.Browser do
   defp validate_html(parent, %{html_validation: :button_type} = query) do
     buttons = all(parent, Query.css("button", text: query.selector))
 
-    if Enum.count(buttons) == 1 && Enum.any?(buttons) do
+    if Enum.count(buttons) == 1 do
       {:error, :button_with_bad_type}
     else
       {:ok, query}
