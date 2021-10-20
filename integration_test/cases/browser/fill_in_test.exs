@@ -69,21 +69,27 @@ defmodule Wallaby.Integration.Browser.FillInTest do
   end
 
   test "checks for mismatched ids on labels", %{page: page} do
-    assert_raise Wallaby.QueryError, ~r/but the label's 'for' attribute\sdoesn't match the id/, fn ->
-      fill_in(page, Query.text_field("Input with bad id"), with: "Test")
-    end
+    assert_raise Wallaby.QueryError,
+                 ~r/but the label's 'for' attribute\sdoesn't match the id/,
+                 fn ->
+                   fill_in(page, Query.text_field("Input with bad id"), with: "Test")
+                 end
   end
 
   test "checks for duplicate ids on labels", %{page: page} do
-    assert_raise Wallaby.QueryError, ~r/but the label's 'for' attribute\smatches 3 elements/, fn ->
-      fill_in(page, Query.text_field("Input with duplicate id"), with: "Test")
-    end
+    assert_raise Wallaby.QueryError,
+                 ~r/but the label's 'for' attribute\smatches 3 elements/,
+                 fn ->
+                   fill_in(page, Query.text_field("Input with duplicate id"), with: "Test")
+                 end
   end
 
   test "provides guidance for labels with type mismatch", %{page: page} do
-    assert_raise Wallaby.QueryError, ~r/but the label's 'for' attribute\smatches one element/, fn ->
-      click(page, Query.radio_button("Name"))
-    end
+    assert_raise Wallaby.QueryError,
+                 ~r/but the label's 'for' attribute\smatches one element/,
+                 fn ->
+                   click(page, Query.radio_button("Name"))
+                 end
   end
 
   test "escapes quotes", %{page: page} do

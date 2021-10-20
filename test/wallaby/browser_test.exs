@@ -29,7 +29,7 @@ defmodule Wallaby.BrowserTest do
               #{inspect(url)} was not visited.
 
               Visited urls:
-              #{visits() |> Enum.map(&"  #{inspect(&1)}") |> Enum.join("\n")}
+              #{visits() |> Enum.map_join("\n", fn v -> "  #{inspect(v)}" end)}
               """
       end
     end

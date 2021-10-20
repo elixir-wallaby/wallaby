@@ -35,7 +35,7 @@ defmodule Wallaby.Query.ErrorMessage do
     """
   end
 
-  def message(%{method: method, selector: selector}, {:label_does_not_find_field, for_text, 1}) do
+  def message(%{selector: selector}, {:label_does_not_find_field, for_text, 1}) do
     """
     The text '#{selector}' matched a label but the label's 'for' attribute
     matches one element `id="#{for_text}"` of a different type than requested.
@@ -44,10 +44,10 @@ defmodule Wallaby.Query.ErrorMessage do
     """
   end
 
-  def message(%{method: method, selector: selector}, {:label_does_not_find_field, for_text, nb_matches}) do
+  def message(%{selector: selector}, {:label_does_not_find_field, for_text, count}) do
     """
     The text '#{selector}' matched a label but the label's 'for' attribute
-    matches #{nb_matches} elements with `id="#{for_text}"`.
+    matches #{count} elements with `id="#{for_text}"`.
 
     Make sure that ids are unique as mandated by HTML spec.
     """
@@ -72,7 +72,7 @@ defmodule Wallaby.Query.ErrorMessage do
   end
 
   def message(_, {:at_number, query}) do
-    #   The query is invalid. the 'at' number requested is not within the results list (1-#{size}).
+    # The query is invalid. the 'at' number requested is not within the results list (1-#{size}).
     """
     The element at index #{Query.at_number(query)} is not available because #{
       result_count(query.result)
