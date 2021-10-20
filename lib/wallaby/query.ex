@@ -502,11 +502,11 @@ defmodule Wallaby.Query do
 
   defp build_conditions(opts) do
     opts
-    |> add_visibility
-    |> add_text
-    |> add_count
-    |> add_selected
-    |> add_at
+    |> add_visibility()
+    |> add_text()
+    |> add_count()
+    |> add_selected()
+    |> add_at()
   end
 
   defp add_visibility(opts) do
