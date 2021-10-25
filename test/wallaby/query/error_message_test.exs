@@ -19,6 +19,20 @@ defmodule Wallaby.Query.ErrorMessageTest do
                """)
     end
 
+    test "when the expected count is 0" do
+      message =
+        Query.css(".test", count: 0)
+        |> Map.put(:result, [1, 2, 3])
+        |> ErrorMessage.message(:not_found)
+        |> format
+
+      assert message ==
+               format("""
+               Expected to find 0 visible elements that matched the css '.test' but 3 visible
+               elements were found.
+               """)
+    end
+
     test "when the result is empty" do
       message =
         Query.css(".test", count: 1)

@@ -136,7 +136,7 @@ defmodule Wallaby.Query.ErrorMessage do
   @spec method({atom(), boolean()}) :: String.t()
 
   def method(%Query{conditions: conditions} = query) do
-    method(query.method, conditions[:count] > 1)
+    method(query.method, conditions[:count] != 1)
   end
 
   def method(_), do: "element"
