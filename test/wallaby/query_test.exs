@@ -81,7 +81,7 @@ defmodule Wallaby.QueryTest do
       refute Query.matches_count?(query, 2)
     end
 
-    test "the result is greater then zero if count is any" do
+    test "the result is greater than zero if count is any" do
       query = %Query{conditions: [count: :any], result: [%{}]}
       assert Query.matches_count?(query, 1)
 
@@ -91,7 +91,7 @@ defmodule Wallaby.QueryTest do
   end
 
   describe "validate/1" do
-    test "when minimum is less then the maximum" do
+    test "when minimum is less than the maximum" do
       query = Query.css("#test", minimum: 5, maximum: 3)
       assert Query.validate(query) == {:error, :min_max}
     end

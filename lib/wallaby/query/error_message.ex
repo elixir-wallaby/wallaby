@@ -255,7 +255,7 @@ defmodule Wallaby.Query.ErrorMessage do
         "at least #{conditions[:minimum]}"
 
       conditions[:maximum] && Enum.count(query.result) > conditions[:maximum] ->
-        "no more then #{conditions[:maximum]}"
+        "no more than #{conditions[:maximum]}"
 
       true ->
         ""
