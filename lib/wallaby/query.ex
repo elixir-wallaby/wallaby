@@ -415,6 +415,9 @@ defmodule Wallaby.Query do
       Query.visible?(query) != true && Query.inner_text(query) ->
         {:error, :cannot_set_text_with_invisible_elements}
 
+      at_number(query) != :all && (at_number(query) < 0 || not is_integer(at_number(query))) ->
+        {:error, {:invalid_at_number, at_number(query)}}
+
       true ->
         {:ok, query}
     end

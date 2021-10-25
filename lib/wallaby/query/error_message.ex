@@ -71,12 +71,10 @@ defmodule Wallaby.Query.ErrorMessage do
     """
   end
 
-  def message(_, {:at_number, query}) do
-    # The query is invalid. the 'at' number requested is not within the results list (1-#{size}).
+  def message(_, {:invalid_at_number, at_number}) do
+    # The query is invalid. the 'at' number requested is negative or not a number
     """
-    The element at index #{Query.at_number(query)} is not available because #{
-      result_count(query.result)
-    } #{method(query)} #{result_expectation(query.result)}
+    The given at index #{inspect(at_number)} is not a non-negative number or :all.
     """
   end
 
@@ -109,9 +107,11 @@ defmodule Wallaby.Query.ErrorMessage do
     """
     #{expected_count(query)} #{visibility_and_selection(query)} #{method(query)} #{
       selector(query)
-    } but #{result_adverb(query)}#{result_count(query.result)} #{visibility_and_selection(query)} #{
-      short_method(query.method, Enum.count(query.result))
-    } #{result_expectation(query.result)}.
+    }#{with_index(Query.at_number(query))} but #{result_adverb(query)}#{
+      result_count(query.result)
+    } #{visibility_and_selection(query)} #{short_method(query.method, Enum.count(query.result))} #{
+      result_expectation(query.result)
+    }.
     """
   end
 
@@ -127,6 +127,9 @@ defmodule Wallaby.Query.ErrorMessage do
   def selector(%Query{selector: selector}) do
     "'#{selector}'"
   end
+
+  defp with_index(:all), do: nil
+  defp with_index(at), do: " and take index #{at}"
 
   @doc """
   Extracts the selector method from the selector and converts it into a human
@@ -234,7 +237,10 @@ defmodule Wallaby.Query.ErrorMessage do
 
   defp result_adverb(query) do
     conditions = query.conditions
-    min = conditions[:count] || conditions[:minimum]
+
+    min =
+      conditions[:count] || conditions[:minimum] ||
+        (conditions[:at] != :all && conditions[:at] + 1)
 
     if min && min > Enum.count(query.result) && query.result != [], do: "only "
   end
@@ -259,7 +265,7 @@ defmodule Wallaby.Query.ErrorMessage do
         "no more than #{conditions[:maximum]}"
 
       true ->
-        ""
+        "some"
     end
   end
 

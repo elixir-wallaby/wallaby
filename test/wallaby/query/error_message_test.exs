@@ -89,6 +89,34 @@ defmodule Wallaby.Query.ErrorMessageTest do
                """)
     end
 
+    test "when the result has too few element for the given `at`" do
+      message =
+        Query.css(".test", at: 2)
+        |> Map.put(:result, [1, 2])
+        |> ErrorMessage.message(:not_found)
+        |> format
+
+      assert message ==
+               format("""
+               Expected to find some visible elements that matched the css '.test'
+               and take index 2 but only 2 visible elements were found.
+               """)
+    end
+
+    test "when the result has too few checkboxes for the given `at`" do
+      message =
+        Query.checkbox("test", at: 3)
+        |> Map.put(:result, [1, 2])
+        |> ErrorMessage.message(:not_found)
+        |> format
+
+      assert message ==
+               format("""
+               Expected to find some visible checkboxes 'test'
+               and take index 3 but only 2 visible checkboxes were found.
+               """)
+    end
+
     test "when the result is supposed to be invisible" do
       message =
         Query.css(".test", count: 1, visible: false)
