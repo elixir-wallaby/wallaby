@@ -145,7 +145,7 @@ defmodule Wallaby.HTTPClient do
   end
 
   defp headers do
-    [{"Accept", "application/json"}, {"Content-Type", "application/json"}]
+    [{"Accept", "application/json"}, {"Content-Type", "application/json;charset=UTF-8"}]
   end
 
   @spec to_params(Query.compiled()) :: map
