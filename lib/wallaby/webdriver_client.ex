@@ -13,6 +13,7 @@ defmodule Wallaby.WebdriverClient do
           | Session.t()
 
   @web_element_identifier "element-6066-11e4-a52e-4f735466cecf"
+  @shadow_web_element_identifier "shadow-6066-11e4-a52e-4f735466cecf"
 
   @doc """
   Create a session with the base url.
@@ -669,6 +670,16 @@ defmodule Wallaby.WebdriverClient do
   end
 
   def cast_as_element(parent, %{@web_element_identifier => id}) do
+    %Wallaby.Element{
+      id: id,
+      session_url: parent.session_url,
+      url: parent.session_url <> "/element/#{id}",
+      parent: parent,
+      driver: parent.driver
+    }
+  end
+
+  def cast_as_element(parent, %{@shadow_web_element_identifier => id}) do
     %Wallaby.Element{
       id: id,
       session_url: parent.session_url,
