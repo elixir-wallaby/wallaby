@@ -23,13 +23,13 @@ defmodule Wallaby.Query.XPath do
   @doc """
   Match any clickable buttons
   """
-  def button(query) do
+  def button(selector) do
     types = "./@type = 'submit' or ./@type = 'reset' or ./@type = 'button' or ./@type = 'image'"
 
     locator =
-      ~s{(((./@id = "#{query}" or ./@name = "#{query}" or ./@value = "#{query}" or ./@alt = "#{
-        query
-      }" or ./@title = "#{query}" or contains(normalize-space(string(.)), "#{query}"))))}
+      ~s{(((./@id = "#{selector}" or ./@name = "#{selector}" or ./@value = "#{selector}" or ./@alt = "#{
+        selector
+      }" or ./@title = "#{selector}" or contains(normalize-space(string(.)), "#{selector}"))))}
 
     ~s{.//input[#{types}][#{locator}] | .//button[(not(./@type) or #{types})][#{locator}]}
   end
@@ -37,11 +37,11 @@ defmodule Wallaby.Query.XPath do
   @doc """
   Match any radio buttons
   """
-  def radio_button(query) do
-    ~s{.//input[./@type = 'radio'][(((./@id = "#{query}" or ./@name = "#{query}") or ./@placeholder = "#{
-      query
-    }") or ./@id = //label[contains(normalize-space(string(.)), "#{query}")]/@for)] | .//label[contains(normalize-space(string(.)), "#{
-      query
+  def radio_button(selector) do
+    ~s{.//input[./@type = 'radio'][(((./@id = "#{selector}" or ./@name = "#{selector}") or ./@placeholder = "#{
+      selector
+    }") or ./@id = //label[contains(normalize-space(string(.)), "#{selector}")]/@for)] | .//label[contains(normalize-space(string(.)), "#{
+      selector
     }")]//.//input[./@type = "radio"]}
   end
 
@@ -50,50 +50,50 @@ defmodule Wallaby.Query.XPath do
   Excludes any inputs with types of `submit`, `image`, `radio`, `checkbox`,
   `hidden`, or `file`.
   """
-  def fillable_field(query) when is_binary(query) do
+  def fillable_field(selector) when is_binary(selector) do
     ~s{.//*[self::input | self::textarea][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'radio' or ./@type = 'checkbox' or ./@type = 'hidden' or ./@type = 'file')][(((./@id = "#{
-      query
-    }" or ./@name = "#{query}") or ./@placeholder = "#{query}") or ./@id = //label[contains(normalize-space(string(.)), "#{
-      query
-    }")]/@for)] | .//label[contains(normalize-space(string(.)), "#{query}")]//.//*[self::input | self::textarea][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'radio' or ./@type = 'checkbox' or ./@type = 'hidden' or ./@type = 'file')]}
+      selector
+    }" or ./@name = "#{selector}") or ./@placeholder = "#{selector}") or ./@id = //label[contains(normalize-space(string(.)), "#{
+      selector
+    }")]/@for)] | .//label[contains(normalize-space(string(.)), "#{selector}")]//.//*[self::input | self::textarea][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'radio' or ./@type = 'checkbox' or ./@type = 'hidden' or ./@type = 'file')]}
   end
 
   @doc """
   Match any checkboxes
   """
-  def checkbox(query) do
-    ~s{.//input[./@type = 'checkbox'][(((./@id = "#{query}" or ./@name = "#{query}") or ./@placeholder = "#{
-      query
-    }") or ./@id = //label[contains(normalize-space(string(.)), "#{query}")]/@for)] | .//label[contains(normalize-space(string(.)), "#{
-      query
+  def checkbox(selector) do
+    ~s{.//input[./@type = 'checkbox'][(((./@id = "#{selector}" or ./@name = "#{selector}") or ./@placeholder = "#{
+      selector
+    }") or ./@id = //label[contains(normalize-space(string(.)), "#{selector}")]/@for)] | .//label[contains(normalize-space(string(.)), "#{
+      selector
     }")]//.//input[./@type = "checkbox"]}
   end
 
   @doc """
   Match any `select` by name, id, or label.
   """
-  def select(query) do
-    ~s{.//select[(((./@id = "#{query}" or ./@name = "#{query}")) or ./@name = //label[contains(normalize-space(string(.)), "#{
-      query
-    }")]/@for or ./@id = //label[contains(normalize-space(string(.)), "#{query}")]/@for)] | .//label[contains(normalize-space(string(.)), "#{
-      query
+  def select(selector) do
+    ~s{.//select[(((./@id = "#{selector}" or ./@name = "#{selector}")) or ./@name = //label[contains(normalize-space(string(.)), "#{
+      selector
+    }")]/@for or ./@id = //label[contains(normalize-space(string(.)), "#{selector}")]/@for)] | .//label[contains(normalize-space(string(.)), "#{
+      selector
     }")]//.//select}
   end
 
   @doc """
   Match any `option` by visible text
   """
-  def option(query) do
-    ~s{.//option[normalize-space(text())="#{query}"]}
+  def option(selector) do
+    ~s{.//option[normalize-space(text())="#{selector}"]}
   end
 
   @doc """
   Matches any file field by name, id, or label
   """
-  def file_field(query) do
-    ~s{.//input[./@type = 'file'][(((./@id = "#{query}" or ./@name = "#{query}")) or ./@id = //label[contains(normalize-space(string(.)), "#{
-      query
-    }")]/@for)] | .//label[contains(normalize-space(string(.)), "#{query}")]//.//input[./@type = 'file']}
+  def file_field(selector) do
+    ~s{.//input[./@type = 'file'][(((./@id = "#{selector}" or ./@name = "#{selector}")) or ./@id = //label[contains(normalize-space(string(.)), "#{
+      selector
+    }")]/@for)] | .//label[contains(normalize-space(string(.)), "#{selector}")]//.//input[./@type = 'file']}
   end
 
   @doc """
