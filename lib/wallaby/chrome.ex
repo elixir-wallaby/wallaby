@@ -107,7 +107,6 @@ defmodule Wallaby.Chrome do
   @behaviour Wallaby.Driver
 
   @default_readiness_timeout 5_000
-  @chromedriver_version_regex ~r/^ChromeDriver (\d+)\.(\d+)/
 
   alias Wallaby.Chrome.Chromedriver
   alias Wallaby.WebdriverClient
@@ -154,14 +153,92 @@ defmodule Wallaby.Chrome do
   @doc false
   @spec validate() :: :ok | {:error, DependencyError.t()}
   def validate do
-    with {:ok, executable} <- find_chromedriver_executable() do
-      {version, 0} = System.cmd(executable, ["--version"])
+    with {:ok, chromedriver_version} <- get_chromedriver_version(),
+         {:ok, chrome_version} <- get_chrome_version(),
+         :ok <- minimum_version_check(chromedriver_version) do
+      version_compare(chrome_version, chromedriver_version)
+    end
+  end
 
-      @chromedriver_version_regex
-      |> Regex.run(version)
-      |> Enum.drop(1)
-      |> Enum.map(&String.to_integer/1)
-      |> version_check()
+  @doc false
+  @spec get_chrome_version() :: {:ok, list(String.t())} | {:error, term}
+  def get_chrome_version do
+    case :os.type() do
+      {:win32, :nt} ->
+        {stdout, 0} =
+          System.cmd("reg", [
+            "query",
+            "HKLM\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Google Chrome"
+          ])
+
+        chrome_version = parse_version("Version", stdout)
+
+        {:ok, chrome_version}
+
+      _ ->
+        case find_chrome_executable() do
+          {:ok, chrome_executable} ->
+            {stdout, 0} = System.cmd(chrome_executable, ["--version"])
+            chrome_version = parse_version("Google Chrome", stdout)
+
+            {:ok, chrome_version}
+
+          error ->
+            error
+        end
+    end
+  end
+
+  @doc false
+  @spec get_chromedriver_version() :: {:ok, list(String.t())} | {:error, term}
+  def get_chromedriver_version do
+    case find_chromedriver_executable() do
+      {:ok, chromedriver_executable} ->
+        {stdout, 0} = System.cmd(chromedriver_executable, ["--version"])
+        chromedriver_version = parse_version("ChromeDriver", stdout)
+
+        {:ok, chromedriver_version}
+
+      error ->
+        error
+    end
+  end
+
+  @doc false
+  @spec find_chrome_executable :: {:ok, String.t()} | {:error, DependencyError.t()}
+  def find_chrome_executable do
+    default_chrome_path =
+      case :os.type() do
+        {:unix, :darwin} ->
+          "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+
+        {:unix, :linux} ->
+          "google-chrome"
+
+        {:win32, :nt} ->
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+      end
+
+    chrome_path =
+      :wallaby
+      |> Application.get_env(:chrome, [])
+      |> Keyword.get(:path, default_chrome_path)
+
+    [Path.expand(chrome_path), default_chrome_path]
+    |> Enum.find(&System.find_executable/1)
+    |> case do
+      path when is_binary(path) ->
+        {:ok, path}
+
+      nil ->
+        exception =
+          DependencyError.exception("""
+          Wallaby can't find chrome. Make sure you have chrome installed
+          and included in your path.
+          You can also provide a path using `config :wallaby, :chrome, path: <path>`.
+          """)
+
+        {:error, exception}
     end
   end
 
@@ -191,16 +268,38 @@ defmodule Wallaby.Chrome do
     end
   end
 
-  defp version_check([major_version, _minor_version]) when major_version > 2 do
+  defp version_compare(chrome_version, chromedriver_version) do
+    case chrome_version == chromedriver_version do
+      true ->
+        :ok
+
+      _ ->
+        exception =
+          DependencyError.exception("""
+          Looks like you're trying to run Wallaby with a mismatched version of chrome: #{chrome_version} and chromedriver: #{chromedriver_version}.
+          chrome and chromedriver must match to a major, minor, and build version.
+          """)
+
+        {:error, exception}
+    end
+  end
+
+  defp minimum_version_check([major_version, _minor_version, _build_version])
+       when major_version > 2 do
     :ok
   end
 
-  defp version_check([major_version, minor_version])
+  defp minimum_version_check([major_version, minor_version, _build_version])
        when major_version == 2 and minor_version >= 30 do
     :ok
   end
 
-  defp version_check(_version) do
+  defp minimum_version_check([major_version, minor_version])
+       when major_version == 2 and minor_version >= 30 do
+    :ok
+  end
+
+  defp minimum_version_check(_version) do
     exception =
       DependencyError.exception("""
       Looks like you're trying to run an older version of chromedriver. Wallaby needs at least
@@ -208,6 +307,17 @@ defmodule Wallaby.Chrome do
       """)
 
     {:error, exception}
+  end
+
+  defp parse_version(prefix, body) do
+    result = case Regex.run(~r/\b#{prefix}\b.*?(\d+\.\d+(\.\d+)?)/, body) do
+      [_, version, _] ->
+        String.split(version, ".")
+      [_, version] ->
+        String.split(version, ".")
+    end
+
+    Enum.map(result, &String.to_integer/1)
   end
 
   @doc false
