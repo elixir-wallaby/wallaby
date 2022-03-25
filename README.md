@@ -181,6 +181,25 @@ Assets are not re-compiled when you run `mix test`.
 This can lead to confusion if you've made changes in JavaScript or CSS but tests are still failing.
 There are two common ways to avoid this confusion.
 
+##### esbuild
+
+You can add `esbuild default` to the `test` alias in the mix config file.
+
+```elixir
+  defp aliases do
+    [
+      "test": [
+        "esbuild default",
+        "ecto.create --quiet",
+        "ecto.migrate",
+        "test",
+      ]
+    ]
+  end
+```
+
+##### Webpack
+
 The first solution is to run `webpack --mode development --watch` from the assets directory.
 This will ensure that assets get recompiled after any changes.
 
