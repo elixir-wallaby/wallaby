@@ -241,6 +241,38 @@ The second solution is to add a new alias to your mix config that recompiles ass
 
 This method is less error prone but it will cause a delay when starting your test suite.
 
+#### LiveView
+
+In order to test Phoenix LiveView with Wallaby you'll also need to add a function to each `mount/3` function in your LiveViews, or use the `on_mount` `live_session` lifecycle hook in the router:
+
+```elixir
+defmodule MyApp.Hooks.AllowEctoSandbox do
+  import Phoenix.LiveView
+
+  def on_mount(:default, _params, _session, socket) do
+    allow_ecto_sandbox(socket)
+    {:cont, socket}
+  end
+
+  defp allow_ecto_sandbox(socket) do
+    %{assigns: %{phoenix_ecto_sandbox: metadata}} =
+      assign_new(socket, :phoenix_ecto_sandbox, fn ->
+        if connected?(socket), do: get_connect_info(socket, :user_agent)
+      end)
+
+    Phoenix.Ecto.SQL.Sandbox.allow(metadata, Ecto.Adapters.SQL.Sandbox)
+  end
+end
+```
+
+and then including the function usage in the router:
+
+```elixir
+live_session :default, on_mount: MyApp.Hooks.AllowEctoSandbox do
+  ...
+end
+```
+
 #### Umbrella Apps
 
 If you're testing an umbrella application containing a Phoenix application for the web interface (`MyWebApp`) and a separate persistence application (`MyPersistenceApp`) using Ecto 2 or 3 with a database that supports sandbox mode, then you can use the same setup as above, with a few tweaks.
