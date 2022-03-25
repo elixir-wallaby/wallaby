@@ -127,9 +127,19 @@ defmodule YourAppWeb.Endpoint do
   if sandbox = Application.get_env(:your_app, :sandbox) do
     plug Phoenix.Ecto.SQL.Sandbox, sandbox: sandbox
   end
+
+  .
+  .
+  .
+
+  socket("/live", Phoenix.LiveView.Socket,
+    websocket: [connect_info: [:user_agent, session: @session_options]]
+  )
 ```
 
-Make sure Phoenix is set up to serve endpoints in tests and that the sandbox is enabled:
+It's also important to make sure the `user_agent` is passed in the `connect_info` in order to allow the database and browser session to be wired up correctly.
+
+Then make sure Phoenix is set up to serve endpoints in tests and that the sandbox is enabled:
 
 ```elixir
 # config/test.exs
