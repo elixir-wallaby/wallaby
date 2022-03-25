@@ -91,6 +91,8 @@ def deps do
 end
 ```
 
+You'll need to install the driver, whether [`chromedriver`](https://chromedriver.chromium.org/downloads) or [`selenium`](https://www.selenium.dev/downloads/), in order to configure it and use Wallaby.
+
 Configure the driver.
 
 ```elixir
