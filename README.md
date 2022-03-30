@@ -269,7 +269,7 @@ and then including the function usage in the router:
 
 ```elixir
 live_session :default, on_mount: MyApp.Hooks.AllowEctoSandbox do
-  ...
+  # ...
 end
 ```
 
