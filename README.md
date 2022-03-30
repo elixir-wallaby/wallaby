@@ -128,9 +128,7 @@ defmodule YourAppWeb.Endpoint do
     plug Phoenix.Ecto.SQL.Sandbox, sandbox: sandbox
   end
 
-  .
-  .
-  .
+  # ...
 
   socket("/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [:user_agent, session: @session_options]]
