@@ -243,7 +243,7 @@ This method is less error prone but it will cause a delay when starting your tes
 
 #### LiveView
 
-In order to test Phoenix LiveView with Wallaby you'll also need to add a function to each `mount/3` function in your LiveViews, or use the `on_mount` `live_session` lifecycle hook in the router:
+In order to test Phoenix LiveView (as of [version 0.17.7](https://github.com/phoenixframework/phoenix_live_view/releases/tag/v0.17.7)) with Wallaby you'll also need to add a function to each `mount/3` function in your LiveViews, or use the `on_mount` `live_session` lifecycle hook in the router:
 
 ```elixir
 defmodule MyApp.Hooks.AllowEctoSandbox do
