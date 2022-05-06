@@ -14,7 +14,6 @@ defmodule Wallaby.Integration.SeleniumCapabilitiesTest do
   describe "capabilities" do
     test "reads default capabilities" do
       expected_capabilities = %{
-        javascriptEnabled: true,
         browserName: "firefox",
         "moz:firefoxOptions": %{
           args: ["-headless"],

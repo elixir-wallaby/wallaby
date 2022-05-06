@@ -12,4 +12,11 @@ Code.require_file("../support/helpers.ex", __DIR__)
 {:ok, server} = Wallaby.Integration.TestServer.start()
 Application.put_env(:wallaby, :base_url, server.base_url)
 
+Application.put_env(
+  :wallaby,
+  :hackney_options,
+  timeout: 30_000,
+  recv_timeout: 30_000
+)
+
 ExUnit.start()
