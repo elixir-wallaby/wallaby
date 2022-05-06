@@ -51,7 +51,7 @@ jobs:
         path: ./selenium.log
 
   selenium-mac:
-    name: Selenium (${{matrix.elixir-otp.elixir}}/${{matrix.elixir-otp.otp}})
+    name: Selenium macOS
     runs-on: macos-latest
 
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
