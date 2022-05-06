@@ -1,5 +1,4 @@
 ExUnit.configure(max_cases: 1, exclude: [pending: true])
-ExUnit.start()
 
 IO.inspect(System.schedulers_online(), label: "online schedulers")
 
@@ -12,3 +11,5 @@ Code.require_file("../support/helpers.ex", __DIR__)
 
 {:ok, server} = Wallaby.Integration.TestServer.start()
 Application.put_env(:wallaby, :base_url, server.base_url)
+
+ExUnit.start()
