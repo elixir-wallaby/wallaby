@@ -1,4 +1,4 @@
-ExUnit.configure(max_cases: 2, exclude: [pending: true])
+ExUnit.configure(max_cases: 1, exclude: [pending: true])
 ExUnit.start()
 
 IO.inspect(System.schedulers_online(), label: "online schedulers")
