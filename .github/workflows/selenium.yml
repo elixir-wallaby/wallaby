@@ -72,7 +72,10 @@ jobs:
 
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
-      run: mix deps.get
+      run: |
+        mix local.hex --force
+        mix local.rebar --force
+        mix deps.get
 
     - name: Start Selenium
       run: java -Djava.awt.headless=true -jar "$SELENIUM_JAR_PATH" standalone > selenium.log 2>&1 &
