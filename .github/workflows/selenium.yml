@@ -78,7 +78,7 @@ jobs:
         mix deps.get
 
     - name: Start Selenium
-      run: java -Djava.awt.headless=true -jar "$SELENIUM_JAR_PATH" standalone > selenium-mac.log 2>&1 &
+      run: selenium-server standalone > selenium-mac.log 2>&1 &
 
     - name: Run Tests
       run: mix test --max-cases 1
