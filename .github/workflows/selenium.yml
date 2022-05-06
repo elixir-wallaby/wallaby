@@ -39,11 +39,17 @@ jobs:
       run: mix deps.get
 
     - name: Start Selenium
-      run: java -jar "$SELENIUM_JAR_PATH" standalone > /dev/null 2>&1 &
+      run: java -jar "$SELENIUM_JAR_PATH" standalone > selenium.log 2>&1 &
 
     - name: Run Tests
       run: mix coveralls.json
 
     - name: Upload results to CodeCov
       run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
+
+    - uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: Selenium Logs
+        path: ./selenium.log
 
