@@ -1,6 +1,8 @@
 ExUnit.configure(max_cases: 2, exclude: [pending: true])
 ExUnit.start()
 
+IO.inspect(System.schedulers_online(), label: "online schedulers")
+
 # Load support files
 Code.require_file("../support/test_server.ex", __DIR__)
 Code.require_file("../support/pages/index_page.ex", __DIR__)
