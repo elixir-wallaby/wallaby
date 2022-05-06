@@ -70,12 +70,12 @@ jobs:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
 
+    - run: mix local.hex --force
+    - run: mix local.rebar --force
+
     - name: Install Dependencies
       if: steps.cache.outputs.cache-hit != 'true'
-      run: |
-        mix local.hex --force
-        mix local.rebar --force
-        mix deps.get
+      run: mix deps.get
 
     - name: Start Selenium
       run: selenium-server standalone > selenium-mac.log 2>&1 &
