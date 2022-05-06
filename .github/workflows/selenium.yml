@@ -48,7 +48,7 @@ jobs:
       if: always()
       with:
         name: Selenium Logs
-        path: ./selenium.log
+        path: ./selenium-${{matrix.elixir-otp.elixir}}.log
 
   selenium-mac:
     name: Selenium macOS
@@ -87,5 +87,5 @@ jobs:
       if: always()
       with:
         name: Selenium Logs
-        path: ./selenium.log
+        path: ./selenium-mac.log
 
