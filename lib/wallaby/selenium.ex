@@ -341,7 +341,6 @@ defmodule Wallaby.Selenium do
       )
 
     %{
-      javascriptEnabled: true,
       browserName: "firefox",
       "moz:firefoxOptions": %{
         args: ["-headless"],
