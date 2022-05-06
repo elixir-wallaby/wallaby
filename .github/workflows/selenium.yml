@@ -38,11 +38,16 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: mix deps.get
 
+    - run: Xvfb :99 &
+
     - name: Start Selenium
       run: java -jar "$SELENIUM_JAR_PATH" standalone > selenium.log 2>&1 &
 
     - name: Run Tests
       run: mix coveralls.json
+      env:
+        DISPLAY: :99
+
 
     - name: Upload results to CodeCov
       run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
