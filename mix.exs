@@ -23,14 +23,9 @@ defmodule Wallaby.Mixfile do
       # Custom testing
       aliases: ["test.all": ["test", "test.drivers"], "test.drivers": &test_drivers/1],
       preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.detail": :test,
-        "coveralls.html": :test,
-        "coveralls.json": :test,
         "test.all": :test,
         "test.drivers": :test
       ],
-      test_coverage: [tool: ExCoveralls],
       test_paths: test_paths(@selected_driver),
       dialyzer: dialyzer()
     ]
@@ -54,9 +49,7 @@ defmodule Wallaby.Mixfile do
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
       {:credo, "~> 1.6.0-rc.1", only: [:dev, :test], runtime: false},
-      # {:credo, github: "rrrene/credo"},
       {:bypass, "~> 1.0.0", only: :test},
-      {:excoveralls, "~> 0.7", only: :test},
       {:ex_doc, "~> 0.23", only: :dev},
       {:ecto_sql, ">= 3.0.0", optional: true},
       {:phoenix_ecto, ">= 3.0.0", optional: true}
