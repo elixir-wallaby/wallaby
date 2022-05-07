@@ -61,6 +61,11 @@ jobs:
     env:
       WALLABY_DRIVER: selenium
 
+    strategy:
+      matrix:
+        elixir-otp: [{otp: 24.x, elixir: 1.13.x}]
+      fail-fast: false
+
     steps:
     - uses: actions/checkout@v2
     - uses: erlef/setup-elixir@v1
