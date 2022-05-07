@@ -39,7 +39,7 @@ jobs:
       run: mix deps.get
 
     - name: Start Selenium
-      run:
+      run: |
         wget https://github.com/SeleniumHQ/selenium/releases/download/selenium-3.141.59/selenium-server-standalone-3.141.59.jar
         java -jar ./selenium-server-standalone-3.141.59.jar > selenium-${{matrix.elixir-otp.elixir}}.log 2>&1 &
 
