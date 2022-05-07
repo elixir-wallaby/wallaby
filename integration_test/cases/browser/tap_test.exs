@@ -12,7 +12,7 @@ defmodule Wallaby.Integration.Browser.TapTest do
       assert visible?(page, Query.text("Start", count: 0))
       assert visible?(page, Query.text("End", count: 0))
 
-      Browser.tap(page, Query.text("Touch me!"))
+      tap(page, Query.text("Touch me!"))
 
       assert visible?(page, Query.text("Start"))
       assert visible?(page, Query.text("End"))
