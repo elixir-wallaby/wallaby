@@ -91,8 +91,6 @@ def deps do
 end
 ```
 
-You'll need to install the driver, whether [`chromedriver`](https://chromedriver.chromium.org/downloads) or [`selenium`](https://www.selenium.dev/downloads/), in order to configure it and use Wallaby.
-
 Configure the driver.
 
 ```elixir
@@ -103,9 +101,18 @@ config :wallaby, driver: Wallaby.Chrome # default
 config :wallaby, driver: Wallaby.Selenium
 ```
 
+You'll need to install the actual drivers as well.
+
+- Chrome
+    - [`chromedriver`](https://chromedriver.chromium.org/downloads)
+
+- Selenium  
+    - [`selenium`](https://www.selenium.dev/downloads/)
+    - [`geckodriver`](https://github.com/mozilla/geckodriver) (for Firefox) or [`chromedriver`](https://chromedriver.chromium.org/downloads) (for Chrome)
+
 When calling `use Wallaby.Feature` and using Ecto, please configure your `otp_app`.
 
-```
+```elixir
 config :wallaby, otp_app: :your_app
 ```
 
