@@ -14,7 +14,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 1 visible element that matched the css '.test' but 3 visible
+               Expected to find 1 visible element that matched the css '.test', but 3 visible
                elements were found.
                """)
     end
@@ -28,7 +28,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 0 visible elements that matched the css '.test' but 3 visible
+               Expected to find 0 visible elements that matched the css '.test', but 3 visible
                elements were found.
                """)
     end
@@ -42,7 +42,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 1 visible element that matched the css '.test' but 0 visible
+               Expected to find 1 visible element that matched the css '.test', but 0 visible
                elements were found.
                """)
     end
@@ -56,7 +56,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 3 visible elements that matched the css '.test' but
+               Expected to find 3 visible elements that matched the css '.test', but
                only 1 visible element was found.
                """)
     end
@@ -71,7 +71,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
       assert message ==
                format("""
                Expected to find at least 3 visible elements that matched the css
-               '.test' but only 2 visible elements were found.
+               '.test', but only 2 visible elements were found.
                """)
     end
 
@@ -85,7 +85,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
       assert message ==
                format("""
                Expected to find no more than 5 visible elements that matched the css
-               '.test' but 6 visible elements were found.
+               '.test', but 6 visible elements were found.
                """)
     end
 
@@ -99,7 +99,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
       assert message ==
                format("""
                Expected to find some visible elements that matched the css '.test'
-               and return element at index 2 but only 2 visible elements were found.
+               and return element at index 2, but only 2 visible elements were found.
                """)
     end
 
@@ -113,7 +113,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
       assert message ==
                format("""
                Expected to find some visible checkboxes 'test'
-               and return element at index 3 but only 2 visible checkboxes were found.
+               and return element at index 3, but only 2 visible checkboxes were found.
                """)
     end
 
@@ -126,7 +126,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 1 invisible element that matched the css '.test' but 3
+               Expected to find 1 invisible element that matched the css '.test', but 3
                invisible elements were found.
                """)
     end
@@ -148,7 +148,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 1 visible, selected element that matched the css '.test' but 0
+               Expected to find 1 visible, selected element that matched the css '.test', but 0
                visible, selected elements were found.
                """)
     end
@@ -161,7 +161,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 1 visible, unselected element that matched the css '.test' but 0
+               Expected to find 1 visible, unselected element that matched the css '.test', but 0
                visible, unselected elements were found.
                """)
     end
@@ -174,7 +174,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 1 visible element with the text 'test' but 0 visible elements with the text were found.
+               Expected to find 1 visible element with the text 'test', but 0 visible elements with the text were found.
                """)
 
       message =
@@ -184,7 +184,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 2 visible elements with the text 'test' but 0 visible elements with the text were found.
+               Expected to find 2 visible elements with the text 'test', but 0 visible elements with the text were found.
                """)
     end
 
@@ -196,7 +196,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 1 visible element with the attribute 'value' with value 'test' but 0 visible elements with the attribute were found.
+               Expected to find 1 visible element with the attribute 'value' with value 'test', but 0 visible elements with the attribute were found.
                """)
     end
 
@@ -208,7 +208,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 1 visible element with the attribute 'an-attribute' with value 'an-attribute-value' but 0 visible elements with the attribute were found.
+               Expected to find 1 visible element with the attribute 'an-attribute' with value 'an-attribute-value', but 0 visible elements with the attribute were found.
                """)
     end
 
@@ -220,7 +220,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find 1 visible element with the attribute 'data-role' with value 'data-attribute-value' but 0 visible elements with the attribute were found.
+               Expected to find 1 visible element with the attribute 'data-role' with value 'data-attribute-value', but 0 visible elements with the attribute were found.
                """)
     end
   end

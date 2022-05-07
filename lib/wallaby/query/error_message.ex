@@ -107,7 +107,7 @@ defmodule Wallaby.Query.ErrorMessage do
     """
     #{expected_count(query)} #{visibility_and_selection(query)} #{method(query)} #{
       selector(query)
-    }#{with_index(Query.at_number(query))} but #{result_adverb(query)}#{
+    }#{with_index(Query.at_number(query))}, but #{result_adverb(query)}#{
       result_count(query.result)
     } #{visibility_and_selection(query)} #{short_method(query.method, Enum.count(query.result))} #{
       result_expectation(query.result)
