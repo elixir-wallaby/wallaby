@@ -81,7 +81,7 @@ jobs:
       run: selenium-server standalone > selenium-mac.log 2>&1 &
 
     - name: Run Tests
-      run: mix test --max-cases 1
+      run: mix test || mix test --failed || mix test --failed
 
     - uses: actions/upload-artifact@v2
       if: always()
