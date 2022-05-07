@@ -65,7 +65,7 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: _build
-        key: ${{ runner.os }}-v1-dialyzer-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+        key: ${{ runner.os }}-v1-dialyzer-${{matrix.elixir-otp.otp}}-${{ matrix.elixir-otp.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
 
     - name: Install Dependencies
       if: steps.deps-cache.outputs.cache-hit != 'true'
@@ -122,6 +122,7 @@ jobs:
   selenium-v3:
     name: Selenium v3 (${{matrix.elixir-otp.elixir}}/${{matrix.elixir-otp.otp}})
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
 
@@ -169,6 +170,7 @@ jobs:
   selenium-v4:
     name: Selenium V4
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
 
@@ -215,6 +217,7 @@ jobs:
   selenium-v4-mac:
     name: Selenium v4 macOS
     runs-on: macos-latest
+    timeout-minutes: 30
 
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
 
