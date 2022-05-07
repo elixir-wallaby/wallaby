@@ -99,7 +99,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
       assert message ==
                format("""
                Expected to find some visible elements that matched the css '.test'
-               and take index 2 but only 2 visible elements were found.
+               and return element at index 2 but only 2 visible elements were found.
                """)
     end
 
@@ -113,7 +113,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
       assert message ==
                format("""
                Expected to find some visible checkboxes 'test'
-               and take index 3 but only 2 visible checkboxes were found.
+               and return element at index 3 but only 2 visible checkboxes were found.
                """)
     end
 

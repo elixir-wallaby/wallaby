@@ -36,7 +36,7 @@ defmodule Wallaby.Integration.Browser.AssertRefuteHasTest do
 
     test "mentions the count of found vs. expected index", %{session: session} do
       assert_raise ExpectationNotMetError,
-                   ~r/Expected.*and take index 7 but only 6 visible elements were found/i,
+                   ~r/Expected.*and return element at index 7 but only 6 visible elements were found/i,
                    fn ->
                      session
                      |> visit("nesting.html")

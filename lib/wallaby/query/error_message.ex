@@ -129,7 +129,7 @@ defmodule Wallaby.Query.ErrorMessage do
   end
 
   defp with_index(:all), do: nil
-  defp with_index(at), do: " and take index #{at}"
+  defp with_index(at), do: " and return element at index #{at}"
 
   @doc """
   Extracts the selector method from the selector and converts it into a human
