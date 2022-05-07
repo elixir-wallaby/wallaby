@@ -1,6 +1,4 @@
-ExUnit.configure(max_cases: 1, timeout: 120_000, exclude: [pending: true])
-
-IO.inspect(System.schedulers_online(), label: "online schedulers")
+ExUnit.configure(max_cases: 1, timeout: 180_000, exclude: [pending: true])
 
 # Load support files
 Code.require_file("../support/test_server.ex", __DIR__)
