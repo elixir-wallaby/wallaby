@@ -6,7 +6,7 @@ defmodule Wallaby.Selenium do
 
   Start a Wallaby Session using this driver with the following command:
 
-  ```
+  ```elixir
   {:ok, session} = Wallaby.start_session()
   ```
 
@@ -16,7 +16,7 @@ defmodule Wallaby.Selenium do
 
   These capabilities will override the default capabilities.
 
-  ```
+  ```elixir
   config :wallaby,
     selenium: [
       capabilities: %{
@@ -25,11 +25,13 @@ defmodule Wallaby.Selenium do
     ]
   ```
 
-  ### Selenium url
+  ### Selenium Remote URL
 
-  You are able to setup selenium location. By default it is http://localhost:4444/wd/hub/
+  It is possible to globally set Selenium's "Remote URL" by setting the following option.
+  
+  By default it is http://localhost:4444/wd/hub/
 
-  ```
+  ```elixir
   config :wallaby,
     selenium: [
       remote_url: "http://selenium_url"
@@ -54,7 +56,7 @@ defmodule Wallaby.Selenium do
 
   ## Notes
 
-  - Requires [selenium-server-standalone](https://www.seleniumhq.org/download/) to be running on port 4444. Wallaby does _not_ manage the start/stop of the Selenium server.
+  - Requires [selenium-server](https://www.seleniumhq.org/download/) to be running on port 4444. Wallaby does _not_ manage the start/stop of the Selenium server.
   - Requires [GeckoDriver](https://github.com/mozilla/geckodriver) to be installed in your path when using [Firefox](https://www.mozilla.org/en-US/firefox/new/). Firefox is used by default.
   """
 
@@ -132,7 +134,6 @@ defmodule Wallaby.Selenium do
     |> Application.get_env(:selenium, [])
     |> Keyword.get(:remote_url, "http://localhost:4444/wd/hub/")
   end
-
 
   @doc false
   @spec end_session(Session.t()) :: :ok
