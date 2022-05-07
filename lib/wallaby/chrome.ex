@@ -233,9 +233,8 @@ defmodule Wallaby.Chrome do
       nil ->
         exception =
           DependencyError.exception("""
-          Wallaby can't find chrome. Make sure you have chrome installed
-          and included in your path.
-          You can also provide a path using `config :wallaby, :chrome, path: <path>`.
+          Wallaby can't find Chrome. Make sure you have chrome installed and included in your path.
+          You can also provide a path using `config :wallaby, :chromedriver, binary: <path>`.
           """)
 
         {:error, exception}
@@ -259,8 +258,7 @@ defmodule Wallaby.Chrome do
       nil ->
         exception =
           DependencyError.exception("""
-          Wallaby can't find chromedriver. Make sure you have chromedriver installed
-          and included in your path.
+          Wallaby can't find chromedriver. Make sure you have chromedriver installed and included in your path.
           You can also provide a path using `config :wallaby, :chromedriver, path: <path>`.
           """)
 
@@ -276,8 +274,8 @@ defmodule Wallaby.Chrome do
       _ ->
         exception =
           DependencyError.exception("""
-          Looks like you're trying to run Wallaby with a mismatched version of chrome: #{chrome_version} and chromedriver: #{chromedriver_version}.
-          chrome and chromedriver must match to a major, minor, and build version.
+          Looks like you're trying to run Wallaby with a mismatched version of Chrome: #{Enum.join(chrome_version, ".")} and chromedriver: #{Enum.join(chromedriver_version, ".")}.
+          Chrome and chromedriver must match to a major, minor, and build version.
           """)
 
         {:error, exception}

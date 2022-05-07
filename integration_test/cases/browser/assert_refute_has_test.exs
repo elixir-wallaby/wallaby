@@ -35,13 +35,14 @@ defmodule Wallaby.Integration.Browser.AssertRefuteHasTest do
     end
 
     test "mentions the count of found vs. expected index", %{session: session} do
-      assert_raise ExpectationNotMetError,
-                   ~r/Expected.*and return element at index 7 but only 6 visible elements were found/i,
-                   fn ->
-                     session
-                     |> visit("nesting.html")
-                     |> assert_has(@wrong_at_query)
-                   end
+      expect =
+        ~r/Expected.*and return element at index 7, but only 6 visible elements were found/i
+
+      assert_raise ExpectationNotMetError, expect, fn ->
+        session
+        |> visit("nesting.html")
+        |> assert_has(@wrong_at_query)
+      end
     end
 
     test "passes if `at` element exists", %{session: session} do
