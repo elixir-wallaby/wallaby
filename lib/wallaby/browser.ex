@@ -1175,9 +1175,9 @@ defmodule Wallaby.Browser do
               raise ExpectationNotMetError,
                     Query.ErrorMessage.message(query, :not_found)
 
-            {:error, :invalid_selector} ->
+            {:error, e} ->
               raise Wallaby.QueryError,
-                    Query.ErrorMessage.message(query, :invalid_selector)
+                    Query.ErrorMessage.message(query, e)
 
             _ ->
               raise Wallaby.ExpectationNotMetError,
@@ -1466,11 +1466,11 @@ defmodule Wallaby.Browser do
       {:all, _} ->
         {:ok, elements}
 
-      {n, count} when n >= 0 and n < count ->
+      {n, count} when n < count ->
         {:ok, [Enum.at(elements, n)]}
 
       {_, _} ->
-        {:error, {:at_number, query}}
+        {:error, {:not_found, elements}}
     end
   end
 
