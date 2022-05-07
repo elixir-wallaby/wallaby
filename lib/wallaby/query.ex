@@ -462,7 +462,15 @@ defmodule Wallaby.Query do
   end
 
   def count(%Query{conditions: conditions}) do
-    Keyword.get(conditions, :count)
+    Keyword.get(conditions, :count) || default_count(conditions)
+  end
+
+  defp default_count(conditions) do
+    if conditions[:minimum] || conditions[:maximum] || conditions[:at] != :all do
+      nil
+    else
+      1
+    end
   end
 
   def at_number(%Query{conditions: conditions}) do
@@ -486,13 +494,15 @@ defmodule Wallaby.Query do
     count(query) == 1 || at_number(query) != :all
   end
 
-  def matches_count?(%{conditions: conditions}, count) do
+  def matches_count?(%{conditions: conditions} = query, count) do
+    query_count = count(query)
+
     cond do
-      conditions[:count] == :any ->
+      query_count == :any ->
         count > 0
 
-      conditions[:count] ->
-        conditions[:count] == count
+      query_count ->
+        query_count == count
 
       true ->
         !(conditions[:minimum] && conditions[:minimum] > count) &&
@@ -522,14 +532,10 @@ defmodule Wallaby.Query do
   end
 
   defp add_count(opts) do
-    if opts[:count] == nil && opts[:minimum] == nil && opts[:maximum] == nil do
-      Keyword.put(opts, :count, 1)
-    else
-      opts
-      |> Keyword.put_new(:count, nil)
-      |> Keyword.put_new(:minimum, nil)
-      |> Keyword.put_new(:maximum, nil)
-    end
+    opts
+    |> Keyword.put_new(:count, nil)
+    |> Keyword.put_new(:minimum, nil)
+    |> Keyword.put_new(:maximum, nil)
   end
 
   defp add_at(opts) do
