@@ -1,9 +1,6 @@
 name: CI
 on: [push, pull_request]
 
-env:
-  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
 jobs:
   chromedriver:
     name: ChromeDriver (${{matrix.elixir-otp.elixir}}/${{matrix.elixir-otp.otp}})
@@ -39,10 +36,7 @@ jobs:
       run: mix deps.get
 
     - name: Run Tests
-      run: mix coveralls.json
-
-    - name: Upload results to CodeCov
-      run: bash <(curl -s https://codecov.io/bash) -F IntegrationTest -e WALLABY_DRIVER,ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
+      run: mix test
 
   linting:
     name: Linting (${{matrix.elixir-otp.elixir}}/${{matrix.elixir-otp.otp}})
@@ -123,10 +117,7 @@ jobs:
       run: mix deps.get
 
     - name: Run Tests
-      run: mix coveralls.json
-
-    - name: Upload results to CodeCov
-      run: bash <(curl -s https://codecov.io/bash) -F UnitTest -e ELIXIR_VERSION,OTP_VERSION || echo "Codecov did not collect coverage reports"
+      run: mix test
 
   selenium-v3:
     name: Selenium v3 (${{matrix.elixir-otp.elixir}}/${{matrix.elixir-otp.otp}})
@@ -259,4 +250,3 @@ jobs:
       with:
         name: Selenium Logs
         path: ./selenium-mac.log
-
