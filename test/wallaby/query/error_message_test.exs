@@ -5,7 +5,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
   alias Wallaby.Query.ErrorMessage
 
   describe "message/1" do
-    test "when the results are more then the expected count" do
+    test "when the results are more than the expected count" do
       message =
         Query.css(".test", count: 1)
         |> Map.put(:result, [1, 2, 3])
@@ -15,6 +15,20 @@ defmodule Wallaby.Query.ErrorMessageTest do
       assert message ==
                format("""
                Expected to find 1 visible element that matched the css '.test' but 3 visible
+               elements were found.
+               """)
+    end
+
+    test "when the expected count is 0" do
+      message =
+        Query.css(".test", count: 0)
+        |> Map.put(:result, [1, 2, 3])
+        |> ErrorMessage.message(:not_found)
+        |> format
+
+      assert message ==
+               format("""
+               Expected to find 0 visible elements that matched the css '.test' but 3 visible
                elements were found.
                """)
     end
@@ -47,7 +61,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
                """)
     end
 
-    test "when the result is less then the minimum result" do
+    test "when the result is less than the minimum result" do
       message =
         Query.css(".test", minimum: 3, maximum: 5)
         |> Map.put(:result, [1, 2])
@@ -61,7 +75,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
                """)
     end
 
-    test "when the result is more then the maximum" do
+    test "when the result is more than the maximum" do
       message =
         Query.css(".test", minimum: 3, maximum: 5)
         |> Map.put(:result, [1, 2, 3, 4, 5, 6])
@@ -70,7 +84,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
 
       assert message ==
                format("""
-               Expected to find no more then 5 visible elements that matched the css
+               Expected to find no more than 5 visible elements that matched the css
                '.test' but 6 visible elements were found.
                """)
     end
@@ -89,7 +103,7 @@ defmodule Wallaby.Query.ErrorMessageTest do
                """)
     end
 
-    test "when the minimum is set less then the maximum" do
+    test "when the minimum is set less than the maximum" do
       message =
         Query.css("", minimum: 6, maximum: 5)
         |> ErrorMessage.message(:min_max)

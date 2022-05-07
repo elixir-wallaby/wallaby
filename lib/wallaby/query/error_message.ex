@@ -136,7 +136,7 @@ defmodule Wallaby.Query.ErrorMessage do
   @spec method({atom(), boolean()}) :: String.t()
 
   def method(%Query{conditions: conditions} = query) do
-    method(query.method, conditions[:count] > 1)
+    method(query.method, conditions[:count] != 1)
   end
 
   def method(_), do: "element"
@@ -255,7 +255,7 @@ defmodule Wallaby.Query.ErrorMessage do
         "at least #{conditions[:minimum]}"
 
       conditions[:maximum] && Enum.count(query.result) > conditions[:maximum] ->
-        "no more then #{conditions[:maximum]}"
+        "no more than #{conditions[:maximum]}"
 
       true ->
         ""
