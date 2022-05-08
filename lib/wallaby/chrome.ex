@@ -6,7 +6,7 @@ defmodule Wallaby.Chrome do
 
   Start a Wallaby Session using this driver with the following command:
 
-  ```
+  ```elixir
   {:ok, session} = Wallaby.start_session()
   ```
 
@@ -20,7 +20,7 @@ defmodule Wallaby.Chrome do
   This will override the default capabilities and capabilities set with application configuration.
   This will _not_ override capabilities passed in directly to `Wallaby.start_session/1`.
 
-  ```
+  ```elixir
   config :wallaby,
     chromedriver: [
       headless: false
@@ -31,7 +31,7 @@ defmodule Wallaby.Chrome do
 
   These capabilities will override the default capabilities.
 
-  ```
+  ```elixir
   config :wallaby,
     chromedriver: [
       capabilities: %{
@@ -44,7 +44,7 @@ defmodule Wallaby.Chrome do
 
   If ChromeDriver is not available in your path, you can specify it's location.
 
-  ```
+  ```elixir
   config :wallaby,
     chromedriver: [
       path: "path/to/chrome"
@@ -58,7 +58,7 @@ defmodule Wallaby.Chrome do
   This will override the default capabilities and capabilities set with application configuration.
   This will _not_ override capabilities passed in directly to `Wallaby.start_session/1`.
 
-  ```
+  ```elixir
   config :wallaby,
     chromedriver: [
       binary: "path/to/chrome"
@@ -221,8 +221,8 @@ defmodule Wallaby.Chrome do
 
     chrome_path =
       :wallaby
-      |> Application.get_env(:chrome, [])
-      |> Keyword.get(:path, default_chrome_path)
+      |> Application.get_env(:chromedriver, [])
+      |> Keyword.get(:binary, default_chrome_path)
 
     [Path.expand(chrome_path), default_chrome_path]
     |> Enum.find(&System.find_executable/1)
@@ -278,7 +278,9 @@ defmodule Wallaby.Chrome do
           Chrome and chromedriver must match to a major, minor, and build version.
           """)
 
-        {:error, exception}
+        IO.warn(exception.message)
+
+        :ok
     end
   end
 
@@ -308,12 +310,14 @@ defmodule Wallaby.Chrome do
   end
 
   defp parse_version(prefix, body) do
-    result = case Regex.run(~r/\b#{prefix}\b.*?(\d+\.\d+(\.\d+)?)/, body) do
-      [_, version, _] ->
-        String.split(version, ".")
-      [_, version] ->
-        String.split(version, ".")
-    end
+    result =
+      case Regex.run(~r/\b#{prefix}\b.*?(\d+\.\d+(\.\d+)?)/, body) do
+        [_, version, _] ->
+          String.split(version, ".")
+
+        [_, version] ->
+          String.split(version, ".")
+      end
 
     Enum.map(result, &String.to_integer/1)
   end

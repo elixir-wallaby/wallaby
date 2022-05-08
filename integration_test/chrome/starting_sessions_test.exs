@@ -1,6 +1,8 @@
 defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
   use ExUnit.Case, async: false
 
+  import ExUnit.CaptureIO
+
   import Wallaby.SettingsTestHelpers
   import Wallaby.TestSupport.ApplicationControl
   import Wallaby.TestSupport.TestScriptUtils
@@ -105,9 +107,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
     assert {:error, _} = Application.start(:wallaby)
   end
 
-  test "application starts when chromedriver version >= 2.30", %{
-    workspace_path: workspace_path
-  } do
+  test "application starts when chromedriver version >= 2.30", %{workspace_path: workspace_path} do
     chromedriver_test_script_path =
       ChromeTestScript.build_chromedriver_version_mock_script(version: "2.30")
       |> write_test_script!(workspace_path)
@@ -118,9 +118,14 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
 
     ensure_setting_is_reset(:wallaby, :chromedriver)
     Application.put_env(:wallaby, :chromedriver, path: chromedriver_test_script_path)
-    Application.put_env(:wallaby, :chrome, path: chrome_test_script_path)
+    Application.put_env(:wallaby, :chromedriver, binary: chrome_test_script_path)
 
-    assert :ok = Application.start(:wallaby)
+    log =
+      capture_io(:stderr, fn ->
+        assert :ok == Application.start(:wallaby)
+      end)
+
+    assert log =~ "Looks like you're trying to run Wallaby with a mismatched version of Chrome"
   end
 
   test "application does not start when chrome version != chromedriver version", %{
@@ -136,9 +141,14 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
 
     ensure_setting_is_reset(:wallaby, :chromedriver)
     Application.put_env(:wallaby, :chromedriver, path: chromedriver_test_script_path)
-    Application.put_env(:wallaby, :chrome, path: chrome_test_script_path)
+    Application.put_env(:wallaby, :chromedriver, binary: chrome_test_script_path)
 
-    assert {:error, _} = Application.start(:wallaby)
+    log =
+      capture_io(:stderr, fn ->
+        assert :ok == Application.start(:wallaby)
+      end)
+
+    assert log =~ "Looks like you're trying to run Wallaby with a mismatched version of Chrome"
   end
 
   test "works with a path in the home directory" do
@@ -160,11 +170,7 @@ defmodule Wallaby.Integration.Chrome.StartingSessionsTest do
   test "fails to start when chromedriver path is configured incorrectly" do
     ensure_setting_is_reset(:wallaby, :chromedriver)
 
-    Application.put_env(
-      :wallaby,
-      :chromedriver,
-      path: "this-really-should-not-exist"
-    )
+    Application.put_env(:wallaby, :chromedriver, path: "this-really-should-not-exist")
 
     assert {:error, _} = Application.start(:wallaby)
   end
