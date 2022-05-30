@@ -106,7 +106,7 @@ defmodule Wallaby.Chrome do
 
   @behaviour Wallaby.Driver
 
-  @default_readiness_timeout 5_000
+  @default_readiness_timeout 10_000
 
   alias Wallaby.Chrome.Chromedriver
   alias Wallaby.WebdriverClient
@@ -144,7 +144,11 @@ defmodule Wallaby.Chrome do
   def init(_) do
     children = [
       Wallaby.Driver.LogStore,
-      Wallaby.Chrome.Chromedriver
+      {PartitionSupervisor,
+        child_spec: Wallaby.Chrome.Chromedriver,
+        name: Wallaby.Chromedrivers,
+        partitions: System.schedulers_online()
+      }
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

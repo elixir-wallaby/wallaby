@@ -7,8 +7,7 @@ defmodule Wallaby.Chrome.Chromedriver.ReadinessChecker do
   @type url :: String.t()
 
   @spec wait_until_ready(url, non_neg_integer()) :: :ok
-  def wait_until_ready(base_url, delay \\ 200)
-      when is_binary(base_url) and is_integer(delay) and delay >= 0 do
+  def wait_until_ready(base_url, delay \\ 200) when is_binary(base_url) and is_integer(delay) and delay >= 0 do
     if ready?(base_url) do
       :ok
     else
