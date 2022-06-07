@@ -26,12 +26,30 @@ defmodule Wallaby.Query.ErrorMessage do
     """
   end
 
-  def message(%{method: method, selector: selector}, {:label_does_not_find_field, for_text}) do
+  def message(%{method: method, selector: selector}, {:label_does_not_find_field, for_text, 0}) do
     """
     The text '#{selector}' matched a label but the label's 'for' attribute
     doesn't match the id of any #{method(method)}.
 
     Make sure that id on your #{method(method)} is `id="#{for_text}"`.
+    """
+  end
+
+  def message(%{selector: selector}, {:label_does_not_find_field, for_text, 1}) do
+    """
+    The text '#{selector}' matched a label but the label's 'for' attribute
+    matches one element `id="#{for_text}"` of a different type than requested.
+
+    Make sure you are using the right query function (e.g. `checkbox` vs `radio_button`).
+    """
+  end
+
+  def message(%{selector: selector}, {:label_does_not_find_field, for_text, count}) do
+    """
+    The text '#{selector}' matched a label but the label's 'for' attribute
+    matches #{count} elements with `id="#{for_text}"`.
+
+    Make sure that ids are unique as mandated by HTML spec.
     """
   end
 
@@ -53,12 +71,10 @@ defmodule Wallaby.Query.ErrorMessage do
     """
   end
 
-  def message(_, {:at_number, query}) do
-    #   The query is invalid. the 'at' number requested is not within the results list (1-#{size}).
+  def message(_, {:invalid_at_number, at_number}) do
+    # The query is invalid. the 'at' number requested is negative or not a number
     """
-    The element at index #{Query.at_number(query)} is not available because #{
-      result_count(query.result)
-    } #{method(query)} #{result_expectation(query.result)}
+    The given at index #{inspect(at_number)} is not a non-negative number or :all.
     """
   end
 
@@ -89,11 +105,13 @@ defmodule Wallaby.Query.ErrorMessage do
 
   defp found_error_message(query) do
     """
-    #{expected_count(query)}, #{visibility_and_selection(query)} #{method(query)} #{
+    #{expected_count(query)} #{visibility_and_selection(query)} #{method(query)} #{
       selector(query)
-    } but #{result_count(query.result)}, #{visibility_and_selection(query)} #{
-      short_method(query.method, Enum.count(query.result))
-    } #{result_expectation(query.result)}.
+    }#{with_index(Query.at_number(query))}, but #{result_adverb(query)}#{
+      result_count(query.result)
+    } #{visibility_and_selection(query)} #{short_method(query.method, Enum.count(query.result))} #{
+      result_expectation(query.result)
+    }.
     """
   end
 
@@ -110,6 +128,9 @@ defmodule Wallaby.Query.ErrorMessage do
     "'#{selector}'"
   end
 
+  defp with_index(:all), do: nil
+  defp with_index(at), do: " and return element at index #{at}"
+
   @doc """
   Extracts the selector method from the selector and converts it into a human
   readable format
@@ -117,8 +138,8 @@ defmodule Wallaby.Query.ErrorMessage do
   @spec method(Query.t()) :: String.t()
   @spec method({atom(), boolean()}) :: String.t()
 
-  def method(%Query{conditions: conditions} = query) do
-    method(query.method, conditions[:count] > 1)
+  def method(%Query{} = query) do
+    method(query.method, Query.count(query) != 1)
   end
 
   def method(_), do: "element"
@@ -214,7 +235,16 @@ defmodule Wallaby.Query.ErrorMessage do
     end
   end
 
-  defp result_count([_]), do: "only 1"
+  defp result_adverb(query) do
+    conditions = query.conditions
+
+    min =
+      conditions[:count] || conditions[:minimum] ||
+        (conditions[:at] != :all && conditions[:at] + 1)
+
+    if min && min > Enum.count(query.result) && query.result != [], do: "only "
+  end
+
   defp result_count(result), do: "#{Enum.count(result)}"
 
   defp times(1), do: "1 time"
@@ -222,19 +252,20 @@ defmodule Wallaby.Query.ErrorMessage do
 
   defp expected_count(query) do
     conditions = query.conditions
+    count = Query.count(query)
 
     cond do
-      conditions[:count] ->
-        "#{conditions[:count]}"
+      count ->
+        "#{count}"
 
       conditions[:minimum] && Enum.count(query.result) < conditions[:minimum] ->
         "at least #{conditions[:minimum]}"
 
       conditions[:maximum] && Enum.count(query.result) > conditions[:maximum] ->
-        "no more then #{conditions[:maximum]}"
+        "no more than #{conditions[:maximum]}"
 
       true ->
-        ""
+        "some"
     end
   end
 

@@ -2,6 +2,9 @@
 
 ## Main
 
+- Fix `refute_has` when passed a query with an invalid selector.
+- Specifying `at` now removes the default `count` of 1 (#641)
+
 ## v0.29.1 (2021-09-22)
 
 - Docs improvements #629

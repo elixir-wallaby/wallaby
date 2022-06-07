@@ -6,6 +6,8 @@ defmodule Wallaby.Integration.Browser.AssertRefuteHasTest do
   @found_query Query.css(".user", count: :any)
   @not_found_query Query.css(".something-else")
   @wrong_exact_found_query Query.css(".user", count: 5)
+  @at_query Query.css(".user", at: 3)
+  @wrong_at_query Query.css(".user", at: 7)
   describe "assert_has/2" do
     test "passes if the query is present on the page", %{session: session} do
       return =
@@ -30,6 +32,26 @@ defmodule Wallaby.Integration.Browser.AssertRefuteHasTest do
         |> visit("nesting.html")
         |> assert_has(@wrong_exact_found_query)
       end
+    end
+
+    test "mentions the count of found vs. expected index", %{session: session} do
+      expect =
+        ~r/Expected.*and return element at index 7, but only 6 visible elements were found/i
+
+      assert_raise ExpectationNotMetError, expect, fn ->
+        session
+        |> visit("nesting.html")
+        |> assert_has(@wrong_at_query)
+      end
+    end
+
+    test "passes if `at` element exists", %{session: session} do
+      return =
+        session
+        |> visit("nesting.html")
+        |> assert_has(@at_query)
+
+      assert %Wallaby.Session{} = return
     end
   end
 

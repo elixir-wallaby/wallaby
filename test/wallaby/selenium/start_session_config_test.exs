@@ -23,7 +23,6 @@ defmodule Wallaby.Selenium.StartSessionConfigTest do
       assert conn.body_params == %{
                "desiredCapabilities" => %{
                  "browserName" => "firefox",
-                 "javascriptEnabled" => true,
                  "moz:firefoxOptions" => %{
                    "args" => ["-headless"],
                    "prefs" => %{

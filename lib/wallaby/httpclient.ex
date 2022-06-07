@@ -79,9 +79,9 @@ defmodule Wallaby.HTTPClient do
 
       {:ok, %HTTPoison.Response{body: body}} ->
         with {:ok, decoded} <- Jason.decode(body),
-             {:ok, response} <- check_status(decoded),
-             {:ok, validated} <- check_for_response_errors(response),
-             do: {:ok, validated}
+             {:ok, response} <- check_status(decoded) do
+          check_for_response_errors(response)
+        end
     end
   end
 
@@ -145,7 +145,7 @@ defmodule Wallaby.HTTPClient do
   end
 
   defp headers do
-    [{"Accept", "application/json"}, {"Content-Type", "application/json"}]
+    [{"Accept", "application/json"}, {"Content-Type", "application/json;charset=UTF-8"}]
   end
 
   @spec to_params(Query.compiled()) :: map

@@ -15,8 +15,7 @@ defmodule Wallaby.Integration.SessionCase do
   Starts a test session with the default opts for the given driver
   """
   def start_test_session(opts \\ []) do
-    with {:ok, session} <- retry(2, fn -> Wallaby.start_session(opts) end),
-         do: {:ok, session}
+    retry(2, fn -> Wallaby.start_session(opts) end)
   end
 
   @doc """
@@ -34,8 +33,12 @@ defmodule Wallaby.Integration.SessionCase do
 
   defp retry(times, f) do
     case f.() do
-      {:ok, session} -> {:ok, session}
-      _ -> retry(times - 1, f)
+      {:ok, session} ->
+        {:ok, session}
+
+      _ ->
+        Process.sleep(250)
+        retry(times - 1, f)
     end
   end
 end

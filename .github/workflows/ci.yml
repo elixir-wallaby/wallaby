@@ -1,0 +1,255 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  chromedriver:
+    name: ChromeDriver (${{matrix.elixir-otp.elixir}}/${{matrix.elixir-otp.otp}})
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
+
+    strategy:
+      matrix:
+        elixir-otp: [{otp: 21.x, elixir: 1.8.x}, {otp: 21.x, elixir: 1.9.x}, {otp: 21.x, elixir: 1.10.x}, {otp: 21.x, elixir: 1.11.x}, {otp: 22.x, elixir: 1.12.x}]
+      fail-fast: false
+
+    env:
+      WALLABY_DRIVER: chrome
+      ELIXIR_VERSION: ${{ matrix.elixir-otp.elixir }}
+      OTP_VERSION: ${{ matrix.elixir-otp.otp }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: erlef/setup-elixir@v1
+      with:
+        otp-version: ${{matrix.elixir-otp.otp}}
+        elixir-version: ${{matrix.elixir-otp.elixir}}
+
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+    - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: mix deps.get
+
+    - name: Run Tests
+      run: mix test
+
+  linting:
+    name: Linting (${{matrix.elixir-otp.elixir}}/${{matrix.elixir-otp.otp}})
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
+
+    strategy:
+      matrix:
+        elixir-otp: [{otp: 21.x, elixir: 1.8.x}, {otp: 21.x, elixir: 1.9.x}, {otp: 21.x, elixir: 1.10.x}, {otp: 21.x, elixir: 1.11.x}, {otp: 22.x, elixir: 1.12.x}]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: erlef/setup-elixir@v1
+      with:
+        otp-version: ${{matrix.elixir-otp.otp}}
+        elixir-version: ${{matrix.elixir-otp.elixir}}
+
+    - uses: actions/cache@v1
+      id: deps-cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+    - uses: actions/cache@v1
+      with:
+        path: _build
+        key: ${{ runner.os }}-v1-dialyzer-${{matrix.elixir-otp.otp}}-${{ matrix.elixir-otp.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+    - name: Install Dependencies
+      if: steps.deps-cache.outputs.cache-hit != 'true'
+      run: mix deps.get
+
+    - name: Compile
+      run: mix compile --force --warnings-as-errors
+
+    - name: Check formatting
+      run: mix format --check-formatted
+      if: matrix.elixir == '1.8.x'
+
+    - name: Run Credo
+      run: mix credo --strict
+
+    - name: Run Dialyzer
+      run: mix dialyzer --halt-exit-status
+
+  unit_tests:
+    name: Unit Tests (${{matrix.elixir-otp.elixir}}/${{matrix.elixir-otp.otp}})
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
+
+    strategy:
+      matrix:
+        elixir-otp: [{otp: 21.x, elixir: 1.8.x}, {otp: 21.x, elixir: 1.9.x}, {otp: 21.x, elixir: 1.10.x}, {otp: 21.x, elixir: 1.11.x}, {otp: 22.x, elixir: 1.12.x}]
+      fail-fast: false
+
+    env:
+      ELIXIR_VERSION: ${{ matrix.elixir-otp.elixir }}
+      OTP_VERSION: ${{ matrix.elixir-otp.otp }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: erlef/setup-elixir@v1
+      with:
+        otp-version: ${{matrix.elixir-otp.otp}}
+        elixir-version: ${{matrix.elixir-otp.elixir}}
+
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+    - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: mix deps.get
+
+    - name: Run Tests
+      run: mix test
+
+  selenium-v3:
+    name: Selenium v3 (${{matrix.elixir-otp.elixir}}/${{matrix.elixir-otp.otp}})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
+
+    strategy:
+      matrix:
+        elixir-otp: [{otp: 21.x, elixir: 1.8.x}, {otp: 21.x, elixir: 1.9.x}, {otp: 21.x, elixir: 1.10.x}, {otp: 21.x, elixir: 1.11.x}, {otp: 22.x, elixir: 1.12.x}]
+      fail-fast: false
+
+    env:
+      WALLABY_DRIVER: selenium
+      ELIXIR_VERSION: ${{ matrix.elixir-otp.elixir }}
+      OTP_VERSION: ${{ matrix.elixir-otp.otp }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: erlef/setup-elixir@v1
+      with:
+        otp-version: ${{matrix.elixir-otp.otp}}
+        elixir-version: ${{matrix.elixir-otp.elixir}}
+
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+    - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: mix deps.get
+
+    - name: Start Selenium
+      run: |
+        wget https://github.com/SeleniumHQ/selenium/releases/download/selenium-3.141.59/selenium-server-standalone-3.141.59.jar
+        java -jar ./selenium-server-standalone-3.141.59.jar > selenium-${{matrix.elixir-otp.elixir}}.log 2>&1 &
+
+    - name: Run Tests
+      run: mix test || mix test --failed || mix test --failed
+
+    - uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: Selenium Logs
+        path: ./selenium-${{matrix.elixir-otp.elixir}}.log
+
+  selenium-v4:
+    name: Selenium V4
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
+
+    env:
+      WALLABY_DRIVER: selenium
+
+    strategy:
+      matrix:
+        elixir-otp: [{otp: 24.x, elixir: 1.13.x}]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: erlef/setup-elixir@v1
+      with:
+        otp-version: ${{matrix.elixir-otp.otp}}
+        elixir-version: ${{matrix.elixir-otp.elixir}}
+
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+    - run: mix local.hex --force
+    - run: mix local.rebar --force
+
+    - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: mix deps.get
+
+    - name: Start Selenium
+      run: java -Djava.awt.headless=true -jar "$SELENIUM_JAR_PATH" standalone > selenium-v4-${{matrix.elixir-otp.elixir}}.log 2>&1 &
+
+    - name: Run Tests
+      run: mix test || mix test --failed || mix test --failed
+
+    - uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: Selenium Logs
+        path: ./selenium-mac.log
+
+  selenium-v4-mac:
+    name: Selenium v4 macOS
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == true)
+
+    env:
+      WALLABY_DRIVER: selenium
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - run: brew install erlang elixir
+
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+    - run: mix local.hex --force
+    - run: mix local.rebar --force
+
+    - name: Install Dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: mix deps.get
+
+    - name: Start Selenium
+      run: selenium-server standalone > selenium-mac.log 2>&1 &
+
+    - name: Run Tests
+      run: mix test || mix test --failed || mix test --failed
+
+    - uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: Selenium Logs
+        path: ./selenium-mac.log

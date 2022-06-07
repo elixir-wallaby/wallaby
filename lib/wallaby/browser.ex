@@ -1,5 +1,4 @@
 defmodule Wallaby.Browser do
-  # credo:disable-for-this-file Credo.Check.Readability.TrailingWhiteSpace
   @moduledoc """
   The Browser module is the entrypoint for interacting with a real browser.
 
@@ -923,26 +922,31 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Finds a specific DOM element on the page based on a CSS selector. Blocks until
-  it either finds the element or until the max time is reached. By default only
-  1 element is expected to match the query. If more elements are present then a
-  count can be specified. Use `:any` to allow any number of elements to be present.
-  By default only elements that are visible on the page are returned.
+  Finds and returns one or more DOM element(s) on the page based on the given query.
 
-  Selections can be scoped by providing a Element as the locator for the query.
+  The query is scoped by the first argument, which is either the `%Session{}` or an
+  `%Element{}`.
 
-  By default finders only work with elements that would be visible to a real
-  user.
+  ## Example
+
+  ```elixir
+  session
+  |> find(Query.css("#login-button"))
+  |> assert_text("Login")
+
+  buttons =
+    session
+    |> find(Query.css(".login-button", count: 2, text: "Login"))
+  ```
+
+  ## Notes
+
+  - Blocks until it finds the element(s) or the max time is reached.
+  - By default only 1 element is expected to match the query. If more elements are present then a count can be
+    specified. Use `count: :any` to allow any number of elements to be present.
+  - By default only elements that would be visible to a real user on the page are returned.
   """
-  @spec find(parent, Query.t(), (Element.t() -> any())) :: parent
   @spec find(parent, Query.t()) :: Element.t() | [Element.t()]
-  @spec find(parent, String.t()) :: Element.t() | [Element.t()]
-  def find(parent, %Query{} = query, callback) when is_function(callback) do
-    results = find(parent, query)
-    callback.(results)
-    parent
-  end
-
   def find(parent, %Query{} = query) do
     case execute_query(parent, query) do
       {:ok, query} ->
@@ -963,6 +967,36 @@ defmodule Wallaby.Browser do
       {:error, e} ->
         raise Wallaby.QueryError, ErrorMessage.message(query, e)
     end
+  end
+
+  @doc """
+  Same as `find/2`, but takes a callback to enact side effects on the found element(s).
+
+  ## Example
+
+  ```elixir
+  session
+  |> find(Query.css("#login-button"), fn button ->
+    assert_text(button, "Login")
+  end)
+
+  session
+  |> find(Query.css(".login-button", count: 2, text: "Login"), fn buttons ->
+    assert 2 == length(buttons)
+  end)
+
+  ```
+
+  ## Notes
+
+  - Returns the first argument to make the function pipe-able.
+  """
+  @spec find(parent, Query.t(), (Element.t() -> any())) :: parent
+  def find(parent, %Query{} = query, callback) when is_function(callback) do
+    results = find(parent, query)
+    callback.(results)
+
+    parent
   end
 
   @doc """
@@ -1154,9 +1188,9 @@ defmodule Wallaby.Browser do
               raise ExpectationNotMetError,
                     Query.ErrorMessage.message(query, :not_found)
 
-            {:error, :invalid_selector} ->
+            {:error, e} ->
               raise Wallaby.QueryError,
-                    Query.ErrorMessage.message(query, :invalid_selector)
+                    Query.ErrorMessage.message(query, e)
 
             _ ->
               raise Wallaby.ExpectationNotMetError,
@@ -1186,6 +1220,10 @@ defmodule Wallaby.Browser do
       query = unquote(query)
 
       case execute_query(parent, query) do
+        {:error, :invalid_selector} ->
+          raise Wallaby.QueryError,
+                Query.ErrorMessage.message(query, :invalid_selector)
+
         {:error, _not_found} ->
           parent
 
@@ -1368,7 +1406,7 @@ defmodule Wallaby.Browser do
   defp validate_html(parent, %{html_validation: :button_type} = query) do
     buttons = all(parent, Query.css("button", text: query.selector))
 
-    if Enum.count(buttons) == 1 && Enum.any?(buttons) do
+    if Enum.count(buttons) == 1 do
       {:error, :button_with_bad_type}
     else
       {:ok, query}
@@ -1379,23 +1417,28 @@ defmodule Wallaby.Browser do
     label_query = Query.css("label", text: query.selector)
     labels = all(parent, label_query)
 
-    if Enum.count(labels) == 1 do
-      if Enum.any?(labels, &missing_for?(&1)) do
-        {:error, :label_with_no_for}
-      else
-        label = List.first(labels)
-        {:error, {:label_does_not_find_field, Element.attr(label, "for")}}
-      end
-    else
-      {:ok, query}
+    case labels do
+      [label] ->
+        for_attr = Element.attr(label, "for")
+
+        error =
+          if for_attr == nil do
+            :label_with_no_for
+          else
+            id_query = Query.css("[id='#{for_attr}']", count: :any)
+            matching_id_count = parent |> all(id_query) |> Enum.count()
+
+            {:label_does_not_find_field, for_attr, matching_id_count}
+          end
+
+        {:error, error}
+
+      _ ->
+        {:ok, query}
     end
   end
 
   defp validate_html(_, query), do: {:ok, query}
-
-  defp missing_for?(element) do
-    Element.attr(element, "for") == nil
-  end
 
   defp validate_visibility(query, elements) do
     case Query.visible?(query) do
@@ -1436,11 +1479,11 @@ defmodule Wallaby.Browser do
       {:all, _} ->
         {:ok, elements}
 
-      {n, count} when n >= 0 and n < count ->
+      {n, count} when n < count ->
         {:ok, [Enum.at(elements, n)]}
 
       {_, _} ->
-        {:error, {:at_number, query}}
+        {:error, {:not_found, elements}}
     end
   end
 

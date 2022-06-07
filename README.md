@@ -101,9 +101,18 @@ config :wallaby, driver: Wallaby.Chrome # default
 config :wallaby, driver: Wallaby.Selenium
 ```
 
+You'll need to install the actual drivers as well.
+
+- Chrome
+    - [`chromedriver`](https://chromedriver.chromium.org/downloads)
+
+- Selenium  
+    - [`selenium`](https://www.selenium.dev/downloads/)
+    - [`geckodriver`](https://github.com/mozilla/geckodriver) (for Firefox) or [`chromedriver`](https://chromedriver.chromium.org/downloads) (for Chrome)
+
 When calling `use Wallaby.Feature` and using Ecto, please configure your `otp_app`.
 
-```
+```elixir
 config :wallaby, otp_app: :your_app
 ```
 
@@ -127,9 +136,17 @@ defmodule YourAppWeb.Endpoint do
   if sandbox = Application.get_env(:your_app, :sandbox) do
     plug Phoenix.Ecto.SQL.Sandbox, sandbox: sandbox
   end
+
+  # ...
+
+  socket("/live", Phoenix.LiveView.Socket,
+    websocket: [connect_info: [:user_agent, session: @session_options]]
+  )
 ```
 
-Make sure Phoenix is set up to serve endpoints in tests and that the sandbox is enabled:
+It's also important to make sure the `user_agent` is passed in the `connect_info` in order to allow the database and browser session to be wired up correctly.
+
+Then make sure Phoenix is set up to serve endpoints in tests and that the sandbox is enabled:
 
 ```elixir
 # config/test.exs
@@ -181,6 +198,25 @@ Assets are not re-compiled when you run `mix test`.
 This can lead to confusion if you've made changes in JavaScript or CSS but tests are still failing.
 There are two common ways to avoid this confusion.
 
+##### esbuild
+
+If you're using [`esbuild`](https://hex.pm/packages/esbuild) you can add `esbuild default` to the `test` alias in the mix config file.
+
+```elixir
+  defp aliases do
+    [
+      "test": [
+        "esbuild default",
+        "ecto.create --quiet",
+        "ecto.migrate",
+        "test",
+      ]
+    ]
+  end
+```
+
+##### Webpack
+
 The first solution is to run `webpack --mode development --watch` from the assets directory.
 This will ensure that assets get recompiled after any changes.
 
@@ -213,6 +249,38 @@ The second solution is to add a new alias to your mix config that recompiles ass
 ```
 
 This method is less error prone but it will cause a delay when starting your test suite.
+
+#### LiveView
+
+In order to test Phoenix LiveView (as of [version 0.17.7](https://github.com/phoenixframework/phoenix_live_view/releases/tag/v0.17.7)) with Wallaby you'll also need to add a function to each `mount/3` function in your LiveViews, or use the `on_mount` `live_session` lifecycle hook in the router:
+
+```elixir
+defmodule MyApp.Hooks.AllowEctoSandbox do
+  import Phoenix.LiveView
+
+  def on_mount(:default, _params, _session, socket) do
+    allow_ecto_sandbox(socket)
+    {:cont, socket}
+  end
+
+  defp allow_ecto_sandbox(socket) do
+    %{assigns: %{phoenix_ecto_sandbox: metadata}} =
+      assign_new(socket, :phoenix_ecto_sandbox, fn ->
+        if connected?(socket), do: get_connect_info(socket, :user_agent)
+      end)
+
+    Phoenix.Ecto.SQL.Sandbox.allow(metadata, Application.get_env(:your_app, :sandbox))
+  end
+end
+```
+
+and then including the function usage in the router:
+
+```elixir
+live_session :default, on_mount: MyApp.Hooks.AllowEctoSandbox do
+  # ...
+end
+```
 
 #### Umbrella Apps
 

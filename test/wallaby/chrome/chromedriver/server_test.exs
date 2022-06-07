@@ -149,7 +149,7 @@ defmodule Wallaby.Chrome.Chromedriver.ServerTest do
     {:ok, chromedriver_path} = Chrome.find_chromedriver_executable()
 
     chromedriver_path
-    |> ChromeTestScript.build_wrapper_script(opts)
+    |> ChromeTestScript.build_chromedriver_wrapper_script(opts)
     |> TestScriptUtils.write_test_script!(base_dir)
   end
 

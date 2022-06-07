@@ -137,10 +137,10 @@ defmodule Wallaby.Integration.QueryTest do
   end
 
   test "queries can not select an element off the end of the list", %{session: session} do
-    assert_raise Wallaby.QueryError, fn ->
+    assert_raise Wallaby.QueryError, ~r/and return element at index 5, but only 5 visible/, fn ->
       session
       |> Browser.visit("/page_1.html")
-      |> Browser.find(Query.css(".user", count: 5, at: 5))
+      |> Browser.find(Query.css(".user", at: 5))
     end
   end
 
