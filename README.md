@@ -202,11 +202,14 @@ There are two common ways to avoid this confusion.
 
 If you're using [`esbuild`](https://hex.pm/packages/esbuild) you can add `esbuild default` to the `test` alias in the mix config file.
 
+If you're using [`dart_sass`](https://hex.pm/packages/dart_sass) you will also need to add `sass default` to the alias.
+
 ```elixir
   defp aliases do
     [
       "test": [
         "esbuild default",
+        "sass default",
         "ecto.create --quiet",
         "ecto.migrate",
         "test",
