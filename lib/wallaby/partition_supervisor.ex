@@ -174,6 +174,8 @@
 #      of your accepting any such warranty or additional liability.
 #
 #   END OF TERMS AND CONDITIONS
+#
+# Link to source code: https://github.com/elixir-lang/elixir/
 
 unless Code.ensure_loaded?(PartitionSupervisor) do
   defmodule PartitionSupervisor do
