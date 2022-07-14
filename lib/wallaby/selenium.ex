@@ -382,11 +382,13 @@ defmodule Wallaby.Selenium do
     zipfile
   end
 
+  @binread_arg if Version.parse!(System.version()).minor >= 13, do: :eof, else: :all
+
   # Base64 encode the zipfile for transfer to remote Selenium
   defp encode_zipfile(zipfile) do
     File.open!(zipfile, [:read, :raw], fn f ->
       f
-      |> IO.binread(:all)
+      |> IO.binread(@binread_arg)
       |> Base.encode64()
     end)
   end
