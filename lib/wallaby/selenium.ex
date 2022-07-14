@@ -28,7 +28,7 @@ defmodule Wallaby.Selenium do
   ### Selenium Remote URL
 
   It is possible to globally set Selenium's "Remote URL" by setting the following option.
-  
+
   By default it is http://localhost:4444/wd/hub/
 
   ```elixir

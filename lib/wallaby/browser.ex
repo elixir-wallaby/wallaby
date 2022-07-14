@@ -1181,9 +1181,7 @@ defmodule Wallaby.Browser do
 
             _ ->
               raise Wallaby.ExpectationNotMetError,
-                    "Wallaby has encountered an internal error: #{inspect(error)} with session: #{
-                      inspect(parent)
-                    }"
+                    "Wallaby has encountered an internal error: #{inspect(error)} with session: #{inspect(parent)}"
           end
       end
     end

@@ -4,7 +4,6 @@ defmodule Wallaby.Chrome.Chromedriver do
   alias Wallaby.Chrome
   alias Wallaby.Chrome.Chromedriver.Server
 
-
   def child_spec(_arg) do
     {:ok, chromedriver_path} = Chrome.find_chromedriver_executable()
     Server.child_spec([chromedriver_path, []])

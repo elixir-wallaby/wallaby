@@ -145,10 +145,9 @@ defmodule Wallaby.Chrome do
     children = [
       Wallaby.Driver.LogStore,
       {PartitionSupervisor,
-        child_spec: Wallaby.Chrome.Chromedriver,
-        name: Wallaby.Chromedrivers,
-        partitions: System.schedulers_online()
-      }
+       child_spec: Wallaby.Chrome.Chromedriver,
+       name: Wallaby.Chromedrivers,
+       partitions: System.schedulers_online()}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

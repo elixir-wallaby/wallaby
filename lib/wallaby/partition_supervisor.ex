@@ -440,6 +440,7 @@ unless Code.ensure_loaded?(PartitionSupervisor) do
     # For whereis_name, we want to lookup on GenServer.whereis/1
     # just once, so we lookup the name and partitions together.
     defp name_partitions(name) when is_atom(name) do
+      # credo:disable-for-next-line
       try do
         {name, :ets.lookup_element(name, :partitions, 2)}
       rescue
