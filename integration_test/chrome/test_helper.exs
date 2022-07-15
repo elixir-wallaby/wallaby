@@ -1,4 +1,4 @@
-ExUnit.configure(max_cases: 4, exclude: [pending: true])
+ExUnit.configure(exclude: [pending: true])
 ExUnit.start()
 
 # Load support files

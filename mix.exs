@@ -11,7 +11,7 @@ defmodule Wallaby.Mixfile do
     [
       app: :wallaby,
       version: @version,
-      elixir: "~> 1.8",
+      elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -48,7 +48,7 @@ defmodule Wallaby.Mixfile do
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:benchee, "~> 0.9", only: :dev},
       {:benchee_html, "~> 0.3", only: :dev},
-      {:credo, "~> 1.6.0-rc.1", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.6.4", only: [:dev, :test], runtime: false},
       {:bypass, "~> 1.0.0", only: :test},
       {:ex_doc, "~> 0.23", only: :dev},
       {:ecto_sql, ">= 3.0.0", optional: true},
