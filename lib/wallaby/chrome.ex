@@ -174,7 +174,7 @@ defmodule Wallaby.Chrome do
             "HKLM\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Google Chrome"
           ])
 
-        chrome_version = parse_version("Version", stdout)
+        chrome_version = parse_version(stdout)
 
         {:ok, chrome_version}
 
@@ -182,7 +182,8 @@ defmodule Wallaby.Chrome do
         case find_chrome_executable() do
           {:ok, chrome_executable} ->
             {stdout, 0} = System.cmd(chrome_executable, ["--version"])
-            chrome_version = parse_version("Google Chrome", stdout)
+
+            chrome_version = parse_version(stdout)
 
             {:ok, chrome_version}
 
@@ -198,7 +199,7 @@ defmodule Wallaby.Chrome do
     case find_chromedriver_executable() do
       {:ok, chromedriver_executable} ->
         {stdout, 0} = System.cmd(chromedriver_executable, ["--version"])
-        chromedriver_version = parse_version("ChromeDriver", stdout)
+        chromedriver_version = parse_version(stdout)
 
         {:ok, chromedriver_version}
 
@@ -210,24 +211,27 @@ defmodule Wallaby.Chrome do
   @doc false
   @spec find_chrome_executable :: {:ok, String.t()} | {:error, DependencyError.t()}
   def find_chrome_executable do
-    default_chrome_path =
+    default_chrome_paths =
       case :os.type() do
         {:unix, :darwin} ->
-          "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+          [
+            "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome",
+            "/Applications/Chromium.app/Contents/MacOS/Chromium"
+          ]
 
         {:unix, :linux} ->
-          "google-chrome"
+          ["google-chrome", "chromium"]
 
         {:win32, :nt} ->
-          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+          ["C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"]
       end
 
     chrome_path =
       :wallaby
       |> Application.get_env(:chromedriver, [])
-      |> Keyword.get(:binary, default_chrome_path)
+      |> Keyword.get(:binary, [])
 
-    [Path.expand(chrome_path), default_chrome_path]
+    [Path.expand(chrome_path) | default_chrome_paths]
     |> Enum.find(&System.find_executable/1)
     |> case do
       path when is_binary(path) ->
@@ -312,9 +316,9 @@ defmodule Wallaby.Chrome do
     {:error, exception}
   end
 
-  defp parse_version(prefix, body) do
+  defp parse_version(body) do
     result =
-      case Regex.run(~r/\b#{prefix}\b.*?(\d+\.\d+(\.\d+)?)/, body) do
+      case Regex.run(~r/.*?(\d+\.\d+(\.\d+)?)/, body) do
         [_, version, _] ->
           String.split(version, ".")
 
