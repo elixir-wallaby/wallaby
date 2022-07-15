@@ -2,8 +2,22 @@
 
 ## Main
 
-- Fix `refute_has` when passed a query with an invalid selector.
-- Specifying `at` now removes the default `count` of 1 (#641)
+## v0.30.0 (2022-07-14)
+
+### Breaking
+
+- Now only supports Elixir v1.12 and higher. Please open an issue if this is too restrictive. This was done to allow us to vendor `PartitionSupervisor`, which uses functions that were introduced in v1.12, so vendoring only gets us that far.
+
+### Fixes
+
+- Handle errors related to Wallaby.Element more consistently #632
+- Fix `refute_has` when passed a query with an invalid selector #639
+- Fix ambiguity between imported Browser.tap/2 and Kernel.tap/2 #686
+- Fix `remote_url` config option for selenium driver #582
+- Specifying `at` now removes the default `count` of 1 #641
+- Various documentation fixes/improvements
+- Start a ChromeDriver for every scheduler #692
+  - This may fix a long standing issue #365
 
 ## v0.29.1 (2021-09-22)
 
