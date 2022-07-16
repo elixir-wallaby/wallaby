@@ -2,6 +2,12 @@
 
 ## Main
 
+## v0.30.1 (2022-07-16)
+
+### Fixes
+
+- fix(chromedriver): Account for Chromium when doing the version matching (#698)
+
 ## v0.30.0 (2022-07-14)
 
 ### Breaking
