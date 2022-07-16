@@ -220,7 +220,7 @@ defmodule Wallaby.Chrome do
           ]
 
         {:unix, :linux} ->
-          ["google-chrome", "chromium"]
+          ["google-chrome", "chromium", "chromium-browser"]
 
         {:win32, :nt} ->
           ["C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"]
