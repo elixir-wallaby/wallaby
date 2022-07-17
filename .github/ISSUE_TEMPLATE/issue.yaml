@@ -1,0 +1,92 @@
+---
+name: Report an issue
+description:
+  Please describe the the bug you believe to have discovered.
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Thank you for contributing to Elixir! :heart:
+
+
+        Please, do not use this form for guidance, questions or support.
+        Try instead in [Elixir Forum](https://elixirforum.com),
+        the [IRC Chat](https://web.libera.chat/#elixir),
+        [Stack Overflow](https://stackoverflow.com/questions/tagged/elixir),
+        [Slack](https://elixir-slackin.herokuapp.com),
+        [Discord](https://discord.gg/elixir) or in other online communities.
+
+  - type: textarea
+    id: elixir-and-otp-version
+    attributes:
+      label: Elixir and Erlang/OTP versions
+      description: Paste the output of `elixir --version` here.
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      description: The operating system that this issue is happening on.
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      description: The browser which is demonstrating the error.
+    validations:
+      required: true
+
+  - type: input
+    id: driver
+    attributes:
+      label: Driver
+      description: The webdriver that is demonstrating the error (ChromeDriver, GeckoDriver, Selenium, etc)
+    validations:
+      required: true
+
+  - type: checkbox
+    id: confirmation
+    attributes:
+      label: Correct Configuration
+      description: This includes `base_url` is set, assets are being compiled before running your tests, Ecto sandbox is configured, server is st to true for Phoenix Endpoints.
+    options:
+    - label: I confirm that I have Wallaby configured correctly.
+      required: true
+
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+      description: >
+        Include code samples, errors, and stacktraces if appropriate.
+
+
+        If reporting a bug, please include the reproducing steps.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A short description on how you expect the code to behave.
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-code
+    attributes:
+      label: Test Code & HTML
+      description: Please include your failing test and any relevant HTML. This can be your template and the HTML that is actually rendered in the browser.
+    validations:
+      required: true
+
+  - type: input
+    id: demonstration-project
+    attributes:
+      label: Demonstration Project
+      description: If you are able to provide a minimal reproduction, please include a link to the repository.
