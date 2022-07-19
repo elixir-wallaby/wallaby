@@ -48,7 +48,7 @@ body:
     validations:
       required: true
 
-  - type: checkbox
+  - type: checkboxes
     id: confirmation
     attributes:
       label: Correct Configuration
