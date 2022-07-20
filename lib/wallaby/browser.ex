@@ -101,6 +101,7 @@ defmodule Wallaby.Browser do
   assert page
   |> create_todo("Write Wallaby Documentation")
   |> todo_was_created?
+  ```
   """
 
   alias Wallaby.CookieError
