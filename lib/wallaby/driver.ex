@@ -115,6 +115,8 @@ defmodule Wallaby.Driver do
   Invoked to set a cookie on a session
   """
   @callback set_cookie(Session.t(), String.t(), String.t()) :: {:ok, any} | {:error, reason}
+  @callback set_cookie(Session.t(), String.t(), String.t(), keyword()) ::
+              {:ok, any} | {:error, reason}
 
   @doc """
   Invoked to set the size of the currently focused window.

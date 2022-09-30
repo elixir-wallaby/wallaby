@@ -223,8 +223,8 @@ defmodule Wallaby.Selenium do
   end
 
   @doc false
-  def set_cookie(%Session{} = session, key, value) do
-    WebdriverClient.set_cookie(session, key, value)
+  def set_cookie(%Session{} = session, key, value, attributes \\ []) do
+    WebdriverClient.set_cookie(session, key, value, attributes)
   end
 
   @doc false
