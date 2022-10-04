@@ -1281,12 +1281,12 @@ defmodule Wallaby.Browser do
     cookies_list
   end
 
-  def set_cookie(%Session{driver: driver} = session, key, value) do
+  def set_cookie(%Session{driver: driver} = session, key, value, attributes \\ []) do
     if blank_page?(session) do
       raise CookieError
     end
 
-    case driver.set_cookie(session, key, value) do
+    case driver.set_cookie(session, key, value, attributes) do
       {:ok, _list} ->
         session
 

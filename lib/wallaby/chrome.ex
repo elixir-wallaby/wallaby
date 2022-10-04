@@ -447,8 +447,11 @@ defmodule Wallaby.Chrome do
   def page_title(session), do: delegate(:page_title, session)
   @doc false
   def page_source(session), do: delegate(:page_source, session)
+
   @doc false
-  def set_cookie(session, key, value), do: delegate(:set_cookie, session, [key, value])
+  def set_cookie(session, key, value, attributes \\ []),
+    do: delegate(:set_cookie, session, [key, value, attributes])
+
   @doc false
   def visit(session, url), do: delegate(:visit, session, [url])
   @doc false

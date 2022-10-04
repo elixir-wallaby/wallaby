@@ -72,7 +72,7 @@ defmodule Wallaby.CookieError do
 
     You're most likely seeing this error because you're trying to set a cookie before
     you have visited a page. You can fix this issue by calling `visit/1`
-    before you call `set_cookie/3`.
+    before you call `set_cookie/3` or `set_cookie/4`.
     """
 
     %__MODULE__{message: msg}

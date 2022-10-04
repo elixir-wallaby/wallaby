@@ -415,12 +415,26 @@ defmodule Wallaby.WebdriverClient do
 
   @doc """
   Sets a cookie for the session.
+
+  It accepts a list of optional cookie attributes per the
+  [WebDriver specification](https://www.w3.org/TR/webdriver1/#cookies):
+
+  * path (string)
+  * domain (string)
+  * secure (boolean)
+  * httpOnly (boolean)
+  * expiry (integer; number of seconds since Unix Epoch)
   """
   @spec set_cookie(Session.t(), String.t(), String.t()) :: {:ok, []}
-  def set_cookie(session, key, value) do
-    params = %{cookie: %{name: key, value: value}}
+  @spec set_cookie(Session.t(), String.t(), String.t(), keyword()) :: {:ok, []}
+  def set_cookie(session, key, value, attributes \\ []) do
+    cookie_params =
+      attributes
+      |> Enum.into(%{})
+      |> Map.take(~w[path domain secure httpOnly expiry]a)
+      |> Map.merge(%{name: key, value: value})
 
-    with {:ok, resp} <- request(:post, "#{session.url}/cookie", params) do
+    with {:ok, resp} <- request(:post, "#{session.url}/cookie", %{cookie: cookie_params}) do
       Map.fetch(resp, "value")
     end
   end
