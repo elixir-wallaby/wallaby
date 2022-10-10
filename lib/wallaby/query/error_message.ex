@@ -53,6 +53,15 @@ defmodule Wallaby.Query.ErrorMessage do
     """
   end
 
+  def message(%{selector: selector}, :label_does_not_find_button) do
+    """
+    The text '#{selector}' matched a label but that label does not find the button.
+
+    You should ensure you are using the right query function and that the text matches the
+    label's raw HTML exactly (before any CSS transforms are applied).
+    """
+  end
+
   def message(%{selector: selector}, :button_with_bad_type) do
     """
     The text '#{selector}' matched a button but the button has an invalid 'type' attribute.

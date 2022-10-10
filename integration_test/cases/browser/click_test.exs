@@ -25,6 +25,25 @@ defmodule Wallaby.Integration.Browser.ClickTest do
 
       assert selected?(page, Query.css("#option2"))
     end
+
+    for {function, button_type} <- [
+          {&Query.checkbox/1, "checkbox"},
+          {&Query.button/1, "button"},
+          {&Query.radio_button/1, "radio"}
+        ] do
+      test "throw an error if label exists for #{button_type} but is not a case match", %{
+        page: page
+      } do
+        assert_raise Wallaby.QueryError,
+                     ~r/matched a label but that label does not find the button/,
+                     fn ->
+                       click(
+                         page,
+                         unquote(function).("misreporting html errors #{unquote(button_type)}")
+                       )
+                     end
+      end
+    end
   end
 
   describe "click/2 with radio buttons (choose replacement)" do

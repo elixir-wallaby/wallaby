@@ -1395,7 +1395,7 @@ defmodule Wallaby.Browser do
     if Enum.count(buttons) == 1 do
       {:error, :button_with_bad_type}
     else
-      {:ok, query}
+      validate_button_label(parent, query)
     end
   end
 
@@ -1411,9 +1411,7 @@ defmodule Wallaby.Browser do
           if for_attr == nil do
             :label_with_no_for
           else
-            id_query = Query.css("[id='#{for_attr}']", count: :any)
-            matching_id_count = parent |> all(id_query) |> Enum.count()
-
+            matching_id_count = get_for_attr_id_count(parent, for_attr)
             {:label_does_not_find_field, for_attr, matching_id_count}
           end
 
@@ -1425,6 +1423,39 @@ defmodule Wallaby.Browser do
   end
 
   defp validate_html(_, query), do: {:ok, query}
+
+  defp validate_button_label(parent, query) do
+    labels = all(parent, Query.css("label", text: query.selector))
+
+    case labels do
+      [label] ->
+        for_attr = Element.attr(label, "for")
+        input_children = all(label, Query.css("input"))
+
+        error =
+          cond do
+            is_nil(for_attr) and Enum.empty?(input_children) ->
+              :label_with_no_for
+
+            not is_nil(for_attr) ->
+              matching_id_count = get_for_attr_id_count(parent, for_attr)
+              {:label_does_not_find_field, for_attr, matching_id_count}
+
+            true ->
+              :label_does_not_find_button
+          end
+
+        {:error, error}
+
+      _ ->
+        {:ok, query}
+    end
+  end
+
+  defp get_for_attr_id_count(parent, for_attr) do
+    id_query = Query.css("[id='#{for_attr}']", count: :any)
+    parent |> all(id_query) |> Enum.count()
+  end
 
   defp validate_visibility(query, elements) do
     case Query.visible?(query) do

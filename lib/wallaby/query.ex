@@ -254,7 +254,7 @@ defmodule Wallaby.Query do
       method: :radio_button,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :bad_label
+      html_validation: :button_type
     }
   end
 
@@ -268,7 +268,7 @@ defmodule Wallaby.Query do
       method: :checkbox,
       selector: selector,
       conditions: build_conditions(opts),
-      html_validation: :bad_label
+      html_validation: :button_type
     }
   end
 
