@@ -660,9 +660,9 @@ defmodule Wallaby.Browser do
 
   ## Example
 
-      iex> Wallaby.Session.send_keys(session, ["Example Text", :enter])
-      iex> Wallaby.Session.send_keys(session, [:enter])
-      iex> Wallaby.Session.send_keys(session, [:shift, :enter])
+      iex> Wallaby.Browser.send_keys(session, ["Example Text", :enter])
+      iex> Wallaby.Browser.send_keys(session, [:enter])
+      iex> Wallaby.Browser.send_keys(session, [:shift, :enter])
 
   ### Note
 
