@@ -118,9 +118,13 @@ defmodule Wallaby.Query.ErrorMessage do
     "'#{name}' with value '#{value}'"
   end
 
-  def selector(%Query{selector: selector}) do
-    "'#{selector}'"
+  def selector(%Query{selector: selector, conditions: conditions}) do
+    text = with_text(conditions[:text])
+    "'#{selector}'#{text}"
   end
+
+  defp with_text(nil), do: ""
+  defp with_text(text), do: " and contained the text '#{text}'"
 
   defp with_index(:all), do: nil
   defp with_index(at), do: " and return element at index #{at}"

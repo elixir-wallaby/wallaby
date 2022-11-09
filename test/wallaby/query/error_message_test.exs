@@ -5,6 +5,34 @@ defmodule Wallaby.Query.ErrorMessageTest do
   alias Wallaby.Query.ErrorMessage
 
   describe "message/1" do
+    test "inclusion of binary 'text' condition when present in css query" do
+      message =
+        Query.css(".lcp-value", text: "322ms")
+        |> Map.put(:result, [])
+        |> ErrorMessage.message(:not_found)
+        |> format
+
+      assert message ==
+               format("""
+               Expected to find 1 visible element that matched the css '.lcp-value' and contained the text '322ms', but 0 visible
+               elements were found.
+               """)
+    end
+
+    test "no reference of 'text' condition when it isn't specified" do
+      message =
+        Query.css(".lcp-value")
+        |> Map.put(:result, [])
+        |> ErrorMessage.message(:not_found)
+        |> format
+
+      assert message ==
+               format("""
+               Expected to find 1 visible element that matched the css '.lcp-value', but 0 visible
+               elements were found.
+               """)
+    end
+
     test "when the results are more than the expected count" do
       message =
         Query.css(".test", count: 1)
