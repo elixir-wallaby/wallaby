@@ -257,6 +257,7 @@ In order to test Phoenix LiveView (as of [version 0.17.7](https://github.com/pho
 ```elixir
 defmodule MyApp.Hooks.AllowEctoSandbox do
   import Phoenix.LiveView
+  import Phoenix.Component
 
   def on_mount(:default, _params, _session, socket) do
     allow_ecto_sandbox(socket)
