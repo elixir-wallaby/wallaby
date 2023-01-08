@@ -98,6 +98,27 @@ defmodule Wallaby.Chrome do
     }
   ```
 
+  ### Partitions
+  You can explicitly configure the number of chromedriver partitions Wallaby will spin up.
+
+  Without this explicit configuration, Wallaby will do its best to make a good choice.
+
+  What choice will it make?
+
+  For machines with less than 56 cores, it will fire up a partition for each core.
+
+  At 56+ cores, though, decreasing returns set in, so Wallaby only uses one-sixth of the available
+  cores by default.
+
+  See the `Wallaby.Chrome.DefaultPartitionCount` module for more details.
+
+  ```elixir
+  config :wallaby,
+    chromedriver: [
+      partitions: 10
+    ]
+  ```
+
   ## Notes
 
   This driver requires [Chromedriver](https://sites.google.com/a/chromium.org/chromedriver/) to be installed in your path.
@@ -109,6 +130,7 @@ defmodule Wallaby.Chrome do
   @default_readiness_timeout 10_000
 
   alias Wallaby.Chrome.Chromedriver
+  alias Wallaby.Chrome.DefaultPartitionCount
   alias Wallaby.WebdriverClient
   alias Wallaby.{DependencyError, Metadata}
   import Wallaby.Driver.LogChecker
@@ -147,7 +169,7 @@ defmodule Wallaby.Chrome do
       {PartitionSupervisor,
        child_spec: Wallaby.Chrome.Chromedriver,
        name: Wallaby.Chromedrivers,
-       partitions: System.schedulers_online()}
+       partitions: partitions()}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -604,5 +626,14 @@ defmodule Wallaby.Chrome do
   defp update_unless_nil(capabilities, key, _, updater) do
     capabilities
     |> update_in([:chromeOptions, key], updater)
+  end
+
+  defp partitions do
+    system_cores_fn = Keyword.get(chromedriver_opts(), :system_cores_fn)
+    Keyword.get(chromedriver_opts(), :partitions, DefaultPartitionCount.choose(system_cores_fn))
+  end
+
+  defp chromedriver_opts do
+    Application.get_env(:wallaby, :chromedriver, [])
   end
 end
