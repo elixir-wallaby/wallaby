@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 23.x, elixir: 1.12.x}, {otp: 25.x, elixir: 1.13.x}]
+        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 25.x, elixir: 1.13.x}]
       fail-fast: false
 
     env:
