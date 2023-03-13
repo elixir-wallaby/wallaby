@@ -76,7 +76,7 @@ jobs:
 
     - name: Check formatting
       run: mix format --check-formatted
-      if: matrix.elixir == '1.8.x'
+      if: matrix.elixir-otp.elixir == '1.13.x'
 
     - name: Run Credo
       run: mix credo --strict
