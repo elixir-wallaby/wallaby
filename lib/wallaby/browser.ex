@@ -999,26 +999,6 @@ defmodule Wallaby.Browser do
     parent
   end
 
-  def find_shadow(%{driver: driver}, query) do
-    retry(fn ->
-      try do
-        with {:ok, query} <- Query.validate(query),
-             compiled_query <- Query.compile(query),
-             {:ok, elements} <- driver.find_shadow(parent, compiled_query),
-             {:ok, elements} <- validate_visibility(query, elements),
-             {:ok, elements} <- validate_text(query, elements),
-             {:ok, elements} <- validate_selected(query, elements),
-             {:ok, elements} <- validate_count(query, elements),
-             {:ok, elements} <- do_at(query, elements) do
-          elements
-        end
-      rescue
-        StaleReferenceError ->
-          {:error, :stale_reference}
-      end
-    end)
-  end
-
   @doc """
   Finds all of the DOM elements that match the CSS selector. If no elements are
   found then an empty list is immediately returned. This is equivalent to calling
@@ -1030,6 +1010,11 @@ defmodule Wallaby.Browser do
       parent,
       %Query{query | conditions: Keyword.merge(query.conditions, count: nil, minimum: 0)}
     )
+  end
+
+  def shadow_root(%{driver: driver} = element) do
+    IO.inspect(driver)
+    driver.shadow_root(element)
   end
 
   @doc """

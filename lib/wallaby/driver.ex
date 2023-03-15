@@ -181,9 +181,9 @@ defmodule Wallaby.Driver do
               {:ok, [Element.t()]} | {:error, reason}
 
   @doc """
-  Invoked to find child elements of the given session/element.
+  Invoked to find shadow root of given element
   """
-  @callback find_shadow(Session.t() | Element.t(), Query.compiled()) ::
+  @callback shadow_root(Element.t()) ::
               {:ok, Element.t()} | {:error, reason}
 
   @doc """

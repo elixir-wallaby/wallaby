@@ -410,6 +410,9 @@ defmodule Wallaby.Chrome do
   defdelegate accept_prompt(session, input, fun), to: WebdriverClient
   @doc false
   defdelegate dismiss_prompt(session, fun), to: WebdriverClient
+
+  defdelegate shadow_root(element), to: WebdriverClient
+
   @doc false
   defdelegate parse_log(log), to: Wallaby.Chrome.Logger
 
@@ -530,9 +533,6 @@ defmodule Wallaby.Chrome do
   @doc false
   def find_elements(session_or_element, compiled_query),
     do: delegate(:find_elements, session_or_element, [compiled_query])
-
-  def find_shadow(session_or_element, compiled_query),
-    do: delegate(:find_shadow, session_or_element, [compiled_query])
 
   @doc false
   def send_keys(session_or_element, keys), do: delegate(:send_keys, session_or_element, [keys])

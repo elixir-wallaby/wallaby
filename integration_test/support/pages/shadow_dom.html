@@ -1,12 +1,13 @@
 <html>
   <head>
     <script>
-      window.customElements.define('shadow-test', class extends HTMLElement() {
-        connecteCallback() {
+      class ShadowTestElement extends HTMLElement {
+        connectedCallback() {
           this.attachShadow({mode: 'open'});
           this.shadowRoot.innerHTML = '<div id="in_shadow">I am in shadow</div>';
         }
-      });
+      }
+      window.customElements.define('shadow-test', ShadowTestElement);
     </script>
   </head>
 

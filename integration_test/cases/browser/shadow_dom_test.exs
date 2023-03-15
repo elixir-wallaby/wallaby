@@ -13,10 +13,11 @@ defmodule Wallaby.Integration.Browser.ShadowDomTest do
   end
 
   test "can find a shadow root", %{session: session} do
-    element =
+    shadow_root =
       session
-      |> find_shadow(Query.css("shadow-test"))
+      |> find(Query.css("shadow-test"))
+      |> shadow_root()
 
-    assert element
+    assert shadow_root
   end
 end
