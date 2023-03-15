@@ -1013,7 +1013,6 @@ defmodule Wallaby.Browser do
   end
 
   def shadow_root(%{driver: driver} = element) do
-    IO.inspect(driver)
     driver.shadow_root(element)
   end
 

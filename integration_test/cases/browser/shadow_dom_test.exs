@@ -20,4 +20,21 @@ defmodule Wallaby.Integration.Browser.ShadowDomTest do
 
     assert shadow_root
   end
+
+  test "can find stuff within da shadow dom", %{session: session} do
+    element =
+      session
+      |> find(Query.css("shadow-test"))
+      |> shadow_root()
+      |> find(Query.css("#in-shadow"))
+  end
+
+  test "can click stuff within da shadow dom", %{session: session} do
+    element =
+      session
+      |> find(Query.css("shadow-test"))
+      |> shadow_root()
+      |> click(Query.css("button"))
+  end
+
 end

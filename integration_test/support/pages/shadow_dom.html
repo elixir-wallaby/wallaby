@@ -4,7 +4,10 @@
       class ShadowTestElement extends HTMLElement {
         connectedCallback() {
           this.attachShadow({mode: 'open'});
-          this.shadowRoot.innerHTML = '<div id="in_shadow">I am in shadow</div>';
+          this.shadowRoot.innerHTML = `
+            <div id="in-shadow">I am in shadow</div>
+            <button>Hi!</button>
+          `;
         }
       }
       window.customElements.define('shadow-test', ShadowTestElement);
