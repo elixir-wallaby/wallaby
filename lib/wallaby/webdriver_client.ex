@@ -50,17 +50,9 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
-  Finds an element on the page for a session. If an element is provided then
-  the query will be scoped to within that element.
+  Finds the shadow root for a given element.
   """
-  @spec find_elements(Session.t() | Element.t(), Query.compiled()) :: {:ok, [Element.t()]}
-  def find_elements(parent, locator) do
-    with {:ok, resp} <- request(:post, parent.url <> "/elements", to_params(locator)),
-         {:ok, elements} <- Map.fetch(resp, "value"),
-         elements <- Enum.map(elements || [], &cast_as_element(parent, &1)),
-         do: {:ok, elements}
-  end
-
+  @spec shadow_root(Element.t()) :: Element.t()
   def shadow_root(element) do
     with {:ok, resp} <- request(:get, element.url <> "/shadow"),
          {:ok, shadow_root} <- Map.fetch(resp, "value") do
