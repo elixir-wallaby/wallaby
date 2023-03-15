@@ -37,4 +37,12 @@ defmodule Wallaby.Integration.Browser.ShadowDomTest do
       |> click(Query.css("button"))
   end
 
+  test "attempting to access a shadow root where there aint one", %{session: session} do
+    shadow_root =
+      session
+      |> find(Query.css("#outside-shadow"))
+      |> shadow_root()
+    refute shadow_root
+  end
+
 end

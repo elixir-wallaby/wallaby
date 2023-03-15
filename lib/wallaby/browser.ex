@@ -1013,7 +1013,10 @@ defmodule Wallaby.Browser do
   end
 
   def shadow_root(%{driver: driver} = element) do
-    driver.shadow_root(element)
+    case driver.shadow_root(element) do
+      {:ok, element} -> element
+      {:error, _error} -> nil
+    end
   end
 
   @doc """
