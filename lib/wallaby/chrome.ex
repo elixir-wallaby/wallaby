@@ -531,6 +531,9 @@ defmodule Wallaby.Chrome do
   def find_elements(session_or_element, compiled_query),
     do: delegate(:find_elements, session_or_element, [compiled_query])
 
+  def find_shadow(session_or_element, compiled_query),
+    do: delegate(:find_shadow, session_or_element, [compiled_query])
+
   @doc false
   def send_keys(session_or_element, keys), do: delegate(:send_keys, session_or_element, [keys])
   @doc false

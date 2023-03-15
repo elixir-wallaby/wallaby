@@ -49,6 +49,18 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
+  Finds an element on the page for a session. If an element is provided then
+  the query will be scoped to within that element.
+  """
+  @spec find_elements(Session.t() | Element.t(), Query.compiled()) :: {:ok, [Element.t()]}
+  def find_elements(parent, locator) do
+    with {:ok, resp} <- request(:post, parent.url <> "/elements", to_params(locator)),
+         {:ok, elements} <- Map.fetch(resp, "value"),
+         elements <- Enum.map(elements || [], &cast_as_element(parent, &1)),
+         do: {:ok, elements}
+  end
+
+  @doc """
   Sets the value of an element.
   """
   @spec set_value(Element.t(), String.t()) :: {:ok, nil} | {:error, Driver.reason()}

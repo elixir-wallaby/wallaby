@@ -181,6 +181,12 @@ defmodule Wallaby.Driver do
               {:ok, [Element.t()]} | {:error, reason}
 
   @doc """
+  Invoked to find child elements of the given session/element.
+  """
+  @callback find_shadow(Session.t() | Element.t(), Query.compiled()) ::
+              {:ok, Element.t()} | {:error, reason}
+
+  @doc """
   Invoked to execute JavaScript in the browser.
   """
   @callback execute_script(Session.t() | Element, String.t(), [any]) ::
