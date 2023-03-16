@@ -1,5 +1,4 @@
 defmodule Wallaby.Integration.Browser.ShadowDomTest do
-
   use Wallaby.Integration.SessionCase, async: true
 
   setup %{session: session} do
@@ -35,6 +34,7 @@ defmodule Wallaby.Integration.Browser.ShadowDomTest do
       |> find(Query.css("shadow-test"))
       |> shadow_root()
       |> click(Query.css("button"))
+
     assert element
   end
 
@@ -43,7 +43,7 @@ defmodule Wallaby.Integration.Browser.ShadowDomTest do
       session
       |> find(Query.css("#outside-shadow"))
       |> shadow_root()
+
     refute shadow_root
   end
-
 end
