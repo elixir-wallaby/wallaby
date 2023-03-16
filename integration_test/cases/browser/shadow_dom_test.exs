@@ -2,8 +2,6 @@ defmodule Wallaby.Integration.Browser.ShadowDomTest do
 
   use Wallaby.Integration.SessionCase, async: true
 
-  import Wallaby.Query, only: [css: 1]
-
   setup %{session: session} do
     page =
       session
@@ -27,6 +25,8 @@ defmodule Wallaby.Integration.Browser.ShadowDomTest do
       |> find(Query.css("shadow-test"))
       |> shadow_root()
       |> find(Query.css("#in-shadow"))
+
+    assert element
   end
 
   test "can click stuff within da shadow dom", %{session: session} do
@@ -35,6 +35,7 @@ defmodule Wallaby.Integration.Browser.ShadowDomTest do
       |> find(Query.css("shadow-test"))
       |> shadow_root()
       |> click(Query.css("button"))
+    assert element
   end
 
   test "attempting to access a shadow root where there aint one", %{session: session} do
