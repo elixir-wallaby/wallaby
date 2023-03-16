@@ -410,7 +410,7 @@ defmodule Wallaby.Chrome do
   defdelegate accept_prompt(session, input, fun), to: WebdriverClient
   @doc false
   defdelegate dismiss_prompt(session, fun), to: WebdriverClient
-
+  @doc false
   defdelegate shadow_root(element), to: WebdriverClient
 
   @doc false
