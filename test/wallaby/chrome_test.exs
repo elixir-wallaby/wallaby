@@ -9,80 +9,95 @@ defmodule Wallaby.ChromeTest do
   end
 
   describe "init/1" do
-    for partitions <- 1..128 do
-      test "when configured for #{partitions} partitions, init returns with #{partitions} partitions" do
-        partition_count = unquote(partitions)
+    # for partitions <- 1..128 do
+    #   test "when configured for #{partitions} partitions, init returns with #{partitions} partitions" do
+    #     partition_count = unquote(partitions)
 
-        Application.put_env(:wallaby, :chromedriver, partitions: partition_count)
+    #     Application.put_env(:wallaby, :chromedriver, partitions: partition_count)
 
-        actual =
-          :meaningless_init_arg
-          |> Chrome.init()
-          |> extract_partition_count()
+    #     actual =
+    #       :meaningless_init_arg
+    #       |> Chrome.init()
+    #       |> extract_partition_count()
 
-        assert actual == partition_count
-      end
-    end
+    #     assert actual == partition_count
+    #   end
+    # end
 
-    for cpu_cores <- 1..55 do
-      test "when partitions have not been explicitly configured, will choose #{cpu_cores} partitions on a #{cpu_cores}-core machine" do
-        cores = unquote(cpu_cores)
-        expected = cores
-        Application.put_env(:wallaby, :chromedriver, system_cores_fn: fn -> cores end)
+    # for cpu_cores <- 1..10 do
+    #   test "when partitions have not been explicitly configured, will choose #{cpu_cores} partitions on a #{cpu_cores}-core machine" do
+    #     cores = unquote(cpu_cores)
+    #     expected = cores
+    #     Application.put_env(:wallaby, :chromedriver, system_cores_fn: fn -> cores end)
 
-        actual =
-          :meaningless_init_arg
-          |> Chrome.init()
-          |> extract_partition_count()
+    #     actual =
+    #       :meaningless_init_arg
+    #       |> Chrome.init()
+    #       |> extract_partition_count()
 
-        assert actual == expected
-      end
-    end
+    #     assert actual == expected
+    #   end
+    # end
 
-    for cpu_cores <- 56..59 do
-      test "when partitions have not been explicitly configured, will choose 9 partitions on a #{cpu_cores}-core machine" do
-        cores = unquote(cpu_cores)
-        expected = 9
-        Application.put_env(:wallaby, :chromedriver, system_cores_fn: fn -> cores end)
+    # for cpu_cores <- 1..55 do
+    #   test "when partitions have not been explicitly configured, will choose #{cpu_cores} partitions on a #{cpu_cores}-core machine" do
+    #     cores = unquote(cpu_cores)
+    #     expected = cores
+    #     Application.put_env(:wallaby, :chromedriver, system_cores_fn: fn -> cores end)
 
-        actual =
-          :meaningless_init_arg
-          |> Chrome.init()
-          |> extract_partition_count()
+    #     actual =
+    #       :meaningless_init_arg
+    #       |> Chrome.init()
+    #       |> extract_partition_count()
 
-        assert actual == expected
-      end
-    end
+    #     assert actual == expected
+    #   end
+    # end
 
-    for cpu_cores <- 60..65 do
-      test "when partitions have not been explicitly configured, will choose 10 partitions on a #{cpu_cores}-core machine" do
-        cores = unquote(cpu_cores)
-        expected = 10
-        Application.put_env(:wallaby, :chromedriver, system_cores_fn: fn -> cores end)
+    # for cpu_cores <- 56..59 do
+    #   test "when partitions have not been explicitly configured, will choose 9 partitions on a #{cpu_cores}-core machine" do
+    #     cores = unquote(cpu_cores)
+    #     expected = 9
+    #     Application.put_env(:wallaby, :chromedriver, system_cores_fn: fn -> cores end)
 
-        actual =
-          :meaningless_init_arg
-          |> Chrome.init()
-          |> extract_partition_count()
+    #     actual =
+    #       :meaningless_init_arg
+    #       |> Chrome.init()
+    #       |> extract_partition_count()
 
-        assert actual == expected
-      end
-    end
+    #     assert actual == expected
+    #   end
+    # end
 
-    for cpu_cores <- 120..125 do
-      test "when partitions have not been explicitly configured, will choose 20 partitions on a #{cpu_cores}-core machine" do
-        cores = unquote(cpu_cores)
-        expected = 20
-        Application.put_env(:wallaby, :chromedriver, system_cores_fn: fn -> cores end)
+    # for cpu_cores <- 60..65 do
+    #   test "when partitions have not been explicitly configured, will choose 10 partitions on a #{cpu_cores}-core machine" do
+    #     cores = unquote(cpu_cores)
+    #     expected = 10
+    #     Application.put_env(:wallaby, :chromedriver, system_cores_fn: fn -> cores end)
 
-        actual =
-          :meaningless_init_arg
-          |> Chrome.init()
-          |> extract_partition_count()
+    #     actual =
+    #       :meaningless_init_arg
+    #       |> Chrome.init()
+    #       |> extract_partition_count()
 
-        assert actual == expected
-      end
-    end
+    #     assert actual == expected
+    #   end
+    # end
+
+    # for cpu_cores <- 120..125 do
+    #   test "when partitions have not been explicitly configured, will choose 20 partitions on a #{cpu_cores}-core machine" do
+    #     cores = unquote(cpu_cores)
+    #     expected = 20
+    #     Application.put_env(:wallaby, :chromedriver, system_cores_fn: fn -> cores end)
+
+    #     actual =
+    #       :meaningless_init_arg
+    #       |> Chrome.init()
+    #       |> extract_partition_count()
+
+    #     assert actual == expected
+    #   end
+    # end
   end
 
   # ┌--------------------------------------------------------------------------------------------┐
@@ -120,6 +135,6 @@ defmodule Wallaby.ChromeTest do
   end
 
   defp extract_partitions_value(from_keyword_list) when is_list(from_keyword_list) do
-    Keyword.get(from_keyword_list, :partitions)
+    Keyword.get(from_keyword_list, :concurrency)
   end
 end

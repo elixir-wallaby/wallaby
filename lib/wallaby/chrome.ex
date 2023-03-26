@@ -105,17 +105,14 @@ defmodule Wallaby.Chrome do
 
   What choice will it make?
 
-  For machines with less than 56 cores, it will fire up a partition for each core.
+  It will fire up one partition per core, with a maximum of 10 partitions. Why the maximum?
+  Decreasing performance returns set in.
 
-  At 56+ cores, though, decreasing returns set in, so Wallaby only uses one-sixth of the available
-  cores by default.
-
-  See the `Wallaby.Chrome.DefaultPartitionCount` module for more details.
 
   ```elixir
   config :wallaby,
     chromedriver: [
-      partitions: 10
+      concurrency: 10
     ]
   ```
 
@@ -169,7 +166,7 @@ defmodule Wallaby.Chrome do
       {PartitionSupervisor,
        child_spec: Wallaby.Chrome.Chromedriver,
        name: Wallaby.Chromedrivers,
-       partitions: partitions()}
+       concurrency: concurrency()}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -628,9 +625,9 @@ defmodule Wallaby.Chrome do
     |> update_in([:chromeOptions, key], updater)
   end
 
-  defp partitions do
-    system_cores_fn = Keyword.get(chromedriver_opts(), :system_cores_fn)
-    Keyword.get(chromedriver_opts(), :partitions, DefaultPartitionCount.choose(system_cores_fn))
+  defp concurrency do
+    chromedriver_opts()
+    |> Keyword.get(:concurrency, min(System.schedulers_online(), 10))
   end
 
   defp chromedriver_opts do

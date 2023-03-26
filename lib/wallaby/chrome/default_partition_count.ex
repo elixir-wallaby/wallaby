@@ -52,35 +52,35 @@ defmodule Wallaby.Chrome.DefaultPartitionCount do
   [here](https://github.com/elixir-wallaby/wallaby/issues/720).
 
   """
-  @decreasing_returns_threshold 56
-  @core_divisor_at_or_above_threshold 6
+  # @decreasing_returns_threshold 56
+  # @core_divisor_at_or_above_threshold 6
 
-  @spec choose((() -> pos_integer)) :: pos_integer()
-  def choose(nil = _fn_count_cpu_cores) do
-    choose(&System.schedulers_online/0)
-  end
+  # @spec choose((() -> pos_integer)) :: pos_integer()
+  # def choose(nil = _fn_count_cpu_cores) do
+  #   choose(&System.schedulers_online/0)
+  # end
 
-  def choose(fn_count_cpu_cores)
-      when is_function(fn_count_cpu_cores, 0) do
-    choose_wisely(fn_count_cpu_cores.())
-  end
+  # def choose(fn_count_cpu_cores)
+  #     when is_function(fn_count_cpu_cores, 0) do
+  #   choose_wisely(fn_count_cpu_cores.())
+  # end
 
-  # ┌--------------------------------------------------------------------------------------------┐
-  # │                       call-depth 1 functions, in order of reference                        │
-  # └--------------------------------------------------------------------------------------------┘
-  defp choose_wisely(cpu_cores) when is_integer(cpu_cores) and cpu_cores > 0 do
-    reasonable_number_of_partitions(cpu_cores)
-  end
+  # # ┌--------------------------------------------------------------------------------------------┐
+  # # │                       call-depth 1 functions, in order of reference                        │
+  # # └--------------------------------------------------------------------------------------------┘
+  # defp choose_wisely(cpu_cores) when is_integer(cpu_cores) and cpu_cores > 0 do
+  #   reasonable_number_of_partitions(cpu_cores)
+  # end
 
-  # ┌--------------------------------------------------------------------------------------------┐
-  # │                       call-depth 2 functions, in order of reference                        │
-  # └--------------------------------------------------------------------------------------------┘
-  defp reasonable_number_of_partitions(cpu_cores)
-       when cpu_cores >= @decreasing_returns_threshold do
-    Integer.floor_div(cpu_cores, @core_divisor_at_or_above_threshold)
-  end
+  # # ┌--------------------------------------------------------------------------------------------┐
+  # # │                       call-depth 2 functions, in order of reference                        │
+  # # └--------------------------------------------------------------------------------------------┘
+  # defp reasonable_number_of_partitions(cpu_cores)
+  #      when cpu_cores >= @decreasing_returns_threshold do
+  #   Integer.floor_div(cpu_cores, @core_divisor_at_or_above_threshold)
+  # end
 
-  defp reasonable_number_of_partitions(cpu_cores) do
-    cpu_cores
-  end
+  # defp reasonable_number_of_partitions(cpu_cores) do
+  #   cpu_cores
+  # end
 end
