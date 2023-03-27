@@ -127,7 +127,6 @@ defmodule Wallaby.Chrome do
   @default_readiness_timeout 10_000
 
   alias Wallaby.Chrome.Chromedriver
-  alias Wallaby.Chrome.DefaultPartitionCount
   alias Wallaby.WebdriverClient
   alias Wallaby.{DependencyError, Metadata}
   import Wallaby.Driver.LogChecker
