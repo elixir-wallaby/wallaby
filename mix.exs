@@ -2,7 +2,7 @@ defmodule Wallaby.Mixfile do
   use Mix.Project
 
   @source_url "https://github.com/elixir-wallaby/wallaby"
-  @version "0.30.1"
+  @version "0.30.2"
   @drivers ~w(selenium chrome)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers ["Mitchell Hanberg"]
@@ -43,7 +43,7 @@ defmodule Wallaby.Mixfile do
   defp deps do
     [
       {:jason, "~> 1.1"},
-      {:httpoison, "~> 0.12 or ~> 1.0"},
+      {:httpoison, "~> 0.12 or ~> 1.0 or ~> 2.0"},
       {:web_driver_client, "~> 0.2.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:benchee, "~> 0.9", only: :dev},

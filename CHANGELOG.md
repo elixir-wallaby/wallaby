@@ -2,6 +2,12 @@
 
 ## Main
 
+## v0.30.2
+
+- Surface 'text' condition in css query error message (#714)
+- Allow 2.0 in httpoison in version constraint (#725)
+- Allow setting of optional cookie attributes (#711)
+
 ## v0.30.1 (2022-07-16)
 
 ### Fixes

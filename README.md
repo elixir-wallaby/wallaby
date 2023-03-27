@@ -86,7 +86,7 @@ Add Wallaby to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:wallaby, "~> 0.30.0", runtime: false, only: :test}
+    {:wallaby, "~> 0.30", runtime: false, only: :test}
   ]
 end
 ```
@@ -257,6 +257,7 @@ In order to test Phoenix LiveView (as of [version 0.17.7](https://github.com/pho
 ```elixir
 defmodule MyApp.Hooks.AllowEctoSandbox do
   import Phoenix.LiveView
+  import Phoenix.Component
 
   def on_mount(:default, _params, _session, socket) do
     allow_ecto_sandbox(socket)
