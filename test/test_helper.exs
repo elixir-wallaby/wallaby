@@ -1,6 +1,6 @@
 ExUnit.configure(
   exclude: [pending: true],
-  max_cases: min(System.schedulers_online(), 10)
+  max_cases: System.schedulers_online()
 )
 
 EventEmitter.start_link([])

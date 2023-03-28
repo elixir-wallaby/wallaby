@@ -98,24 +98,6 @@ defmodule Wallaby.Chrome do
     }
   ```
 
-  ### Partitions
-  You can explicitly configure the number of chromedriver partitions Wallaby will spin up.
-
-  Without this explicit configuration, Wallaby will do its best to make a good choice.
-
-  What choice will it make?
-
-  It will fire up one partition per core, with a maximum of 10 partitions. Why the maximum?
-  Decreasing performance returns set in.
-
-
-  ```elixir
-  config :wallaby,
-    chromedriver: [
-      concurrency: 10
-    ]
-  ```
-
   ## Notes
 
   This driver requires [Chromedriver](https://sites.google.com/a/chromium.org/chromedriver/) to be installed in your path.
@@ -165,7 +147,7 @@ defmodule Wallaby.Chrome do
       {PartitionSupervisor,
        child_spec: Wallaby.Chrome.Chromedriver,
        name: Wallaby.Chromedrivers,
-       concurrency: concurrency()}
+       concurrency: min(System.schedulers_online(), 10)}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -622,14 +604,5 @@ defmodule Wallaby.Chrome do
   defp update_unless_nil(capabilities, key, _, updater) do
     capabilities
     |> update_in([:chromeOptions, key], updater)
-  end
-
-  defp concurrency do
-    chromedriver_opts()
-    |> Keyword.get(:concurrency, min(System.schedulers_online(), 10))
-  end
-
-  defp chromedriver_opts do
-    Application.get_env(:wallaby, :chromedriver, [])
   end
 end
