@@ -147,7 +147,7 @@ defmodule Wallaby.Chrome do
       {PartitionSupervisor,
        child_spec: Wallaby.Chrome.Chromedriver,
        name: Wallaby.Chromedrivers,
-       concurrency: min(System.schedulers_online(), 10)}
+       partitions: min(System.schedulers_online(), 10)}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

@@ -99,7 +99,7 @@ unless Code.ensure_loaded?(PartitionSupervisor) do
         raise ArgumentError, "the :child_spec option must be given to PartitionSupervisor"
       end
 
-      {partitions, opts} = Keyword.pop(opts, :partitions, min(System.schedulers_online(), 10))
+      {partitions, opts} = Keyword.pop(opts, :partitions, System.schedulers_online())
 
       unless is_integer(partitions) and partitions >= 1 do
         raise ArgumentError,
