@@ -2,6 +2,10 @@
 
 ## Main
 
+## v0.30.3
+
+- Better support Chromedriver tests on machines with tons of cores
+
 ## v0.30.2
 
 - Surface 'text' condition in css query error message (#714)
