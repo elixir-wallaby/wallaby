@@ -527,6 +527,29 @@ defmodule Wallaby.Chrome do
     end
   end
 
+  @doc """
+  Chromium specific function to execute CDP (Chrome Devtools Protocol) commands
+  https://chromedevtools.github.io/devtools-protocol/
+  """
+  @spec execute_cdp_command(Wallaby.Session.t(), String.t(), map()) :: {:ok, any()} | {:error, any()}
+  def execute_cdp_command(session, command, params) do
+    url = "#{session.session_url}/goog/cdp/execute"
+    case Wallaby.HTTPClient.request(:post, url, %{cmd: command, params: params}) do
+      {:ok, %{"status" => 0, "value" => value}} ->
+        {:ok, value}
+
+      {:ok, %{"status" => status} = response} ->
+        {:error, {:bad_status, status, response}}
+
+      {:ok, %{}} ->
+        # Value not presend
+        :error
+
+      other ->
+        other
+    end
+  end
+
   @doc false
   def find_elements(session_or_element, compiled_query),
     do: delegate(:find_elements, session_or_element, [compiled_query])
