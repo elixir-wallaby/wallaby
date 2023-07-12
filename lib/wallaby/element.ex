@@ -234,7 +234,7 @@ defmodule Wallaby.Element do
   @doc """
   Returns a tuple `{x, y}` with the coordinates of the left-top corner of given element.
   """
-  @spec location(t) :: t
+  @spec location(t) :: {non_neg_integer, non_neg_integer}
 
   def location(%__MODULE__{driver: driver} = element) do
     element
