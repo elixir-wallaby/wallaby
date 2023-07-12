@@ -362,8 +362,8 @@ defmodule Wallaby.Chrome do
     :wallaby
     |> Application.get_env(:chromedriver, [])
     |> Keyword.get(:capabilities, default_capabilities(opts))
-    |> put_headless_config()
-    |> put_binary_config()
+    |> put_headless_config(opts)
+    |> put_binary_config(opts)
   end
 
   @spec wait_until_ready!(timeout) :: :ok | no_return
@@ -576,8 +576,8 @@ defmodule Wallaby.Chrome do
     }
   end
 
-  defp put_headless_config(capabilities) do
-    headless? = Application.get_env(:wallaby, :chromedriver, []) |> Keyword.get(:headless)
+  defp put_headless_config(capabilities, opts) do
+    headless? = resolve_opt(opts, :headless)
 
     capabilities
     |> update_unless_nil(:args, headless?, fn args ->
@@ -590,13 +590,20 @@ defmodule Wallaby.Chrome do
     end)
   end
 
-  defp put_binary_config(capabilities) do
-    binary_path = Application.get_env(:wallaby, :chromedriver, []) |> Keyword.get(:binary)
+  defp put_binary_config(capabilities, opts) do
+    binary_path = resolve_opt(opts, :binary)
 
     capabilities
     |> update_unless_nil(:binary, binary_path, fn _ ->
       binary_path
     end)
+  end
+
+  defp resolve_opt(opts, key) do
+    case Keyword.fetch(opts, key) do
+      {:ok, value} -> value
+      :error -> Application.get_env(:wallaby, :chromedriver, []) |> Keyword.get(key)
+    end
   end
 
   defp update_unless_nil(capabilities, _key, nil, _updater), do: capabilities
