@@ -11,10 +11,6 @@ jobs:
     strategy:
       matrix:
         elixir-otp:
-          - otp: 24.x
-            elixir: 1.12.x
-          - otp: 25.x
-            elixir: 1.13.x
           - otp: 25.x
             elixir: 1.14.x
           - otp: 26.x
@@ -55,10 +51,6 @@ jobs:
     strategy:
       matrix:
         elixir-otp:
-          - otp: 24.x
-            elixir: 1.12.x
-          - otp: 25.x
-            elixir: 1.13.x
           - otp: 25.x
             elixir: 1.14.x
           - otp: 26.x
@@ -109,10 +101,6 @@ jobs:
     strategy:
       matrix:
         elixir-otp:
-          - otp: 24.x
-            elixir: 1.12.x
-          - otp: 25.x
-            elixir: 1.13.x
           - otp: 25.x
             elixir: 1.14.x
           - otp: 26.x
@@ -153,10 +141,6 @@ jobs:
     strategy:
       matrix:
         elixir-otp:
-          - otp: 24.x
-            elixir: 1.12.x
-          - otp: 25.x
-            elixir: 1.13.x
           - otp: 25.x
             elixir: 1.14.x
           - otp: 26.x
@@ -212,8 +196,6 @@ jobs:
     strategy:
       matrix:
         elixir-otp:
-          - otp: 25.x
-            elixir: 1.13.x
           - otp: 25.x
             elixir: 1.14.x
           - otp: 26.x
