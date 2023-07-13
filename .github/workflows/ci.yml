@@ -10,7 +10,15 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 25.x, elixir: 1.13.x}]
+        elixir-otp:
+          - otp: 24.x
+            elixir: 1.12.x
+          - otp: 25.x
+            elixir: 1.13.x
+          - otp: 25.x
+            elixir: 1.14.x
+          - otp: 26.x
+            elixir: 1.15.x
       fail-fast: false
 
     env:
@@ -46,7 +54,15 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 25.x, elixir: 1.13.x}]
+        elixir-otp:
+          - otp: 24.x
+            elixir: 1.12.x
+          - otp: 25.x
+            elixir: 1.13.x
+          - otp: 25.x
+            elixir: 1.14.x
+          - otp: 26.x
+            elixir: 1.15.x
       fail-fast: false
 
     steps:
@@ -92,7 +108,15 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 25.x, elixir: 1.13.x}]
+        elixir-otp:
+          - otp: 24.x
+            elixir: 1.12.x
+          - otp: 25.x
+            elixir: 1.13.x
+          - otp: 25.x
+            elixir: 1.14.x
+          - otp: 26.x
+            elixir: 1.15.x
       fail-fast: false
 
     env:
@@ -128,7 +152,15 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 25.x, elixir: 1.13.x}]
+        elixir-otp:
+          - otp: 24.x
+            elixir: 1.12.x
+          - otp: 25.x
+            elixir: 1.13.x
+          - otp: 25.x
+            elixir: 1.14.x
+          - otp: 26.x
+            elixir: 1.15.x
       fail-fast: false
 
     env:
@@ -179,7 +211,13 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.13.x}]
+        elixir-otp:
+          - otp: 25.x
+            elixir: 1.13.x
+          - otp: 25.x
+            elixir: 1.14.x
+          - otp: 26.x
+            elixir: 1.15.x
       fail-fast: false
 
     steps:
