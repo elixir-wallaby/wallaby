@@ -13,6 +13,8 @@ defmodule Wallaby.Integration.CapabilitiesTest do
 
   describe "capabilities" do
     test "reads default capabilities" do
+      assert {:ok, chrome_binary} = Wallaby.Chrome.find_chrome_executable()
+
       expected_capabilities = %{
         javascriptEnabled: false,
         loadImages: false,
@@ -27,6 +29,7 @@ defmodule Wallaby.Integration.CapabilitiesTest do
           browser: "DEBUG"
         },
         chromeOptions: %{
+          binary: chrome_binary,
           args: [
             "--no-sandbox",
             "window-size=1280,800",
