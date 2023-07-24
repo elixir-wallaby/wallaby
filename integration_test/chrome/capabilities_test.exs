@@ -39,7 +39,7 @@ defmodule Wallaby.Integration.CapabilitiesTest do
       }
 
       create_session_fn = fn url, capabilities ->
-        assert capabilities == expected_capabilities
+        assert ^expected_capabilities = capabilities
 
         WebdriverClient.create_session(url, capabilities)
       end
