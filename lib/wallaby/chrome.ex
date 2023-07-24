@@ -232,7 +232,7 @@ defmodule Wallaby.Chrome do
       |> Keyword.get(:binary, [])
 
     [Path.expand(chrome_path) | default_chrome_paths]
-    |> Enum.find(&System.find_executable/1)
+    |> Enum.find_value(&System.find_executable/1)
     |> case do
       path when is_binary(path) ->
         {:ok, path}
@@ -257,7 +257,7 @@ defmodule Wallaby.Chrome do
       |> Keyword.get(:path, "chromedriver")
 
     [Path.expand(chromedriver_path), chromedriver_path]
-    |> Enum.find(&System.find_executable/1)
+    |> Enum.find_value(&System.find_executable/1)
     |> case do
       path when is_binary(path) ->
         {:ok, path}
