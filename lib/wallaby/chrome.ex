@@ -232,7 +232,7 @@ defmodule Wallaby.Chrome do
       |> Keyword.get(:binary, [])
 
     [Path.expand(chrome_path) | default_chrome_paths]
-    |> Enum.find(&System.find_executable/1)
+    |> Enum.find_value(&System.find_executable/1)
     |> case do
       path when is_binary(path) ->
         {:ok, path}
@@ -257,7 +257,7 @@ defmodule Wallaby.Chrome do
       |> Keyword.get(:path, "chromedriver")
 
     [Path.expand(chromedriver_path), chromedriver_path]
-    |> Enum.find(&System.find_executable/1)
+    |> Enum.find_value(&System.find_executable/1)
     |> case do
       path when is_binary(path) ->
         {:ok, path}
@@ -550,6 +550,18 @@ defmodule Wallaby.Chrome do
         opts[:metadata]
       )
 
+    chrome_options =
+      maybe_put_chrome_executable(%{
+        args: [
+          "--no-sandbox",
+          "window-size=1280,800",
+          "--disable-gpu",
+          "--headless",
+          "--fullscreen",
+          "--user-agent=#{user_agent}"
+        ]
+      })
+
     %{
       javascriptEnabled: false,
       loadImages: false,
@@ -563,17 +575,15 @@ defmodule Wallaby.Chrome do
       loggingPrefs: %{
         browser: "DEBUG"
       },
-      chromeOptions: %{
-        args: [
-          "--no-sandbox",
-          "window-size=1280,800",
-          "--disable-gpu",
-          "--headless",
-          "--fullscreen",
-          "--user-agent=#{user_agent}"
-        ]
-      }
+      chromeOptions: chrome_options
     }
+  end
+
+  defp maybe_put_chrome_executable(chrome_options) do
+    case find_chrome_executable() do
+      {:ok, chrome_binary} -> Map.put(chrome_options, :binary, chrome_binary)
+      _ -> chrome_options
+    end
   end
 
   defp put_headless_config(capabilities, opts) do
