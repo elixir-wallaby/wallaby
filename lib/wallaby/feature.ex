@@ -69,11 +69,11 @@ defmodule Wallaby.Feature do
   end
   ```
 
-  If you need to change the capabilities sent to the session for a specific feature, you can assign `@sessions` to a list of keyword lists of the options to be passed to `Wallaby.start_session/1`. This will start the number of sessions equal to the size of the list.
+  If you need to change the headless mode, binary path, or capabilities sent to the session for a specific feature, you can assign `@sessions` to a list of keyword lists of the options to be passed to `Wallaby.start_session/1`. This will start the number of sessions equal to the size of the list.
 
   ```
   @sessions [
-    [capabilities: %{}]
+    [headless: false, binary: "some_path", capabilities: %{}]
   ]
   feature "test with different capabilities", %{session: session} do
     # ...

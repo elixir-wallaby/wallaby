@@ -1,8 +1,6 @@
-![Wallaby](https://i.imgur.com/eQ1tlI3.png)
-============
+# ![Wallaby](https://i.imgur.com/eQ1tlI3.png)
 
 [![Actions Status](https://github.com/elixir-wallaby/wallaby/workflows/CI/badge.svg)](https://github.com/elixir-wallaby/wallaby/actions)
-[![codecov](https://codecov.io/gh/elixir-wallaby/wallaby/branch/main/graph/badge.svg?token=eaEe1AIM2e)](https://codecov.io/gh/elixir-wallaby/wallaby)
 [![Module Version](https://img.shields.io/hexpm/v/wallaby.svg)](https://hex.pm/packages/wallaby)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/wallaby/)
 [![License](https://img.shields.io/hexpm/l/wallaby.svg)](https://github.com/elixir-wallaby/wallaby/blob/master/LICENSE)
@@ -104,11 +102,11 @@ config :wallaby, driver: Wallaby.Selenium
 You'll need to install the actual drivers as well.
 
 - Chrome
-    - [`chromedriver`](https://chromedriver.chromium.org/downloads)
+  - [`chromedriver`](https://chromedriver.chromium.org/downloads)
 
-- Selenium  
-    - [`selenium`](https://www.selenium.dev/downloads/)
-    - [`geckodriver`](https://github.com/mozilla/geckodriver) (for Firefox) or [`chromedriver`](https://chromedriver.chromium.org/downloads) (for Chrome)
+- Selenium
+  - [`selenium`](https://www.selenium.dev/downloads/)
+  - [`geckodriver`](https://github.com/mozilla/geckodriver) (for Firefox) or [`chromedriver`](https://chromedriver.chromium.org/downloads) (for Chrome)
 
 When calling `use Wallaby.Feature` and using Ecto, please configure your `otp_app`.
 
@@ -555,9 +553,9 @@ Wallaby provides several ways to interact with JavaScript dialogs such as `windo
 
 You can use one of the following functions:
 
-* For `window.alert` use `accept_alert/2`
-* For `window.confirm` use `accept_confirm/2` or `dismiss_confirm/2`
-* For `window.prompt` use `accept_prompt/2-3` or `dismiss_prompt/2`
+- For `window.alert` use `accept_alert/2`
+- For `window.confirm` use `accept_confirm/2` or `dismiss_confirm/2`
+- For `window.prompt` use `accept_prompt/2-3` or `dismiss_prompt/2`
 
 All of these take a function as last parameter, which must include the necessary interactions to trigger the dialog. For example:
 
@@ -623,7 +621,6 @@ Wallaby requires the following tools.
 - GeckoDriver
 - Mozilla Firefox
 - selenium-server-standalone
-
 
 ```shell
 # Unit tests

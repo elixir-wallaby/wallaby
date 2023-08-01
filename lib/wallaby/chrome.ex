@@ -147,7 +147,7 @@ defmodule Wallaby.Chrome do
       {PartitionSupervisor,
        child_spec: Wallaby.Chrome.Chromedriver,
        name: Wallaby.Chromedrivers,
-       partitions: System.schedulers_online()}
+       partitions: min(System.schedulers_online(), 10)}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -232,7 +232,7 @@ defmodule Wallaby.Chrome do
       |> Keyword.get(:binary, [])
 
     [Path.expand(chrome_path) | default_chrome_paths]
-    |> Enum.find(&System.find_executable/1)
+    |> Enum.find_value(&System.find_executable/1)
     |> case do
       path when is_binary(path) ->
         {:ok, path}
@@ -257,7 +257,7 @@ defmodule Wallaby.Chrome do
       |> Keyword.get(:path, "chromedriver")
 
     [Path.expand(chromedriver_path), chromedriver_path]
-    |> Enum.find(&System.find_executable/1)
+    |> Enum.find_value(&System.find_executable/1)
     |> case do
       path when is_binary(path) ->
         {:ok, path}
@@ -362,8 +362,8 @@ defmodule Wallaby.Chrome do
     :wallaby
     |> Application.get_env(:chromedriver, [])
     |> Keyword.get(:capabilities, default_capabilities(opts))
-    |> put_headless_config()
-    |> put_binary_config()
+    |> put_headless_config(opts)
+    |> put_binary_config(opts)
   end
 
   @spec wait_until_ready!(timeout) :: :ok | no_return
@@ -553,6 +553,18 @@ defmodule Wallaby.Chrome do
         opts[:metadata]
       )
 
+    chrome_options =
+      maybe_put_chrome_executable(%{
+        args: [
+          "--no-sandbox",
+          "window-size=1280,800",
+          "--disable-gpu",
+          "--headless",
+          "--fullscreen",
+          "--user-agent=#{user_agent}"
+        ]
+      })
+
     %{
       javascriptEnabled: false,
       loadImages: false,
@@ -566,21 +578,19 @@ defmodule Wallaby.Chrome do
       loggingPrefs: %{
         browser: "DEBUG"
       },
-      chromeOptions: %{
-        args: [
-          "--no-sandbox",
-          "window-size=1280,800",
-          "--disable-gpu",
-          "--headless",
-          "--fullscreen",
-          "--user-agent=#{user_agent}"
-        ]
-      }
+      chromeOptions: chrome_options
     }
   end
 
-  defp put_headless_config(capabilities) do
-    headless? = Application.get_env(:wallaby, :chromedriver, []) |> Keyword.get(:headless)
+  defp maybe_put_chrome_executable(chrome_options) do
+    case find_chrome_executable() do
+      {:ok, chrome_binary} -> Map.put(chrome_options, :binary, chrome_binary)
+      _ -> chrome_options
+    end
+  end
+
+  defp put_headless_config(capabilities, opts) do
+    headless? = resolve_opt(opts, :headless)
 
     capabilities
     |> update_unless_nil(:args, headless?, fn args ->
@@ -593,13 +603,20 @@ defmodule Wallaby.Chrome do
     end)
   end
 
-  defp put_binary_config(capabilities) do
-    binary_path = Application.get_env(:wallaby, :chromedriver, []) |> Keyword.get(:binary)
+  defp put_binary_config(capabilities, opts) do
+    binary_path = resolve_opt(opts, :binary)
 
     capabilities
     |> update_unless_nil(:binary, binary_path, fn _ ->
       binary_path
     end)
+  end
+
+  defp resolve_opt(opts, key) do
+    case Keyword.fetch(opts, key) do
+      {:ok, value} -> value
+      :error -> Application.get_env(:wallaby, :chromedriver, []) |> Keyword.get(key)
+    end
   end
 
   defp update_unless_nil(capabilities, _key, nil, _updater), do: capabilities
