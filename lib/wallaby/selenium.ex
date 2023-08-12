@@ -103,7 +103,11 @@ defmodule Wallaby.Selenium do
   def start_session(opts \\ []) do
     base_url = Keyword.get(opts, :remote_url, remote_url_from_config())
     create_session = Keyword.get(opts, :create_session_fn, &WebdriverClient.create_session/2)
-    capabilities = Keyword.get(opts, :capabilities, capabilities_from_config(opts))
+
+    capabilities =
+      opts
+      |> Keyword.get_lazy(:capabilities, &capabilities_from_config/0)
+      |> put_beam_metadata(opts)
 
     with {:ok, response} <- create_session.(base_url, capabilities) do
       id = response["sessionId"]
@@ -123,10 +127,10 @@ defmodule Wallaby.Selenium do
     end
   end
 
-  defp capabilities_from_config(opts) do
+  defp capabilities_from_config do
     :wallaby
     |> Application.get_env(:selenium, [])
-    |> Keyword.get(:capabilities, default_capabilities(opts))
+    |> Keyword.get_lazy(:capabilities, &default_capabilities/0)
   end
 
   defp remote_url_from_config() do
@@ -352,19 +356,14 @@ defmodule Wallaby.Selenium do
   end
 
   @doc false
-  def default_capabilities(opts \\ []) do
-    user_agent =
-      Metadata.append(
-        "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
-        opts[:metadata]
-      )
-
+  def default_capabilities do
     %{
       browserName: "firefox",
       "moz:firefoxOptions": %{
         args: ["-headless"],
         prefs: %{
-          "general.useragent.override" => user_agent
+          "general.useragent.override" =>
+            "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
         }
       }
     }
@@ -429,4 +428,18 @@ defmodule Wallaby.Selenium do
       Map.fetch!(response, "value")
     end
   end
+
+  defp put_beam_metadata(%{"moz:firefoxOptions": %{prefs: %{}}} = capabilities, opts) do
+    capabilities
+    |> update_in(
+      [:"moz:firefoxOptions", :prefs, "general.useragent.override"],
+      fn user_agent ->
+        if user_agent do
+          Metadata.append(user_agent, opts[:metadata])
+        end
+      end
+    )
+  end
+
+  defp put_beam_metadata(capabilities, _opts), do: capabilities
 end
