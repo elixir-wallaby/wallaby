@@ -337,7 +337,10 @@ defmodule Wallaby.Chrome do
     base_url = Chromedriver.base_url()
     create_session_fn = Keyword.get(opts, :create_session_fn, &WebdriverClient.create_session/2)
 
-    capabilities = Keyword.get(opts, :capabilities, capabilities_from_config(opts))
+    capabilities =
+      opts
+      |> Keyword.get_lazy(:capabilities, fn -> capabilities_from_config(opts) end)
+      |> put_beam_metadata(opts)
 
     with {:ok, response} <- create_session_fn.(base_url, capabilities) do
       id = response["sessionId"]
@@ -361,7 +364,7 @@ defmodule Wallaby.Chrome do
   defp capabilities_from_config(opts) do
     :wallaby
     |> Application.get_env(:chromedriver, [])
-    |> Keyword.get(:capabilities, default_capabilities(opts))
+    |> Keyword.get_lazy(:capabilities, &default_capabilities/0)
     |> put_headless_config(opts)
     |> put_binary_config(opts)
   end
@@ -543,13 +546,7 @@ defmodule Wallaby.Chrome do
   defdelegate log(session_or_element), to: WebdriverClient
 
   @doc false
-  def default_capabilities(opts \\ []) do
-    user_agent =
-      Metadata.append(
-        "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
-        opts[:metadata]
-      )
-
+  def default_capabilities do
     chrome_options =
       maybe_put_chrome_executable(%{
         args: [
@@ -558,7 +555,7 @@ defmodule Wallaby.Chrome do
           "--disable-gpu",
           "--headless",
           "--fullscreen",
-          "--user-agent=#{user_agent}"
+          "--user-agent=Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
         ]
       })
 
@@ -606,6 +603,22 @@ defmodule Wallaby.Chrome do
     capabilities
     |> update_unless_nil(:binary, binary_path, fn _ ->
       binary_path
+    end)
+  end
+
+  defp put_beam_metadata(capabilities, opts) do
+    capabilities
+    |> update_in([:chromeOptions, :args], fn args ->
+      for arg <- args do
+        case String.split(arg, "=") do
+          ["--user-agent", user_agent] ->
+            new_user_agent = Metadata.append(user_agent, opts[:metadata])
+            "--user-agent=#{new_user_agent}"
+
+          _ ->
+            arg
+        end
+      end
     end)
   end
 
