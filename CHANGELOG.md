@@ -2,6 +2,10 @@
 
 ## Main
 
+## v0.30.6
+
+- fix: concurrent tests when using custom capabilities (#744)
+
 ## v0.30.5
 
 - Workaround for chromedriver 115 regression (#740)
