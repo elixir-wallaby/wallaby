@@ -55,7 +55,7 @@ defmodule Wallaby.HTTPClientTest do
       assert {:error, :stale_reference} = Client.request(:post, bypass_url(bypass, "/my_url"))
     end
 
-    test "with a non-existant shadow root response", %{bypass: bypass} do
+    test "with a non-existent shadow root", %{bypass: bypass} do
       Bypass.expect(bypass, fn conn ->
         send_json_resp(conn, 404, %{
           "sessionId" => "abc123",
@@ -70,6 +70,24 @@ defmodule Wallaby.HTTPClientTest do
       assert {:error, :shadow_root_not_found} =
                Client.request(:post, bypass_url(bypass, "/my_url"))
     end
+
+    test "with an existing shadow root", %{bypass: bypass} do
+      Bypass.expect(bypass, fn conn ->
+        send_json_resp(conn, 200, %{
+          "sessionId" => "abc123",
+          "status" => 0,
+          "value" => nil
+        })
+      end)
+
+      {:ok, response} = Client.request(:post, bypass_url(bypass, "/my_url"))
+
+      assert response == %{
+               "sessionId" => "abc123",
+               "status" => 0,
+               "value" => nil
+             }
+             end
 
     test "with an obscure status code", %{bypass: bypass} do
       expected_message = "message from an obscure error"

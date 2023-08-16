@@ -1013,16 +1013,15 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
-  Finds the shadow DOM for the specified element and returns an element corresponding
-  to this shadow DOM. Subsequent queries made within element retured by calling `shadow_root`
-  will return elements within the shadow DOM, e. g.
+  Finds and returns the shadow root for the given element.
+
+  Queries executed on the returned shadow root will be scoped to the root's shadow DOM.
 
   ```
-  element =
-    session
-    |> find(Query.css("shadow-test"))
-    |> shadow_root()
-    |> find(Query.css("#in-shadow"))
+  session
+  |> find(Query.css("shadow-test"))
+  |> shadow_root()
+  |> find(Query.css("#in-shadow"))
   ```
   """
   def shadow_root(%{driver: driver} = element) do

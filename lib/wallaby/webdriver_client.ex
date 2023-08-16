@@ -50,14 +50,13 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
-  Finds the shadow root for a given element.
+  Finds the shadow root for the given element.
   """
   @spec shadow_root(Element.t()) :: {:ok, Element.t()}
   def shadow_root(element) do
     with {:ok, resp} <- request(:get, element.url <> "/shadow"),
-         {:ok, shadow_root} <- Map.fetch(resp, "value"),
-         element <- cast_as_element(element, shadow_root) do
-      {:ok, element}
+         {:ok, shadow_root} <- Map.fetch(resp, "value") do
+      {:ok, cast_as_element(element, shadow_root)}
     end
   end
 
