@@ -51,8 +51,8 @@ defmodule Wallaby.Mixfile do
       {:credo, "~> 1.6.4", only: [:dev, :test], runtime: false},
       {:bypass, "~> 1.0.0", only: :test},
       {:ex_doc, "~> 0.28", only: :dev},
-      {:ecto_sql, ">= 3.0.0", optional: true},
-      {:phoenix_ecto, ">= 3.0.0", optional: true}
+      {:ecto_sql, "~> 3.10", optional: true},
+      {:phoenix_ecto, "~> 4.4", optional: true}
     ]
   end
 

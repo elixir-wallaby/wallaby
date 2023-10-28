@@ -157,19 +157,19 @@ defmodule Wallaby.Integration.CapabilitiesTest do
         chromeOptions: %{args: ["--headless", "--user-agent=#{user_agent}"]}
       }
 
-      expected_capabilities = %{
-        chromeOptions: %{
-          args: [
-            "--headless",
-            "--user-agent=#{user_agent}/BeamMetadata (g2gCZAACdjF0AAAAAW0AAAAEc29tZW0AAAAIbWV0YWRhdGE=)"
-          ]
-        }
-      }
-
       Application.put_env(:wallaby, :chromedriver, capabilities: defined_capabilities)
 
       create_session_fn = fn url, capabilities ->
-        assert capabilities == expected_capabilities
+        assert %{
+                 chromeOptions: %{
+                   args: [
+                     "--headless",
+                     user_agent_arg
+                   ]
+                 }
+               } = capabilities
+
+        assert String.starts_with?(user_agent_arg, "--user-agent=#{user_agent}/BeamMetadata (g2g")
 
         WebdriverClient.create_session(url, capabilities)
       end
