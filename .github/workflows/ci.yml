@@ -10,19 +10,19 @@ jobs:
 
     strategy:
       matrix:
-        otp: [23.3, 24.2, 25.3, 26.1]
-        elixir: [1.12.2, 1.13.4, 1.14.5, 1.15.7]
+        otp: [23.x, 24.x, 25.x, 26.x]
+        elixir: [1.12.x, 1.13.x, 1.14.x, 1.15.x]
         exclude:
-          - elixir: 1.12.2
-            otp: 25.3
-          - elixir: 1.12.2
-            otp: 26.1
-          - elixir: 1.13.4
-            otp: 26.1
-          - elixir: 1.14.5
-            otp: 26.1
-          - elixir: 1.15.7
-            otp: 23.3
+          - elixir: 1.12.x
+            otp: 25.x
+          - elixir: 1.12.x
+            otp: 26.x
+          - elixir: 1.13.x
+            otp: 26.x
+          - elixir: 1.14.x
+            otp: 26.x
+          - elixir: 1.15.x
+            otp: 23.x
 
       fail-fast: false
 
@@ -59,19 +59,19 @@ jobs:
 
     strategy:
       matrix:
-        otp: [23.3, 24.2, 25.3, 26.1]
-        elixir: [1.12.2, 1.13.4, 1.14.5, 1.15.7]
+        otp: [23.x, 24.x, 25.x, 26.x]
+        elixir: [1.12.x, 1.13.x, 1.14.x, 1.15.x]
         exclude:
-          - elixir: 1.12.2
-            otp: 25.3
-          - elixir: 1.12.2
-            otp: 26.1
-          - elixir: 1.13.4
-            otp: 26.1
-          - elixir: 1.14.5
-            otp: 26.1
-          - elixir: 1.15.7
-            otp: 23.3
+          - elixir: 1.12.x
+            otp: 25.x
+          - elixir: 1.12.x
+            otp: 26.x
+          - elixir: 1.13.x
+            otp: 26.x
+          - elixir: 1.14.x
+            otp: 26.x
+          - elixir: 1.15.x
+            otp: 23.x
 
       fail-fast: false
 
@@ -120,19 +120,19 @@ jobs:
 
     strategy:
       matrix:
-        otp: [23.3, 24.2, 25.3, 26.1]
-        elixir: [1.12.2, 1.13.4, 1.14.5, 1.15.7]
+        otp: [23.x, 24.x, 25.x, 26.x]
+        elixir: [1.12.x, 1.13.x, 1.14.x, 1.15.x]
         exclude:
-          - elixir: 1.12.2
-            otp: 25.3
-          - elixir: 1.12.2
-            otp: 26.1
-          - elixir: 1.13.4
-            otp: 26.1
-          - elixir: 1.14.5
-            otp: 26.1
-          - elixir: 1.15.7
-            otp: 23.3
+          - elixir: 1.12.x
+            otp: 25.x
+          - elixir: 1.12.x
+            otp: 26.x
+          - elixir: 1.13.x
+            otp: 26.x
+          - elixir: 1.14.x
+            otp: 26.x
+          - elixir: 1.15.x
+            otp: 23.x
       fail-fast: false
 
     env:
@@ -168,19 +168,19 @@ jobs:
 
     strategy:
       matrix:
-        otp: [23.3, 24.2, 25.3, 26.1]
-        elixir: [1.12.2, 1.13.4, 1.14.5, 1.15.7]
+        otp: [23.x, 24.x, 25.x, 26.x]
+        elixir: [1.12.x, 1.13.x, 1.14.x, 1.15.x]
         exclude:
-          - elixir: 1.12.2
-            otp: 25.3
-          - elixir: 1.12.2
-            otp: 26.1
-          - elixir: 1.13.4
-            otp: 26.1
-          - elixir: 1.14.5
-            otp: 26.1
-          - elixir: 1.15.7
-            otp: 23.3
+          - elixir: 1.12.x
+            otp: 25.x
+          - elixir: 1.12.x
+            otp: 26.x
+          - elixir: 1.13.x
+            otp: 26.x
+          - elixir: 1.14.x
+            otp: 26.x
+          - elixir: 1.15.x
+            otp: 23.x
 
       fail-fast: false
 
@@ -232,19 +232,19 @@ jobs:
 
     strategy:
       matrix:
-        otp: [23.3, 24.2, 25.3, 26.1]
-        elixir: [1.12.2, 1.13.4, 1.14.5, 1.15.7]
+        otp: [23.x, 24.x, 25.x, 26.x]
+        elixir: [1.12.x, 1.13.x, 1.14.x, 1.15.x]
         exclude:
-          - elixir: 1.12.2
-            otp: 25.3
-          - elixir: 1.12.2
-            otp: 26.1
-          - elixir: 1.13.4
-            otp: 26.1
-          - elixir: 1.14.5
-            otp: 26.1
-          - elixir: 1.15.7
-            otp: 23.3
+          - elixir: 1.12.x
+            otp: 25.x
+          - elixir: 1.12.x
+            otp: 26.x
+          - elixir: 1.13.x
+            otp: 26.x
+          - elixir: 1.14.x
+            otp: 26.x
+          - elixir: 1.15.x
+            otp: 23.x
 
       fail-fast: false
 
