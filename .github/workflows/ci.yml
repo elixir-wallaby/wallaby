@@ -59,19 +59,8 @@ jobs:
 
     strategy:
       matrix:
-        otp: [23.x, 24.x, 25.x, 26.x]
-        elixir: [1.12.x, 1.13.x, 1.14.x, 1.15.x]
-        exclude:
-          - elixir: 1.12.x
-            otp: 25.x
-          - elixir: 1.12.x
-            otp: 26.x
-          - elixir: 1.13.x
-            otp: 26.x
-          - elixir: 1.14.x
-            otp: 26.x
-          - elixir: 1.15.x
-            otp: 23.x
+        otp: [26.x]
+        elixir: [1.15.x]
 
       fail-fast: false
 
