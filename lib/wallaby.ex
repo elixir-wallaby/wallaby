@@ -57,7 +57,7 @@ defmodule Wallaby do
   Each session runs in its own browser so that each test runs in isolation.
   Because of this isolation multiple sessions can be created for a test:
 
-  ```
+  ```elixir
   @message_field Query.text_field("Share Message")
   @share_button Query.button("Share")
   @message_list Query.css(".messages")
