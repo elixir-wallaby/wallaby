@@ -11,7 +11,7 @@ defmodule Wallaby.Mixfile do
     [
       app: :wallaby,
       version: @version,
-      elixir: "~> 1.12",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -42,17 +42,17 @@ defmodule Wallaby.Mixfile do
 
   defp deps do
     [
-      {:jason, "~> 1.1"},
-      {:httpoison, "~> 0.12 or ~> 1.0 or ~> 2.0"},
+      {:jason, "~> 1.4.1"},
+      {:httpoison, "~> 2.2.1"},
       {:web_driver_client, "~> 0.2.0"},
-      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
-      {:benchee, "~> 0.9", only: :dev},
-      {:benchee_html, "~> 0.3", only: :dev},
-      {:credo, "~> 1.6.4", only: [:dev, :test], runtime: false},
-      {:bypass, "~> 1.0.0", only: :test},
+      {:bypass, "~> 2.1.0", only: :test},
+      {:dialyxir, "~> 1.4.3", only: :dev, runtime: false},
+      {:benchee, "~> 1.3", only: :dev},
+      {:benchee_html, "~> 1.0.1", only: :dev},
+      {:credo, "~> 1.7.2", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.28", only: :dev},
-      {:ecto_sql, ">= 3.0.0", optional: true},
-      {:phoenix_ecto, ">= 3.0.0", optional: true}
+      {:ecto_sql, ">= 3.11.1", optional: true},
+      {:phoenix_ecto, ">= 4.4.3", optional: true}
     ]
   end
 

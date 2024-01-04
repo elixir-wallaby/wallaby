@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :wallaby,
   max_wait_time: 5000,

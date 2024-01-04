@@ -1335,7 +1335,7 @@ defmodule Wallaby.WebdriverClientTest do
     }
   end
 
-  defp build_element_for_session(session, element_id \\ ":wdc:abc123") do
+  defp build_element_for_session(session, element_id \\ ":wdc_abc123") do
     %Element{
       driver: Wallaby.Selenium,
       id: element_id,

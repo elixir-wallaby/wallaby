@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # Prevents timeouts in ExUnit
 config :wallaby,

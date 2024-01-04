@@ -2,6 +2,12 @@
 
 ## Main
 
+- upgrade dependencies
+- fix compile time warnings from Wallaby
+- remove PartitionSupervisor from Wallaby (use the built-in one from Elixir `1.14`)
+- set minimum Elixir version at `1.14`
+- set ASDF tool version to: Erlang `26.2.1` & Elixir `1.15.7-otp-26`
+
 ## v0.30.6
 
 - fix: concurrent tests when using custom capabilities (#744)
