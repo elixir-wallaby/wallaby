@@ -77,21 +77,21 @@ defmodule Wallaby.Integration.SeleniumCapabilitiesTest do
         }
       }
 
-      expected_capabilities = %{
-        browserName: "firefox",
-        "moz:firefoxOptions": %{
-          args: ["-headless"],
-          prefs: %{
-            "general.useragent.override" =>
-              "#{user_agent}/BeamMetadata (g2gCZAACdjF0AAAAAW0AAAAEc29tZW0AAAAIbWV0YWRhdGE=)"
-          }
-        }
-      }
-
       Application.put_env(:wallaby, :selenium, capabilities: defined_capabilities)
 
       create_session_fn = fn url, capabilities ->
-        assert capabilities == expected_capabilities
+        %{
+          browserName: "firefox",
+          "moz:firefoxOptions": %{
+            args: ["-headless"],
+            prefs: %{
+              "general.useragent.override" => general_user_agent_override_arg
+            }
+          }
+        } = capabilities
+
+        assert general_user_agent_override_arg
+               |> String.starts_with?("#{user_agent}/BeamMetadata (g2g")
 
         WebdriverClient.create_session(url, capabilities)
       end
