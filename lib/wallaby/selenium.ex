@@ -336,9 +336,7 @@ defmodule Wallaby.Selenium do
     keys =
       case Enum.all?(keys, &is_local_file?(&1)) do
         true ->
-          keys
-          |> Enum.map(fn key -> upload_file(element, key) end)
-          |> Enum.intersperse("\n")
+          keys |> Enum.map_intersperse("\n", fn key -> upload_file(element, key) end)
 
         false ->
           keys
