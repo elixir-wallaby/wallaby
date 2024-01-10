@@ -223,7 +223,7 @@ defmodule Wallaby.Element do
   @doc """
   Returns a tuple `{width, height}` with the size of the given element.
   """
-  @spec size(t) :: t
+  @spec size(t) :: {non_neg_integer, non_neg_integer}
 
   def size(%__MODULE__{driver: driver} = element) do
     element
