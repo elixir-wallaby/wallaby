@@ -10,7 +10,15 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 25.x, elixir: 1.13.x}]
+        elixir-otp:
+          - otp: 24.x
+            elixir: 1.12.x
+          - otp: 25.x
+            elixir: 1.13.x
+          - otp: 25.x
+            elixir: 1.14.x
+          - otp: 26.x
+            elixir: 1.15.x
       fail-fast: false
 
     env:
@@ -46,7 +54,15 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 25.x, elixir: 1.13.x}]
+        elixir-otp:
+          - otp: 24.x
+            elixir: 1.12.x
+          - otp: 25.x
+            elixir: 1.13.x
+          - otp: 25.x
+            elixir: 1.14.x
+          - otp: 26.x
+            elixir: 1.15.x
       fail-fast: false
 
     steps:
@@ -92,7 +108,15 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 25.x, elixir: 1.13.x}]
+        elixir-otp:
+          - otp: 24.x
+            elixir: 1.12.x
+          - otp: 25.x
+            elixir: 1.13.x
+          - otp: 25.x
+            elixir: 1.14.x
+          - otp: 26.x
+            elixir: 1.15.x
       fail-fast: false
 
     env:
@@ -128,7 +152,15 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 25.x, elixir: 1.13.x}]
+        elixir-otp:
+          - otp: 24.x
+            elixir: 1.12.x
+          - otp: 25.x
+            elixir: 1.13.x
+          - otp: 25.x
+            elixir: 1.14.x
+          - otp: 26.x
+            elixir: 1.15.x
       fail-fast: false
 
     env:
@@ -177,9 +209,34 @@ jobs:
     env:
       WALLABY_DRIVER: selenium
 
+    services:
+      selenium-chrome:
+        image: selenium/standalone-chrome
+        ports:
+          - 4444:4444
+        options: --shm-size=2g
+      selenium-firefox:
+        image: selenium/standalone-firefox
+        ports:
+          - 4445:4444
+        options: --shm-size=2g
+
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.13.x}]
+        elixir-otp:
+          - otp: 24.x
+            elixir: 1.12.x
+          - otp: 25.x
+            elixir: 1.13.x
+          - otp: 25.x
+            elixir: 1.14.x
+          - otp: 26.x
+            elixir: 1.15.x
+        browser:
+          - name: chrome
+            port: 4444
+          - name: firefox
+            port: 4445
       fail-fast: false
 
     steps:
@@ -202,11 +259,10 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: mix deps.get
 
-    - name: Start Selenium
-      run: java -Djava.awt.headless=true -jar "$SELENIUM_JAR_PATH" standalone > selenium-v4-${{matrix.elixir-otp.elixir}}.log 2>&1 &
-
-    - name: Run Tests
+    - name: Run Tests (${{matrix.browser.name}})
       run: mix test || mix test --failed || mix test --failed
+      env:
+        SELENIUM_REMOTE_URL: http://selenium-${{matrix.browser.name}}:${{matrix.browser.port}}/
 
     - uses: actions/upload-artifact@v2
       if: always()
@@ -227,7 +283,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - run: brew install erlang elixir
+    - run: brew install erlang elixir chromedriver selenium-server
 
     - uses: actions/cache@v1
       id: cache
@@ -243,7 +299,7 @@ jobs:
       run: mix deps.get
 
     - name: Start Selenium
-      run: selenium-server standalone > selenium-mac.log 2>&1 &
+      run: selenium-server standalone -p 4444 > selenium-mac.log 2>&1 &
 
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed

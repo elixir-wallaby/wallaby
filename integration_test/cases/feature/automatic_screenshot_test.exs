@@ -24,7 +24,12 @@ defmodule Wallaby.Integration.Feature.AutomaticScreenshotTest do
         end
       end
 
-      ExUnit.Server.modules_loaded()
+      if function_exported?(ExUnit.Server, :modules_loaded, 0) do
+        ExUnit.Server.modules_loaded()
+      else
+        ExUnit.Server.modules_loaded(true)
+      end
+
       configure_and_reload_on_exit(colors: [enabled: false])
 
       output =
@@ -52,7 +57,12 @@ defmodule Wallaby.Integration.Feature.AutomaticScreenshotTest do
         end
       end
 
-      ExUnit.Server.modules_loaded()
+      if function_exported?(ExUnit.Server, :modules_loaded, 0) do
+        ExUnit.Server.modules_loaded()
+      else
+        ExUnit.Server.modules_loaded(true)
+      end
+
       configure_and_reload_on_exit(colors: [enabled: false])
 
       output =
