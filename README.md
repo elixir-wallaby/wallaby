@@ -131,7 +131,7 @@ It's important that this is at the top of `endpoint.ex` before any other plugs.
 defmodule YourAppWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :your_app
 
-  if sandbox = Application.get_env(:your_app, :sandbox) do
+  if sandbox = Application.compile_env(:your_app, :sandbox, false) do
     plug Phoenix.Ecto.SQL.Sandbox, sandbox: sandbox
   end
 
