@@ -160,7 +160,7 @@ This enables the database connection to be owned by the process that is running 
 If you have other resources that should be shared by both processes (e.g. expectations or stubs if using [Mox](https://hexdocs.pm/mox/Mox.html)), then you can define a custom sandbox module:
 
 ```elixir
-# config/support/sandbox.ex
+# test/support/sandbox.ex
 
 defmodule YourApp.Sandbox do
   def allow(repo, owner_pid, child_pid) do
