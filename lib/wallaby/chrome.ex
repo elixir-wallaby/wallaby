@@ -1,6 +1,6 @@
 defmodule Wallaby.Chrome do
   @moduledoc """
-  The Chrome driver uses [Chromedriver](https://sites.google.com/a/chromium.org/chromedriver/) to power Google Chrome and Chromium.
+  The Chrome driver uses [Chromedriver](https://chromedriver.chromium.org/) to power Google Chrome and Chromium.
 
   ## Usage
 
