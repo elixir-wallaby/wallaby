@@ -170,7 +170,14 @@ defmodule Wallaby.Query do
   The second is by providing an existing query and a value to set as the `text`
   option.
 
-  ## Example
+  Note that the text you're querying for must appear in a single element.
+  To assert on text that appears in multiple (potentially nested) elements,
+  rather than using `assert_has/2` in combination with `Query.text/2`, use
+  `assert_text/{2,3}` directly.
+
+  ## Examples
+
+  ### Querying the text of a specific element
 
     ```
     submit_button = Query.css("#submit-button")
@@ -178,6 +185,34 @@ defmodule Wallaby.Query do
     update_button = submit_button |> Query.text("Update")
     create_button = submit_button |> Query.text("Create")
     ```
+
+  ### Asserting on the text of a single element
+
+      ```
+      submit_button = Query.css("#submit-button")
+      assert_has(session, Query.text(submit_button, "Create"))
+      ```
+
+  ### Asserting on the text of nested elements
+
+  HTML:
+
+      ```
+      <div id="unread-notifications">
+        Unread messages:
+        <strong>1 message</strong>
+      </div>
+      ```
+
+  Test:
+
+      ```
+      assert_text(session, "Unread messages: 1 message")
+
+      notifications_block = Query.css("#unread-notifications")
+      # It would *not* work to query as: Query.text(notifications_block, "Unread messages: 1 message")
+      assert_has(session, Query.text(notifications_block, "Unread messages:"))
+      ```
   """
   def text(query_or_selector, value_or_opts \\ [])
 
