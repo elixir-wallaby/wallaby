@@ -207,7 +207,7 @@ defmodule Wallaby.Query do
   Test:
 
       ```
-      assert_has_text(session, "Unread messages: 1 message")
+      assert_text(session, "Unread messages: 1 message")
 
       notifications_block = Query.css("#unread-notifications")
       # It would *not* work to query as: Query.text(notifications_block, "Unread messages: 1 message")
