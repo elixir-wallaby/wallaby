@@ -108,19 +108,39 @@ You'll need to install the actual drivers as well.
   - [`selenium`](https://www.selenium.dev/downloads/)
   - [`geckodriver`](https://github.com/mozilla/geckodriver) (for Firefox) or [`chromedriver`](https://chromedriver.chromium.org/downloads) (for Chrome)
 
+Ensure that Wallaby is started in your `test_helper.exs`:
+
+```elixir
+{:ok, _} = Application.ensure_all_started(:wallaby)
+```
+
 When calling `use Wallaby.Feature` and using Ecto, please configure your `otp_app`.
 
 ```elixir
 config :wallaby, otp_app: :your_app
 ```
 
-Then ensure that Wallaby is started in your `test_helper.exs`:
+### Phoenix
+
+Enable Phoenix to serve endpoints in tests:
 
 ```elixir
-{:ok, _} = Application.ensure_all_started(:wallaby)
+# config/test.exs
+
+config :your_app, YourAppWeb.Endpoint,
+  server: true
 ```
 
-### Phoenix
+In your `test_helper.exs` you can provide some configuration to Wallaby.
+At a minimum, you need to specify a `:base_url`, so Wallaby knows how to resolve relative paths.
+
+```elixir
+# test/test_helper.exs
+
+Application.put_env(:wallaby, :base_url, YourAppWeb.Endpoint.url)
+```
+
+#### Ecto
 
 If you're testing a Phoenix application with Ecto and a database that [supports sandbox mode](https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.Sandbox.html), you can enable concurrent testing by adding the `Phoenix.Ecto.SQL.Sandbox` plug to your `Endpoint`.
 It's important that this is at the top of `endpoint.ex` before any other plugs.
@@ -144,13 +164,10 @@ defmodule YourAppWeb.Endpoint do
 
 It's also important to make sure the `user_agent` is passed in the `connect_info` in order to allow the database and browser session to be wired up correctly.
 
-Then make sure Phoenix is set up to serve endpoints in tests and that the sandbox is enabled:
+Then make sure sandbox is enabled:
 
 ```elixir
 # config/test.exs
-
-config :your_app, YourAppWeb.Endpoint,
-  server: true
 
 config :your_app, :sandbox, Ecto.Adapters.SQL.Sandbox
 ```
@@ -179,15 +196,6 @@ And update the test config to use your custom sandbox:
 # config/test.exs
 
 config :your_app, :sandbox, YourApp.Sandbox
-```
-
-Finally, in your `test_helper.exs` you can provide some configuration to Wallaby.
-At minimum, you need to specify a `:base_url`, so Wallaby knows how to resolve relative paths.
-
-```elixir
-# test/test_helper.exs
-
-Application.put_env(:wallaby, :base_url, YourAppWeb.Endpoint.url)
 ```
 
 #### Assets
