@@ -33,7 +33,7 @@ defmodule Wallaby.SessionStore do
       if(name == :session_store, do: [:named_table], else: []) ++
         [:set, :public, read_concurrency: true]
 
-    Process.flag(:trap_exit, true)
+    # Process.flag(:trap_exit, true)
     tid = :ets.new(name, opts)
 
     Application.ensure_all_started(:ex_unit)
@@ -89,6 +89,14 @@ defmodule Wallaby.SessionStore do
     :ets.delete(state.ets_table, {ref, session.id, pid})
 
     emit(%{module: __MODULE__, name: :DOWN, metadata: %{monitored_session: session}})
+
+    {:noreply, state}
+  end
+
+  def handle_info({:EXIT, _pid, :normal}, state) do
+    # Fallback - Handle the normal exit signal appropriately
+    # Just log it or ignore as per the requirement
+    Logger.info("Received normal exit signal from linked process")
 
     {:noreply, state}
   end
