@@ -33,7 +33,6 @@ defmodule Wallaby.SessionStore do
       if(name == :session_store, do: [:named_table], else: []) ++
         [:set, :public, read_concurrency: true]
 
-    Process.flag(:trap_exit, false)
     tid = :ets.new(name, opts)
 
     Application.ensure_all_started(:ex_unit)
