@@ -121,8 +121,17 @@ defmodule Wallaby.Feature do
     context = Macro.escape(context)
     contents = Macro.escape(contents, unquote: true)
 
-    quote bind_quoted: [context: context, contents: contents, message: message] do
-      name = ExUnit.Case.register_test(__ENV__, :feature, message, [:feature])
+    %{module: mod, file: file, line: line} = __CALLER__
+
+    quote bind_quoted: [
+            mod: mod,
+            file: file,
+            line: line,
+            context: context,
+            contents: contents,
+            message: message
+          ] do
+      name = ExUnit.Case.register_test(mod, file, line, :feature, message, [:feature])
 
       def unquote(name)(unquote(context)), do: unquote(contents)
     end
