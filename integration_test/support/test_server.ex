@@ -5,8 +5,8 @@ defmodule Wallaby.Integration.TestServer do
     port: 0,
     server_root: String.to_charlist(Path.absname("./", __DIR__)),
     document_root: String.to_charlist(Path.absname("./pages", __DIR__)),
-    server_name: 'wallaby_test',
-    directory_index: ['index.html']
+    server_name: ~c"wallaby_test",
+    directory_index: [~c"index.html"]
   ]
 
   defstruct [:base_url, :pid]
