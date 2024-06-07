@@ -78,8 +78,7 @@ defmodule Wallaby.Integration.SeleniumCapabilitiesTest do
       }
 
       metadata =
-        if System.get_env("WALLABY_DRIVER") == "chrome" &&
-             Version.compare(System.version(), "1.16.0") in [:eq, :gt] do
+        if Version.compare(System.version(), "1.16.0") in [:eq, :gt] do
           "g2gCdwJ2MXQAAAABbQAAAARzb21lbQAAAAhtZXRhZGF0YQ=="
         else
           "g2gCZAACdjF0AAAAAW0AAAAEc29tZW0AAAAIbWV0YWRhdGE="
