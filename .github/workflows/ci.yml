@@ -79,9 +79,11 @@ jobs:
       if: matrix.elixir-otp.elixir == '1.16.x'
 
     - name: Run Credo
+      if: matrix.elixir-otp.elixir == '1.16.x'
       run: mix credo --strict
 
     - name: Run Dialyzer
+      if: matrix.elixir-otp.elixir == '1.16.x'
       run: mix dialyzer --halt-exit-status
 
   unit_tests:
