@@ -77,13 +77,20 @@ defmodule Wallaby.Integration.SeleniumCapabilitiesTest do
         }
       }
 
+      metadata =
+        if System.get_env("WALLABY_DRIVER") == "chrome" &&
+             Version.compare(System.version(), "1.16.0") in [:eq, :gt] do
+          "g2gCdwJ2MXQAAAABbQAAAARzb21lbQAAAAhtZXRhZGF0YQ=="
+        else
+          "g2gCZAACdjF0AAAAAW0AAAAEc29tZW0AAAAIbWV0YWRhdGE="
+        end
+
       expected_capabilities = %{
         browserName: "firefox",
         "moz:firefoxOptions": %{
           args: ["-headless"],
           prefs: %{
-            "general.useragent.override" =>
-              "#{user_agent}/BeamMetadata (g2gCZAACdjF0AAAAAW0AAAAEc29tZW0AAAAIbWV0YWRhdGE=)"
+            "general.useragent.override" => "#{user_agent}/BeamMetadata (#{metadata})"
           }
         }
       }
