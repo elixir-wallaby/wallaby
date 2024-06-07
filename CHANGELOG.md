@@ -2,6 +2,10 @@
 
 ## Main
 
+## v0.30.7
+
+TODO
+
 ## v0.30.6
 
 - fix: concurrent tests when using custom capabilities (#744)
