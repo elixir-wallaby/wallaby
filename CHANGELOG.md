@@ -4,7 +4,15 @@
 
 ## v0.30.7
 
-TODO
+- refactor to map_intersperse by @bradhanks in https://github.com/elixir-wallaby/wallaby/pull/758
+- Fix Wallaby.Element.size/1 spec by @NikitaNaumenko in https://github.com/elixir-wallaby/wallaby/pull/759
+- Update README to Avoid Elixir Warning by @stratigos in https://github.com/elixir-wallaby/wallaby/pull/762
+- Update README: Local Sandbox File Location by @stratigos in https://github.com/elixir-wallaby/wallaby/pull/766
+- Update chrome.ex by @RicoTrevisan in https://github.com/elixir-wallaby/wallaby/pull/768
+- Make Query.text/2 docs also point to assert_text/{2,3} by @s3cur3 in https://github.com/elixir-wallaby/wallaby/pull/770
+- Update README: Separate Phoenix setup from Ecto by @Corkle in https://github.com/elixir-wallaby/wallaby/pull/772
+- Address deprecation; prefer ExUnit.Case.register_test/6 by @vanderhoop in https://github.com/elixir-wallaby/wallaby/pull/776
+- Fix newer invalid selector error from chromedriver by @mhanberg in 4f82ca82a6c417d298663ac4a996d49e1150d6f2
 
 ## v0.30.6
 
