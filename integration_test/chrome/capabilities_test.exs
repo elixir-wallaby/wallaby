@@ -161,7 +161,7 @@ defmodule Wallaby.Integration.CapabilitiesTest do
         chromeOptions: %{
           args: [
             "--headless",
-            "--user-agent=#{user_agent}/BeamMetadata (g2gCZAACdjF0AAAAAW0AAAAEc29tZW0AAAAIbWV0YWRhdGE=)"
+            "--user-agent=#{user_agent}/BeamMetadata (g2gCdwJ2MXQAAAABbQAAAARzb21lbQAAAAhtZXRhZGF0YQ==)"
           ]
         }
       }
