@@ -142,7 +142,7 @@ defmodule Wallaby.Browser do
   loop forever (or until the test is killed by exunit).
   """
   @type sync_result :: {:ok, any()} | {:error, any()}
-  @spec retry((() -> sync_result), non_neg_integer()) :: sync_result()
+  @spec retry((-> sync_result), non_neg_integer()) :: sync_result()
 
   def retry(f, start_time \\ current_time()) do
     case f.() do
@@ -208,7 +208,7 @@ defmodule Wallaby.Browser do
   """
   @spec attach_file(parent, Query.t(), path: String.t()) :: parent
   def attach_file(parent, query, path: path) do
-    case is_selenium?(parent) do
+    case selenium?(parent) do
       true ->
         # local/remote selenium will only properly attach
         # & upload a local file with `send_keys`
@@ -1558,7 +1558,7 @@ defmodule Wallaby.Browser do
     "file://" <> (path |> Path.expand() |> URI.encode())
   end
 
-  defp is_selenium?(parent) do
+  defp selenium?(parent) do
     parent.driver == Wallaby.Selenium
   end
 end

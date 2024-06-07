@@ -334,7 +334,7 @@ defmodule Wallaby.Selenium do
 
   def send_keys(%Element{} = element, keys) do
     keys =
-      case Enum.all?(keys, &is_local_file?(&1)) do
+      case Enum.all?(keys, &local_file?(&1)) do
         true ->
           keys |> Enum.map_intersperse("\n", fn key -> upload_file(element, key) end)
 
@@ -390,7 +390,7 @@ defmodule Wallaby.Selenium do
     end)
   end
 
-  defp is_local_file?(file) do
+  defp local_file?(file) do
     file
     |> keys_to_binary()
     |> File.exists?()
