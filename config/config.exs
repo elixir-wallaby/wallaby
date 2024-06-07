@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :wallaby,
   max_wait_time: 5000,
@@ -8,4 +8,4 @@ config :wallaby,
   js_errors: true,
   hackney_options: [timeout: :infinity, recv_timeout: :infinity]
 
-import_config "#{Mix.env()}.exs"
+import_config "#{config_env()}.exs"
