@@ -24,7 +24,6 @@ defmodule Wallaby.Integration.Feature.AutomaticScreenshotTest do
         end
       end
 
-      ExUnit.Server.modules_loaded()
       configure_and_reload_on_exit(colors: [enabled: false])
 
       output =
@@ -52,7 +51,6 @@ defmodule Wallaby.Integration.Feature.AutomaticScreenshotTest do
         end
       end
 
-      ExUnit.Server.modules_loaded()
       configure_and_reload_on_exit(colors: [enabled: false])
 
       output =
