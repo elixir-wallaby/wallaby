@@ -167,8 +167,14 @@ defmodule Wallaby.HTTPClient do
     value =
       case Regex.named_captures(~r/(?<type>.*): (?<payload>{.*})\n.*/, message) do
         %{"payload" => payload, "type" => type} ->
+          message =
+            case Jason.decode(payload) do
+              {:ok, message} -> message
+              _ -> payload
+            end
+
           %{
-            "message" => Jason.decode!(payload),
+            "message" => message,
             "type" => type
           }
 
