@@ -165,19 +165,14 @@ defmodule Wallaby.HTTPClient do
 
   defp coerce_json_message(%{"value" => %{"message" => message} = value} = response) do
     value =
-      case Regex.named_captures(~r/(?<type>.*): (?<payload>{.*})\n.*/, message) do
-        %{"payload" => payload, "type" => type} ->
-          message =
-            case Jason.decode(payload) do
-              {:ok, message} -> message
-              _ -> payload
-            end
-
-          %{
-            "message" => message,
-            "type" => type
-          }
-
+      with %{"payload" => payload, "type" => type} <-
+             Regex.named_captures(~r/(?<type>.*): (?<payload>{.*})\n.*/, message),
+           {:ok, message} <- Jason.decode(payload) do
+        %{
+          "message" => message,
+          "type" => type
+        }
+      else
         _ ->
           value
       end
