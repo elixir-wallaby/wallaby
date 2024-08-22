@@ -397,6 +397,12 @@ defmodule Wallaby.Chrome do
 
   defp delegate(fun, element_or_session, args \\ []) do
     check_logs!(element_or_session, fn ->
+      delay = Application.get_env(:wallaby, :slow_down, 0)
+
+      if delay > 0 do
+        :timer.sleep(delay)
+      end
+
       apply(WebdriverClient, fun, [element_or_session | args])
     end)
   end
