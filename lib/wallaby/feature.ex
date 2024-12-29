@@ -23,22 +23,33 @@ defmodule Wallaby.Feature do
       import Wallaby.Feature
 
       setup context do
-        metadata = unquote(__MODULE__).Utils.maybe_checkout_repos(context[:async])
+        # Only set up a session if this is a feature test (using the `feature` macro).
+        feature_test? = context[:feature] == true
 
-        start_session_opts =
-          [metadata: metadata]
-          |> unquote(__MODULE__).Utils.put_create_session_fn(context[:create_session_fn])
+        # If you have `use Wallaby.Feature` at the top of your test module,
+        # then also within a `describe` block, we only want to set up one session.
+        already_has_session? = is_map_key(context, :session)
 
-        get_in(context, [:registered, :sessions])
-        |> unquote(__MODULE__).Utils.sessions_iterable()
-        |> Enum.map(fn
-          opts when is_list(opts) ->
-            unquote(__MODULE__).Utils.start_session(opts, start_session_opts)
+        if feature_test? and not already_has_session? do
+          metadata = unquote(__MODULE__).Utils.maybe_checkout_repos(context[:async])
 
-          i when is_number(i) ->
-            unquote(__MODULE__).Utils.start_session([], start_session_opts)
-        end)
-        |> unquote(__MODULE__).Utils.build_setup_return()
+          start_session_opts =
+            [metadata: metadata]
+            |> unquote(__MODULE__).Utils.put_create_session_fn(context[:create_session_fn])
+
+          get_in(context, [:registered, :sessions])
+          |> unquote(__MODULE__).Utils.sessions_iterable()
+          |> Enum.map(fn
+            opts when is_list(opts) ->
+              unquote(__MODULE__).Utils.start_session(opts, start_session_opts)
+
+            i when is_number(i) ->
+              unquote(__MODULE__).Utils.start_session([], start_session_opts)
+          end)
+          |> unquote(__MODULE__).Utils.build_setup_return()
+        else
+          :ok
+        end
       end
     end
   end
