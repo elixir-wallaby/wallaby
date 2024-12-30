@@ -23,14 +23,7 @@ defmodule Wallaby.Feature do
       import Wallaby.Feature
 
       setup context do
-        # Only set up a session if this is a feature test (using the `feature` macro).
-        feature_test? = context[:feature] == true
-
-        # If you have `use Wallaby.Feature` at the top of your test module,
-        # then also within a `describe` block, we only want to set up one session.
-        already_has_session? = is_map_key(context, :session)
-
-        if feature_test? and not already_has_session? do
+        if context[:test_type] == :feature do
           metadata = unquote(__MODULE__).Utils.maybe_checkout_repos(context[:async])
 
           start_session_opts =
