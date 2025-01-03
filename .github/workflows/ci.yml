@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.0-rc.1}]
+        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.x}, {otp: 27.x, elixir: 1.18.x}]
       fail-fast: false
 
     env:
@@ -46,7 +46,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.0-rc.1}]
+        elixir-otp: [{otp: 27.x, elixir: 1.18.x}]
       fail-fast: false
 
     steps:
@@ -76,14 +76,11 @@ jobs:
 
     - name: Check formatting
       run: mix format --check-formatted
-      if: matrix.elixir-otp.elixir == '1.16.x'
 
     - name: Run Credo
-      if: matrix.elixir-otp.elixir == '1.16.x'
       run: mix credo --strict
 
     - name: Run Dialyzer
-      if: matrix.elixir-otp.elixir == '1.16.x'
       run: mix dialyzer --halt-exit-status
 
   unit_tests:
@@ -94,7 +91,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.0-rc.1}]
+        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.x}, {otp: 27.x, elixir: 1.18.x}]
       fail-fast: false
 
     env:
@@ -130,7 +127,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.0-rc.1}]
+        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.x}, {otp: 27.x, elixir: 1.18.x}]
       fail-fast: false
 
     env:
@@ -181,7 +178,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 27.x, elixir: 1.17.0-rc.1}]
+        elixir-otp: [{otp: 27.x, elixir: 1.18.x}]
       fail-fast: false
 
     steps:
