@@ -163,7 +163,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: Selenium Logs
@@ -210,7 +210,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: Selenium Logs
@@ -250,7 +250,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: Selenium Logs

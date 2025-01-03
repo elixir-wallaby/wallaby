@@ -23,22 +23,26 @@ defmodule Wallaby.Feature do
       import Wallaby.Feature
 
       setup context do
-        metadata = unquote(__MODULE__).Utils.maybe_checkout_repos(context[:async])
+        if context[:test_type] == :feature do
+          metadata = unquote(__MODULE__).Utils.maybe_checkout_repos(context[:async])
 
-        start_session_opts =
-          [metadata: metadata]
-          |> unquote(__MODULE__).Utils.put_create_session_fn(context[:create_session_fn])
+          start_session_opts =
+            [metadata: metadata]
+            |> unquote(__MODULE__).Utils.put_create_session_fn(context[:create_session_fn])
 
-        get_in(context, [:registered, :sessions])
-        |> unquote(__MODULE__).Utils.sessions_iterable()
-        |> Enum.map(fn
-          opts when is_list(opts) ->
-            unquote(__MODULE__).Utils.start_session(opts, start_session_opts)
+          get_in(context, [:registered, :sessions])
+          |> unquote(__MODULE__).Utils.sessions_iterable()
+          |> Enum.map(fn
+            opts when is_list(opts) ->
+              unquote(__MODULE__).Utils.start_session(opts, start_session_opts)
 
-          i when is_number(i) ->
-            unquote(__MODULE__).Utils.start_session([], start_session_opts)
-        end)
-        |> unquote(__MODULE__).Utils.build_setup_return()
+            i when is_number(i) ->
+              unquote(__MODULE__).Utils.start_session([], start_session_opts)
+          end)
+          |> unquote(__MODULE__).Utils.build_setup_return()
+        else
+          :ok
+        end
       end
     end
   end
