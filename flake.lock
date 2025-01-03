@@ -1,0 +1,99 @@
+{
+  "nodes": {
+    "beam-flakes": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1735920615,
+        "narHash": "sha256-H/IUdAUv2xTXsUBjTWS5j6t2DjqKbEcSCAMJj1+dU/s=",
+        "owner": "mhanberg",
+        "repo": "nix-beam-flakes",
+        "rev": "9dec5af2ad0d065ee53fe73611438705ed5bf5a3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mhanberg",
+        "repo": "nix-beam-flakes",
+        "type": "github"
+      }
+    },
+    "chromedriver": {
+      "locked": {
+        "lastModified": 1732045383,
+        "narHash": "sha256-PWkPHtnTSaqTdIsP5Gb/ySk1dJUbGNqiC/BLypvyljY=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "8dd2f1add978a4747a5962f2874b8ad20f86b01c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "8dd2f1add978a4747a5962f2874b8ad20f86b01c",
+        "type": "github"
+      }
+    },
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib"
+      },
+      "locked": {
+        "lastModified": 1735774679,
+        "narHash": "sha256-soePLBazJk0qQdDVhdbM98vYdssfs3WFedcq+raipRI=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "f2f7418ce0ab4a5309a4596161d154cfc877af66",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1735821806,
+        "narHash": "sha256-cuNapx/uQeCgeuhUhdck3JKbgpsml259sjUQnWM7zW8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "d6973081434f88088e5321f83ebafe9a1167c367",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-lib": {
+      "locked": {
+        "lastModified": 1735774519,
+        "narHash": "sha256-CewEm1o2eVAnoqb6Ml+Qi9Gg/EfNAxbRx1lANGVyoLI=",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/e9b51731911566bbf7e4895475a87fe06961de0b.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/e9b51731911566bbf7e4895475a87fe06961de0b.tar.gz"
+      }
+    },
+    "root": {
+      "inputs": {
+        "beam-flakes": "beam-flakes",
+        "chromedriver": "chromedriver",
+        "flake-parts": "flake-parts",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
