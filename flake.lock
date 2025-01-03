@@ -23,22 +23,6 @@
         "type": "github"
       }
     },
-    "chromedriver": {
-      "locked": {
-        "lastModified": 1732045383,
-        "narHash": "sha256-PWkPHtnTSaqTdIsP5Gb/ySk1dJUbGNqiC/BLypvyljY=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "8dd2f1add978a4747a5962f2874b8ad20f86b01c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "8dd2f1add978a4747a5962f2874b8ad20f86b01c",
-        "type": "github"
-      }
-    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -88,7 +72,6 @@
     "root": {
       "inputs": {
         "beam-flakes": "beam-flakes",
-        "chromedriver": "chromedriver",
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs"
       }
