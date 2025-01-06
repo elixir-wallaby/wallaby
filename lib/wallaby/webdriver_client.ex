@@ -677,7 +677,8 @@ defmodule Wallaby.WebdriverClient do
          do: {:ok, {value["x"], value["y"]}}
   end
 
-  @spec cast_as_element(Session.t() | Element.t(), map) :: Element.t()
+  @spec cast_as_element(Session.t() | Element.t() | WebDriverClient.Element.t(), map) ::
+          Element.t()
   defp cast_as_element(parent, %{"ELEMENT" => id}) do
     # In the Selenium WebDriver Protocol, the identifier is "ELEMENT":
     #  https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#webelement-json-object
