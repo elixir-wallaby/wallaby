@@ -10,8 +10,20 @@ defmodule Wallaby.Session do
           server: pid | :none,
           screenshots: list,
           driver: module,
-          capabilities: map()
+          capabilities: map(),
+          wdc_config: WebDriverClient.Config.t() | nil,
+          wdc_session: WebDriverClient.Session.t() | nil
         }
 
-  defstruct [:id, :url, :session_url, :driver, :capabilities, server: :none, screenshots: []]
+  defstruct [
+    :id,
+    :url,
+    :session_url,
+    :driver,
+    :capabilities,
+    :wdc_config,
+    :wdc_session,
+    server: :none,
+    screenshots: []
+  ]
 end

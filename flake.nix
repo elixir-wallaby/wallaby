@@ -14,6 +14,7 @@
   outputs = inputs @ {
     beam-flakes,
     flake-parts,
+    self,
     ...
   }:
     flake-parts.lib.mkFlake {inherit inputs;} {
@@ -25,13 +26,19 @@
         pkgs,
         system,
         ...
-      }: {
+      }: let
+        selenium-server = pkgs.callPackage ./nix/selenium-server.nix {};
+      in {
+        packages.selenium-server = selenium-server;
         beamWorkspace = {
           enable = true;
           devShell = {
             packages = with pkgs; [
-              chromedriver
+              selenium-server
               selenium-server-standalone
+              chromedriver
+              geckodriver
+              firefox
             ];
             languageServers.elixir = false;
             languageServers.erlang = false;
