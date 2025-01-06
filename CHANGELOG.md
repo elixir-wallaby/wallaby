@@ -1,6 +1,16 @@
 # Changelog
 
-## Main
+## v0.30.10
+
+- only automatically start sessions for `feature` test macros and not every test in a file by @s3cur3 in https://github.com/elixir-wallaby/wallaby/pull/795
+
+## v0.30.9
+
+- fix unhandled alerts by @s3cur3 in https://github.com/elixir-wallaby/wallaby/pull/779
+
+## v0.30.8
+
+- fix malformed JSON from chromedriver by @s3cur3 in https://github.com/elixir-wallaby/wallaby/pull/778
 
 ## v0.30.7
 
