@@ -598,6 +598,33 @@ Application.put_env(:wallaby, :js_logger, file)
 
 Logging can be disabled by setting `:js_logger` to `nil`.
 
+### Enabling WebAuthn Virtual Authenticator (Chrome only)
+
+When wanting to test Passkeys with Wallaby, you have to make sure WebAuthn Virtual Authenticator is enabled. You must execute this code to enable this feature in Chrome via the Chromedriver. This configuration will make Chrome automatically present a virtual Passkey whenever WebAuthn [create()](https://developer.mozilla.org/en-US/docs/Web/API/CredentialsContainer/create) or [get()](https://developer.mozilla.org/en-US/docs/Web/API/CredentialsContainer/get) APIs are called in browser.
+
+```elixir
+{:ok, _result} =
+  Wallaby.HTTPClient.request(:post, "#{session.url}/chromium/send_command_and_get_result", %{
+    cmd: "WebAuthn.enable",
+    params: %{}
+  })
+
+{:ok, result} =
+  Wallaby.HTTPClient.request(:post, "#{session.url}/chromium/send_command_and_get_result", %{
+    cmd: "WebAuthn.addVirtualAuthenticator",
+    params: %{
+      options: %{
+        protocol: "ctap2",
+        transport: "internal",
+        hasResidentKey: true,
+        hasUserVerification: true,
+        isUserVerified: true,
+        automaticPresenceSimulation: true
+      }
+    }
+  })
+```
+
 ## Configuration
 
 ### Adjusting timeouts
