@@ -3,7 +3,7 @@ defmodule Wallaby.Mixfile do
 
   @source_url "https://github.com/elixir-wallaby/wallaby"
   @version "0.30.10"
-  @drivers ~w(selenium chrome)
+  @drivers ~w(selenium chrome selenium4)
   @selected_driver System.get_env("WALLABY_DRIVER")
   @maintainers ["Mitchell Hanberg"]
 
@@ -44,7 +44,8 @@ defmodule Wallaby.Mixfile do
     [
       {:jason, "~> 1.1"},
       {:httpoison, "~> 0.12 or ~> 1.0 or ~> 2.0"},
-      {:web_driver_client, "~> 0.2.0"},
+      # {:web_driver_client, "~> 0.2.0"},
+      {:web_driver_client, path: "../web_driver_client"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:bypass, "~> 1.0.0", only: :test},
@@ -84,6 +85,7 @@ defmodule Wallaby.Mixfile do
     ]
   end
 
+  defp test_paths("selenium4"), do: ["integration_test/selenium"]
   defp test_paths(driver) when driver in @drivers, do: ["integration_test/#{driver}"]
   defp test_paths(_), do: ["test"]
 
