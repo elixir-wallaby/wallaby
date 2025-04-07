@@ -6,7 +6,6 @@ defmodule Wallaby.Metadata do
   # test can then be extracted in the application.
 
   @prefix "BeamMetadata"
-  @regex ~r{#{@prefix} \((.*?)\)}
 
   def append(user_agent, nil), do: user_agent
 
@@ -31,12 +30,14 @@ defmodule Wallaby.Metadata do
   end
 
   def extract(str) do
+    regex = ~r{#{@prefix} \((.*?)\)}
+
     ua =
       str
       |> String.split("/")
       |> List.last()
 
-    case Regex.run(@regex, ua) do
+    case Regex.run(regex, ua) do
       [_, metadata] -> parse(metadata)
       _ -> %{}
     end
