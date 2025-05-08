@@ -299,8 +299,8 @@ If you're testing an umbrella application containing a Phoenix application for t
 defmodule MyWebApp.Endpoint do
   use Phoenix.Endpoint, otp_app: :my_web_app
 
-  if Application.get_env(:my_persistence_app, :sql_sandbox) do
-    plug Phoenix.Ecto.SQL.Sandbox
+  if sandbox = Application.compile_env(:my_persistence_app, :sandbox, false) do
+    plug Phoenix.Ecto.SQL.Sandbox, sandbox: sandbox
   end
 ```
 
