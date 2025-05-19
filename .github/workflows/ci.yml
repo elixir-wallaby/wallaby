@@ -25,7 +25,7 @@ jobs:
         otp-version: ${{matrix.elixir-otp.otp}}
         elixir-version: ${{matrix.elixir-otp.elixir}}
 
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       id: cache
       with:
         path: deps
@@ -56,13 +56,13 @@ jobs:
         otp-version: ${{matrix.elixir-otp.otp}}
         elixir-version: ${{matrix.elixir-otp.elixir}}
 
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       id: deps-cache
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
 
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       with:
         path: _build
         key: ${{ runner.os }}-v1-dialyzer-${{matrix.elixir-otp.otp}}-${{ matrix.elixir-otp.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
@@ -105,7 +105,7 @@ jobs:
         otp-version: ${{matrix.elixir-otp.otp}}
         elixir-version: ${{matrix.elixir-otp.elixir}}
 
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       id: cache
       with:
         path: deps
@@ -142,7 +142,7 @@ jobs:
         otp-version: ${{matrix.elixir-otp.otp}}
         elixir-version: ${{matrix.elixir-otp.elixir}}
 
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       id: cache
       with:
         path: deps
@@ -188,7 +188,7 @@ jobs:
         otp-version: ${{matrix.elixir-otp.otp}}
         elixir-version: ${{matrix.elixir-otp.elixir}}
 
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       id: cache
       with:
         path: deps
@@ -228,7 +228,7 @@ jobs:
 
     - run: brew install erlang elixir
 
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       id: cache
       with:
         path: deps
