@@ -1,0 +1,53 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        otp: [27.x]
+        elixir: [1.17.x]
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      - uses: erlef/setup-beam@v1
+        id: install
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+        if: ${{ steps.release.outputs.release_created }}
+
+      - uses: actions/cache@v4
+        id: cache
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{steps.install.outputs.otp-version}}-${{steps.install.outputs.elixir-version}}-
+
+      - name: Install Dependencies
+        if: steps.release.outputs.release_created && steps.cache.outputs.cache-hit != 'true'
+        run: mix deps.get
+
+      - name: publish to hex
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          HEX_API_KEY: ${{secrets.HEX_API_KEY}}
+        run: |
+          mix hex.publish --yes
