@@ -14,7 +14,6 @@
   outputs = inputs @ {
     beam-flakes,
     flake-parts,
-    self,
     ...
   }:
     flake-parts.lib.mkFlake {inherit inputs;} {
@@ -22,11 +21,7 @@
 
       systems = ["aarch64-darwin" "x86_64-darwin" "x86_64-linux"];
 
-      perSystem = {
-        pkgs,
-        system,
-        ...
-      }: let
+      perSystem = {pkgs, ...}: let
         selenium-server = pkgs.callPackage ./nix/selenium-server.nix {};
       in {
         packages.selenium-server = selenium-server;

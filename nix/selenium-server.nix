@@ -23,11 +23,9 @@ pkgs.stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/share/lib/${pname}-${version}
     cp $src $out/share/lib/${pname}-${version}/${pname}-${version}.jar
-    makeWrapper ${jre}/bin/java $out/bin/selenium-server \
-      --add-flags "-Dwebdriver.chrome.driver=${chromedriver}/bin/chromedriver" \
-      --add-flags "-Dwebdriver.firefox.driver=${geckodriver}/bin/geckodriver" \
+    makeWrapper ${jre}/bin/java $out/bin/selenium-server4 \
       --add-flags "-jar $out/share/lib/${pname}-${version}/${pname}-${version}.jar"
   '';
 
-  meta.main = "selenium-server";
+  meta.main = "selenium-server4";
 }
