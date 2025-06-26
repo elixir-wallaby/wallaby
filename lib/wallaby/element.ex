@@ -27,17 +27,14 @@ defmodule Wallaby.Element do
 
   alias Wallaby.StaleReferenceError
 
-  defstruct [:url, :session_url, :parent, :id, :driver, screenshots: []]
+  defstruct [:url, :session_url, :session, :parent, :id, :driver, screenshots: []]
 
-  @type value ::
-          String.t()
-          | number()
-          | :selected
-          | :unselected
+  @type value :: String.t() | number() | :selected | :unselected
   @type attr :: String.t()
   @type keys_to_send :: String.t() | list(atom | String.t())
   @type t :: %__MODULE__{
           session_url: String.t(),
+          session: Wallaby.Session.t(),
           url: String.t(),
           id: String.t(),
           screenshots: list,

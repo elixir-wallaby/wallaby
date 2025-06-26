@@ -117,13 +117,9 @@ defmodule Wallaby.Browser do
 
   @typep session :: Session.t()
   @typep element :: Element.t()
-  @opaque queryable ::
-            Query.t()
-            | Element.t()
+  @opaque queryable :: Query.t() | Element.t()
 
-  @type parent ::
-          element
-          | session
+  @type parent :: element | session
   @type opts :: Query.opts()
 
   @default_max_wait_time 3_000

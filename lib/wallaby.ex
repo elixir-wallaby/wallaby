@@ -16,7 +16,8 @@ defmodule Wallaby do
 
   @drivers %{
     "chrome" => Wallaby.Chrome,
-    "selenium" => Wallaby.Selenium
+    "selenium" => Wallaby.Selenium,
+    "selenium4" => Wallaby.Selenium4
   }
 
   use Application
