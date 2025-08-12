@@ -195,6 +195,9 @@ defmodule Wallaby.Selenium do
   defdelegate dismiss_prompt(session, fun), to: WebdriverClient
 
   @doc false
+  defdelegate shadow_root(element), to: WebdriverClient
+
+  @doc false
   defdelegate take_screenshot(session_or_element), to: WebdriverClient
 
   @doc false
