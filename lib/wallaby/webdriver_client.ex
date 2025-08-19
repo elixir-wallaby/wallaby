@@ -23,7 +23,13 @@ defmodule Wallaby.WebdriverClient do
   def create_session(base_url, capabilities) do
     params = %{desiredCapabilities: capabilities}
 
-    request(:post, "#{base_url}session", params)
+    case request(:post, "#{base_url}session", params) do
+      {:ok, %{"status" => status} = nonzero_status_response} when status != 0 ->
+        {:error, nonzero_status_response}
+
+      response ->
+        response
+    end
   end
 
   @doc """
