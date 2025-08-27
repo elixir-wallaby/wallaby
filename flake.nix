@@ -21,17 +21,19 @@
 
       systems = ["aarch64-darwin" "x86_64-darwin" "x86_64-linux"];
 
-      perSystem = {
-        pkgs,
-        system,
-        ...
-      }: {
+      perSystem = {pkgs, ...}: let
+        selenium-server = pkgs.callPackage ./nix/selenium-server.nix {};
+      in {
+        packages.selenium-server = selenium-server;
         beamWorkspace = {
           enable = true;
           devShell = {
             packages = with pkgs; [
-              chromedriver
+              selenium-server
               selenium-server-standalone
+              chromedriver
+              geckodriver
+              firefox
             ];
             languageServers.elixir = false;
             languageServers.erlang = false;
