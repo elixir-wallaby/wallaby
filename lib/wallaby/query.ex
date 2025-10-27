@@ -582,6 +582,6 @@ defmodule Wallaby.Query do
 
   defp update_condition(%Query{conditions: conditions} = query, key, value) do
     updated_conditions = Keyword.put(conditions, key, value)
-    %Query{query | conditions: updated_conditions}
+    %{query | conditions: updated_conditions}
   end
 end
