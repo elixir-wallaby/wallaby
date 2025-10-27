@@ -160,7 +160,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       if: always()
       with:
         name: Selenium Logs (Elixir ${{matrix.elixir-otp.elixir}})
@@ -207,7 +207,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       if: always()
       with:
         name: Selenium Logs Selenium 4 Linux
@@ -247,7 +247,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       if: always()
       with:
         name: Selenium Logs Selenium 4 Mac
