@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.x}, {otp: 27.x, elixir: 1.18.x}]
+        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.x}, {otp: 27.x, elixir: 1.18.x}, {otp: 28.x, elixir: 1.19.x}]
       fail-fast: false
 
     env:
@@ -46,7 +46,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 27.x, elixir: 1.18.x}]
+        elixir-otp: [{otp: 28.x, elixir: 1.19.x}]
       fail-fast: false
 
     steps:
@@ -91,7 +91,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.x}, {otp: 27.x, elixir: 1.18.x}]
+        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.x}, {otp: 27.x, elixir: 1.18.x}, {otp: 28.x, elixir: 1.19.x}]
       fail-fast: false
 
     env:
@@ -127,7 +127,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.x}, {otp: 27.x, elixir: 1.18.x}]
+        elixir-otp: [{otp: 24.x, elixir: 1.12.x}, {otp: 26.x, elixir: 1.16.x}, {otp: 27.x, elixir: 1.17.x}, {otp: 27.x, elixir: 1.18.x}, {otp: 28.x, elixir: 1.19.x}]
       fail-fast: false
 
     env:
@@ -178,7 +178,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir-otp: [{otp: 27.x, elixir: 1.18.x}]
+        elixir-otp: [{otp: 27.x, elixir: 1.18.x}, {otp: 28.x, elixir: 1.19.x}]
       fail-fast: false
 
     steps:

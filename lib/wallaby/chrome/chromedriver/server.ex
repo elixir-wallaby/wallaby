@@ -103,7 +103,7 @@ defmodule Wallaby.Chrome.Chromedriver.Server do
     check_readiness_async(port_number)
 
     {:noreply,
-     %State{
+     %{
        state
        | port_number: port_number,
          wrapper_script_port: wrapper_script_port,
@@ -125,13 +125,13 @@ defmodule Wallaby.Chrome.Chromedriver.Server do
       GenServer.reply(call, :ok)
     end
 
-    {:noreply, %State{state | calls_awaiting_readiness: [], ready?: true}}
+    {:noreply, %{state | calls_awaiting_readiness: [], ready?: true}}
   end
 
   def handle_info({port, {:data, output}}, %State{wrapper_script_port: port} = state) do
     case analyze_output(output) do
       {:os_pid, os_pid} ->
-        {:noreply, %State{state | chromedriver_os_pid: os_pid}}
+        {:noreply, %{state | chromedriver_os_pid: os_pid}}
 
       :unknown ->
         {:noreply, state}
@@ -161,7 +161,7 @@ defmodule Wallaby.Chrome.Chromedriver.Server do
 
   def handle_call(:wait_until_ready, from, %State{ready?: false} = state) do
     %State{calls_awaiting_readiness: calls_awaiting_readiness} = state
-    {:noreply, %State{state | calls_awaiting_readiness: [from | calls_awaiting_readiness]}}
+    {:noreply, %{state | calls_awaiting_readiness: [from | calls_awaiting_readiness]}}
   end
 
   @spec open_chromedriver_port(String.t(), port_number) :: port
