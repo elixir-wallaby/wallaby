@@ -22,12 +22,17 @@ defmodule Wallaby.Mixfile do
 
       # Custom testing
       aliases: ["test.all": ["test", "test.drivers"], "test.drivers": &test_drivers/1],
-      preferred_cli_env: [
-        "test.all": :test,
-        "test.drivers": :test
-      ],
       test_paths: test_paths(@selected_driver),
       dialyzer: dialyzer()
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [
+        "test.all": :test,
+        "test.drivers": :test
+      ]
     ]
   end
 
