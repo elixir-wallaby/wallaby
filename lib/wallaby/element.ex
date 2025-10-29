@@ -286,6 +286,11 @@ defimpl Inspect, for: Wallaby.Element do
           []
       end
 
-    concat([Inspect.Any.inspect(element, opts)] ++ additional_output)
+    element
+    |> Inspect.Any.inspect(opts)
+    |> maybe_concat(additional_output)
   end
+
+  defp maybe_concat(inspect_result, []), do: inspect_result
+  defp maybe_concat(inspect_result, output), do: concat([inspect_result | output])
 end
