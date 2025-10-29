@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.11](https://github.com/elixir-wallaby/wallaby/compare/v0.30.10...v0.30.11) (2025-10-29)
+
+
+### Bug Fixes
+
+* removed elixir 1.19 warnings ([#823](https://github.com/elixir-wallaby/wallaby/issues/823)) ([f64b943](https://github.com/elixir-wallaby/wallaby/commit/f64b943aca168ddf5869081201a5993384a66d61))
+
 ## v0.30.10
 
 - only automatically start sessions for `feature` test macros and not every test in a file by @s3cur3 in https://github.com/elixir-wallaby/wallaby/pull/795
