@@ -204,6 +204,12 @@ defmodule Wallaby.Driver do
   @callback take_screenshot(Session.t() | Element.t()) :: binary | {:error, reason}
 
   @doc """
+  Invoked to take a fullpage screenshot of the session.
+  This uses browser-specific APIs to capture the entire page, not just the viewport.
+  """
+  @callback take_fullpage_screenshot(Session.t() | Element.t()) :: binary | {:error, reason}
+
+  @doc """
   Invoked to get the handle for the currently focused window.
   """
   @callback window_handle(Session.t() | Element.t()) :: {:ok, String.t()} | {:error, reason}

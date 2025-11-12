@@ -404,6 +404,51 @@ defmodule Wallaby.WebdriverClient do
   end
 
   @doc """
+  Executes a Chrome DevTools Protocol (CDP) command.
+  Only works with ChromeDriver.
+  """
+  @spec execute_cdp(Session.t(), String.t(), map) :: {:ok, any} | {:error, any}
+  def execute_cdp(session, command, params \\ %{}) do
+    request_params = %{
+      cmd: command,
+      params: params
+    }
+
+    with {:ok, resp} <- request(:post, "#{session.session_url}/goog/cdp/execute", request_params) do
+      Map.fetch(resp, "value")
+    end
+  end
+
+  @doc """
+  Takes a fullpage screenshot using Chrome DevTools Protocol.
+  Only works with ChromeDriver.
+  """
+  @spec take_fullpage_screenshot_cdp(Session.t()) :: binary | {:error, any}
+  def take_fullpage_screenshot_cdp(session) do
+    params = %{
+      format: "png",
+      captureBeyondViewport: true
+    }
+
+    with {:ok, result} <- execute_cdp(session, "Page.captureScreenshot", params),
+         {:ok, data} <- Map.fetch(result, "data") do
+      :base64.decode(data)
+    end
+  end
+
+  @doc """
+  Takes a fullpage screenshot using Firefox's Moz-specific extension.
+  Only works with GeckoDriver/Firefox.
+  """
+  @spec take_fullpage_screenshot_moz(Session.t()) :: binary | {:error, any}
+  def take_fullpage_screenshot_moz(session) do
+    with {:ok, resp} <- request(:get, "#{session.session_url}/moz/screenshot/full"),
+         {:ok, value} <- Map.fetch(resp, "value") do
+      :base64.decode(value)
+    end
+  end
+
+  @doc """
   Gets the cookies for a session.
   """
   @spec cookies(Session.t()) :: {:ok, [map]}
