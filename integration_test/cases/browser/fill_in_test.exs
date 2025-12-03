@@ -92,6 +92,17 @@ defmodule Wallaby.Integration.Browser.FillInTest do
                  end
   end
 
+  test "fill_in fields with labels by exact text", %{page: page} do
+    password = "$uper$ecret"
+
+    page
+    |> fill_in(Query.text_field("Password"), with: password)
+    |> fill_in(Query.text_field("Confirm Password"), with: password)
+
+    assert find(page, Query.css("#password_field")) |> has_value?(password)
+    assert find(page, Query.css("#confirm_password_field")) |> has_value?(password)
+  end
+
   test "escapes quotes", %{page: page} do
     assert fill_in(page, Query.text_field("I'm a text field"), with: "Stuff")
   end
