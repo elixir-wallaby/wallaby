@@ -30,7 +30,7 @@ jobs:
           elixir-version: ${{matrix.elixir}}
         if: ${{ steps.release.outputs.release_created }}
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: cache
         if: ${{ steps.release.outputs.release_created }}
         with:
