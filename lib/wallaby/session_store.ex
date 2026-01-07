@@ -68,7 +68,7 @@ defmodule Wallaby.SessionStore do
 
     case result do
       [{ref, pid}] ->
-        true = Process.demonitor(ref)
+        true = Process.demonitor(ref, [:flush])
         :ets.delete(state.ets_table, {ref, session.id, pid})
 
       [] ->
