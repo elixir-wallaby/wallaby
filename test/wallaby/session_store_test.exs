@@ -71,6 +71,44 @@ defmodule Wallaby.SessionStoreTest do
       refute Enum.member?(store, second)
       assert Enum.member?(store, third)
     end
+
+    test "flushes DOWN message when demonitoring", %{session_store: session_store, table: table} do
+      session = %Session{id: "session_to_flush"}
+
+      test_pid = self()
+
+      owner_pid =
+        spawn(fn ->
+          :ok = SessionStore.monitor(session_store, session)
+          send(test_pid, :monitored)
+          receive do: (_ -> :ok)
+        end)
+
+      receive do
+        :monitored -> :ok
+      after
+        1000 -> flunk("Failed to monitor session")
+      end
+
+      # Suspend SessionStore so we can queue messages
+      :sys.suspend(session_store)
+
+      # We spawn a task because GenServer.call will block until SessionStore resumes
+      Task.async(fn ->
+        SessionStore.demonitor(session_store, session)
+      end)
+
+      Process.sleep(50)
+      Process.exit(owner_pid, :kill)
+      Process.sleep(50)
+      :sys.resume(session_store)
+
+      # Ensure all messages are processed (including potentially fatal DOWN)
+      :sys.get_state(session_store)
+
+      # Check if SessionStore is still working
+      assert [] == SessionStore.list_sessions_for(name: table)
+    end
   end
 
   test "removes sessions when the monitored process dies", %{
