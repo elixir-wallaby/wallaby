@@ -106,7 +106,7 @@ defmodule Wallaby.SessionStoreTest do
       # Ensure all messages are processed (including potentially fatal DOWN)
       :sys.get_state(session_store)
 
-      # 7. Check if SessionStore is still working
+      # Check if SessionStore is still working
       assert [] == SessionStore.list_sessions_for(name: table)
     end
   end
