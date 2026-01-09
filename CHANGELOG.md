@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.12](https://github.com/elixir-wallaby/wallaby/compare/v0.30.11...v0.30.12) (2026-01-09)
+
+
+### Bug Fixes
+
+* flush a DOWN message if one was present ([#832](https://github.com/elixir-wallaby/wallaby/issues/832)) ([63d64de](https://github.com/elixir-wallaby/wallaby/commit/63d64dec492d06f4b609c67bfef41deac161b8a5))
+
 ## [0.30.11](https://github.com/elixir-wallaby/wallaby/compare/v0.30.10...v0.30.11) (2025-10-29)
 
 
