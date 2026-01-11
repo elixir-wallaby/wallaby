@@ -10,7 +10,7 @@ echo "PID: $pid1"
 
 shutdown(){
     local pid1=$1
-    local pid2=$1
+    local pid2=$2
 
     if [ $script_status = "running" ]; then
         script_status="shutting down"
