@@ -67,7 +67,7 @@ defmodule Wallaby.Chrome do
 
   ## Default Capabilities
 
-  By default, Chromdriver will use the following capabilities
+  By default, Chromedriver will use the following capabilities
 
   You can read more about capabilities in the [JSON Wire Protocol](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#capabilities-json-object) documentation and the [Chromedriver](https://sites.google.com/a/chromium.org/chromedriver/capabilities) documentation.
 
