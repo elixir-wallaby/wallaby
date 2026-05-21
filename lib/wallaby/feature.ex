@@ -13,9 +13,13 @@ defmodule Wallaby.Feature do
   ```
   config :wallaby, otp_app: :your_app
   ```
+  When used, it accepts the following options:
+   * `:sandbox` - whether or not to use the sandbox in the tests. Defaults to `true`.
   """
 
-  defmacro __using__(_) do
+  defmacro __using__(opts \\ []) do
+    use_sandbox? = Keyword.get(opts, :sandbox, true)
+
     quote do
       ExUnit.Case.register_attribute(__MODULE__, :sessions)
 
@@ -24,7 +28,8 @@ defmodule Wallaby.Feature do
 
       setup context do
         if context[:test_type] == :feature do
-          metadata = unquote(__MODULE__).Utils.maybe_checkout_repos(context[:async])
+          metadata =
+            unquote(__MODULE__).Utils.maybe_checkout_repos(unquote(use_sandbox?), context[:async])
 
           start_session_opts =
             [metadata: metadata]
@@ -171,12 +176,14 @@ defmodule Wallaby.Feature do
     def put_create_session_fn(opts, func), do: Keyword.put(opts, :create_session_fn, func)
 
     if @includes_ecto do
-      def maybe_checkout_repos(async?) do
+      def maybe_checkout_repos(true, async?) do
         otp_app()
         |> ecto_repos()
         |> Enum.map(&checkout_ecto_repos(&1, async?))
         |> metadata_for_ecto_repos()
       end
+
+      def maybe_checkout_repos(_, _), do: ""
 
       defp otp_app(), do: Application.get_env(:wallaby, :otp_app)
 
