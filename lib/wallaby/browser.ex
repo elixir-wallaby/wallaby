@@ -1136,6 +1136,8 @@ defmodule Wallaby.Browser do
     parent
     |> find(query)
     |> assert_text(text)
+    
+    parent
   end
 
   def assert_text(parent, text) when is_binary(text) do
