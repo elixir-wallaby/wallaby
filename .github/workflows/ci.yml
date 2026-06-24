@@ -19,13 +19,13 @@ jobs:
       OTP_VERSION: ${{ matrix.elixir-otp.otp }}
 
     steps:
-    - uses: actions/checkout@v6
-    - uses: erlef/setup-beam@v1
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1.24.0
       with:
         otp-version: ${{matrix.elixir-otp.otp}}
         elixir-version: ${{matrix.elixir-otp.elixir}}
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       id: cache
       with:
         path: deps
@@ -50,19 +50,19 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v6
-    - uses: erlef/setup-beam@v1
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1.24.0
       with:
         otp-version: ${{matrix.elixir-otp.otp}}
         elixir-version: ${{matrix.elixir-otp.elixir}}
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       id: deps-cache
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       with:
         path: _build
         key: ${{ runner.os }}-v1-dialyzer-${{matrix.elixir-otp.otp}}-${{ matrix.elixir-otp.elixir }}-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
@@ -99,13 +99,13 @@ jobs:
       OTP_VERSION: ${{ matrix.elixir-otp.otp }}
 
     steps:
-    - uses: actions/checkout@v6
-    - uses: erlef/setup-beam@v1
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1.24.0
       with:
         otp-version: ${{matrix.elixir-otp.otp}}
         elixir-version: ${{matrix.elixir-otp.elixir}}
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       id: cache
       with:
         path: deps
@@ -136,13 +136,13 @@ jobs:
       OTP_VERSION: ${{ matrix.elixir-otp.otp }}
 
     steps:
-    - uses: actions/checkout@v6
-    - uses: erlef/setup-beam@v1
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1.24.0
       with:
         otp-version: ${{matrix.elixir-otp.otp}}
         elixir-version: ${{matrix.elixir-otp.elixir}}
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       id: cache
       with:
         path: deps
@@ -160,7 +160,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@v7
+    - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: always()
       with:
         name: Selenium Logs (Elixir ${{matrix.elixir-otp.elixir}})
@@ -182,13 +182,13 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v6
-    - uses: erlef/setup-beam@v1
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1.24.0
       with:
         otp-version: ${{matrix.elixir-otp.otp}}
         elixir-version: ${{matrix.elixir-otp.elixir}}
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       id: cache
       with:
         path: deps
@@ -207,7 +207,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@v7
+    - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: always()
       with:
         name: Selenium Logs Selenium 4 Linux
@@ -224,11 +224,11 @@ jobs:
       WALLABY_DRIVER: selenium
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
     - run: brew install erlang elixir
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       id: cache
       with:
         path: deps
@@ -247,7 +247,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@v7
+    - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: always()
       with:
         name: Selenium Logs Selenium 4 Mac

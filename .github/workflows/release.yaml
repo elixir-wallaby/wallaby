@@ -17,20 +17,20 @@ jobs:
         otp: [27.x]
         elixir: [1.17.x]
     steps:
-      - uses: googleapis/release-please-action@v5
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         id: release
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         if: ${{ steps.release.outputs.release_created }}
 
-      - uses: erlef/setup-beam@v1
+      - uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1.24.0
         id: install
         with:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
         if: ${{ steps.release.outputs.release_created }}
 
-      - uses: actions/cache@v5
+      - uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         id: cache
         if: ${{ steps.release.outputs.release_created }}
         with:
