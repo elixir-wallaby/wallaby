@@ -64,10 +64,10 @@ defmodule Wallaby.Selenium do
 
   @behaviour Wallaby.Driver
 
+  alias Wallaby.{Driver, Element, Session}
   alias Wallaby.Helpers.KeyCodes
   alias Wallaby.Metadata
   alias Wallaby.WebdriverClient
-  alias Wallaby.{Driver, Element, Session}
 
   @typedoc """
   Options to pass to Wallaby.start_session/1

@@ -109,8 +109,8 @@ defmodule Wallaby.Chrome do
   @default_readiness_timeout 10_000
 
   alias Wallaby.Chrome.Chromedriver
-  alias Wallaby.WebdriverClient
   alias Wallaby.{DependencyError, Metadata}
+  alias Wallaby.WebdriverClient
   import Wallaby.Driver.LogChecker
 
   @typedoc """
@@ -609,17 +609,19 @@ defmodule Wallaby.Chrome do
   defp put_beam_metadata(capabilities, opts) do
     capabilities
     |> update_in([:chromeOptions, :args], fn args ->
-      for arg <- args do
-        case String.split(arg, "=") do
-          ["--user-agent", user_agent] ->
-            new_user_agent = Metadata.append(user_agent, opts[:metadata])
-            "--user-agent=#{new_user_agent}"
-
-          _ ->
-            arg
-        end
-      end
+      Enum.map(args, &append_metadata_to_arg(&1, opts[:metadata]))
     end)
+  end
+
+  defp append_metadata_to_arg(arg, metadata) do
+    case String.split(arg, "=") do
+      ["--user-agent", user_agent] ->
+        new_user_agent = Metadata.append(user_agent, metadata)
+        "--user-agent=#{new_user_agent}"
+
+      _ ->
+        arg
+    end
   end
 
   defp resolve_opt(opts, key) do
