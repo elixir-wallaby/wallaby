@@ -543,6 +543,13 @@ defmodule Wallaby.Chrome do
   @doc false
   def take_screenshot(session_or_element), do: delegate(:take_screenshot, session_or_element)
   @doc false
+  def take_fullpage_screenshot(session_or_element) do
+    check_logs!(session_or_element, fn ->
+      WebdriverClient.take_fullpage_screenshot(session_or_element)
+    end)
+  end
+
+  @doc false
   defdelegate log(session_or_element), to: WebdriverClient
 
   @doc false

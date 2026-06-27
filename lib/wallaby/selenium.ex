@@ -198,6 +198,9 @@ defmodule Wallaby.Selenium do
   defdelegate take_screenshot(session_or_element), to: WebdriverClient
 
   @doc false
+  defdelegate take_fullpage_screenshot(session_or_element), to: WebdriverClient
+
+  @doc false
   def cookies(%Session{} = session) do
     WebdriverClient.cookies(session)
   end
