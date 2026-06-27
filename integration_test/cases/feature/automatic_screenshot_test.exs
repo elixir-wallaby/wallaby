@@ -31,7 +31,7 @@ defmodule Wallaby.Integration.Feature.AutomaticScreenshotTest do
           assert ExUnit.run() == %{failures: 1, skipped: 0, total: 1, excluded: 0}
         end)
 
-      assert output =~ "\n1 feature, 1 failure\n"
+      assert_one_feature_failed(output)
       assert screenshot_taken_count(output) == 2
     end
   end
@@ -58,8 +58,20 @@ defmodule Wallaby.Integration.Feature.AutomaticScreenshotTest do
           assert ExUnit.run() == %{failures: 1, skipped: 0, total: 1, excluded: 0}
         end)
 
-      assert output =~ "\n1 feature, 1 failure\n"
+      assert_one_feature_failed(output)
       assert screenshot_taken_count(output) == 2
+    end
+  end
+
+  # ExUnit's CLIFormatter summary line changed format in Elixir 1.20.
+  # Pre-1.20: "1 feature, 1 failure"
+  # 1.20+:    "Result: 0/1 passed" / "Failed: 1 feature"
+  defp assert_one_feature_failed(output) do
+    if Version.match?(System.version(), ">= 1.20.0") do
+      assert output =~ "\nResult: 0/1 passed\n"
+      assert output =~ "\nFailed: 1 feature\n"
+    else
+      assert output =~ "\n1 feature, 1 failure\n"
     end
   end
 

@@ -11,7 +11,7 @@ defmodule Wallaby.Mixfile do
     [
       app: :wallaby,
       version: @version,
-      elixir: "~> 1.12",
+      elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -48,8 +48,8 @@ defmodule Wallaby.Mixfile do
   defp deps do
     [
       {:jason, "~> 1.1"},
-      {:httpoison, "~> 0.12 or ~> 1.0 or ~> 2.0"},
-      {:web_driver_client, "~> 0.2.0"},
+      {:httpoison, "~> 0.12 or ~> 1.0 or ~> 2.0 or ~> 3.0"},
+      {:web_driver_client, "~> 0.3.0"},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:bypass, "~> 1.0.0", only: :test},

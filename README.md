@@ -73,7 +73,7 @@ _Your company's name and logo could be here!_
 
 ### Requirements
 
-Wallaby requires Elixir 1.12+ and OTP 22+.
+Wallaby requires Elixir 1.17+ and OTP 26+.
 
 Wallaby also requires `bash` to be installed. Generally `bash` is widely available, but it does not come pre-installed on Alpine Linux.
 

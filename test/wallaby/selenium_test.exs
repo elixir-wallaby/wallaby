@@ -28,7 +28,8 @@ defmodule Wallaby.SeleniumTest do
     end
 
     test "raises a RuntimeError on unknown domain" do
-      remote_url = "http://does.not.exist-asdf/"
+      # Trailing dot prevents DNS search domain resolution
+      remote_url = "http://does.not.exist-asdf./"
 
       assert_raise RuntimeError, ~r/:nxdomain/, fn ->
         Selenium.start_session(remote_url: remote_url)
