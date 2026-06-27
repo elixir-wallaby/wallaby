@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.31.0](https://github.com/elixir-wallaby/wallaby/compare/v0.30.12...v0.31.0) (2026-06-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* add support for Hackney 4.x, drop Elixir <1.17 and OTP <26 ([#839](https://github.com/elixir-wallaby/wallaby/issues/839))
+
+### Features
+
+* add support for Hackney 4.x, drop Elixir &lt;1.17 and OTP &lt;26 ([#839](https://github.com/elixir-wallaby/wallaby/issues/839)) ([b7f7605](https://github.com/elixir-wallaby/wallaby/commit/b7f7605880e0711702aa0c219a9799edbaa37b22))
+
 ## [0.30.12](https://github.com/elixir-wallaby/wallaby/compare/v0.30.11...v0.30.12) (2026-01-09)
 
 
