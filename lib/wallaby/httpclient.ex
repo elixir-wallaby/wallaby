@@ -115,6 +115,9 @@ defmodule Wallaby.HTTPClient do
       %{"message" => "stale element reference" <> _} ->
         {:error, :stale_reference}
 
+      %{"message" => "no such shadow root" <> _} ->
+        {:error, :shadow_root_not_found}
+
       %{
         "message" =>
           "An element command failed because the referenced element is no longer available" <> _

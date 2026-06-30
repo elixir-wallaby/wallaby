@@ -181,6 +181,11 @@ defmodule Wallaby.Driver do
               {:ok, [Element.t()]} | {:error, reason}
 
   @doc """
+  Invoked to find shadow root of given element
+  """
+  @callback shadow_root(Element.t()) :: {:ok, Element.t()} | {:error, reason}
+
+  @doc """
   Invoked to execute JavaScript in the browser.
   """
   @callback execute_script(Session.t() | Element, String.t(), [any]) ::

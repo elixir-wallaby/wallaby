@@ -1013,6 +1013,25 @@ defmodule Wallaby.Browser do
   end
 
   @doc """
+  Finds and returns the shadow root for the given element.
+
+  Queries executed on the returned shadow root will be scoped to the root's shadow DOM.
+
+  ```
+  session
+  |> find(Query.css("shadow-test"))
+  |> shadow_root()
+  |> find(Query.css("#in-shadow"))
+  ```
+  """
+  def shadow_root(%{driver: driver} = element) do
+    case driver.shadow_root(element) do
+      {:ok, element} -> element
+      {:error, _error} -> nil
+    end
+  end
+
+  @doc """
   Validates that the query returns a result. This can be used to define other
   types of matchers.
   """

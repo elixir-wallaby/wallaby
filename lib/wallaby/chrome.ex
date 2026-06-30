@@ -414,6 +414,9 @@ defmodule Wallaby.Chrome do
   @doc false
   defdelegate dismiss_prompt(session, fun), to: WebdriverClient
   @doc false
+  defdelegate shadow_root(element), to: WebdriverClient
+
+  @doc false
   defdelegate parse_log(log), to: Wallaby.Chrome.Logger
 
   @doc false
