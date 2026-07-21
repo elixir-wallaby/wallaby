@@ -19,7 +19,7 @@ jobs:
       OTP_VERSION: ${{ matrix.elixir-otp.otp }}
 
     steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
       with:
         otp-version: ${{matrix.elixir-otp.otp}}
@@ -50,7 +50,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
       with:
         otp-version: ${{matrix.elixir-otp.otp}}
@@ -99,7 +99,7 @@ jobs:
       OTP_VERSION: ${{ matrix.elixir-otp.otp }}
 
     steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
       with:
         otp-version: ${{matrix.elixir-otp.otp}}
@@ -136,7 +136,7 @@ jobs:
       OTP_VERSION: ${{ matrix.elixir-otp.otp }}
 
     steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
       with:
         otp-version: ${{matrix.elixir-otp.otp}}
@@ -182,7 +182,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
       with:
         otp-version: ${{matrix.elixir-otp.otp}}
@@ -224,7 +224,7 @@ jobs:
       WALLABY_DRIVER: selenium
 
     steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
     - run: brew install erlang elixir
 
