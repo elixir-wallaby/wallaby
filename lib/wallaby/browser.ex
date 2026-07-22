@@ -227,14 +227,27 @@ defmodule Wallaby.Browser do
 
   Pass `[{:name, "some_name"}]` to specify the file name. Defaults to a timestamp.
   Pass `[{:log, true}]` to log the location of the screenshot to stdout. Defaults to false.
+  Pass `[{:full_page, true}]` to capture the entire page, not just the viewport. Defaults to false.
+
+  ## Full Page Screenshots
+
+  When `full_page: true` is specified, the entire document is captured including content
+  outside the viewport. Supported drivers:
+  - ChromeDriver (Chrome)
+  - GeckoDriver 0.16.0+ (Firefox via Selenium)
   """
-  @type take_screenshot_opt :: {:name, String.t()} | {:log, boolean}
+  @type take_screenshot_opt :: {:name, String.t()} | {:log, boolean} | {:full_page, boolean}
   @spec take_screenshot(parent, [take_screenshot_opt]) :: parent
 
   def take_screenshot(%{driver: driver} = screenshotable, opts \\ []) do
     image_data =
-      screenshotable
-      |> driver.take_screenshot
+      if opts[:full_page] do
+        screenshotable
+        |> driver.take_fullpage_screenshot()
+      else
+        screenshotable
+        |> driver.take_screenshot()
+      end
 
     name =
       opts
