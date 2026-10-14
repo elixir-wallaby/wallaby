@@ -160,7 +160,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+    - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       if: always()
       with:
         name: Selenium Logs (Elixir ${{matrix.elixir-otp.elixir}})
@@ -207,7 +207,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+    - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       if: always()
       with:
         name: Selenium Logs Selenium 4 Linux
@@ -247,7 +247,7 @@ jobs:
     - name: Run Tests
       run: mix test || mix test --failed || mix test --failed
 
-    - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+    - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       if: always()
       with:
         name: Selenium Logs Selenium 4 Mac
