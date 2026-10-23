@@ -403,6 +403,43 @@ defmodule Wallaby.WebdriverClient do
     end
   end
 
+  defp execute_cdp(session, command, params \\ %{}) do
+    request_params = %{
+      cmd: command,
+      params: params
+    }
+
+    with {:ok, resp} <- request(:post, "#{session.session_url}/goog/cdp/execute", request_params) do
+      Map.fetch(resp, "value")
+    end
+  end
+
+  @doc """
+  Takes a fullpage screenshot of the entire document.
+  Uses the Moz-specific endpoint for Firefox, and Chrome DevTools Protocol for all other browsers.
+  """
+  @spec take_fullpage_screenshot(Session.t()) :: binary | {:error, any}
+  # Firefox: uses GeckoDriver's Moz-specific endpoint
+  def take_fullpage_screenshot(%Session{capabilities: %{browserName: "firefox"}} = session) do
+    with {:ok, resp} <- request(:get, "#{session.session_url}/moz/screenshot/full"),
+         {:ok, value} <- Map.fetch(resp, "value") do
+      :base64.decode(value)
+    end
+  end
+
+  # Chrome and other Chromium-based browsers: uses Chrome DevTools Protocol
+  def take_fullpage_screenshot(session) do
+    params = %{
+      format: "png",
+      captureBeyondViewport: true
+    }
+
+    with {:ok, result} <- execute_cdp(session, "Page.captureScreenshot", params),
+         {:ok, data} <- Map.fetch(result, "data") do
+      :base64.decode(data)
+    end
+  end
+
   @doc """
   Gets the cookies for a session.
   """
