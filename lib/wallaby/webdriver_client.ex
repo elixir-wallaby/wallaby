@@ -13,6 +13,7 @@ defmodule Wallaby.WebdriverClient do
           | Session.t()
 
   @web_element_identifier "element-6066-11e4-a52e-4f735466cecf"
+  @shadow_root_identifier "shadow-6066-11e4-a52e-4f735466cecf"
 
   @button_mapping %{left: 0, middle: 1, right: 2}
 
@@ -46,6 +47,17 @@ defmodule Wallaby.WebdriverClient do
          {:ok, elements} <- Map.fetch(resp, "value"),
          elements <- Enum.map(elements || [], &cast_as_element(parent, &1)),
          do: {:ok, elements}
+  end
+
+  @doc """
+  Finds the shadow root for the given element.
+  """
+  @spec shadow_root(Element.t()) :: {:ok, Element.t()}
+  def shadow_root(element) do
+    with {:ok, resp} <- request(:get, element.url <> "/shadow"),
+         {:ok, shadow_root} <- Map.fetch(resp, "value") do
+      {:ok, cast_as_element(element, shadow_root)}
+    end
   end
 
   @doc """
@@ -694,6 +706,16 @@ defmodule Wallaby.WebdriverClient do
       id: id,
       session_url: parent.session_url,
       url: parent.session_url <> "/element/#{id}",
+      parent: parent,
+      driver: parent.driver
+    }
+  end
+
+  defp cast_as_element(parent, %{@shadow_root_identifier => id}) do
+    %Wallaby.Element{
+      id: id,
+      session_url: parent.session_url,
+      url: parent.session_url <> "/shadow/#{id}",
       parent: parent,
       driver: parent.driver
     }

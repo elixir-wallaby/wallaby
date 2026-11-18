@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <script>
+      class ShadowTestElement extends HTMLElement {
+        connectedCallback() {
+          this.attachShadow({mode: 'open'});
+          this.shadowRoot.innerHTML = `
+            <div id="in-shadow">I am in shadow</div>
+            <form class="form" action="index.html" method="get">
+              <input id="option1" type="radio" name="radios" value="option1" />
+              <input id="option2" type="radio" name="radios" value="option2" />
+            </form>
+          `;
+        }
+      }
+      window.customElements.define('shadow-test', ShadowTestElement);
+    </script>
+  </head>
+
+  <body>
+    <div id="outside-shadow">I am out of shadow</div>
+    <shadow-test></shadow-test>
+  </body>
+</html>
