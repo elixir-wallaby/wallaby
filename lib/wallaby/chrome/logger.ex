@@ -1,7 +1,5 @@
 defmodule Wallaby.Chrome.Logger do
   @moduledoc false
-  @log_regex ~r/^(?<url>\S+) (?<line>\d+):(?<column>\d+) (?<message>.*)$/s
-  @string_regex ~r/^"(?<string>.+)"$/
 
   def parse_log(%{"level" => "SEVERE", "source" => "javascript", "message" => msg}) do
     if Wallaby.js_errors?() do
@@ -10,8 +8,10 @@ defmodule Wallaby.Chrome.Logger do
   end
 
   def parse_log(%{"level" => "INFO", "source" => "console-api", "message" => msg}) do
+    log_regex = ~r/^(?<url>\S+) (?<line>\d+):(?<column>\d+) (?<message>.*)$/s
+
     if Wallaby.js_logger() do
-      case Regex.named_captures(@log_regex, msg) do
+      case Regex.named_captures(log_regex, msg) do
         %{"message" => message} -> print_message(message)
       end
     end
@@ -20,8 +20,10 @@ defmodule Wallaby.Chrome.Logger do
   def parse_log(_), do: nil
 
   defp print_message(message) do
+    string_regex = ~r/^"(?<string>.+)"$/
+
     message =
-      case Regex.named_captures(@string_regex, message) do
+      case Regex.named_captures(string_regex, message) do
         %{"string" => string} -> format_string(string)
         nil -> message
       end
